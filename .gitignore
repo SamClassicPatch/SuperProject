@@ -1,0 +1,50 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.lnk
+
+# CMake Build dirs (temp)
+Build/
+Debug/
+
+# Visual Studio
+*.vs
+*.opendb
+*.sdf
+*.map
+*.opensdf
+*.pdb
+*.sbr
+*.suo
+*.tlog
+*.ipch
+*.hm
+*.exp
+*.res
+*.lastbuildstate
+*.idb
+
+# Build directories
+Bin/*
