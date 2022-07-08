@@ -1,0 +1,13 @@
+[submodule "Includes"]
+	path = Includes
+	url = https://github.com/DreamyCecil/SeriousSam_SDK107.git
+	branch = includes
+[submodule "CoreLib"]
+	path = CoreLib
+	url = https://github.com/SamClassicPatch/CoreLib.git
+[submodule "GameExecutable"]
+	path = GameExecutable
+	url = https://github.com/SamClassicPatch/GameExecutable.git
+[submodule "DedicatedServer"]
+	path = DedicatedServer
+	url = https://github.com/SamClassicPatch/DedicatedServer.git
