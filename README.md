@@ -5,9 +5,10 @@ This custom Serious Sam Classic patch includes a lot of modern enhancements that
 This super project gathers everything together under a single solution for proper development.
 
 **Projects include:**
-- [`CoreLib`](https://github.com/SamClassicPatch/GameExecutable) - static library with core functionality that's used by other projects.
+- [`CoreLib`](https://github.com/SamClassicPatch/CoreLib) - static library with core functionality that's used by other projects.
 - [`GameExecutable`](https://github.com/SamClassicPatch/GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
 - [`DedicatedServer`](https://github.com/SamClassicPatch/DedicatedServer) - dedicated server application for launching your own classic servers.
+- [`ExamplePlugin`](https://github.com/SamClassicPatch/ExamplePlugin) - example of how user plugins can be made for the Serious Sam Classics patch.
 
 Original source code of `DedicatedServer` and `GameExecutable` projects are taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
 

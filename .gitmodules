@@ -11,3 +11,6 @@
 [submodule "DedicatedServer"]
 	path = DedicatedServer
 	url = https://github.com/SamClassicPatch/DedicatedServer.git
+[submodule "ExamplePlugin"]
+	path = ExamplePlugin
+	url = https://github.com/SamClassicPatch/ExamplePlugin.git
