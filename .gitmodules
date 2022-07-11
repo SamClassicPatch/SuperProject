@@ -17,3 +17,6 @@
 [submodule "EngineGUI"]
 	path = EngineGUI
 	url = https://github.com/SamClassicPatch/EngineGUI.git
+[submodule "Plugins"]
+	path = Plugins
+	url = https://github.com/SamClassicPatch/Plugins.git
