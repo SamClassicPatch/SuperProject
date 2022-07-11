@@ -17,6 +17,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DedicatedServer", "Dedicate
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginModule", "ExamplePlugin\PluginModule.vcxproj", "{5D8EBD18-915D-4A91-A2FF-4CD988C7C399}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EngineGUI", "EngineGUI\EngineGUI.vcxproj", "{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E768DEE-319A-43AB-8D52-7079E270D91C} = {4E768DEE-319A-43AB-8D52-7079E270D91C}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_TSE107|x86 = Debug_TSE107|x86
@@ -57,6 +62,14 @@ Global
 		{5D8EBD18-915D-4A91-A2FF-4CD988C7C399}.Release_TSE105|x86.Build.0 = Release_TSE105|Win32
 		{5D8EBD18-915D-4A91-A2FF-4CD988C7C399}.Release_TSE107|x86.ActiveCfg = Release_TSE107|Win32
 		{5D8EBD18-915D-4A91-A2FF-4CD988C7C399}.Release_TSE107|x86.Build.0 = Release_TSE107|Win32
+		{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}.Debug_TSE107|x86.ActiveCfg = Debug_TSE107|Win32
+		{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}.Debug_TSE107|x86.Build.0 = Debug_TSE107|Win32
+		{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}.Release_TFE105|x86.ActiveCfg = Release_TFE105|Win32
+		{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}.Release_TFE105|x86.Build.0 = Release_TFE105|Win32
+		{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}.Release_TSE105|x86.ActiveCfg = Release_TSE105|Win32
+		{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}.Release_TSE105|x86.Build.0 = Release_TSE105|Win32
+		{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}.Release_TSE107|x86.ActiveCfg = Release_TSE107|Win32
+		{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}.Release_TSE107|x86.Build.0 = Release_TSE107|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

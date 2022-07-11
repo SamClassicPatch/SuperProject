@@ -6,6 +6,7 @@ This super project gathers everything together under a single solution for prope
 
 **Projects include:**
 - [`CoreLib`](https://github.com/SamClassicPatch/CoreLib) - static library with core functionality that's used by other projects.
+- [`EngineGUI`](https://github.com/SamClassicPatch/EngineGUI) - patched Serious Engine library that allows to integrate new features into different tools.
 - [`GameExecutable`](https://github.com/SamClassicPatch/GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
 - [`DedicatedServer`](https://github.com/SamClassicPatch/DedicatedServer) - dedicated server application for launching your own classic servers.
 - [`ExamplePlugin`](https://github.com/SamClassicPatch/ExamplePlugin) - example of how user plugins can be made for the Serious Sam Classics patch.
