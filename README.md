@@ -22,6 +22,12 @@ To compile the code, you'll need to use a compiler from Microsoft Visual C++ 6.0
 
 Full guide: https://github.com/DreamyCecil/SeriousSam_SDK107#building
 
+### Notes
+
+Once the projects are compiled, the output files are automatically placed into the `Bin` directory one level above the solution directory (e.g. `C:/SeriousSam/Bin` if this repository is in `C:/SeriousSam/SuperProject`).
+
+You can change the destination path of each project in the post-build event (**Project properties** -> **Build Events** -> **Post-Build Event** -> **Command Line**).
+
 ## License
 
 This project is licensed under GNU GPL v2 (see LICENSE file).
