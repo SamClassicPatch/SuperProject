@@ -24,9 +24,7 @@ Full guide: https://github.com/DreamyCecil/SeriousSam_SDK107#building
 
 ### Notes
 
-Once the projects are compiled, the output files are automatically placed into the `Bin` directory one level above the solution directory (e.g. `C:/SeriousSam/Bin` if this repository is in `C:/SeriousSam/SuperProject`).
-
-You can change the destination path of each project in the post-build event (**Project properties** -> **Build Events** -> **Post-Build Event** -> **Command Line**).
+Once the projects are compiled for the `Release_TSE107` configuration, you can manually copy them into the `Bin` directory one level above the solution directory by using the `DeployToBin.bat` script (e.g. into `C:/SeriousSam/Bin` if this repository is in `C:/SeriousSam/SuperProject`).
 
 ## License
 
