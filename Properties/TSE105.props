@@ -3,12 +3,17 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <EngineIncludes>$(SolutionDir)Includes\Engine105\</EngineIncludes>
+    <EngineLibraries>$(SolutionDir)Includes\Engine105\</EngineLibraries>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
     <BuildMacro Include="EngineIncludes">
       <Value>$(EngineIncludes)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="EngineLibraries">
+      <Value>$(EngineLibraries)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>
