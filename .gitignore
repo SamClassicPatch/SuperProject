@@ -48,3 +48,4 @@ Debug/
 
 # Build directories
 Bin/*
+Obj/*
