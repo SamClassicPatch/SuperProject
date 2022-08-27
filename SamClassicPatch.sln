@@ -16,6 +16,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DedicatedServer", "Dedicate
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginModule", "ExamplePlugin\PluginModule.vcxproj", "{5D8EBD18-915D-4A91-A2FF-4CD988C7C399}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E768DEE-319A-43AB-8D52-7079E270D91C} = {4E768DEE-319A-43AB-8D52-7079E270D91C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EngineGUI", "EngineGUI\EngineGUI.vcxproj", "{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -25,10 +28,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{C0B455EE-4E9E-4547-8F54-392AAD01B704}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LocalCheats", "Plugins\LocalCheats\LocalCheats.vcxproj", "{D99C3608-D607-44D3-9B80-EF7BC3762E8A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E768DEE-319A-43AB-8D52-7079E270D91C} = {4E768DEE-319A-43AB-8D52-7079E270D91C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ToggleableRedScreen", "Plugins\ToggleableRedScreen\ToggleableRedScreen.vcxproj", "{0EABD2EE-EF9F-47D6-B960-B2BC9A4C8561}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E768DEE-319A-43AB-8D52-7079E270D91C} = {4E768DEE-319A-43AB-8D52-7079E270D91C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerUtilities", "Plugins\ServerUtilities\ServerUtilities.vcxproj", "{76F38908-49C8-4F5A-9ABA-ED1A0B89448A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E768DEE-319A-43AB-8D52-7079E270D91C} = {4E768DEE-319A-43AB-8D52-7079E270D91C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WorldEditor", "WorldEditor\WorldEditor.vcxproj", "{DC47DA88-14E2-0634-61C5-7CEEC46A45C2}"
 	ProjectSection(ProjectDependencies) = postProject
