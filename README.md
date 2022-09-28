@@ -13,7 +13,7 @@ This super project gathers everything together under a single solution for prope
 - [`Plugins`](https://github.com/SamClassicPatch/Plugins) - projects with various plugins that come with the Serious Sam Classics patch.
 - [`WorldEditor`](https://github.com/SamClassicPatch/WorldEditor) - patched Serious Editor application that works on 64-bit systems.
 
-Original source code of `DedicatedServer`, `EngineGUI`, `GameExecutable` and `WorldEditor` projects are taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
+Original source code of `DedicatedServer`, `EngineGUI`, `GameExecutable` and `WorldEditor` projects is taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
 
 ## Building
 
@@ -21,7 +21,7 @@ Before building the code, make sure to load in all of the submodules. Use `git s
 
 To compile the code, you'll need to use a compiler from Microsoft Visual C++ 6.0.
 
-Full guide: https://github.com/DreamyCecil/SeriousSam_SDK107#building
+Full guide: https://github.com/DreamyCecil/SE1-ModSDK#building
 
 ### Notes
 
