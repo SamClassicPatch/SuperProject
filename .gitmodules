@@ -15,7 +15,7 @@
 	path = ExamplePlugin
 	url = https://github.com/SamClassicPatch/ExamplePlugin.git
 [submodule "EngineGUI"]
-	path = EngineGUI
+	path = PatchedGui
 	url = https://github.com/SamClassicPatch/EngineGUI.git
 [submodule "Plugins"]
 	path = Plugins
