@@ -7,13 +7,13 @@ This super project gathers everything together under a single solution for prope
 **Projects include:**
 - [`CoreLib`](https://github.com/SamClassicPatch/CoreLib) - static library with core functionality that's used by other projects.
 - [`DedicatedServer`](https://github.com/SamClassicPatch/DedicatedServer) - dedicated server application for launching your own classic servers.
-- [`EngineGUI`](https://github.com/SamClassicPatch/EngineGUI) - patched Serious Engine library that allows to integrate new features into different tools.
+- [`PatchedGui`](https://github.com/SamClassicPatch/EngineGUI) - patched EngineGUI library from the engine that allows to integrate new features into different tools.
 - [`ExamplePlugin`](https://github.com/SamClassicPatch/ExamplePlugin) - example of how user plugins can be made for the Serious Sam Classics patch.
 - [`GameExecutable`](https://github.com/SamClassicPatch/GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
 - [`Plugins`](https://github.com/SamClassicPatch/Plugins) - projects with various plugins that come with the Serious Sam Classics patch.
 - [`WorldEditor`](https://github.com/SamClassicPatch/WorldEditor) - patched Serious Editor application that works on 64-bit systems.
 
-Original source code of `DedicatedServer`, `EngineGUI`, `GameExecutable` and `WorldEditor` projects is taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
+Original source code of `DedicatedServer`, `PatchedGui`, `GameExecutable` and `WorldEditor` projects is taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
 
 ## Building
 
