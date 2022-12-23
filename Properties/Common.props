@@ -3,7 +3,7 @@
   <PropertyGroup Label="UserMacros">
     <BinDir>$(SolutionDir)Bin\$(Configuration)\</BinDir>
     <ObjDir>$(SolutionDir)Obj\$(Configuration)\$(ProjectName)\</ObjDir>
-    <CommonIncludes>$(ProjectDir);$(SolutionDir);$(SolutionDir)Includes\</CommonIncludes>
+    <CommonIncludes>$(ProjectDir);$(SolutionDir);$(SolutionDir)Includes\;$(SolutionDir)Includes\Common\</CommonIncludes>
     <OtherLibraries>$(SolutionDir)Bin\$(Configuration);$(LibraryPath)</OtherLibraries>
   </PropertyGroup>
 </Project>
