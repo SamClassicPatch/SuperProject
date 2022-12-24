@@ -1,0 +1,59 @@
+14
+
+\0\<
+WINDOW MODE
+\0\>
+РЕЖИМ ОКНА
+\0\<
+Window
+\0\>
+Оконный
+\0\<
+Borderless
+\0\>
+Без рамки
+\0\<
+Fullscreen
+\0\>
+Полноэкранный
+\0\<
+Serious Sam (Borderless %dx%d)
+\0\>
+Serious Sam (Без рамки %dx%d)
+\0\<
+ (Native)
+\0\>
+ (Родное)
+\0\<
+CLASSICS PATCH
+\0\>
+ПАТЧ ДЛЯ КЛАССИКИ
+\0\<
+settings for the classics patch
+\0\>
+настройки патча для классики
+\0\<
+All options
+\0\>
+Все опции
+\0\<
+This is a level in the %s format, it cannot be played!
+\0\>
+Этот уровень сохранен в формате %s и не может быть загружен!
+\0\<
+Show visible levels
+\0\>
+Показать видимые уровни
+\0\<
+Show all levels
+\0\>
+Показать все уровни
+\0\<
+ASPECT RATIO
+\0\>
+СООТНОШЕНИЕ СТОРОН
+\0\<
+select video mode aspect ratio
+\0\>
+выбор соотношения сторон для видеорежима
+\0\$

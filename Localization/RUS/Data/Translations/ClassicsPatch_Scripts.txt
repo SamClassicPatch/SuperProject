@@ -1,0 +1,991 @@
+247
+
+\0\<
+Common options
+\0\>
+Общие настройки
+\0\<
+Background game render
+\0\>
+Отрисовка игры на фоне
+\0\<
+render current game in the back instead of the menu background
+\0\>
+отображение игры на заднем фоне вместо фона меню
+\0\<
+No
+\0\>
+Нет
+\0\<
+Yes
+\0\>
+Да
+\0\<
+Adjust for aspect ratio
+\0\>
+Подогнать под соотношение экрана
+\0\<
+display 2D elements properly on wider resolutions (fixes HUD)
+\0\>
+правильное отображение 2D-элементов на более широких разрешениях (исправляет HUD)
+\0\<
+Option tabs
+\0\>
+Вкладки с параметрами
+\0\<
+display tabs for config options on the left
+\0\>
+отображение вкладок для параметров конфигурации слева
+\0\<
+FOV options
+\0\>
+Настройки поля зрения
+\0\<
+Fix field of view
+\0\>
+Исправить поле зрения
+\0\<
+always preserve vertical FOV via adjusting horizontal FOV on wider resolutions
+\0\>
+всегда сохранять вертикальный FOV, регулируя горизонтальный FOV на широких разрешениях
+\0\<
+Field of view
+\0\>
+Поле зрения
+\0\<
+set custom FOV for the player view regardless of gamemode
+\0\>
+установка пользовательского FOV для вида игрока независимо от режима игры
+\0\<
+Ignore (use plr_fFOV)
+\0\>
+В зависимости от plr_fFOV
+\0\<
+90 (default)
+\0\>
+90 (по умолчанию)
+\0\<
+3rd person view FOV
+\0\>
+Поле зрения от третьего лица
+\0\<
+separate FOV for the third person view
+\0\>
+отдельный FOV для вида от третьего лица
+\0\<
+Ignore (use sam_fCustomFOV)
+\0\>
+В зависимости от sam_fCustomFOV
+\0\<
+Query manager
+\0\>
+Менеджер запросов
+\0\<
+Master server protocol
+\0\>
+Протокол главного сервера
+\0\<
+which master server protocol to use (Legacy is for classic servers)
+\0\>
+какой протокол использовать для главного сервера (Legacy - для классических серверов)
+\0\<
+Legacy (GameSpy replacement)
+\0\>
+Legacy (замена GameSpy)
+\0\<
+DarkPlaces
+\0\>
+DarkPlaces
+\0\<
+GameAgent
+\0\>
+GameAgent
+\0\<
+Legacy master server
+\0\>
+Главный сервер для Legacy
+\0\<
+which master server to use for Legacy protocol
+\0\>
+какой главный сервер использовать для протокола Legacy
+\0\<
+333networks (recommended)
+\0\>
+333networks (рекомендуемый)
+\0\<
+The Errorist Network
+\0\>
+The Errorist Network
+\0\<
+GoneSpy
+\0\>
+GoneSpy
+\0\<
+42amsterdam
+\0\>
+42amsterdam
+\0\<
+Debug output
+\0\>
+Отладочный вывод
+\0\<
+output master server actions in console
+\0\>
+вывод действий главного сервера в консоль
+\0\<
+Server options
+\0\>
+Настройки сервера
+\0\<
+VIP password
+\0\>
+VIP пароль
+\0\<
+specify password for VIP clients
+\0\>
+указание пароля для VIP клиентов
+\0\<
+Connect password
+\0\>
+Пароль для подключения
+\0\<
+specify password for player connections
+\0\>
+указание пароля для подключения игроков
+\0\<
+Observer password
+\0\>
+Пароль для наблюдения
+\0\<
+specify password for observer connections
+\0\>
+указание пароля для подключения наблюдателей
+\0\<
+Enable anti-flood system
+\0\>
+Система от флуда
+\0\<
+kick clients for attempted packet flood
+\0\>
+кикать клиентов за попытки флуда пакетами
+\0\<
+Packet flood threshold
+\0\>
+Порог флуда пакетов
+\0\<
+maximum amount of packets a client may send before kicking them
+\0\>
+максимальное количество допустимых пакетов от клиента
+\0\<
+None
+\0\>
+Нисколько
+\0\<
+Unlimited
+\0\>
+Неограничено
+\0\<
+Max chat messages
+\0\>
+Количество сообщений в чате
+\0\<
+maximum amount of chat messages a client may send per second
+\0\>
+максимальное количество сообщений в секунду от клиента
+\0\<
+Chat command prefix
+\0\>
+Префикс команды чата
+\0\<
+what prefix should chat commands start with (e.g. "!" for "!dummy")
+\0\>
+какой префикс использовать для команд в чате (например, "!" для "!dummy")
+\0\<
+Accessibility
+\0\>
+Доступность
+\0\<
+Red screen on damage
+\0\>
+Покраснение экрана
+\0\<
+blend screen into red color upon taking damage, if supported
+\0\>
+окрашивать экран в красный цвет при получении урона, если поддерживается
+\0\<
+World options (SUTL)
+\0\>
+Настройки мира (SUTL)
+\0\<
+Start health
+\0\>
+Начальное здоровье
+\0\<
+change start health (sutl_fStartHealth)
+\0\>
+выставление начального здоровья (sutl_fStartHealth)
+\0\<
+100 (default)
+\0\>
+100 (по умолчанию)
+\0\<
+Start armor
+\0\>
+Начальная броня
+\0\<
+change start armor (sutl_fStartArmor)
+\0\>
+выставление начальной брони (sutl_fStartArmor)
+\0\<
+0 (default)
+\0\>
+0 (по умолчанию)
+\0\<
+Enemy multiplier
+\0\>
+Множитель врагов
+\0\<
+increase enemy count (sutl_fEnemyMultiplier)
+\0\>
+увеличение количества врагов (sutl_fEnemyMultiplier)
+\0\<
+1 (default)
+\0\>
+1 (по умолчанию)
+\0\<
+Maximum ammo
+\0\>
+Максимальные боезапас
+\0\<
+give maximum amount of ammo on start
+\0\>
+выдача максимального количества боеприпасов на старте
+\0\<
+Weapon options (SUTL)
+\0\>
+Настройки оружия (SUTL)
+\0\<
+Give Knife
+\0\>
+Выдать Нож
+\0\<
+give/take knife on start (no effect in vanilla game)
+\0\>
+выдать/отобрать нож на старте (не работает в ванильной игре)
+\0\<
+Ignore
+\0\>
+Игнорировать
+\0\<
+Give
+\0\>
+Выдать
+\0\<
+Take
+\0\>
+Забрать
+\0\<
+Give Chainsaw
+\0\>
+Выдать Бензопилу
+\0\<
+give/take chainsaw on start
+\0\>
+выдать/отобрать бензопилу на старте
+\0\<
+Give Colt
+\0\>
+Выдать Кольт
+\0\<
+give/take colt on start (no effect in vanilla game)
+\0\>
+выдать/отобрать кольт на старте (не работает в ванильной игре)
+\0\<
+Give Double Colt
+\0\>
+Выдать Двойной Кольт
+\0\<
+give/take double colt on start
+\0\>
+выдать/отобрать двойной кольт на старте
+\0\<
+Give Single Shotgun
+\0\>
+Выдать Дробовик
+\0\<
+give/take single shotgun on start
+\0\>
+выдать/отобрать дробовик на старте
+\0\<
+Give Double Shotgun
+\0\>
+Выдать Двустволку
+\0\<
+give/take double shotgun on start
+\0\>
+выдать/отобрать двустволку на старте
+\0\<
+Give Tommygun
+\0\>
+Выдать Автомат Томпсона
+\0\<
+give/take tommygun on start
+\0\>
+выдать/отобрать автомат томпсона на старте
+\0\<
+Give Minigun
+\0\>
+Выдать Миниган
+\0\<
+give/take minigun on start
+\0\>
+выдать/отобрать миниган на старте
+\0\<
+Give Rocket Launcher
+\0\>
+Выдать Ракетницу
+\0\<
+give/take rocket launcher on start
+\0\>
+выдать/отобрать ракетницу на старте
+\0\<
+Give Grenade Launcher
+\0\>
+Выдать Гранатомет
+\0\<
+give/take grenade launcher on start
+\0\>
+выдать/отобрать гранатомет на старте
+\0\<
+Give Flamer
+\0\>
+Выдать Огнемет
+\0\<
+give/take flamer on start
+\0\>
+выдать/отобрать огнемет на старте
+\0\<
+Give Sniper
+\0\>
+Выдать Снайперскую винтовку
+\0\<
+give/take sniper on start
+\0\>
+выдать/отобрать снайперскую винтовку на старте
+\0\<
+Give Laser
+\0\>
+Выдать Лазерное ружье
+\0\<
+give/take laser on start
+\0\>
+выдать/отобрать лазерное ружье на старте
+\0\<
+Give Cannon
+\0\>
+Выдать Пушку
+\0\<
+give/take cannon on start
+\0\>
+выдать/отобрать пушку на старте
+\0\<
+Item options (SUTL)
+\0\>
+Настройки предметов (SUTL)
+\0\<
+Weapon replacement
+\0\>
+Замена оружия
+\0\<
+which weapon to replace the items with
+\0\>
+каким оружием заменить остальные предметы
+\0\<
+Knife (no effect in vanilla game)
+\0\>
+Нож (не работает в ванильной игре)
+\0\<
+Chainsaw
+\0\>
+Бензопила
+\0\<
+Colt
+\0\>
+Кольт
+\0\<
+Single Shotgun
+\0\>
+Дробовик
+\0\<
+Double Shotgun
+\0\>
+Двустволка
+\0\<
+Tommygun
+\0\>
+Автомат Томпсона
+\0\<
+Minigun
+\0\>
+Миниган
+\0\<
+Rocket Launcher
+\0\>
+Ракетница
+\0\<
+Grenade Launcher
+\0\>
+Гранатомет
+\0\<
+Sniper
+\0\>
+Снайперская винтовка
+\0\<
+Flamer
+\0\>
+Огнемет
+\0\<
+Laser
+\0\>
+Лазерное ружье
+\0\<
+Cannon
+\0\>
+Пушка
+\0\<
+Health replacement
+\0\>
+Замена здоровья
+\0\<
+which health item to replace other health with
+\0\>
+каким здоровьем заменить остальные предметы
+\0\<
+Pill (+1)
+\0\>
+Таблетка (+1)
+\0\<
+Small (+10)
+\0\>
+Маленькое (+10)
+\0\<
+Medium (+25)
+\0\>
+Среднее (+25)
+\0\<
+Large (+50)
+\0\>
+Большое (+50)
+\0\<
+Super (+100)
+\0\>
+Огромное (+100)
+\0\<
+Armor replacement
+\0\>
+Замена брони
+\0\<
+which armor item to replace other armor with
+\0\>
+какой броней заменить остальные предметы
+\0\<
+Shard (+1)
+\0\>
+Осколок (+1)
+\0\<
+Helm (+5)
+\0\>
+Шлем (+5)
+\0\<
+Small (+25)
+\0\>
+Малая (+25)
+\0\<
+Medium (+50)
+\0\>
+Средняя (+50)
+\0\<
+Strong (+100)
+\0\>
+Сильная (+100)
+\0\<
+Super (+200)
+\0\>
+Суперская (+200)
+\0\<
+Replace Knife Item
+\0\>
+Замена Ножа
+\0\<
+replace knife specifically (no effect in vanilla game)
+\0\>
+чем заменить нож (не работает в ванильной игре)
+\0\<
+Remove
+\0\>
+Убрать
+\0\<
+Knife
+\0\>
+Нож
+\0\<
+Replace Chainsaw Item
+\0\>
+Замена Бензопилы
+\0\<
+replace chainsaw specifically
+\0\>
+чем заменить бензопилу
+\0\<
+Replace Colt Item
+\0\>
+Замена Кольта
+\0\<
+replace colt specifically
+\0\>
+чем заменить кольт
+\0\<
+Replace Single Shotgun Item
+\0\>
+Замена Дробовика
+\0\<
+replace single shotgun specifically
+\0\>
+чем заменить дробовик
+\0\<
+Replace Double Shotgun Item
+\0\>
+Замена Двустволки
+\0\<
+replace double shotgun specifically
+\0\>
+чем заменить двустволку
+\0\<
+Replace Tommygun Item
+\0\>
+Замена Автомата Томпсона
+\0\<
+replace tommygun specifically
+\0\>
+чем заменить автомат томпсона
+\0\<
+Replace Minigun Item
+\0\>
+Замена Минигана
+\0\<
+replace minigun specifically
+\0\>
+чем заменить миниган
+\0\<
+Replace Rocket Launcher Item
+\0\>
+Замена Ракетницы
+\0\<
+replace rocket launcher specifically
+\0\>
+чем заменить ракетницу
+\0\<
+Replace Grenade Launcher Item
+\0\>
+Замена Гранатомета
+\0\<
+replace grenade launcher specifically
+\0\>
+чем заменить гранатомет
+\0\<
+Replace Flamer Item
+\0\>
+Замена Огнемета
+\0\<
+replace flamer specifically
+\0\>
+чем заменить огнемет
+\0\<
+Replace Sniper Item
+\0\>
+Замена Снайперской винтовки
+\0\<
+replace sniper specifically
+\0\>
+чем заменить снайперскую винтовку
+\0\<
+Replace Laser Item
+\0\>
+Замена Лазерного ружья
+\0\<
+replace laser specifically
+\0\>
+чем заменить лазерное ружье
+\0\<
+Replace Cannon Item
+\0\>
+Замена Пушки
+\0\<
+replace cannon specifically
+\0\>
+чем заменить пушку
+\0\<
+Replace Invisibility
+\0\>
+Замена Невидимости
+\0\<
+replace invisibility specifically
+\0\>
+чем заменить невидимость
+\0\<
+Invisibility
+\0\>
+Невидимость
+\0\<
+Invulnerability
+\0\>
+Неуязвимость
+\0\<
+Serious Damage
+\0\>
+Серьезный ущерб
+\0\<
+Serious Speed
+\0\>
+Серьезная скорость
+\0\<
+Serious Bomb
+\0\>
+Серьезная бомба
+\0\<
+Replace Invulnerability
+\0\>
+Замена Неуязвимости
+\0\<
+replace invulnerability specifically
+\0\>
+чем заменить неуязвимость
+\0\<
+Replace Serious Damage
+\0\>
+Замена Серьезного Ущерба
+\0\<
+replace serious damage specifically
+\0\>
+чем заменить серьезный ущерб
+\0\<
+Replace Serious Speed
+\0\>
+Замена Серьезной Скорости
+\0\<
+replace serious speed specifically
+\0\>
+чем заменить серьезную скорость
+\0\<
+Replace Serious Bomb
+\0\>
+Замена Серьезной Бомбы
+\0\<
+replace serious bomb specifically
+\0\>
+чем заменить серьезную бомбу
+\0\<
+Display options
+\0\>
+Настройки отображения
+\0\<
+Decorated text
+\0\>
+Декорации текста
+\0\<
+display text decorations (e.g. color tags)
+\0\>
+отображать текст с декорациями (например, цветовые теги)
+\0\<
+Show everything
+\0\>
+Показать все
+\0\<
+toggle visibility of the entire interface and viewmodels
+\0\>
+переключение видимости всего интерфейса и модели оружия
+\0\<
+HUD size
+\0\>
+Размер HUD
+\0\<
+set size of HUD boxes
+\0\>
+выставление размера интерфейса
+\0\<
+75% (recommended)
+\0\>
+75% (рекомендуемый)
+\0\<
+HUD opacity
+\0\>
+Прозрачность HUD
+\0\<
+set opacity factor of HUD boxes
+\0\>
+выставление прозрачности интерфейса
+\0\<
+90% (default)
+\0\>
+90% (по умолчанию)
+\0\<
+Show HUD
+\0\>
+Отображение HUD
+\0\<
+toggle visibility of the heads-up display
+\0\>
+переключение видимости интерфейса
+\0\<
+Show messages
+\0\>
+Отображение сообщений
+\0\<
+display NETRICSA message notifications
+\0\>
+отображение уведомлений о новых сообщениях в компьютере
+\0\<
+Player list
+\0\>
+Список игроков
+\0\<
+toggle visibility of the player list in multiplayer
+\0\>
+переключение видимости списка игроков в сетевой игре
+\0\<
+Sort players
+\0\>
+Сортировка игроков
+\0\<
+sort player list by appropriate player stats
+\0\>
+сортировать список игроков по соответствующей статистике
+\0\<
+Show target names
+\0\>
+Отображение имен
+\0\<
+display player names upon targeting them
+\0\>
+отображать имена игроков при нацелевании на них
+\0\<
+Weapon list timeout
+\0\>
+Время списка оружия
+\0\<
+how long to show the weapon selection list for
+\0\>
+как долго отображать список выбора оружия
+\0\<
+Disabled
+\0\>
+Выключен
+\0\<
+0.5s
+\0\>
+0.5 секунды
+\0\<
+1s
+\0\>
+1 секунду
+\0\<
+2s
+\0\>
+2 секунды
+\0\<
+3s (default)
+\0\>
+3 секунды (по умолчанию)
+\0\<
+4s
+\0\>
+4 секунды
+\0\<
+5s
+\0\>
+5 секунд
+\0\<
+6s
+\0\>
+6 секунд
+\0\<
+Miscellaneous information
+\0\>
+Различная информация
+\0\<
+Show game time
+\0\>
+Время игры
+\0\<
+show current game time
+\0\>
+отображение времени текущей игры
+\0\<
+Show clock
+\0\>
+Часы
+\0\<
+show computer clock
+\0\>
+отображение компьютерного времени
+\0\<
+Show match info
+\0\>
+Информация о матче
+\0\<
+display information about the current game
+\0\>
+отображение информации о текущей игре
+\0\<
+Show coordinates
+\0\>
+Показ координат
+\0\<
+display crosshair coordinates
+\0\>
+отображение координат прицела
+\0\<
+Show resolution
+\0\>
+Разрешение экрана
+\0\<
+display current resolution
+\0\>
+отображение разрешения экрана
+\0\<
+Show benchmark info
+\0\>
+Бенчмаркинг
+\0\<
+display information for benchmarking
+\0\>
+отображение информации для бенчмаркинга
+\0\<
+FPS
+\0\>
+Кадры в секунду
+\0\<
+FPS & Benchmark
+\0\>
+Кадры в секунду & Бенчмарк
+\0\<
+Network information
+\0\>
+Сетевая информация
+\0\<
+Show ping
+\0\>
+Задержка
+\0\<
+display latency to the server in milliseconds
+\0\>
+отображение задержки до сервера в миллисекундах
+\0\<
+Latency update
+\0\>
+Обновление задержки
+\0\<
+how often to update the latency counter
+\0\>
+как часто обновлять задержку
+\0\<
+Real time
+\0\>
+В реальном времени
+\0\<
+Normal (1s)
+\0\>
+Часто (1 секунда)
+\0\<
+Sometimes (5s)
+\0\>
+Иногда (5 секунд)
+\0\<
+Show network graph
+\0\>
+График сети
+\0\<
+display network graph
+\0\>
+отображение графика сети
+\0\<
+Network graph size
+\0\>
+Размер графика сети
+\0\<
+set buffer size of the network graph
+\0\>
+установка размера буфера для графика сети
+\0\<
+100 (default)
+\0\>
+100 (по умолчанию)
+\0\<
+Crosshair options
+\0\>
+Настройки прицела
+\0\<
+Fixed crosshair
+\0\>
+Фиксированный прицел
+\0\<
+toggle fixed crosshair position
+\0\>
+фиксирование прицела в центре экрана
+\0\<
+Crosshair coloring
+\0\>
+Окраска прицела
+\0\<
+colorize crosshair based on the health level of a target
+\0\>
+окрашивать прицел в зависимости от количества здоровья цели
+\0\<
+Crosshair ratio
+\0\>
+Соотношение
+\0\<
+how much the crosshair should change depending on the distance
+\0\>
+как сильно прицел должен меняться в размере в зависимости от дистанции
+\0\<
+No change
+\0\>
+Без изменений
+\0\<
+50% (default)
+\0\>
+50% (по умолчанию)
+\0\<
+Crosshair scale
+\0\>
+Размер прицела
+\0\<
+size of the crosshair
+\0\>
+установка размера прицела
+\0\<
+No crosshair
+\0\>
+Нет прицела
+\0\<
+Crosshair opacity
+\0\>
+Прозрачность прицела
+\0\<
+how transparent the crosshair should be
+\0\>
+насколько прозрачным должен быть прицел
+\0\<
+Player options
+\0\>
+Настройки игрока
+\0\<
+Vanilla FOV
+\0\>
+Стандартное поле зрения
+\0\<
+vanilla command for changing field of view in Cooperative mode
+\0\>
+стандартная комадна для изменения поля зрения в кооперативном режиме
+\0\$

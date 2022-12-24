@@ -1,0 +1,351 @@
+64
+
+\0\<
+Cannot find '%s' symbol in '%s'!
+\0\>
+Не удается найти символ '%s' в '%s'!
+\0\<
+Plugin module has not been loaded yet!
+\0\>
+Плагин еще не загружен!
+\0\<
+Loading game library '%s'...\n
+
+\0\>
+Загрузка библиотеки игры '%s'...\n
+
+\0\<
+Warning
+\0\>
+Предупреждение
+\0\<
+Available function patches:\n
+
+\0\>
+Доступные патчи функций:\n
+
+\0\<
+No function patches available!\n
+
+\0\>
+Патчи функций отсутствуют!\n
+
+\0\<
+Invalid patch index!\n
+
+\0\>
+Неверный индекс патча!\n
+
+\0\<
+Cannot set '%s' function patch!\n
+
+\0\>
+Не удается установить патч функции '%s'!\n
+
+\0\<
+Successfully set '%s' function patch!\n
+
+\0\>
+Успешно установлен патч функции '%s'!\n
+
+\0\<
+Successfully removed '%s' function patch!\n
+
+\0\>
+Успешно убран патч функции '%s'!\n
+
+\0\<
+  Description: %s\n
+
+\0\>
+  Описание: %s\n
+
+\0\<
+  Version: %s\n
+
+\0\>
+  Версия: %s\n
+
+\0\<
+  Author: %s\n
+
+\0\>
+  Автор: %s\n
+
+\0\<
+  Name: %s\n
+
+\0\>
+  Название: %s\n
+
+\0\<
+^cffffffLoaded plugins:\n
+
+\0\>
+^cffffffЗагруженные плагины:\n
+
+\0\<
+No plugins have been loaded!\n
+
+\0\>
+Никакие плагины не загружены!\n
+
+\0\<
+Invalid plugin index!\n
+
+\0\>
+Неверный индекс плагина!\n
+
+\0\<
+Cannot enable '%s' plugin!\n
+
+\0\>
+Не удается включить плагин '%s'!\n
+
+\0\<
+Successfully enabled '%s' plugin!\n
+
+\0\>
+Успешно включен плагин '%s'!\n
+
+\0\<
+'%s' plugin is already enabled!\n
+
+\0\>
+Плагин '%s' уже включен!\n
+
+\0\<
+Successfully disabled '%s' plugin!\n
+
+\0\>
+Успешно выключен плагин '%s'!\n
+
+\0\<
+'%s' plugin is already disabled!\n
+
+\0\>
+Плагин '%s' уже выключен!\n
+
+\0\<
+'%s' loading cancelled: Mismatching utility flags (0x%X)\n
+
+\0\>
+Загрузка '%s' отменена: Несоответствие служебных флагов (0x%X)\n
+
+\0\<
+'%s' loading cancelled: Wrong API version (%u)\n
+
+\0\>
+Загрузка '%s' отменена: Неправильная версия API (%u)\n
+
+\0\<
+  %s: %d files\n
+
+\0\>
+  %s: %d файлов\n
+
+\0\<
+Cannot load module '%s':\n
+%s
+\0\>
+Не удается загрузить модуль '%s':\n
+%s
+\0\<
+Cannot format error message!\n
+Original error code: %d,\n
+Formatting error code: %d.\n
+
+\0\>
+Не удается отформатировать сообщение!\n
+Оригинальный код ошибки: %d,\n
+Код ошибки форматирования: %d.\n
+
+\0\<
+Chatting is disabled in this session!
+\0\>
+Чат отключен в этой сессии!
+\0\<
+Too many chat messages at once!
+\0\>
+Слишком много сообщений!
+\0\<
+You are not allowed to chat for %s!
+\0\>
+Вам запрещено общаться %s!
+\0\<
+\n
+^cffffffFurther attempts may lead to a kick!
+\0\>
+\n
+^cffffffДальнейшие попытки могут привести к кику с сервера!
+\0\<
+indefinite time
+\0\>
+неопределенное время
+\0\<
+Client %d has been banned for %s!
+\0\>
+Клиент %d был забанен на %s!
+\0\<
+You have been banned for %s!
+\0\>
+Вы были забанены на %s!
+\0\<
+Client %d has been muted for %s!
+\0\>
+Клиенту %d запрещено общаться на %s!
+\0\<
+Client %d has been kicked! Reason: "%s"
+\0\>
+Клиент %d был кикнут! Причина: "%s"
+\0\<
+You have been kicked!
+\0\>
+Вы были кикнуты с сервера!
+\0\<
+You are not allowed on this server!
+\0\>
+Вы не допущены на этот сервер!
+\0\<
+Too many players in session.
+\0\>
+Слишком много игроков.
+\0\<
+Player character '%s' already exists in this session.
+\0\>
+Игрок с именем '%s' уже существует в этой сессии.
+\0\<
+Protocol violation
+\0\>
+Нарушение протокола
+\0\<
+You are banned from this server
+\0\>
+Вы забанены на этом сервере
+\0\<
+Server received PCK_EXTENSION of an invalid (%u) type!\n
+
+\0\>
+Сервер получил PCK_EXTENSION с неверным (%u) типом!\n
+
+\0\<
+Client received PCK_EXTENSION of an invalid (%u) type!\n
+
+\0\>
+Клиент получил PCK_EXTENSION с неверным (%u) типом!\n
+
+\0\<
+Too many split-screen players (more than %d)!
+\0\>
+Слишком много игроков в разделении экрана (больше %d)!
+\0\<
+Split-screen isn't allowed in this session!
+\0\>
+Разделение экрана запрещено на этом сервере!
+\0\<
+%s^r - wall walking: %s\n
+
+\0\>
+%s^r - хождение по стенам: %s\n
+
+\0\<
+%s^r - noclip: %s\n
+
+\0\>
+%s^r - режим призрака: %s\n
+
+\0\<
+Set %s^r health to %d\n
+
+\0\>
+%s^r установлено %d здоровья\n
+
+\0\<
+%s^r created '%s' item (%u)\n
+
+\0\>
+%s^r создали предмет '%s' (%u)\n
+
+\0\<
+<unknown>
+\0\>
+<неизвестно>
+\0\<
+Executing scheduled sandbox commands...\n
+
+\0\>
+Выполнение запланированных команд песочницы...\n
+
+\0\<
+Scheduled command for the server:\n
+
+\0\>
+Запланирована команда для сервера:\n
+
+\0\<
+Scheduled commands for the next server start:\n
+
+\0\>
+Запланированные команды для следующего запуска сервера:\n
+
+\0\<
+No commands have been scheduled\n
+
+\0\>
+Никаких запланированных команд\n
+
+\0\<
+Cleared %d scheduled commands\n
+
+\0\>
+Очищено %d запланированных команд\n
+
+\0\<
+Destroyed '%s' entity under ID: %d\n
+
+\0\>
+Уничтожение сущности '%s' под идентификатором: %d\n
+
+\0\<
+Could not find entity under ID: %d\n
+
+\0\>
+Невозможно найти сущность под идентификатором: %d\n
+
+\0\<
+Invalid entity ID: %d\n
+
+\0\>
+Неверный идентификатор сущности: %d\n
+
+\0\<
+Reinitialized '%s' entity under ID: %d\n
+
+\0\>
+Реинициализирована сущность '%s' под идентификатором: %d\n
+
+\0\<
+Initialized '%s' entity under ID: %d\n
+
+\0\>
+Инициализирована сущность '%s' под идентификатором: %d\n
+
+\0\<
+Could not set '%s' value to '%s' property\n
+
+\0\>
+Невозможно задать значение '%s' для свойства '%s'\n
+
+\0\<
+Could not find entity property with the name '%s' in %s\n
+
+\0\>
+Невозможно найти свойство сущности под именем '%s' в %s\n
+
+\0\<
+'%s' (%u) : Cannot retrieve '%s' property!\n
+
+\0\>
+'%s' (%u) : Не удалось заполучить свойство '%s'!\n
+
+\0\$
