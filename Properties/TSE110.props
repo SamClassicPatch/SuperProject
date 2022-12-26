@@ -6,5 +6,6 @@
   <PropertyGroup Label="UserMacros">
     <EngineIncludes>$(SolutionDir)Includes\Engine110\</EngineIncludes>
     <EngineLibraries>$(SolutionDir)Includes\Engine110\</EngineLibraries>
+    <EnginePreproc>$(CommonPreproc);SE1_VER=SE1_110;SE1_GAME=SS_TSE</EnginePreproc>
   </PropertyGroup>
 </Project>
