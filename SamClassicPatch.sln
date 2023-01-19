@@ -65,6 +65,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "Extras\zlib\zlib.vcxproj", "{9187FA7C-47D1-416A-9066-8B214753A249}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shaders", "Shaders\Shaders.vcxproj", "{B4D2AF41-7034-490F-B7DD-D446A8B593BF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{016909B5-B8F5-4394-8013-8B1EAD9E3914} = {016909B5-B8F5-4394-8013-8B1EAD9E3914}
+		{4E768DEE-319A-43AB-8D52-7079E270D91C} = {4E768DEE-319A-43AB-8D52-7079E270D91C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

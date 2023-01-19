@@ -2,6 +2,12 @@
 echo Copying TSE 1.07 binaries...
 echo ----------------------------
 
+echo ClassicsCore
+copy /B Bin\Release_TSE107\ClassicsCore.dll ..\Bin\
+
+echo ClassicsPatches
+copy /B Bin\Release_TSE107\ClassicsPatches.dll ..\Bin\
+
 echo DedicatedServer
 copy /B Bin\Release_TSE107\DedicatedServer_Custom.exe ..\Bin\
 
