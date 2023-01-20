@@ -1,4 +1,4 @@
-64
+59
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -139,12 +139,6 @@ Successfully disabled '%s' plugin!\n
 Загрузка '%s' отменена: Неправильная версия API (%u)\n
 
 \0\<
-  %s: %d files\n
-
-\0\>
-  %s: %d файлов\n
-
-\0\<
 Cannot load module '%s':\n
 %s
 \0\>
@@ -206,22 +200,6 @@ You have been kicked!
 You are not allowed on this server!
 \0\>
 Вы не допущены на этот сервер!
-\0\<
-Too many players in session.
-\0\>
-Слишком много игроков.
-\0\<
-Player character '%s' already exists in this session.
-\0\>
-Игрок с именем '%s' уже существует в этой сессии.
-\0\<
-Protocol violation
-\0\>
-Нарушение протокола
-\0\<
-You are banned from this server
-\0\>
-Вы забанены на этом сервере
 \0\<
 Server received PCK_EXTENSION of an invalid (%u) type!\n
 

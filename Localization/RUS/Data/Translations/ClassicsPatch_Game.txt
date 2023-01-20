@@ -1,4 +1,4 @@
-14
+16
 
 \0\<
 WINDOW MODE
@@ -56,4 +56,14 @@ ASPECT RATIO
 select video mode aspect ratio
 \0\>
 выбор соотношения сторон для видеорежима
+\0\<
+make game run in a window or in full screen
+\0\>
+запуск игры в оконном режиме или в полноэкранном
+\0\<
+ERROR: Couldn't start a new game!\n
+
+\0\>
+ОШИБКА: Не удалось запустить новую игру!\n
+
 \0\$

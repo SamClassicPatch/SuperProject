@@ -1,4 +1,4 @@
-247
+245
 
 \0\<
 Common options
@@ -12,14 +12,6 @@ Background game render
 render current game in the back instead of the menu background
 \0\>
 отображение игры на заднем фоне вместо фона меню
-\0\<
-No
-\0\>
-Ќет
-\0\<
-Yes
-\0\>
-ƒа
 \0\<
 Adjust for aspect ratio
 \0\>
@@ -176,10 +168,6 @@ Packet flood threshold
 maximum amount of packets a client may send before kicking them
 \0\>
 максимальное количество допустимых пакетов от клиента
-\0\<
-None
-\0\>
-Ќисколько
 \0\<
 Unlimited
 \0\>
@@ -917,10 +905,6 @@ set buffer size of the network graph
 \0\>
 установка размера буфера дл€ графика сети
 \0\<
-100 (default)
-\0\>
-100 (по умолчанию)
-\0\<
 Crosshair options
 \0\>
 Ќастройки прицела
@@ -988,4 +972,12 @@ Vanilla FOV
 vanilla command for changing field of view in Cooperative mode
 \0\>
 стандартна€ комадна дл€ изменени€ пол€ зрени€ в кооперативном режиме
+\0\<
+Decorated server names
+\0\>
+ƒекорации имен серверов
+\0\<
+display text decorations (e.g. color tags) in server names in the list
+\0\>
+отображать имена серверов в списке с декораци€ми (например, цветовые теги)
 \0\$
