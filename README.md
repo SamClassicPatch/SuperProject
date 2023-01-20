@@ -1,17 +1,17 @@
 # Serious Sam Classics Patch
 
-This custom Serious Sam Classic patch includes a lot of modern enhancements that aren't present in the original code, nor the official Steam patches.
+This custom Serious Sam Classics patch includes a lot of modern enhancements that aren't present in the original code, nor the official Steam patches.
 
 This super project gathers everything together under a single solution for proper development.
 
 **Projects include:**
-- [`CoreLib`](https://github.com/SamClassicPatch/CoreLib) - static library with core functionality that's used by other projects.
+- [`CoreLib`](https://github.com/SamClassicPatch/CoreLib) - library with core functionality that's used by other projects.
 - [`DedicatedServer`](https://github.com/SamClassicPatch/DedicatedServer) - dedicated server application for launching your own classic servers.
-- [`EnginePatches`](https://github.com/SamClassicPatch/EnginePatches) - dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
+- [`EnginePatches`](https://github.com/SamClassicPatch/EnginePatches) - library with dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
 - [`ExamplePlugin`](https://github.com/SamClassicPatch/ExamplePlugin) - example of how user plugins can be made for the Serious Sam Classics patch.
 - [`GameExecutable`](https://github.com/SamClassicPatch/GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
 - [`PatchedGui`](https://github.com/SamClassicPatch/PatchedGui) - patched EngineGUI library from the engine that allows to integrate new features into different tools.
-- [`Plugins`](https://github.com/SamClassicPatch/Plugins) - projects with various plugins that come with the Serious Sam Classics patch.
+- [`Plugins`](https://github.com/SamClassicPatch/Plugins) - projects with various plugins that come with Serious Sam Classics Patch.
 - [`Shaders`](https://github.com/SamClassicPatch/Shaders) - patched Shaders library with certain fixes for SKA models and shaders used by them.
 - [`WorldEditor`](https://github.com/SamClassicPatch/WorldEditor) - patched Serious Editor application that works on 64-bit systems.
 
@@ -35,5 +35,5 @@ This project is licensed under GNU GPL v2 (see LICENSE file).
 
 Some of the code included with the SDK may not be licensed under the GNU GPL v2:
 
-- DirectX8 SDK (Headers & Libraries) (`d3d8.h`, `d3d8caps.h` and `d3d8types.h` located in `Includes` folder) by Microsoft
+- DirectX8 SDK (Headers & Libraries) (`d3d8.h`, `d3d8caps.h` and `d3d8types.h` located in `Includes/Common` folder) by Microsoft
 - zlib (located in `Extras/zlib`) by Jean-loup Gailly and Mark Adler
