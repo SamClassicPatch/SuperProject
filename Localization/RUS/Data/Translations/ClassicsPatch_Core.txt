@@ -146,13 +146,13 @@ Cannot load module '%s':\n
 %s
 \0\<
 Cannot format error message!\n
-Original error code: %d,\n
-Formatting error code: %d.\n
+Original error code: %d\n
+Formatting error code: %d\n
 
 \0\>
 Не удается отформатировать сообщение!\n
-Оригинальный код ошибки: %d,\n
-Код ошибки форматирования: %d.\n
+Оригинальный код ошибки: %d\n
+Код ошибки форматирования: %d\n
 
 \0\<
 Chatting is disabled in this session!

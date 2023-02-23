@@ -1,4 +1,4 @@
-245
+246
 
 \0\<
 Common options
@@ -980,4 +980,8 @@ Decorated server names
 display text decorations (e.g. color tags) in server names in the list
 \0\>
 отображать имена серверов в списке с декораци€ми (например, цветовые теги)
+\0\<
+Yes (only player view)
+\0\>
+ƒа (только дл€ вида игрока)
 \0\$
