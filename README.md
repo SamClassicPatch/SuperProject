@@ -35,5 +35,4 @@ This project is licensed under GNU GPL v2 (see LICENSE file).
 
 Some of the code included with the SDK may not be licensed under the GNU GPL v2:
 
-- DirectX8 SDK (Headers & Libraries) (`d3d8.h`, `d3d8caps.h` and `d3d8types.h` located in `Includes/Common` folder) by Microsoft
 - zlib (located in `Extras/zlib`) by Jean-loup Gailly and Mark Adler
