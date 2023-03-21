@@ -1,9 +1,17 @@
-246
+263
 
 \0\<
 Common options
 \0\>
 Общие настройки
+\0\<
+The First Encounter directory
+\0\>
+Каталог Первой Крови
+\0\<
+specify directory with The First Encounter installation
+\0\>
+указать каталог с установкой Первой Крови
 \0\<
 Background game render
 \0\>
@@ -984,4 +992,64 @@ display text decorations (e.g. color tags) in server names in the list
 Yes (only player view)
 \0\>
 Да (только для вида игрока)
+\0\<
+Advanced HUD
+\0\>
+Расширенный интерфейс
+\0\<
+Replace HUD
+\0\>
+Заменить интерфейс
+\0\<
+replace vanilla HUD with the plugin one
+\0\>
+заменить стандартный интерфейс интерфейсом из плагина
+\0\<
+HUD theme
+\0\>
+Тема интерфейса
+\0\<
+stylize HUD in a specific way
+\0\>
+выбрать стиль для интерфейса
+\0\<
+The First Encounter
+\0\>
+Первая Кровь
+\0\<
+Seriously Warped Deathmatch
+\0\>
+Seriously Warped Deathmatch
+\0\<
+The Second Encounter
+\0\>
+Второе Пришествие
+\0\<
+Screen edges X
+\0\>
+Край экрана X
+\0\<
+define how far the horizontal screen edges should be
+\0\>
+насколько далеко должны быть горизонтальные края экрана
+\0\<
+5 (default)
+\0\>
+5 (по умолчанию)
+\0\<
+Screen edges Y
+\0\>
+Край экрана Y
+\0\<
+define how far the vertical screen edges should be
+\0\>
+насколько далеко должны быть вертикальные края экрана
+\0\<
+Sniper scope opacity
+\0\>
+Прозрачность прицела
+\0\<
+how transparent the sniper scope should be
+\0\>
+насколько прозрачным должен быть снайперский прицел
 \0\$

@@ -1,4 +1,4 @@
-16
+17
 
 \0\<
 WINDOW MODE
@@ -66,4 +66,8 @@ ERROR: Couldn't start a new game!\n
 \0\>
 ОШИБКА: Не удалось запустить новую игру!\n
 
+\0\<
+This level is from Serious Sam: The First Encounter
+\0\>
+Этот уровень из "Крутой Сэм: Первая Кровь"
 \0\$

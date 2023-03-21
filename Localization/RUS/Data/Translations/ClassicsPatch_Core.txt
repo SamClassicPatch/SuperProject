@@ -1,4 +1,4 @@
-59
+61
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -325,5 +325,17 @@ Could not find entity property with the name '%s' in %s\n
 
 \0\>
 '%s' (%u) : Не удалось заполучить свойство '%s'!\n
+
+\0\<
+Restart the game to load content from the new directory!\n
+
+\0\>
+Перезапустите игру для загрузки ресурсов из нового каталога!\n
+
+\0\<
+Saved new directory with The First Encounter installation into '%s'!\n
+
+\0\>
+Новый каталог с установкой Первой Крови был сохранен в '%s'!\n
 
 \0\$
