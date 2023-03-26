@@ -1,4 +1,4 @@
-61
+60
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -14,10 +14,6 @@ Loading game library '%s'...\n
 \0\>
 Загрузка библиотеки игры '%s'...\n
 
-\0\<
-Warning
-\0\>
-Предупреждение
 \0\<
 Available function patches:\n
 

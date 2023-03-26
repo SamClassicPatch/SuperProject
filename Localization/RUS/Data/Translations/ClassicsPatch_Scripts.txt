@@ -1,4 +1,4 @@
-263
+282
 
 \0\<
 Common options
@@ -1052,4 +1052,80 @@ Sniper scope opacity
 how transparent the sniper scope should be
 \0\>
 насколько прозрачным должен быть снайперский прицел
+\0\<
+Revolution
+\0\>
+Революция
+\0\<
+Show player ping
+\0\>
+Показать пинг игроков
+\0\<
+display latency of each player next to their stats in the list
+\0\>
+показывать пинг рядом с другой статистикой в списке игроков
+\0\<
+Milliseconds
+\0\>
+Миллисекунды
+\0\<
+Signal strength
+\0\>
+Сила сигнала
+\0\<
+Show ammo row
+\0\>
+Показать боеприпасы
+\0\<
+display a row of available ammunition in the bottom right corner
+\0\>
+показывать ряд доступных боеприпасов в правом нижнем углу
+\0\<
+Colorize HUD
+\0\>
+Окрасить интерфейс
+\0\<
+use custom colors for the HUD
+\0\>
+использовать пользовательские цвета для интерфейса
+\0\<
+HUD color preset
+\0\>
+Цветовая предустановка
+\0\<
+select preset for HUD colorization
+\0\>
+выбрать предустановку для окраски интерфейса
+\0\<
+The Blue Encounter
+\0\>
+Синее Пришествие
+\0\<
+The Yellow Encounter
+\0\>
+Желтое Пришествие
+\0\<
+Bleached
+\0\>
+Отбеленный
+\0\<
+Demonic Red
+\0\>
+Демонический Красный
+\0\<
+Retro Neon
+\0\>
+Ретро Неон
+\0\<
+Candy Gurl
+\0\>
+Конфетка
+\0\<
+Black Mesa
+\0\>
+Черная Меза
+\0\<
+Inverted
+\0\>
+Инвертированный
 \0\$
