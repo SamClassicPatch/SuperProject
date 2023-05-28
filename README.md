@@ -14,6 +14,7 @@ This super project gathers everything together under a single solution for prope
 - [`Plugins`](https://github.com/SamClassicPatch/Plugins) - projects with various plugins that come with Serious Sam Classics Patch.
 - [`Shaders`](https://github.com/SamClassicPatch/Shaders) - patched Shaders library with certain fixes for SKA models and shaders used by them.
 - [`WorldEditor`](https://github.com/SamClassicPatch/WorldEditor) - patched Serious Editor application that works on 64-bit systems.
+- `Docs` - up-to-date contents of the [wiki](https://github.com/SamClassicPatch/SuperProject/wiki) for any specific release.
 - `Extras` - third-party dependencies that the projects utilize.
 - `Includes` - [Serious Engine 1 SDK](https://github.com/DreamyCecil/SE1-ModSDK/tree/includes) that includes static libraries and engine headers for different game versions.
 - `Localization` - translations of Serious Sam Classics Patch contents to different languages.
