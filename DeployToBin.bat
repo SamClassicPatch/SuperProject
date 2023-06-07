@@ -24,6 +24,19 @@ echo EngineGUI
 copy /B /-Y Bin\Release_TSE107\EngineGUI.dll ..\Bin\
 
 echo ----------------------------
+echo Copying mod binaries...
+echo ----------------------------
+
+echo Entities
+copy /B Bin\Release_TSE107\Entities_Custom.dll ..\Bin\
+
+echo Game
+copy /B Bin\Release_TSE107\Game_Custom.dll ..\Bin\
+
+echo GameGUI
+copy /B Bin\Release_TSE107\GameGUI_Custom.dll ..\Bin\
+
+echo ----------------------------
 echo Copying TSE 1.07 plugins...
 echo ----------------------------
 

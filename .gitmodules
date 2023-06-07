@@ -32,3 +32,6 @@
 [submodule "Docs"]
 	path = Docs
 	url = https://github.com/SamClassicPatch/SuperProject.wiki.git
+[submodule "Mod"]
+	path = Mod
+	url = https://github.com/SamClassicPatch/Mod.git

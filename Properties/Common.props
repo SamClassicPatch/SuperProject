@@ -5,7 +5,7 @@
     <ObjDir>$(SolutionDir)Obj\$(Configuration)\$(ProjectName)\</ObjDir>
 
     <SdkExe>$(SolutionDir)Includes;$(ExecutablePath);</SdkExe>
-    <SdkIncl>$(SolutionDir);$(ProjectDir);$(IncludePath);</SdkIncl>
+    <SdkIncl>$(SolutionDir);$(SolutionDir)Mod\;$(ProjectDir);$(IncludePath);</SdkIncl>
     <SdkLibs>$(SolutionDir)Bin\$(Configuration);$(LibraryPath);</SdkLibs>
   </PropertyGroup>
 </Project>

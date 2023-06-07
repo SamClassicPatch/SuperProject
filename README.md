@@ -10,6 +10,7 @@ This super project gathers everything together under a single solution for prope
 - [`EnginePatches`](https://github.com/SamClassicPatch/EnginePatches) - library with dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
 - [`ExamplePlugin`](https://github.com/SamClassicPatch/ExamplePlugin) - example of how user plugins can be made for Serious Sam Classics Patch.
 - [`GameExecutable`](https://github.com/SamClassicPatch/GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
+- [`Mod`](https://github.com/SamClassicPatch/Mod) - libraries of a special mod that fixes more intricate issues and expands gameplay possibilities.
 - [`PatchedGui`](https://github.com/SamClassicPatch/PatchedGui) - patched EngineGUI library from the engine that allows to integrate new features into different tools.
 - [`Plugins`](https://github.com/SamClassicPatch/Plugins) - projects with various plugins that come with Serious Sam Classics Patch.
 - [`Shaders`](https://github.com/SamClassicPatch/Shaders) - patched Shaders library with certain fixes for SKA models and shaders used by them.
