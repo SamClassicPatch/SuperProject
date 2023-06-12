@@ -49,3 +49,9 @@ Debug/
 # Build directories
 Bin/*
 Obj/*
+
+# Assembled builds
+Builds/**/*.gro
+Builds/**/*.zip
+!Builds/**/EngineGUI_OG.dll
+!Builds/**/Shaders_OG.dll
