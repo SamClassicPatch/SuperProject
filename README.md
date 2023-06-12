@@ -1,20 +1,22 @@
 # Serious Sam Classics Patch
 
-This custom Serious Sam Classics patch includes a lot of modern enhancements that aren't present in the original code, nor the official Steam patches.
+This fan-made patch for Serious Sam Classics includes a lot of modern enhancements that aren't present in the open-source release, nor in the official Steam patches since 2014.
 
 This super project gathers everything together under a single solution for proper development.
 
 ### Project structure
-- [`CoreLib`](https://github.com/SamClassicPatch/CoreLib) - library with core functionality that's used by other projects.
-- [`DedicatedServer`](https://github.com/SamClassicPatch/DedicatedServer) - dedicated server application for launching your own classic servers.
-- [`EnginePatches`](https://github.com/SamClassicPatch/EnginePatches) - library with dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
-- [`ExamplePlugin`](https://github.com/SamClassicPatch/ExamplePlugin) - example of how user plugins can be made for Serious Sam Classics Patch.
-- [`GameExecutable`](https://github.com/SamClassicPatch/GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
-- [`Mod`](https://github.com/SamClassicPatch/Mod) - libraries of a special mod that fixes more intricate issues and expands gameplay possibilities.
-- [`PatchedGui`](https://github.com/SamClassicPatch/PatchedGui) - patched EngineGUI library from the engine that allows to integrate new features into different tools.
-- [`Plugins`](https://github.com/SamClassicPatch/Plugins) - projects with various plugins that come with Serious Sam Classics Patch.
-- [`Shaders`](https://github.com/SamClassicPatch/Shaders) - patched Shaders library with certain fixes for SKA models and shaders used by them.
-- [`WorldEditor`](https://github.com/SamClassicPatch/WorldEditor) - patched Serious Editor application that works on 64-bit systems.
+- [`CoreLib`](../CoreLib) - library with core functionality that's used by other projects.
+- [`DedicatedServer`](../DedicatedServer) - dedicated server application for launching your own classic servers.
+- [`EnginePatches`](../EnginePatches) - library with dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
+- [`ExamplePlugin`](../ExamplePlugin) - example of how user plugins can be made for Serious Sam Classics Patch.
+- [`GameExecutable`](../GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
+- [`Mod`](../Mod) - libraries of a special mod that fixes more intricate issues and expands gameplay possibilities.
+- [`PatchedGui`](../PatchedGui) - patched EngineGUI library from the engine that allows to integrate new features into different tools.
+- [`Plugins`](../Plugins) - projects with various plugins that come with Serious Sam Classics Patch.
+- [`Shaders`](../Shaders) - patched Shaders library with certain fixes for SKA models and shaders used by them.
+- [`WorldEditor`](../WorldEditor) - patched Serious Editor application that works on 64-bit systems.
+- `Builds` - directory for assembling final builds of Serious Sam Classics Patch for every supported game version.
+  - [`Builds/TSE107/Mods/ClassicsPatchMod`](../ModShell) - shell of a special mod that includes resources necessary for properly running it. 
 - `Docs` - up-to-date contents of the [wiki](https://github.com/SamClassicPatch/SuperProject/wiki) for any specific release.
 - `Extras` - third-party dependencies that the projects utilize.
 - `Includes` - [Serious Engine 1 SDK](https://github.com/DreamyCecil/SE1-ModSDK/tree/includes) that includes static libraries and engine headers for different game versions.
@@ -22,7 +24,7 @@ This super project gathers everything together under a single solution for prope
 - `Properties` - common properties for use in project files.
 - `Resources` - text data that's included into builds, such as option configs.
 
-Original source code of `DedicatedServer`, `GameExecutable`, `PatchedGui`, `Shaders` and `WorldEditor` projects is taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
+Original source code of `DedicatedServer`, `GameExecutable`, `Mod`, `PatchedGui`, `Shaders` and `WorldEditor` projects is taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
 
 ## Building
 
