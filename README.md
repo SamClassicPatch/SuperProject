@@ -5,19 +5,19 @@ This fan-made patch for Serious Sam Classics includes a lot of modern enhancemen
 This super project gathers everything together under a single solution for proper development.
 
 ### Project structure
-- [`CoreLib`](../CoreLib) - library with core functionality that's used by other projects.
-- [`DedicatedServer`](../DedicatedServer) - dedicated server application for launching your own classic servers.
-- [`EnginePatches`](../EnginePatches) - library with dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
-- [`ExamplePlugin`](../ExamplePlugin) - example of how user plugins can be made for Serious Sam Classics Patch.
-- [`GameExecutable`](../GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
-- [`Mod`](../Mod) - libraries of a special mod that fixes more intricate issues and expands gameplay possibilities.
-- [`PatchedGui`](../PatchedGui) - patched EngineGUI library from the engine that allows to integrate new features into different tools.
-- [`Plugins`](../Plugins) - projects with various plugins that come with Serious Sam Classics Patch.
-- [`Shaders`](../Shaders) - patched Shaders library with certain fixes for SKA models and shaders used by them.
-- [`WorldEditor`](../WorldEditor) - patched Serious Editor application that works on 64-bit systems.
+- [`CoreLib`](../../../CoreLib) - library with core functionality that's used by other projects.
+- [`DedicatedServer`](../../../DedicatedServer) - dedicated server application for launching your own classic servers.
+- [`EnginePatches`](../../../EnginePatches) - library with dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
+- [`ExamplePlugin`](../../../ExamplePlugin) - example of how user plugins can be made for Serious Sam Classics Patch.
+- [`GameExecutable`](../../../GameExecutable) - executable file for playing the game that includes many quality-of-life improvements.
+- [`Mod`](../../../Mod) - libraries of a special mod that fixes more intricate issues and expands gameplay possibilities.
+- [`PatchedGui`](../../../PatchedGui) - patched EngineGUI library from the engine that allows to integrate new features into different tools.
+- [`Plugins`](../../../Plugins) - projects with various plugins that come with Serious Sam Classics Patch.
+- [`Shaders`](../../../Shaders) - patched Shaders library with certain fixes for SKA models and shaders used by them.
+- [`WorldEditor`](../../../WorldEditor) - patched Serious Editor application that works on 64-bit systems.
 - `Builds` - directory for assembling final builds of Serious Sam Classics Patch for every supported game version.
-  - [`Builds/TSE107/Mods/ClassicsPatchMod`](../ModShell) - shell of a special mod that includes resources necessary for properly running it. 
-- `Docs` - up-to-date contents of the [wiki](https://github.com/SamClassicPatch/SuperProject/wiki) for any specific release.
+  - [`Builds/TSE107/Mods/ClassicsPatchMod`](../../../ModShell) - shell of a special mod that includes resources necessary for properly running it. 
+- `Docs` - up-to-date contents of the [wiki](../../wiki) for any specific release.
 - `Extras` - third-party dependencies that the projects utilize.
 - `Includes` - [Serious Engine 1 SDK](https://github.com/DreamyCecil/SE1-ModSDK/tree/includes) that includes static libraries and engine headers for different game versions.
 - `Localization` - translations of Serious Sam Classics Patch contents to different languages.
