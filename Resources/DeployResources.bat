@@ -6,6 +6,6 @@
 @echo off
 
 cd %~dp0
-copy /B SE1_ClassicsPatch.gro %~f1
+copy /B SE1_ClassicsPatch.gro "%~f1"
 
 7z.exe u -tzip "%~f1SE1_ClassicsPatch.gro" -r * -x!*.gro -x!*.bat
