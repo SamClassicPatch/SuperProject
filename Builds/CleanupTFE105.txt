@@ -1,0 +1,14 @@
+Data\ClassicsPatch\LevelCategories\01_TSE.lst
+Scripts\ClassicsPatch\Themes\
+Scripts\ClassicsPatch\03_ModSettings.cfg
+Scripts\ClassicsPatch\03_ModSettings.des
+Scripts\ClassicsPatch\SaveTFEDirectory.ini
+Textures\Editor\
+Textures\General\
+Textures\Interface\*.tex
+Textures\Interface\Revolution\P*.tex
+Textures\Interface\Revolution\AmFuelReservoir.tex
+Textures\Interface\Revolution\AmSniperBullets.tex
+Textures\Interface\Revolution\WChainsaw.tex
+Textures\Interface\Revolution\WFlamer.tex
+Textures\Interface\Revolution\WSniper.tex
