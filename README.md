@@ -16,13 +16,13 @@ This super project gathers everything together under a single solution for prope
 - [`Shaders`](../../../Shaders) - patched Shaders library with certain fixes for SKA models and shaders used by them.
 - [`WorldEditor`](../../../WorldEditor) - patched Serious Editor application that works on 64-bit systems.
 - `Builds` - directory for assembling final builds of Serious Sam Classics Patch for every supported game version.
-  - [`Builds/TSE107/Mods/ClassicsPatchMod`](../../../ModShell) - shell of a special mod that includes resources necessary for properly running it. 
+  - [`Builds/TSE107/Mods/ClassicsPatchMod`](../../../ModShell) - shell of a special mod that includes resources necessary for properly running it.
 - `Docs` - up-to-date contents of the [wiki](../../wiki) for any specific release.
 - `Extras` - third-party dependencies that the projects utilize.
 - `Includes` - [Serious Engine 1 SDK](https://github.com/DreamyCecil/SE1-ModSDK/tree/includes) that includes static libraries and engine headers for different game versions.
 - `Localization` - translations of Serious Sam Classics Patch contents to different languages.
 - `Properties` - common properties for use in project files.
-- `Resources` - text data that's included into builds, such as option configs.
+- `Resources` - resources in text & binary formats that are included into final builds.
 
 Original source code of `DedicatedServer`, `GameExecutable`, `Mod`, `PatchedGui`, `Shaders` and `WorldEditor` projects is taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
 
@@ -36,7 +36,7 @@ Full guide: https://github.com/DreamyCecil/SE1-ModSDK#building
 
 ### Notes
 
-Once the projects are compiled for the `Release_TSE107` configuration, you can manually copy them into the `Bin` directory one level above the solution directory by using the `DeployToBin.bat` script (e.g. into `C:/SeriousSam/Bin` if this repository is in `C:/SeriousSam/SuperProject`).
+After the project solution is built for the `Release_TSE107` configuration, you can apply the patch to your build of TSE 1.07 one level above by using the `DeployToBin.bat` script (e.g. to `C:/SeriousSam` if this repository resides is in `C:/SeriousSam/SuperProject`).
 
 ## License
 
