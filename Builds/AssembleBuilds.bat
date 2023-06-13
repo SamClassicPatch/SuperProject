@@ -75,9 +75,9 @@ echo ----------------------------
 cd %BUILDS%
 
 :: Remove unnecessary files from specific games
-7z.exe d TFE105\SE1_ClassicsPatch.gro -i@CleanupTFE105.txt
-7z.exe d TSE105\SE1_ClassicsPatch.gro -i@CleanupTSE105.txt
-7z.exe d TSE107\SE1_ClassicsPatch.gro -i@CleanupTSE107.txt
+7z.exe d -tzip TFE105\SE1_ClassicsPatch.gro -i@CleanupTFE105.txt
+7z.exe d -tzip TSE105\SE1_ClassicsPatch.gro -i@CleanupTSE105.txt
+7z.exe d -tzip TSE107\SE1_ClassicsPatch.gro -i@CleanupTSE107.txt
 
 echo ----------------------------
 echo Zipping build packages...
@@ -90,15 +90,15 @@ del TSE1.07.zip
 
 :: Assemble a TFE 1.05 package
 cd %BUILDS%TFE105\
-7z.exe a ..\TFE1.05.zip *
+7z.exe a -tzip ..\TFE1.05.zip *
 
 :: Assemble a TSE 1.05 package
 cd %BUILDS%TSE105\
-7z.exe a ..\TSE1.05.zip *
+7z.exe a -tzip ..\TSE1.05.zip *
 
 :: Assemble a TSE 1.07 package
 cd %BUILDS%TSE107\
-7z.exe a ..\TSE1.07.zip * -x!Mods\ClassicsPatchMod\.git*
+7z.exe a -tzip ..\TSE1.07.zip * -x!Mods\ClassicsPatchMod\.git*
 
 echo ----------------------------
 echo Finished assembling!

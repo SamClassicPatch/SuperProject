@@ -9,4 +9,4 @@ cd %~dp0
 del SE1_ClassicsPatch_RUS.gro
 
 cd RUS\
-7z.exe a ..\SE1_ClassicsPatch_RUS.gro *
+7z.exe a -tzip ..\SE1_ClassicsPatch_RUS.gro *
