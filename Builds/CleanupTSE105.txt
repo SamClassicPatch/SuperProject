@@ -1,6 +1,7 @@
+ModelsPatch\
 Scripts\ClassicsPatch\Themes\
 Scripts\ClassicsPatch\03_ModSettings.cfg
 Scripts\ClassicsPatch\03_ModSettings.des
 Textures\Editor\
-Textures\General\
 TexturesMP\
+TexturesPatch\General\
