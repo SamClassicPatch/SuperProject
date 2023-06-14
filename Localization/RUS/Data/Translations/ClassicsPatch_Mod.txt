@@ -1,0 +1,15 @@
+2
+
+\0\<
+Cannot load game theme config '%s':\n
+%s\n
+
+\0\>
+Невозможно загрузить игровую тему '%s':\n
+%s\n
+
+\0\<
+Trying to load a sync theme during an ongoing synchronization!
+\0\>
+Попытка загрузки темы с синхронизацией во время текущей синхронизации!
+\0\$

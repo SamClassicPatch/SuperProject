@@ -1,4 +1,4 @@
-60
+95
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -266,7 +266,7 @@ Scheduled commands for the next server start:\n
 No commands have been scheduled\n
 
 \0\>
-Никаких запланированных команд\n
+Запланированных команд нет\n
 
 \0\<
 Cleared %d scheduled commands\n
@@ -278,31 +278,31 @@ Cleared %d scheduled commands\n
 Destroyed '%s' entity under ID: %d\n
 
 \0\>
-Уничтожение сущности '%s' под идентификатором: %d\n
+Уничтожение объекта '%s' под идентификатором: %d\n
 
 \0\<
 Could not find entity under ID: %d\n
 
 \0\>
-Невозможно найти сущность под идентификатором: %d\n
+Невозможно найти объект под идентификатором: %d\n
 
 \0\<
 Invalid entity ID: %d\n
 
 \0\>
-Неверный идентификатор сущности: %d\n
+Неверный идентификатор объекта: %d\n
 
 \0\<
 Reinitialized '%s' entity under ID: %d\n
 
 \0\>
-Реинициализирована сущность '%s' под идентификатором: %d\n
+Реинициализирован объект '%s' под идентификатором: %d\n
 
 \0\<
 Initialized '%s' entity under ID: %d\n
 
 \0\>
-Инициализирована сущность '%s' под идентификатором: %d\n
+Инициализирован объект '%s' под идентификатором: %d\n
 
 \0\<
 Could not set '%s' value to '%s' property\n
@@ -314,13 +314,13 @@ Could not set '%s' value to '%s' property\n
 Could not find entity property with the name '%s' in %s\n
 
 \0\>
-Невозможно найти свойство сущности под именем '%s' в %s\n
+Невозможно найти свойство объекта под именем '%s' в %s\n
 
 \0\<
 '%s' (%u) : Cannot retrieve '%s' property!\n
 
 \0\>
-'%s' (%u) : Не удалось заполучить свойство '%s'!\n
+'%s' (%u) : Не удалось получить свойство '%s'!\n
 
 \0\<
 Restart the game to load content from the new directory!\n
@@ -329,9 +329,215 @@ Restart the game to load content from the new directory!\n
 Перезапустите игру для загрузки ресурсов из нового каталога!\n
 
 \0\<
-Saved new directory with The First Encounter installation into '%s'!\n
+Received invalid entity ID!\n
 
 \0\>
-Новый каталог с установкой Первой Крови был сохранен в '%s'!\n
+Получен неверный идентификатор объекта!\n
+
+\0\<
+Copied %u entity: 
+\0\>
+Скопирован объект %u: 
+\0\<
+Cannot create entity: %s\n
+
+\0\>
+Невозможно создать объект: %s\n
+
+\0\<
+Created '%s' entity (%u)\n
+
+\0\>
+Создан объект '%s' (%u)\n
+
+\0\<
+Deleted %u entity\n
+
+\0\>
+Удален объект %u\n
+
+\0\<
+Deleted %d "%s" entities\n
+
+\0\>
+Удалено %d объектов "%s"\n
+
+\0\<
+Changed collision flags of %u entity: 0x%08X -> 0x%08X\n
+
+\0\>
+Изменены флаги коллизии объекта %u: 0x%08X -> 0x%08X\n
+
+\0\<
+Changed physical flags of %u entity: 0x%08X -> 0x%08X\n
+
+\0\>
+Изменены физические флаги объекта %u: 0x%08X -> 0x%08X\n
+
+\0\<
+Changed flags of %u entity: 0x%08X -> 0x%08X\n
+
+\0\>
+Изменены флаги объекта %u: 0x%08X -> 0x%08X\n
+
+\0\<
+Set health of %u entity to %.2f\n
+
+\0\>
+Для объекта %u задано здоровье %.2f\n
+
+\0\<
+Cannot set health for %u entity: not a live entity\n
+
+\0\>
+Невозможно задать здоровье для объекта %u: объект не является живым\n
+
+\0\<
+Reinitialized %u entity\n
+
+\0\>
+Реинициализирован объект %u\n
+
+\0\<
+Initialized %u entity\n
+
+\0\>
+Инициализирован объект %u\n
+
+\0\<
+Changed movement speed of %u entity to [%.2f, %.2f, %.2f]\n
+
+\0\>
+Скорость движения объекта %u изменена на [%.2f, %.2f, %.2f]\n
+
+\0\<
+Changed rotation speed of %u entity to [%.2f, %.2f, %.2f]\n
+
+\0\>
+Скорость вращения объекта %u изменена на [%.2f, %.2f, %.2f]\n
+
+\0\<
+Parented %u entity to %u\n
+
+\0\>
+Объект %u прикреплен к %u\n
+
+\0\<
+Unparented %u entity\n
+
+\0\>
+Объект %u откреплен\n
+
+\0\<
+Teleported %u entity to [%.2f, %.2f, %.2f;  %.2f, %.2f, %.2f]\n
+
+\0\>
+Объект %u телепортирован на [%.2f, %.2f, %.2f;  %.2f, %.2f, %.2f]\n
+
+\0\<
+Expected number property type but got %d\n
+
+\0\>
+Ожидался нумерованный тип свойства, но получен %d\n
+
+\0\<
+Expected string property type but got %d\n
+
+\0\>
+Ожидался строковый тип свойства, но получен %d\n
+
+\0\<
+Error %u in HttpRequest()\n
+
+\0\>
+Ошибка %u в HttpRequest()\n
+
+\0\<
+Error %u in WinHttpReadData()\n
+
+\0\>
+Ошибка %u в WinHttpReadData()\n
+
+\0\<
+Error %u in WinHttpQueryDataAvailable()\n
+
+\0\>
+Ошибка %u в WinHttpQueryDataAvailable()\n
+
+\0\<
+Cannot save client log file: %s\n
+
+\0\>
+Невозможно сохранить журнал клиентов: %s\n
+
+\0\<
+Cannot load client log file: %s\n
+
+\0\>
+Невозможно загрузить журнал клиентов: %s\n
+
+\0\<
+Cannot load Light class:\n
+%s
+\0\>
+Невозможно загрузить Light класс:\n
+%s
+\0\<
+Cannot change the state of GUID masking while the server is running!\n
+
+\0\>
+Невозможно изменить состояние маскирования GUID во время работы сервера!\n
+
+\0\<
+Cannot hook '%s'!\n
+Aborting HUD initialization...
+\0\>
+Невозможно подключить '%s'!\n
+Прерывание инициализации интерфейса...
+\0\<
+Cannot change movement speed for %u entity: %s\n
+
+\0\>
+Невозможно изменить скорость движения объекта %u: %s\n
+
+\0\<
+not a movable entity
+\0\>
+не является движущимся объектом
+\0\<
+Cannot change rotation speed for %u entity: %s\n
+
+\0\>
+Невозможно изменить скорость вращения объекта %u: %s\n
+
+\0\<
+Cannot give impulse to %u entity: %s\n
+
+\0\>
+Невозможно дать импульс объекту %u: %s\n
+
+\0\<
+Gave impulse to %u entity: [%.2f, %.2f, %.2f]\n
+
+\0\>
+Объекту %u дан импульс [%.2f, %.2f, %.2f]\n
+
+\0\<
+Cannot save patch configuration file: %s\n
+
+\0\>
+Невозможно сохранить файл конфигурации патча: %s\n
+
+\0\<
+Saved new directory with The First Encounter installation into 'TFEDir' property!\n
+
+\0\>
+Новый каталог с установкой "Первой крови" был сохранен в свойство '%s'!\n
+
+\0\<
+'%s' (%u) : Item type %d is invalid!\n
+
+\0\>
+'%s' (%u) : Недействительный тип предмета %d!\n
 
 \0\$

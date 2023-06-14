@@ -1,4 +1,4 @@
-282
+297
 
 \0\<
 Common options
@@ -7,11 +7,11 @@ Common options
 \0\<
 The First Encounter directory
 \0\>
-Каталог Первой Крови
+Каталог "Первой крови"
 \0\<
 specify directory with The First Encounter installation
 \0\>
-указать каталог с установкой Первой Крови
+указать каталог с установкой "Первой крови"
 \0\<
 Background game render
 \0\>
@@ -117,10 +117,6 @@ The Errorist Network
 \0\>
 The Errorist Network
 \0\<
-GoneSpy
-\0\>
-GoneSpy
-\0\<
 42amsterdam
 \0\>
 42amsterdam
@@ -139,11 +135,11 @@ Server options
 \0\<
 VIP password
 \0\>
-VIP пароль
+VIP-пароль
 \0\<
 specify password for VIP clients
 \0\>
-указание пароля для VIP клиентов
+указание пароля для VIP-клиентов
 \0\<
 Connect password
 \0\>
@@ -179,7 +175,7 @@ maximum amount of packets a client may send before kicking them
 \0\<
 Unlimited
 \0\>
-Неограничено
+Неограниченно
 \0\<
 Max chat messages
 \0\>
@@ -251,7 +247,7 @@ increase enemy count (sutl_fEnemyMultiplier)
 \0\<
 Maximum ammo
 \0\>
-Максимальные боезапас
+Максимальный боезапас
 \0\<
 give maximum amount of ammo on start
 \0\>
@@ -299,11 +295,11 @@ give/take colt on start (no effect in vanilla game)
 \0\<
 Give Double Colt
 \0\>
-Выдать Двойной Кольт
+Выдать Два кольта
 \0\<
 give/take double colt on start
 \0\>
-выдать/отобрать двойной кольт на старте
+выдать/отобрать два кольта на старте
 \0\<
 Give Single Shotgun
 \0\>
@@ -487,7 +483,7 @@ which armor item to replace other armor with
 \0\<
 Shard (+1)
 \0\>
-Осколок (+1)
+Щит (+1)
 \0\<
 Helm (+5)
 \0\>
@@ -495,19 +491,19 @@ Helm (+5)
 \0\<
 Small (+25)
 \0\>
-Малая (+25)
+Экзоскелет (+25)
 \0\<
 Medium (+50)
 \0\>
-Средняя (+50)
+Бронежилет (+50)
 \0\<
 Strong (+100)
 \0\>
-Сильная (+100)
+Панцирь (+100)
 \0\<
 Super (+200)
 \0\>
-Суперская (+200)
+Бронекостюм (+200)
 \0\<
 Replace Knife Item
 \0\>
@@ -659,7 +655,7 @@ replace invulnerability specifically
 \0\<
 Replace Serious Damage
 \0\>
-Замена Серьезного Ущерба
+Замена Серьезного ущерба
 \0\<
 replace serious damage specifically
 \0\>
@@ -667,7 +663,7 @@ replace serious damage specifically
 \0\<
 Replace Serious Speed
 \0\>
-Замена Серьезной Скорости
+Замена Серьезной скорости
 \0\<
 replace serious speed specifically
 \0\>
@@ -675,7 +671,7 @@ replace serious speed specifically
 \0\<
 Replace Serious Bomb
 \0\>
-Замена Серьезной Бомбы
+Замена Серьезной бомбы
 \0\<
 replace serious bomb specifically
 \0\>
@@ -687,11 +683,11 @@ Display options
 \0\<
 Decorated text
 \0\>
-Декорации текста
+Украшения текста
 \0\<
 display text decorations (e.g. color tags)
 \0\>
-отображать текст с декорациями (например, цветовые теги)
+отображать текст с украшениями (например, цветовые теги)
 \0\<
 Show everything
 \0\>
@@ -699,7 +695,7 @@ Show everything
 \0\<
 toggle visibility of the entire interface and viewmodels
 \0\>
-переключение видимости всего интерфейса и модели оружия
+отображение всего интерфейса и модели оружия
 \0\<
 HUD size
 \0\>
@@ -707,7 +703,7 @@ HUD size
 \0\<
 set size of HUD boxes
 \0\>
-выставление размера интерфейса
+изменение размера интерфейса
 \0\<
 75% (recommended)
 \0\>
@@ -719,7 +715,7 @@ HUD opacity
 \0\<
 set opacity factor of HUD boxes
 \0\>
-выставление прозрачности интерфейса
+изменение прозрачности интерфейса
 \0\<
 90% (default)
 \0\>
@@ -731,7 +727,7 @@ Show HUD
 \0\<
 toggle visibility of the heads-up display
 \0\>
-переключение видимости интерфейса
+отображение интерфейса
 \0\<
 Show messages
 \0\>
@@ -739,7 +735,7 @@ Show messages
 \0\<
 display NETRICSA message notifications
 \0\>
-отображение уведомлений о новых сообщениях в компьютере
+отображение уведомлений о сообщениях в ИНЕРТАНе
 \0\<
 Player list
 \0\>
@@ -747,7 +743,7 @@ Player list
 \0\<
 toggle visibility of the player list in multiplayer
 \0\>
-переключение видимости списка игроков в сетевой игре
+отображение списка игроков в сетевой игре
 \0\<
 Sort players
 \0\>
@@ -763,7 +759,7 @@ Show target names
 \0\<
 display player names upon targeting them
 \0\>
-отображать имена игроков при нацелевании на них
+отображать имена игроков при нацеливании на них
 \0\<
 Weapon list timeout
 \0\>
@@ -779,31 +775,31 @@ Disabled
 \0\<
 0.5s
 \0\>
-0.5 секунды
+0.5 сек.
 \0\<
 1s
 \0\>
-1 секунду
+1 сек.
 \0\<
 2s
 \0\>
-2 секунды
+2 сек.
 \0\<
 3s (default)
 \0\>
-3 секунды (по умолчанию)
+3 сек. (по умолчанию)
 \0\<
 4s
 \0\>
-4 секунды
+4 сек.
 \0\<
 5s
 \0\>
-5 секунд
+5 сек.
 \0\<
 6s
 \0\>
-6 секунд
+6 сек.
 \0\<
 Miscellaneous information
 \0\>
@@ -835,7 +831,7 @@ display information about the current game
 \0\<
 Show coordinates
 \0\>
-Показ координат
+Отображение координат
 \0\<
 display crosshair coordinates
 \0\>
@@ -859,11 +855,11 @@ display information for benchmarking
 \0\<
 FPS
 \0\>
-Кадры в секунду
+Счетчик кадров
 \0\<
 FPS & Benchmark
 \0\>
-Кадры в секунду & Бенчмарк
+Счетчик кадров и бенчмарк
 \0\<
 Network information
 \0\>
@@ -891,11 +887,11 @@ Real time
 \0\<
 Normal (1s)
 \0\>
-Часто (1 секунда)
+Часто (1 сек.)
 \0\<
 Sometimes (5s)
 \0\>
-Иногда (5 секунд)
+Иногда (5 сек.)
 \0\<
 Show network graph
 \0\>
@@ -935,7 +931,7 @@ colorize crosshair based on the health level of a target
 \0\<
 Crosshair ratio
 \0\>
-Соотношение
+Соотношение прицела
 \0\<
 how much the crosshair should change depending on the distance
 \0\>
@@ -979,15 +975,15 @@ Vanilla FOV
 \0\<
 vanilla command for changing field of view in Cooperative mode
 \0\>
-стандартная комадна для изменения поля зрения в кооперативном режиме
+стандартная команда для изменения поля зрения в кооперативном режиме
 \0\<
 Decorated server names
 \0\>
-Декорации имен серверов
+Украшения имен серверов
 \0\<
 display text decorations (e.g. color tags) in server names in the list
 \0\>
-отображать имена серверов в списке с декорациями (например, цветовые теги)
+отображать имена серверов в списке с украшениями (например, цветовые теги)
 \0\<
 Yes (only player view)
 \0\>
@@ -1003,7 +999,7 @@ Replace HUD
 \0\<
 replace vanilla HUD with the plugin one
 \0\>
-заменить стандартный интерфейс интерфейсом из плагина
+заменить стандартный интерфейс версией из плагина
 \0\<
 HUD theme
 \0\>
@@ -1015,7 +1011,7 @@ stylize HUD in a specific way
 \0\<
 The First Encounter
 \0\>
-Первая Кровь
+Первая кровь
 \0\<
 Seriously Warped Deathmatch
 \0\>
@@ -1023,7 +1019,7 @@ Seriously Warped Deathmatch
 \0\<
 The Second Encounter
 \0\>
-Второе Пришествие
+Второе пришествие
 \0\<
 Screen edges X
 \0\>
@@ -1047,7 +1043,7 @@ define how far the vertical screen edges should be
 \0\<
 Sniper scope opacity
 \0\>
-Прозрачность прицела
+Прозрачность снайперского прицела
 \0\<
 how transparent the sniper scope should be
 \0\>
@@ -1091,41 +1087,105 @@ use custom colors for the HUD
 \0\<
 HUD color preset
 \0\>
-Цветовая предустановка
+Цвет интерфейса
 \0\<
 select preset for HUD colorization
 \0\>
-выбрать предустановку для окраски интерфейса
+выбрать шаблон для окраски интерфейса
 \0\<
-The Blue Encounter
+Display patch version
 \0\>
-Синее Пришествие
+Отображать версию патча
 \0\<
-The Yellow Encounter
+display current version of the patch in the main menu
 \0\>
-Желтое Пришествие
+отображать текущую версию патча в главном меню
 \0\<
-Bleached
+Notify about updates
 \0\>
-Отбеленный
+Уведомления об обновлениях
 \0\<
-Demonic Red
+notify about new patch versions upon starting the game
 \0\>
-Демонический Красный
+уведомлять о новых версиях патча по запуску игры
 \0\<
-Retro Neon
+Level categories
 \0\>
-Ретро Неон
+Категории уровней
 \0\<
-Candy Gurl
+separate levels in the list by custom categories
 \0\>
-Конфетка
+разделить уровни в списке по пользовательским категориям
 \0\<
-Black Mesa
+Mask character GUID
 \0\>
-Черная Меза
+Замаскировать GUID персонажей
 \0\<
-Inverted
+hide unique identifiers of other players from server clients
 \0\>
-Инвертированный
+спрятать уникальные идентификаторы других игроков от клиентов на сервере
+\0\<
+HUD icon shake
+\0\>
+Тряска интерфейса
+\0\<
+shake HUD icons whenever values that they represent change
+\0\>
+трясти иконки интерфейса, когда их значения меняются
+\0\<
+Sniper scope coloring
+\0\>
+Окраска снайперского прицела
+\0\<
+colorize zoom wheel based on the health level of a target
+\0\>
+окрашивать снайперский прицел в зависимости от количества здоровья цели
+\0\<
+Show depleted ammo
+\0\>
+Отображать израсходованные боеприпасы
+\0\<
+display icon in the ammunition row even when the weapon is out of ammo
+\0\>
+отображать иконку с боеприпасами, даже если они полностью израсходованы
+\0\<
+Show high score
+\0\>
+Отображать рекорд
+\0\<
+display high score on the top of the screen
+\0\>
+отображать рекорд в верхней части экрана
+\0\<
+Game theme
+\0\>
+Игровая тема
+\0\<
+theme for menu elements, console and NETRICSA
+\0\>
+тема для элементов меню, консоли и ИНЕРТАНа
+\0\<
+Pointer in borderless
+\0\>
+Курсор в безрамочном режиме
+\0\<
+display game's mouse pointer in borderless window mode
+\0\>
+отображать игровой курсор в безрамочном режиме окна
+\0\<
+Console fade time
+\0\>
+Время анимации консоли
+\0\<
+animation speed for opening and closing the console
+\0\>
+скорость анимации при открытии и закрытии консоли
+\0\<
+0.25s
+\0\>
+0.25 сек.
+\0\<
+0.5s (default)
+\0\>
+0.5 сек. (по умолчанию)
 \0\$
