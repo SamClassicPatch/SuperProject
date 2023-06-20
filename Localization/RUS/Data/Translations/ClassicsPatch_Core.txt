@@ -1,4 +1,4 @@
-95
+100
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -540,4 +540,30 @@ Saved new directory with The First Encounter installation into 'TFEDir' property
 \0\>
 '%s' (%u) : Недействительный тип предмета %d!\n
 
+\0\<
+Entity %u inflicted %.2f damage to entity %u\n
+
+\0\>
+Объект %u нанес %.2f урона объекту %u\n
+
+\0\<
+Entity %u inflicted %.2f damage in a %.1f range\n
+
+\0\>
+Объект %u нанес %.2f урона в радиусе %.1f\n
+
+\0\<
+Entity %u inflicted %.2f damage in a [%.2f, %.2f, %.2f] sized area\n
+
+\0\>
+Объект %u нанес %.2f урона в области размером [%.2f, %.2f, %.2f]\n
+
+\0\<
+Please wait until you are fully connected to change your character.
+\0\>
+Пожалуйста, дождитесь полного подключения, чтобы изменить своего персонажа.
+\0\<
+SYNCBAD: Sequence %d Tick %.2f - bad %d
+\0\>
+SYNCBAD: Последовательность %d такт %.2f - неверный %d
 \0\$

@@ -1,4 +1,4 @@
-297
+311
 
 \0\<
 Common options
@@ -1188,4 +1188,60 @@ animation speed for opening and closing the console
 0.5s (default)
 \0\>
 0.5 сек. (по умолчанию)
+\0\<
+Report bad syncs to clients
+\0\>
+Сообщать клиентам о рассинхронизации
+\0\<
+notify clients whenever their game state doesn't sync with the server
+\0\>
+уведомлять клиентов, когда их игра не синхронизируется с сервером
+\0\<
+Big NETRICSA font
+\0\>
+Большой шрифт в ИНЕРТАНе
+\0\<
+make message font in NETRICSA bigger and scale it with resolution
+\0\>
+увеличить шрифт сообщений в ИНЕРТАНе и масштабировать его с разрешением
+\0\<
+Observer options
+\0\>
+Настройки наблюдения
+\0\<
+Main view overlay
+\0\>
+Наложение на основной вид
+\0\<
+placement of observer view windows during the game
+\0\>
+расположение окон наблюдателя во время игры
+\0\<
+On the side
+\0\>
+В стороне
+\0\<
+On top of main view
+\0\>
+Поверх основного вида
+\0\<
+Empty space background
+\0\>
+Фон на пустом пространстве
+\0\<
+cover empty space with a simple background under the observer views
+\0\>
+закрыть пустое пространство под окнами наблюдения простым фоном
+\0\<
+View window size
+\0\>
+Размер экрана вида
+\0\<
+size of observer view windows relative to the screen resolution
+\0\>
+размер окон наблюдения относительно разрешения экрана
+\0\<
+25% (default)
+\0\>
+25% (по умолчанию)
 \0\$
