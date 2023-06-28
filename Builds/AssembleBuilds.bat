@@ -20,6 +20,8 @@ copy /B Bin\Release_TFE105\DedicatedServer_Custom.exe  %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\SeriousSam_Custom.exe       %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\SeriousEditor_Custom.exe    %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\EngineGUI.dll               %BUILDS%TFE105\Bin\
+copy /B Bin\Release_TFE105\Game_Custom.dll             %BUILDS%TFE105\Bin\
+copy /B Bin\Release_TFE105\GameGUI_Custom.dll          %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\Plugins\Accessibility.dll   %BUILDS%TFE105\Bin\Plugins\
 copy /B Bin\Release_TFE105\Plugins\AdvancedHUD.dll     %BUILDS%TFE105\Bin\Plugins\
 copy /B Bin\Release_TFE105\Plugins\LocalCheats.dll     %BUILDS%TFE105\Bin\Plugins\
@@ -39,6 +41,8 @@ copy /B Bin\Release_TSE105\DedicatedServer_Custom.exe  %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\SeriousSam_Custom.exe       %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\SeriousEditor_Custom.exe    %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\EngineGUI.dll               %BUILDS%TSE105\Bin\
+copy /B Bin\Release_TSE105\Game_Custom.dll             %BUILDS%TSE105\Bin\
+copy /B Bin\Release_TSE105\GameGUI_Custom.dll          %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\Plugins\Accessibility.dll   %BUILDS%TSE105\Bin\Plugins\
 copy /B Bin\Release_TSE105\Plugins\AdvancedHUD.dll     %BUILDS%TSE105\Bin\Plugins\
 copy /B Bin\Release_TSE105\Plugins\LocalCheats.dll     %BUILDS%TSE105\Bin\Plugins\
