@@ -1,6 +1,5 @@
 Data\ClassicsPatch\LevelCategories\01_TSE.des
 Data\ClassicsPatch\LevelCategories\01_TSE.lst
-Scripts\ClassicsPatch\SaveTFEDirectory.ini
 Textures\
 TexturesPatch\Interface\Revolution\P*.tex
 TexturesPatch\Interface\Revolution\AmFuelReservoir.tex
