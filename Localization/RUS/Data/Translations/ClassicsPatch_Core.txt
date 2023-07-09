@@ -1,5 +1,13 @@
-100
+105
 
+\0\<
+Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
+\0\>
+[These strings aren't supposed to be here and I don't know how to get rid of them]
+\0\<
+Plugin?5module?5has?5not?5been?5l@
+\0\>
+[It is all because they start with "ETRS" and get picked up by the Depend utility]
 \0\<
 Cannot find '%s' symbol in '%s'!
 \0\>
@@ -9,10 +17,16 @@ Plugin module has not been loaded yet!
 \0\>
 Плагин еще не загружен!
 \0\<
-Loading game library '%s'...\n
+Loading Game library '%s'...\n
 
 \0\>
 Загрузка библиотеки игры '%s'...\n
+
+\0\<
+Loading Game GUI library '%s'...\n
+
+\0\>
+Загрузка GUI библиотеки игры '%s'...\n
 
 \0\<
 Available function patches:\n
@@ -323,10 +337,10 @@ Could not find entity property with the name '%s' in %s\n
 '%s' (%u) : Не удалось получить свойство '%s'!\n
 
 \0\<
-Restart the game to load content from the new directory!\n
+Restart the game for the new settings to take effect!\n
 
 \0\>
-Перезапустите игру для загрузки ресурсов из нового каталога!\n
+Перезапустите игру, чтобы новые настройки вступили в силу!\n
 
 \0\<
 Received invalid entity ID!\n
@@ -477,16 +491,16 @@ Cannot load client log file: %s\n
 Невозможно загрузить журнал клиентов: %s\n
 
 \0\<
-Cannot load Light class:\n
+Cannot load %s class:\n
 %s
 \0\>
-Невозможно загрузить Light класс:\n
+Невозможно загрузить %s класс:\n
 %s
 \0\<
-Cannot change the state of GUID masking while the server is running!\n
+Cannot change the value of this shell symbol while the server is running!\n
 
 \0\>
-Невозможно изменить состояние маскирования GUID во время работы сервера!\n
+Невозможно изменить значения этого символа во время работы сервера!\n
 
 \0\<
 Cannot hook '%s'!\n
@@ -529,10 +543,10 @@ Cannot save patch configuration file: %s\n
 Невозможно сохранить файл конфигурации патча: %s\n
 
 \0\<
-Saved new directory with The First Encounter installation into 'TFEDir' property!\n
+Config properties have been resaved into '%s'!\n
 
 \0\>
-Новый каталог с установкой "Первой крови" был сохранен в свойство '%s'!\n
+Свойства файла конфигурации были пересохранены в '%s'!\n
 
 \0\<
 '%s' (%u) : Item type %d is invalid!\n
@@ -566,4 +580,18 @@ Please wait until you are fully connected to change your character.
 SYNCBAD: Sequence %d Tick %.2f - bad %d
 \0\>
 SYNCBAD: Последовательность %d такт %.2f - неверный %d
+\0\<
+Server: Client '%s' hasn't provided an identification tag\n
+
+\0\>
+Сервер: Клиент '%s' не предоставил тег для идентификации\n
+
+\0\<
+Server: Client '%s' has provided an identification tag:\n
+  Tag match: %d | Version match: %d\n
+
+\0\>
+Сервер: Клиент '%s' предоставил тег для идентификации:\n
+  Соответсвие тега: %d | Соответсвие версии: %d\n
+
 \0\$

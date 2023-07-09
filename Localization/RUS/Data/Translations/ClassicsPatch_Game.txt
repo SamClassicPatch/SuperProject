@@ -1,4 +1,4 @@
-25
+30
 
 \0\<
 WINDOW MODE
@@ -116,4 +116,24 @@ Checking for updates...\n
 unsorted user made levels
 \0\>
 несортированные пользовательские уровни
+\0\<
+enter the password for connecting, observing or VIP access
+\0\>
+введите пароль для подключения, наблюдения или VIP-доступа
+\0\<
+Password:
+\0\>
+Пароль:
+\0\<
+adjust server settings from the classics patch
+\0\>
+настройка параметров сервера из патча для классики
+\0\<
+Server options
+\0\>
+Параметры сервера
+\0\<
+SERVER OPTIONS
+\0\>
+ПАРАМЕТРЫ СЕРВЕРА
 \0\$

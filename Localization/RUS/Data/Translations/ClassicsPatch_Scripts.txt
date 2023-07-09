@@ -1,4 +1,4 @@
-311
+351
 
 \0\<
 Common options
@@ -36,10 +36,6 @@ Option tabs
 display tabs for config options on the left
 \0\>
 отображение вкладок для параметров конфигурации слева
-\0\<
-FOV options
-\0\>
-Настройки поля зрения
 \0\<
 Fix field of view
 \0\>
@@ -1244,4 +1240,168 @@ size of observer view windows relative to the screen resolution
 25% (default)
 \0\>
 25% (по умолчанию)
+\0\<
+Global options
+\0\>
+Глобальные настройки
+\0\<
+Custom mod libraries
+\0\>
+Собственные библиотеки модов
+\0\<
+replace vanilla Entities, Game & GameGUI libraries
+\0\>
+заменить ванильные библиотеки Entities, Game и GameGUI
+\0\<
+Yes (recommended)
+\0\>
+Да (рекомендуется)
+\0\<
+DPI awareness
+\0\>
+Масштабирование окна игры
+\0\<
+scale the game window according to monitor settings
+\0\>
+масштабировать окно игры в соответствии с настройками монитора
+\0\<
+Extended file system
+\0\>
+Расширенная файловая система
+\0\<
+load content from other directories or use custom mod libraries
+\0\>
+загружать контент из других каталогов или использовать собственные библиотеки модов
+\0\<
+Debug patcher
+\0\>
+Отладка патчера
+\0\<
+print actions of the function patcher for debugging purposes
+\0\>
+выводить действия патчера функций для отлавливания ошибок
+\0\<
+Forbid vanilla clients
+\0\>
+Не пускать клиентов без патча
+\0\<
+make the server exclusive to clients with the patch for better compatibility
+\0\>
+сделать сервер эксклюзивным для клиентов с патчем для лучшей совместимости
+\0\<
+Game options
+\0\>
+Настройки игры
+\0\<
+Gameplay options
+\0\>
+Настройки геймплея
+\0\<
+Auto update shadows
+\0\>
+Автоматическое обновление теней
+\0\<
+automatically update shadow maps upon loading into games, playing demos etc.
+\0\>
+автоматически обновлять карты теней при загрузке в игры, проигрывании демонстраций и т.д.
+\0\<
+Custom connection setting
+\0\>
+Настройки подключения
+\0\<
+Prediction
+\0\>
+Предсказания
+\0\<
+enable prediction of movable entities
+\0\>
+предсказывать поведение движущихся объектов
+\0\<
+Buffer action count
+\0\>
+Размер буфера действий
+\0\<
+set amount of actions to buffer
+\0\>
+установка количества действий для буферизации
+\0\<
+1 (lowest ping)
+\0\>
+1 (низкая задержка)
+\0\<
+2 (most stable)
+\0\>
+2 (самое стабильное)
+\0\<
+3 (slower connection)
+\0\>
+3 (медленное подключение)
+\0\<
+4 (slow connection)
+\0\>
+4 (еще медленнее подключение)
+\0\<
+5 (slowest connection)
+\0\>
+5 (самое медленное подключение)
+\0\<
+Minimum BPS
+\0\>
+Минимум Б/с
+\0\<
+set minimum bytes per second that can be sent (cli_iCustomMinBPS)
+\0\>
+установка минимального количества байт в секунду для отправки (cli_iCustomMinBPS)
+\0\<
+5 kB (least stable)
+\0\>
+5 Кбайт (наименее стабильное)
+\0\<
+10 kB
+\0\>
+10 Кбайт
+\0\<
+25 kB
+\0\>
+25 Кбайт
+\0\<
+50 kB (default)
+\0\>
+50 Кбайт (по умолчанию)
+\0\<
+100 kB
+\0\>
+100 Кбайт
+\0\<
+500 kB
+\0\>
+500 Кбайт
+\0\<
+1000 kB (most stable)
+\0\>
+1000 Кбайт (наиболее стабильное)
+\0\<
+Maximum BPS
+\0\>
+Максимум Б/с
+\0\<
+set maximum bytes per second that can be sent (cli_iCustomMaxBPS)
+\0\>
+установка максимального количества байт в секунду для отправки (cli_iCustomMaxBPS)
+\0\<
+10 kB (least stable)
+\0\>
+10 Кбайт (наименее стабильное)
+\0\<
+50 kB
+\0\>
+50 Кбайт
+\0\<
+100 kB (default)
+\0\>
+100 Кбайт (по умолчанию)
+\0\<
+250 kB
+\0\>
+250 Кбайт
 \0\$
