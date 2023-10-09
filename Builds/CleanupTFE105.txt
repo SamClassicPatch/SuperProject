@@ -1,5 +1,7 @@
 Data\ClassicsPatch\LevelCategories\01_TSE.des
 Data\ClassicsPatch\LevelCategories\01_TSE.lst
+Data\ClassicsPatch\LevelCategories\02_SSR.des
+Data\ClassicsPatch\LevelCategories\02_SSR.lst
 Textures\
 TexturesPatch\Interface\Revolution\P*.tex
 TexturesPatch\Interface\Revolution\AmFuelReservoir.tex
