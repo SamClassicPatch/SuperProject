@@ -1,4 +1,4 @@
-351
+412
 
 \0\<
 Common options
@@ -1404,4 +1404,248 @@ set maximum bytes per second that can be sent (cli_iCustomMaxBPS)
 250 kB
 \0\>
 250 Кбайт
+\0\<
+Revolution directory
+\0\>
+Каталог "Революции"
+\0\<
+specify directory with Serious Sam Revolution installation
+\0\>
+указать каталог с установкой "Революции"
+\0\<
+Revolution workshop directory
+\0\>
+Каталог мастерской "Революции"
+\0\<
+specify Revolution's workshop directory (leave blank for automatic)
+\0\>
+указать каталог с файлами мастерской из "Революции" (оставьте пустым для автоматического)
+\0\<
+No
+\0\>
+Нет
+\0\<
+Yes
+\0\>
+Да
+\0\<
+None
+\0\>
+Отсутствует
+\0\<
+Gameplay extensions
+\0\>
+Расширения геймплея
+\0\<
+Enable extensions
+\0\>
+Включить расширения
+\0\<
+extend gameplay by enabling new patched logic (incompatible with vanilla)
+\0\>
+расширить игровой процесс включением новой логики (несовместимо с ваниллой)
+\0\<
+Fix timers
+\0\>
+Исправить таймеры
+\0\<
+fix logic timers to delay the slowdown bug
+\0\>
+исправить логические таймеры для задержки бага с замедлением
+\0\<
+Unlimited air control
+\0\>
+Неограниченный контроль в воздухе
+\0\<
+let players move while in air indefinitely
+\0\>
+позволить игрокам свободно перемещаться в воздухе
+\0\<
+Movement speed
+\0\>
+Скорость передвижения
+\0\<
+multiply player movement speed (gex_fMoveSpeed)
+\0\>
+умножение скорость передвижения игрока (gex_fMoveSpeed)
+\0\<
+Standing still
+\0\>
+Стоя на месте
+\0\<
+Jump height
+\0\>
+Высота прыжка
+\0\<
+multiply player jump height (gex_fJumpHeight)
+\0\>
+умножение высоты прыжка игрока (gex_fJumpHeight)
+\0\<
+No jumping
+\0\>
+Без прыжков
+\0\<
+Ammo replacement
+\0\>
+Замена боеприпасов
+\0\<
+which ammo item to replace other ammo with
+\0\>
+какими боеприпасами заменить остальные предметы
+\0\<
+Shells
+\0\>
+Патроны
+\0\<
+Bullets
+\0\>
+Пули
+\0\<
+Rockets
+\0\>
+Ракеты
+\0\<
+Grenades
+\0\>
+Гранаты
+\0\<
+Electricity
+\0\>
+Элементы питания
+\0\<
+Iron balls
+\0\>
+Пушечные ядра
+\0\<
+Napalm
+\0\>
+Напалм
+\0\<
+Sniper bullets
+\0\>
+Снайперские пули
+\0\<
+Weapon items (SUTL)
+\0\>
+Оружейные предметы (SUTL)
+\0\<
+Ammo items (SUTL)
+\0\>
+Боеприпасы (SUTL)
+\0\<
+Replace Shells
+\0\>
+Замена патронов
+\0\<
+replace shells specifically
+\0\>
+чем заменить патроны
+\0\<
+Replace Bullets
+\0\>
+Замена пуль
+\0\<
+replace bullets specifically
+\0\>
+чем заменить пули
+\0\<
+Replace Rockets
+\0\>
+Замена ракет
+\0\<
+replace rockets specifically
+\0\>
+чем заменить ракеты
+\0\<
+Replace Grenades
+\0\>
+Замена гранат
+\0\<
+replace grenades specifically
+\0\>
+чем заменить гранаты
+\0\<
+Replace Electricity
+\0\>
+Замена элементов питания
+\0\<
+replace electricity specifically
+\0\>
+чем заменить элементы питания
+\0\<
+Replace Iron balls
+\0\>
+Замена пушечных ядер
+\0\<
+replace iron balls specifically
+\0\>
+чем заменить пушечные ядра
+\0\<
+Replace Napalm
+\0\>
+Замена напалма
+\0\<
+replace napalm specifically
+\0\>
+чем заменить напалм
+\0\<
+Replace Sniper bullets
+\0\>
+Замена снайперских пуль
+\0\<
+replace sniper bullets specifically
+\0\>
+чем заменить снайперские пули
+\0\<
+Show lives
+\0\>
+Показать жизни
+\0\<
+display amount of remaining lives above the messages
+\0\>
+отображать количество оставшихся жизней над сообщениями
+\0\<
+Big console font
+\0\>
+Большой шрифт в консоли
+\0\<
+make console font bigger and scale it with resolution
+\0\>
+увеличить шрифт консольного лога и масштабировать его с разрешением
+\0\<
+Never
+\0\>
+Никогда
+\0\<
+Only last lines
+\0\>
+Только последние строки
+\0\<
+Always
+\0\>
+Всегда
+\0\<
+Spawn invulnerability indicator
+\0\>
+Индикатор неуязвимости после возрождения
+\0\<
+toggle spawn invulnerability indication for the player
+\0\>
+включить индикатор неуязвимости после возрождения для игрока
+\0\<
+Active power-up
+\0\>
+Активная Неуязвимость
+\0\<
+Active power-up + sound
+\0\>
+Активная Неуязвимость + звук
+\0\<
+Extras menu
+\0\>
+Меню с дополнениями
+\0\<
+replace "mods" button with "extras" in the main menu
+\0\>
+заменить кнопку "модификации" на "дополнения" в главном меню
 \0\$

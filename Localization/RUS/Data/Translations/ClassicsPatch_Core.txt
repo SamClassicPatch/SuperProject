@@ -1,4 +1,4 @@
-105
+107
 
 \0\<
 Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
@@ -594,4 +594,18 @@ Server: Client '%s' has provided an identification tag:\n
 Сервер: Клиент '%s' предоставил тег для идентификации:\n
   Соответсвие тега: %d | Соответсвие версии: %d\n
 
+\0\<
+Cannot read server info from session state:\n
+%s\n
+
+\0\>
+Не удается прочитать информацию о сервере из состояния сеанса:\n
+%s\n
+
+\0\<
+Cannot load user difficulty config '%s':\n
+%s
+\0\>
+Не удается загрузить пользовательскую сложность '%s':\n
+%s
 \0\$

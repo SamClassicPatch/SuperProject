@@ -1,4 +1,4 @@
-30
+45
 
 \0\<
 WINDOW MODE
@@ -136,4 +136,64 @@ Server options
 SERVER OPTIONS
 \0\>
 ПАРАМЕТРЫ СЕРВЕРА
+\0\<
+This level is from Serious Sam: Revolution
+\0\>
+Этот уровень из игры "Крутой Сэм: Революция"
+\0\<
+Customize game
+\0\>
+Настроить игру
+\0\<
+this mod has no difficulties set up
+\0\>
+эта модификация не имеет ни одной сложности
+\0\<
+INVALID
+\0\>
+НЕДЕЙСТВИТЕЛЬНАЯ
+\0\<
+GAME CUSTOMIZATION
+\0\>
+НАСТРОЙКИ ИГРЫ
+\0\<
+Config '%s' is included recursively
+\0\>
+Конфиг '%s' рекурсивно вложен
+\0\<
+SPECIAL THANKS
+\0\>
+ОСОБЫЕ БЛАГОДАРНОСТИ
+\0\<
+DESIGN AND PROGRAMMING
+\0\>
+ДИЗАЙН И ПРОГРАММИРОВАНИЕ
+\0\<
+reload current game or mod immediately
+\0\>
+незамедлительно перезагрузить текущую игру или модификацию
+\0\<
+RESTART
+\0\>
+ПЕРЕЗАПУСТИТЬ
+\0\<
+credits for Classics Patch
+\0\>
+титры к патчу для классики
+\0\<
+CREDITS
+\0\>
+ТИТРЫ
+\0\<
+EXTRAS
+\0\>
+ДОПОЛНЕНИЯ
+\0\<
+modifications, credits and more
+\0\>
+модификации, титры и прочее
+\0\<
+source code repository
+\0\>
+репозиторий с исходным кодом
 \0\$
