@@ -1,4 +1,4 @@
-107
+117
 
 \0\<
 Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
@@ -608,4 +608,50 @@ Cannot load user difficulty config '%s':\n
 \0\>
 Не удается загрузить пользовательскую сложность '%s':\n
 %s
+\0\<
+Client '%s' (identity %d) is attempting to authorize as an admin with '%s':\n
+
+\0\>
+Клиент '%s' (идентификатор %d) пытается авторизироваться в качестве администратора с паролем '%s':\n
+
+\0\<
+Password is incorrect! Login attempt was logged.
+\0\>
+Неверный пароль! Попытка входа зарегистрирована.
+\0\<
+Successfully authorized as a server administrator!
+\0\>
+Успешная авторизация в качестве администратора сервера!
+\0\<
+Successfully authorized as a server operator!
+\0\>
+Успешная авторизация в качестве оператора сервера!
+\0\<
+You are already a server operator!
+\0\>
+Вы уже являетесь оператором сервера!
+\0\<
+See server log for the command output.
+\0\>
+См. лог сервера для вывода команды.
+\0\<
+Client '%s' (identity %d) is executing a command:\n
+
+\0\>
+Клиент '%s' (идентификатор %d) выполняет команду:\n
+
+\0\<
+You are not a server operator!
+\0\>
+Вы не являетесь оператором сервера!
+\0\<
+Client '%s' (identity %d) is trying to execute a command:\n
+
+\0\>
+Клиент '%s' (идентификатор %d) пытается выполнить команду:\n
+
+\0\<
+Saved game: %s
+\0\>
+Сохраненная игра: %s
 \0\$

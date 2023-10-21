@@ -1,4 +1,4 @@
-45
+51
 
 \0\<
 WINDOW MODE
@@ -41,13 +41,13 @@ This is a level in the %s format, it cannot be played!
 \0\>
 Этот уровень сохранен в формате %s и не может быть загружен!
 \0\<
-Show visible levels
+Show visible
 \0\>
-Показать видимые уровни
+Показать видимые
 \0\<
-Show all levels
+Show all
 \0\>
-Показать все уровни
+Показать все
 \0\<
 ASPECT RATIO
 \0\>
@@ -196,4 +196,28 @@ modifications, credits and more
 source code repository
 \0\>
 репозиторий с исходным кодом
+\0\<
+display title filter
+\0\>
+фильтрация по отображаемому названию
+\0\<
+list levels only in a specific world format
+\0\>
+показать уровни только определенного формата
+\0\<
+toggle visibility of all world files
+\0\>
+переключить видимость всех файлов уровней
+\0\<
+FILTERING
+\0\>
+ФИЛЬТРАЦИЯ
+\0\<
+Format: 
+\0\>
+Формат: 
+\0\<
+All
+\0\>
+Все
 \0\$

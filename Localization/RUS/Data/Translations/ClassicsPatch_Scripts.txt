@@ -1,4 +1,4 @@
-412
+419
 
 \0\<
 Common options
@@ -1648,4 +1648,32 @@ Extras menu
 replace "mods" button with "extras" in the main menu
 \0\>
 заменить кнопку "модификации" на "дополнения" в главном меню
+\0\<
+Admin login password
+\0\>
+Пароль администратора
+\0\<
+for authorization using "!login" chat command (leave blank to disable admin rights)
+\0\>
+для авторизации используя команду "!login" (оставьте пустым для отключения прав администратора)
+\0\<
+Operator login password
+\0\>
+Пароль оператора
+\0\<
+for authorization using "!login" chat command (leave blank to disable operator rights)
+\0\>
+для авторизации используя команду "!login" (оставьте пустым для отключения прав оператора)
+\0\<
+Level filtering
+\0\>
+Фильтрация уровней
+\0\<
+show filtering options in the level selection menu
+\0\>
+показывать опции для фильтрации в списке выбора уровня
+\0\<
+Yes (with seconds)
+\0\>
+Да (с секундами)
 \0\$
