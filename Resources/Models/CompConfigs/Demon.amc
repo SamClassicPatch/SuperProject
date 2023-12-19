@@ -1,0 +1,9 @@
+Name: Fiendian Reptiloid Demon
+{
+  Model:   TFNM ModelsMP\Enemies\Demon\Demon.mdl
+  Texture: TFNM ModelsMP\Enemies\Demon\Demon.tex
+  Animation: 3
+
+  Stretch: 1.4; 1.4; 1.4
+  CompPlace: 0; -1.25; -2.25f; 160; 0; 0
+}

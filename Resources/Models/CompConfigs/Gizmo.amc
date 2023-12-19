@@ -1,0 +1,8 @@
+Name: Marsh-Hopper from Rigil Kentaurus
+{
+  Model:   TFNM Models\Enemies\Gizmo\Gizmo.mdl
+  Texture: TFNM Models\Enemies\Gizmo\Gizmo.tex
+  Animation: 1
+
+  CompPlace: 0; -0.5; -1.2; 150; 0; 0
+}

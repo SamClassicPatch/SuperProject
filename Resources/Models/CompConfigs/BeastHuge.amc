@@ -1,0 +1,10 @@
+Name: Aludran Reptiloid, Highlander's Bride
+{
+  Model:   TFNM Models\Enemies\Beast\Beast.mdl
+  Texture: TFNM ModelsMP\Enemies\Beast\BeastBiggest.tex
+  Animation: 13
+
+  Stretch: 11; 11; 11
+  CompPlace: -0.5; -12; -30; 170; 0; 0
+  CompLight: -0.1; -0.3; -0.2
+}

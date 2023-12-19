@@ -1,0 +1,22 @@
+Name: Rotating Cannon
+{
+  Model:   TFNM ModelsMP\Enemies\CannonRotating\Turret.mdl
+  Texture: TFNM ModelsMP\Enemies\CannonRotating\Turret.tex
+  Animation: 0
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Enemies\CannonRotating\RotatingMechanism.mdl
+    Texture: TFNM ModelsMP\Enemies\CannonRotating\RotatingMechanism.tex
+
+    Attachment: 0
+    {
+      Model:   TFNM ModelsMP\Enemies\CannonStatic\Cannon.mdl
+      Texture: TFNM ModelsMP\Enemies\CannonStatic\Cannon.tex
+      Rotate: 0; 10; 0
+    }
+  }
+
+  Stretch: 1.4; 1.4; 1.4
+  CompPlace: 0.4; -1; -2.75; 125; 0; 0
+}

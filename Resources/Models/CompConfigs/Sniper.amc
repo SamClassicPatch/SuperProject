@@ -1,0 +1,22 @@
+Name: RAPTOR 16mm Sniper
+{
+  Model:   TFNM ModelsMP\Weapons\Sniper\Sniper.mdl
+  Texture: TFNM ModelsMP\Weapons\Sniper\Body.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Weapons\Sniper\Body.mdl
+    Texture: TFNM ModelsMP\Weapons\Sniper\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+
+    Animation: 1
+  }
+
+  Stretch: 1.5; 1.5; 1.5
+  CompPlace: 0; -0.4; -4; 0; 10; 0
+  CompRotate: 100; 0; 0
+  CompFloor: -0.5
+  CompFOV: 50
+  CompLight: -0.1; -0.2; -0.2
+}

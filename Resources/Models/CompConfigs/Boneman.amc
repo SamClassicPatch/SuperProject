@@ -1,0 +1,8 @@
+Name: Kleer Skeleton
+{
+  Model:   TFNM Models\Enemies\Boneman\Boneman.mdl
+  Texture: TFNM Models\Enemies\Boneman\Boneman.tex
+  Animation: 15
+
+  CompPlace: 0; -1; -3; 210; 0; 0
+}

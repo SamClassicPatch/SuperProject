@@ -1,0 +1,8 @@
+Name: Gnaar Male
+{
+  Model:   TFNM Models\Enemies\Eyeman\Eyeman.mdl
+  Texture: TFNM Models\Enemies\Eyeman\Eyeman4.tex
+  Animation: 17
+
+  CompPlace: 0; -0.9; -1.5; 210; 0; 0
+}

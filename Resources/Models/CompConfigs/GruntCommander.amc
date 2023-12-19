@@ -1,0 +1,17 @@
+Name: Zorg Commander from Beelmez IV
+{
+  Model:   TFNM ModelsMP\Enemies\Grunt\Grunt.mdl
+  Texture: TFNM ModelsMP\Enemies\Grunt\Commander.tex
+  Animation: 2
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Enemies\Grunt\Gun_Commander.mdl
+    Texture: TFNM ModelsMP\Enemies\Grunt\Gun_Commander.tex
+  }
+
+  Stretch: 1.4; 1.4; 1.4
+  CompPlace: 0; -1.65; -3.9; 165; 0; 0
+  CompFOV: 70
+  CompLight: -0.1; -0.2; -0.2
+}

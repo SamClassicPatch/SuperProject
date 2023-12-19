@@ -1,0 +1,18 @@
+Name: Mordekai, The Summoner
+{
+  Model:   TFNM ModelsMP\Enemies\Summoner\Summoner.mdl
+  Texture: TFNM ModelsMP\Enemies\Summoner\Summoner.tex
+  Bump:    TFNM TexturesMP\Detail\Crumples04.tex
+  Animation: 1
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Enemies\Summoner\Staff.mdl
+    Texture: TFNM ModelsMP\Enemies\Summoner\Staff.tex
+  }
+
+  Stretch: 7; 7; 7
+  CompPlace: 0.25; -7; -31; 160; 0; 0
+  CompFOV: 50
+  CompLight: 0.1; -0.3; -0.2
+}

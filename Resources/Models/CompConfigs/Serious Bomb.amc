@@ -1,0 +1,10 @@
+Name: Serious Bomb
+{
+  Model:   TFNM ModelsMP\Items\PowerUps\SeriousBomb\SeriousBomb.mdl
+  Texture: TFNM ModelsMP\Items\PowerUps\SeriousBomb\SeriousBomb.tex
+
+  Stretch: 3; 3; 3
+  CompPlace: 0; -1; -6; 0; -10; 0
+  CompRotate: 60; 0; 0
+  CompFOV: 40
+}

@@ -1,0 +1,42 @@
+Name: XM214-A Minigun
+{
+  Model:   TFNM Models\Weapons\Minigun\MinigunItem.mdl
+  Texture: TFNM Models\Weapons\Minigun\Body.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Weapons\Minigun\Body.mdl
+    Texture: TFNM Models\Weapons\Minigun\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Weapons\Minigun\Barrels.mdl
+    Texture: TFNM Models\Weapons\Minigun\Barrels.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Weapons\Minigun\Engine.mdl
+    Texture: TFNM Models\Weapons\Minigun\Barrels.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 3
+  {
+    Model:   TFNM Models\Weapons\Minigun\Handle.mdl
+    Texture: TFNM Models\Weapons\Minigun\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Stretch: 1.75; 1.75; 1.75
+  CompPlace: 0; -0.5; -3.75; 0; 10; 0
+  CompRotate: 100; 0; 0
+  CompFloor: -1
+}

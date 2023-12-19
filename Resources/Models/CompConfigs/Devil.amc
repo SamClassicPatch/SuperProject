@@ -1,0 +1,9 @@
+Name: Ugh-Zan III, The Vicious Warlock
+{
+  Model:   TFNM Models\Enemies\Devil\Devil.mdl
+  Texture: TFNM Models\Enemies\Devil\Devil.tex
+  Animation: 21
+
+  Stretch: 12; 12; 12
+  CompPlace: 0; -12; -25; 150; 0; 0
+}

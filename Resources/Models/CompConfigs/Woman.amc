@@ -1,0 +1,9 @@
+Name: Scythian Witch-Harpy
+{
+  Model:   TFNM Models\Enemies\Woman\Woman.mdl
+  Texture: TFNM Models\Enemies\Woman\Woman.tex
+  Animation: 4
+
+  CompPlace: 0; 0; -2; 210; 30; 0
+  CompFloor: -1.5
+}

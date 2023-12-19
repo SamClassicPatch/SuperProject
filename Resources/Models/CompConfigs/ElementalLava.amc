@@ -1,0 +1,29 @@
+Name: Lava Golem
+{
+  Model:   TFNM Models\Enemies\ElementalLava\ElementalLava.mdl
+  Texture: TFNM Models\Enemies\ElementalLava\Lava04Fx.tex
+  Bump:    TFNM Models\Enemies\ElementalLava\Detail.tex
+  Animation: 16
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Enemies\ElementalLava\BodyFlare.mdl
+    Texture: TFNM Models\Enemies\ElementalLava\Flare.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Enemies\ElementalLava\HandFlare.mdl
+    Texture: TFNM Models\Enemies\ElementalLava\Flare.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Enemies\ElementalLava\HandFlare.mdl
+    Texture: TFNM Models\Enemies\ElementalLava\Flare.tex
+  }
+
+  Stretch: 4; 4; 4
+  CompPlace: 0; -5; -8; 150; 0; 0
+  CompParticles: fire
+}

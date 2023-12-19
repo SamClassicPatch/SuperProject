@@ -1,0 +1,10 @@
+Name: Reeban Electro-Fish
+{
+  Model:    TFNM Models\Enemies\Fish\Fish.mdl
+  Texture:  TFNM Models\Enemies\Fish\Fish1.tex
+  Specular: TFNM Models\SpecularTextures\Medium.tex
+  Animation: 5
+
+  CompPlace: -0.2; -0.5; -3; 250; 0; 0
+  CompFloor: -1
+}

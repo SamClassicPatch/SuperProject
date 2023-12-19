@@ -1,0 +1,28 @@
+Name: XOP Flamethrower
+{
+  Model:   TFNM ModelsMP\Weapons\Flamer\FlamerItem.mdl
+  Texture: TFNM ModelsMP\Weapons\Flamer\Body.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Weapons\Flamer\Body.mdl
+    Texture: TFNM ModelsMP\Weapons\Flamer\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM ModelsMP\Weapons\Flamer\FuelReservoir.mdl
+    Texture: TFNM ModelsMP\Weapons\Flamer\FuelReservoir.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Stretch: 1.5; 1.5; 1.5
+  CompPlace: 0; -0.4; -2.2; 0; 10; 0
+  CompRotate: 100; 0; 0
+  CompFloor: -0.5
+  CompFOV: 70
+  CompLight: -0.1; -0.2; -0.2
+}

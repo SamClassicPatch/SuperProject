@@ -1,0 +1,26 @@
+Name: M1-A2 Thompson Submachine Gun
+{
+  Model:   TFNM Models\Weapons\Tommygun\TommygunItem.mdl
+  Texture: TFNM Models\Weapons\Tommygun\Body.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Weapons\Tommygun\Body.mdl
+    Texture: TFNM Models\Weapons\Tommygun\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Weapons\Tommygun\Slider.mdl
+    Texture: TFNM Models\Weapons\Tommygun\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Stretch: 2; 2; 2
+  CompPlace: 0; -0.8; -1.8; 0; 10; 0
+  CompRotate: 100; 0; 0
+  CompFloor: -0.5
+}

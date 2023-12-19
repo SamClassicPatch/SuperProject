@@ -1,0 +1,70 @@
+Name: Exotech Larva
+{
+  Model:   TFNM ModelsMP\Enemies\ExotechLarva\Body.mdl
+  Texture: TFNM ModelsMP\Enemies\ExotechLarva\Body.tex
+  Animation: 3
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Enemies\ExotechLarva\Arm.mdl
+    Texture: TFNM ModelsMP\Enemies\ExotechLarva\Arm.tex
+
+    Attachment: 0
+    {
+      Model:   TFNM ModelsMP\Enemies\ExotechLarva\Weapons\PlasmaGun.mdl
+      Texture: TFNM ModelsMP\Enemies\ExotechLarva\Weapons\PlasmaGun.tex
+    }
+
+    Stretch: -1; 1; 1
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM ModelsMP\Enemies\ExotechLarva\Arm.mdl
+    Texture: TFNM ModelsMP\Enemies\ExotechLarva\Arm.tex
+
+    Attachment: 0
+    {
+      Model:   TFNM ModelsMP\Enemies\ExotechLarva\Weapons\PlasmaGun.mdl
+      Texture: TFNM ModelsMP\Enemies\ExotechLarva\Weapons\PlasmaGun.tex
+    }
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM ModelsMP\Enemies\ExotechLarva\ExotechLarva.mdl
+    Texture: TFNM ModelsMP\Enemies\ExotechLarva\ExotechLarva.tex
+
+    Attachment: 0
+    {
+      Model:   TFNM ModelsMP\Enemies\ExotechLarva\Beam.mdl
+      Texture: TFNM ModelsMP\Effects\Laser\Laser.tex
+    }
+
+    Attachment: 1
+    {
+      Model:   TFNM ModelsMP\Enemies\ExotechLarva\EnergyBeams.mdl
+      Texture: TFNM ModelsMP\Enemies\ExotechLarva\EnergyBeams.tex
+    }
+
+    Attachment: 2
+    {
+      Model:   TFNM ModelsMP\Enemies\ExotechLarva\EffectFlare.mdl
+      Texture: TFNM ModelsMP\Enemies\ExotechLarva\EffectFlare.tex
+    }
+  }
+
+  Attachment: 3
+  {
+    Model:   TFNM ModelsMP\Enemies\ExotechLarva\BackArms.mdl
+    Texture: TFNM ModelsMP\Enemies\ExotechLarva\Body.tex
+    Animation: 2
+  }
+
+  Stretch: 2.5; 2.5; 2.5
+  CompPlace: 0.5; -8; -21; 165; 0; 0
+  CompFOV: 70
+  CompRotate: 10; 0; 0
+	CompLight: -0.1; -0.2; -0.2
+  CompFloor: -2
+}

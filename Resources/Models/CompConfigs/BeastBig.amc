@@ -1,0 +1,9 @@
+Name: Aludran Reptiloid, Highlander
+{
+  Model:   TFNM Models\Enemies\Beast\Beast.mdl
+  Texture: TFNM Models\Enemies\Beast\BeastBig.tex
+  Animation: 13
+
+  Stretch: 6; 6; 6
+  CompPlace: 0; -6.5; -18; 170; 0; 0
+}

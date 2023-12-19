@@ -1,0 +1,11 @@
+Name: Military Knife
+{
+  Model:   TFNM Models\Weapons\Knife\KnifeItem.mdl
+  Texture: TFNM Models\Weapons\Knife\KnifeItem.tex
+  Animation: 1
+
+  Stretch: 4; 4; 4
+  CompPlace: 0; -0.5; -2; 0; 10; 0
+  CompRotate: 100; 0; 0
+  CompFloor: -1
+}

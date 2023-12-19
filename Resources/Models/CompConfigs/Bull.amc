@@ -1,0 +1,8 @@
+Name: Sirian Werebull
+{
+  Model:   TFNM Models\Enemies\Werebull\Werebull.mdl
+  Texture: TFNM Models\Enemies\Werebull\Werebull.tex
+  Animation: 3
+
+  CompPlace: 0; -1.5; -4; -110; 0; 0
+}

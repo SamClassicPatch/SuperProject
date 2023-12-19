@@ -1,0 +1,18 @@
+Name: Arachnoid, Adult
+{
+  Model:    TFNM Models\Enemies\Scorpman\Scorpman.mdl
+  Texture:  TFNM Models\Enemies\Scorpman\General.tex
+  Specular: TFNM Models\SpecularTextures\Medium.tex
+  Animation: 1
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Enemies\Scorpman\Gun.mdl
+    Texture: TFNM Models\Enemies\Scorpman\Gun.tex
+  }
+
+  Stretch: 3; 3; 3
+  CompPlace: 1.5; -3; -7; 135; 0; 0
+  CompLight: 0.2; -0.2; -0.2
+  CompColors: 0xBFBFBF00; 0x1F1F1F00
+}

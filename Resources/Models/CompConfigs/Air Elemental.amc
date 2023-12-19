@@ -1,0 +1,13 @@
+Name: Kukulkan, The Wind God
+{
+  Model:   TFNM ModelsMP\Enemies\AirElemental\Elemental.mdl
+  Texture: TFNM ModelsMP\Enemies\AirElemental\Elemental.tex
+  Animation: 2
+
+  Stretch: 14; 14; 14
+  Blend: 0x0
+  CompPlace: -1; -13; -52; 170; 0; 0
+  CompFOV: 50
+  CompFloor: -2;
+  CompParticles: air
+}

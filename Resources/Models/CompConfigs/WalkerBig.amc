@@ -1,0 +1,22 @@
+Name: Bio-Mechanoid, Major
+{
+  Model:   TFNM Models\Enemies\Walker\Walker.mdl
+  Texture: TFNM Models\Enemies\Walker\Walker01.tex
+  Animation: 7
+
+  Attachment: 0
+  {
+    Model:    TFNM Models\Enemies\Walker\RocketLauncher.mdl
+    Texture:  TFNM Models\Enemies\Walker\RocketLauncher.tex
+    Specular: TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:    TFNM Models\Enemies\Walker\RocketLauncher.mdl
+    Texture:  TFNM Models\Enemies\Walker\RocketLauncher.tex
+    Specular: TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  CompPlace: 0; -4; -10; 210; 0; 0
+}

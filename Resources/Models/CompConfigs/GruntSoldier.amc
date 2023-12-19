@@ -1,0 +1,17 @@
+Name: Zorg Mercenary from Beelmez IV
+{
+  Model:   TFNM ModelsMP\Enemies\Grunt\Grunt.mdl
+  Texture: TFNM ModelsMP\Enemies\Grunt\Soldier.tex
+  Animation: 2
+
+  Attachment: 1
+  {
+    Model:   TFNM ModelsMP\Enemies\Grunt\Gun.mdl
+    Texture: TFNM ModelsMP\Enemies\Grunt\Gun.tex
+  }
+
+  Stretch: 1.2; 1.2; 1.2
+  CompPlace: 0; -1.5; -3.7; 165; 0; 0
+  CompFOV: 70
+  CompLight: -0.1; -0.2; -0.2
+}

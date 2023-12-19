@@ -1,0 +1,24 @@
+Name: Zumb'ul from planet Ras-ad-Nyk
+{
+  Model:   TFNM ModelsMP\Enemies\Guffy\Guffy.mdl
+  Texture: TFNM ModelsMP\Enemies\Guffy\Guffy.tex
+  Animation: 1
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Enemies\Guffy\Gun.mdl
+    Texture: TFNM ModelsMP\Enemies\Guffy\Gun.tex
+    Stretch: -1; 1; 1
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM ModelsMP\Enemies\Guffy\Gun.mdl
+    Texture: TFNM ModelsMP\Enemies\Guffy\Gun.tex
+  }
+
+  Stretch: 1.5; 1.5; 1.5
+  CompPlace: 0; -2; -5.75; 210; 0; 0
+  CompFOV: 70
+  CompLight: -0.1; -0.1; -0.175
+}

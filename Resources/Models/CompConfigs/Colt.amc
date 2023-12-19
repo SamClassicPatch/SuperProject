@@ -1,0 +1,34 @@
+Name: Shofield .45 w/ TMAR
+{
+  Model:   TFNM Models\Weapons\Colt\ColtItem.mdl
+  Texture: TFNM Models\Weapons\Colt\ColtMain.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Weapons\Colt\ColtMain.mdl
+    Texture: TFNM Models\Weapons\Colt\ColtMain.tex
+    Reflection: TFNM Models\ReflectionTextures\LightBlueMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Weapons\Colt\ColtBullets.mdl
+    Texture: TFNM Models\Weapons\Colt\ColtBullets.tex
+    Reflection: TFNM Models\ReflectionTextures\LightBlueMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Weapons\Colt\ColtCock.mdl
+    Texture: TFNM Models\Weapons\Colt\ColtCock.tex
+    Reflection: TFNM Models\ReflectionTextures\LightBlueMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Stretch: 4; 4; 4
+  CompPlace: 0; -0.5; -2; 0; 10; 0
+  CompRotate: 100; 0; 0
+  CompFloor: -1
+}

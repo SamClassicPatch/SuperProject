@@ -1,0 +1,18 @@
+Name: Arachnoid, Juvenile
+{
+  Model:    TFNM Models\Enemies\Scorpman\Scorpman.mdl
+  Texture:  TFNM Models\Enemies\Scorpman\Soldier.tex
+  Specular: TFNM Models\SpecularTextures\Medium.tex
+  Animation: 1
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Enemies\Scorpman\Gun.mdl
+    Texture: TFNM Models\Enemies\Scorpman\Gun.tex
+  }
+
+  Stretch: 2; 2; 2
+  CompPlace: 1; -2; -4.5; 135; 0; 0
+  CompLight: 0.2; -0.2; -0.2
+  CompColors: 0xBFBFBF00; 0x1F1F1F00
+}

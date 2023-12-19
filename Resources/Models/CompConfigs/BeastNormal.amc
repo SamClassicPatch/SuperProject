@@ -1,0 +1,9 @@
+Name: Aludran Reptiloid, Common
+{
+  Model:   TFNM Models\Enemies\Beast\Beast.mdl
+  Texture: TFNM Models\Enemies\Beast\Beast.tex
+  Animation: 13
+
+  Stretch: 2; 2; 2
+  CompPlace: 0; -2; -6; 170; 0; 0
+}

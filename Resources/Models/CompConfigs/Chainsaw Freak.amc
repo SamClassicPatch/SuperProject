@@ -1,0 +1,15 @@
+Name: Cucurbito the Pumpkin
+{
+  Model:   TFNM ModelsMP\Enemies\ChainsawFreak\Freak.mdl
+  Texture: TFNM ModelsMP\Enemies\ChainsawFreak\Freak.tex
+  Animation: 2
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Enemies\ChainsawFreak\Saw.mdl
+    Texture: TFNM ModelsMP\Enemies\ChainsawFreak\Saw.tex
+  }
+
+  Stretch: 1.4; 1.4; 1.4
+  CompPlace: -0.25; -2; -3.75; 200; 0; 0
+}

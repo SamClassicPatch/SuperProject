@@ -1,0 +1,21 @@
+Name: Beheaded Rocketeer
+{
+  Model:   TFNM Models\Enemies\Headman\Headman.mdl
+  Texture: TFNM Models\Enemies\Headman\Rocketman.tex
+  Animation: 2
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Enemies\Headman\Head.mdl
+    Texture: TFNM Models\Enemies\Headman\Head.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Enemies\Headman\RocketLauncher.mdl
+    Texture: TFNM Models\Enemies\Headman\RocketLauncher.tex
+  }
+
+  Stretch: 1.25; 1.25; 1.25
+  CompPlace: 0; -1; -1.75; 210; 0; 0
+}
