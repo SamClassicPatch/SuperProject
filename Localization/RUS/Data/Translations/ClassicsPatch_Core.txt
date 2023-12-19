@@ -1,4 +1,4 @@
-117
+125
 
 \0\<
 Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
@@ -654,4 +654,52 @@ Client '%s' (identity %d) is trying to execute a command:\n
 Saved game: %s
 \0\>
 Сохраненная игра: %s
+\0\<
+  failed!\n
+
+\0\>
+  не удалось!\n
+
+\0\<
+  done!\n
+
+\0\>
+  готово!\n
+
+\0\<
+Initializing Steam API...\n
+
+\0\>
+Инициализация Steam API...\n
+
+\0\<
+Cannot create 'steam_appid.txt': %s\n
+
+\0\>
+Невозможно создать 'steam_appid.txt': %s\n
+
+\0\<
+Successfully created 'steam_appid.txt' with %s app ID!\n
+
+\0\>
+Успешно создан 'steam_appid.txt' с идентификатором приложения %s!\n
+
+\0\<
+Successfully loaded 'steam_api.dll'!\n
+
+\0\>
+Успешно загружена 'steam_api.dll'!\n
+
+\0\<
+Failed to load 'steam_api.dll': %s\n
+
+\0\>
+Не удалось загрузить 'steam_api.dll': %s\n
+
+\0\<
+Shutting down Steam API...\n
+
+\0\>
+Выключение Steam API...\n
+
 \0\$

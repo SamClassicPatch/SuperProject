@@ -1,4 +1,4 @@
-2
+5
 
 \0\<
 Cannot load game theme config '%s':\n
@@ -12,4 +12,24 @@ Cannot load game theme config '%s':\n
 Trying to load a sync theme during an ongoing synchronization!
 \0\>
 Попытка загрузки темы с синхронизацией во время текущей синхронизации!
+\0\<
+Unknown property '%s'
+\0\>
+Неизвестное свойство '%s'
+\0\<
+Cannot load model config:\n
+%s (%d) : %s\n
+
+\0\>
+Невозможно загрузить конфиг с моделью:\n
+%s (%d) : %s\n
+
+\0\<
+Cannot setup model '%s':\n
+%s\n
+
+\0\>
+Невозможно настроить модель '%s':\n
+%s\n
+
 \0\$

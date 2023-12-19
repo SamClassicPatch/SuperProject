@@ -1,4 +1,4 @@
-419
+445
 
 \0\<
 Common options
@@ -1676,4 +1676,108 @@ show filtering options in the level selection menu
 Yes (with seconds)
 \0\>
 Да (с секундами)
+\0\<
+Gravity acceleration
+\0\>
+Ускорение силы тяжести
+\0\<
+multiply gravity acceleration (gex_fGravityAcc)
+\0\>
+умножение ускорения силы тяжести (gex_fGravityAcc)
+\0\<
+Zero-G
+\0\>
+Невесомость
+\0\<
+These options are only available in the custom mod
+\0\>
+Эти настройки доступны только в модификации патча
+\0\<
+Blood color
+\0\>
+Цвет крови
+\0\<
+set local blood color for enemies and players
+\0\>
+установка локального цвета крови для врагов и игроков
+\0\<
+Red (default)
+\0\>
+Красный (по умолчанию)
+\0\<
+Green
+\0\>
+Зеленый
+\0\<
+Yellow
+\0\>
+Желтый
+\0\<
+Blue
+\0\>
+Синий
+\0\<
+Hot pink
+\0\>
+Ярко-розовый
+\0\<
+Pumpkin
+\0\>
+Тыквенный
+\0\<
+Brutal red
+\0\>
+Брутальный красный
+\0\<
+Crude oil
+\0\>
+Нефтянной
+\0\<
+Milk
+\0\>
+Молочный
+\0\<
+Invisible
+\0\>
+Невидимый
+\0\<
+Blood theme
+\0\>
+Тема крови
+\0\<
+set special theme for blood and gib coloring
+\0\>
+установка специальной темы для окраски крови и частей тела
+\0\<
+Based on seasonal event
+\0\>
+На основе сезонного события
+\0\<
+Red blood -> own color
+\0\>
+Красная кровь -> свой цвет
+\0\<
+All blood -> own brightened color
+\0\>
+Вся кровь -> свой осветленный цвет
+\0\<
+Hippie
+\0\>
+Хиппи
+\0\<
+Birthday party
+\0\>
+День рождения
+\0\<
+Christmas
+\0\>
+Рождество
+\0\<
+Connect to Steam
+\0\>
+Соединение со Steam
+\0\<
+establish connection with the Steam client (only if you own the game there)
+\0\>
+установить соединение с клиентом Steam (только если у вас есть игра)
 \0\$
