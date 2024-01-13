@@ -504,10 +504,12 @@ Cannot change the value of this shell symbol while the server is running!\n
 
 \0\<
 Cannot hook '%s'!\n
-Aborting HUD initialization...
+Aborting HUD initialization...\n
+
 \0\>
 Невозможно подключить '%s'!\n
-Прерывание инициализации интерфейса...
+Прерывание инициализации интерфейса...\n
+
 \0\<
 Cannot change movement speed for %u entity: %s\n
 

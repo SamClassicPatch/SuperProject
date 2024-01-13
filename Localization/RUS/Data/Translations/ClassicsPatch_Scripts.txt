@@ -1,4 +1,4 @@
-445
+458
 
 \0\<
 Common options
@@ -112,6 +112,10 @@ which master server to use for Legacy protocol
 The Errorist Network
 \0\>
 The Errorist Network
+\0\<
+GoneSpy
+\0\>
+GoneSpy
 \0\<
 42amsterdam
 \0\>
@@ -993,9 +997,17 @@ Replace HUD
 \0\>
 Заменить интерфейс
 \0\<
-replace vanilla HUD with the plugin one
+replace vanilla or modded HUD with the plugin one
 \0\>
-заменить стандартный интерфейс версией из плагина
+заменить стандартный или модифицированный интерфейс версией из плагина
+\0\<
+Vanilla
+\0\>
+Стандартный
+\0\<
+Vanilla and modded (experimental)
+\0\>
+Станд. и из мода (экспериментальная функция)
 \0\<
 HUD theme
 \0\>
@@ -1201,9 +1213,9 @@ make message font in NETRICSA bigger and scale it with resolution
 \0\>
 увеличить шрифт сообщений в ИНЕРТАНе и масштабировать его с разрешением
 \0\<
-Observer options
+Multiple player views
 \0\>
-Настройки наблюдения
+Окна просмотра нескольких игроков
 \0\<
 Main view overlay
 \0\>
@@ -1780,4 +1792,44 @@ Connect to Steam
 establish connection with the Steam client (only if you own the game there)
 \0\>
 установить соединение с клиентом Steam (только если у вас есть игра)
+\0\<
+Mirror weapon viewmodel
+\0\>
+Отразить модель оружия
+\0\<
+toggle left-handed mode for the first person view
+\0\>
+включить режим для левшей от первого лица
+\0\<
+Power-up particles on weapons
+\0\>
+Частицы усилений на оружии
+\0\<
+display particles of active power-ups on the weapon viewmodel
+\0\>
+отображать частицы от усилений на моделях оружия
+\0\<
+Fix player info sound
+\0\>
+Исправить звук уведомления
+\0\<
+prevent notification sound from playing after killing every enemy
+\0\>
+запретить воспроизведение звука уведомления после убийства каждого врага
+\0\<
+Vertical split-screen split
+\0\>
+Вертикальное разделение экрана
+\0\<
+place views side by side for two players on a single screen
+\0\>
+разместить виды для двух игроков на одном экране слева и справа
+\0\<
+Vanilla query
+\0\>
+Стандартный менеджер запросов
+\0\<
+replace GameSpy in the engine with Legacy master server
+\0\>
+заменить GameSpy в движке Legacy мастер сервером
 \0\$

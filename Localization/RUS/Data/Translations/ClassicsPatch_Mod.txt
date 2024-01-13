@@ -1,4 +1,4 @@
-5
+6
 
 \0\<
 Cannot load game theme config '%s':\n
@@ -32,4 +32,12 @@ Cannot setup model '%s':\n
 Невозможно настроить модель '%s':\n
 %s\n
 
+\0\<
+Mod from Classics Patch can only be launched from the patch itself by using its executables!\n
+\n
+Could not locate 'SeriousSam_Custom.exe'. Please reinstall the patch or locate the appropriate executable, if it has been renamed.
+\0\>
+Модификация из Classics Patch может быть запущена только через сам патч с помощью его исполняемых файлов!\n
+\n
+Не удалось найти 'SeriousSam_Custom.exe'. Пожалуйста, переустановите патч или найдите соответствующий исполняемый файл, если он был переименован.
 \0\$

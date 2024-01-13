@@ -1,4 +1,4 @@
-51
+53
 
 \0\<
 WINDOW MODE
@@ -181,9 +181,17 @@ credits for Classics Patch
 \0\>
 титры к патчу для классики
 \0\<
-CREDITS
+PATCH CREDITS
 \0\>
-ТИТРЫ
+АВТОРЫ ПАТЧА
+\0\<
+credits for the game or a mod
+\0\>
+титры к игре или моду
+\0\<
+GAME CREDITS
+\0\>
+АВТОРЫ ИГРЫ
 \0\<
 EXTRAS
 \0\>
