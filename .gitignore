@@ -51,6 +51,8 @@ Bin/*
 Obj/*
 
 # Assembled builds
+Builds/TFE105/Mods/
+Builds/TSE105/Mods/
 Builds/**/*.gro
 Builds/**/*.zip
 !Builds/**/EngineGUI_OG.dll

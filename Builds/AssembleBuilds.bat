@@ -21,6 +21,7 @@ copy /B Bin\Release_TFE105\DedicatedServer_Custom.exe  %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\SeriousSam_Custom.exe       %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\SeriousEditor_Custom.exe    %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\EngineGUI.dll               %BUILDS%TFE105\Bin\
+copy /B Bin\Release_TFE105\Entities_Custom.dll         %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\Game_Custom.dll             %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\GameGUI_Custom.dll          %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\Plugins\Accessibility.dll   %BUILDS%TFE105\Bin\Plugins\
@@ -28,6 +29,7 @@ copy /B Bin\Release_TFE105\Plugins\AdvancedHUD.dll     %BUILDS%TFE105\Bin\Plugin
 copy /B Bin\Release_TFE105\Plugins\LocalCheats.dll     %BUILDS%TFE105\Bin\Plugins\
 copy /B Bin\Release_TFE105\Plugins\ServerUtilities.dll %BUILDS%TFE105\Bin\Plugins\
 call Resources\DeployResources.bat                     %BUILDS%TFE105\
+robocopy %BUILDS%TSE107\Mods\                          %BUILDS%TFE105\Mods\ /E
 
 echo ----------------------------
 echo Copying TSE 1.05 binaries...
@@ -43,6 +45,7 @@ copy /B Bin\Release_TSE105\DedicatedServer_Custom.exe  %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\SeriousSam_Custom.exe       %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\SeriousEditor_Custom.exe    %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\EngineGUI.dll               %BUILDS%TSE105\Bin\
+copy /B Bin\Release_TSE105\Entities_Custom.dll         %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\Game_Custom.dll             %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\GameGUI_Custom.dll          %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\Plugins\Accessibility.dll   %BUILDS%TSE105\Bin\Plugins\
@@ -50,6 +53,7 @@ copy /B Bin\Release_TSE105\Plugins\AdvancedHUD.dll     %BUILDS%TSE105\Bin\Plugin
 copy /B Bin\Release_TSE105\Plugins\LocalCheats.dll     %BUILDS%TSE105\Bin\Plugins\
 copy /B Bin\Release_TSE105\Plugins\ServerUtilities.dll %BUILDS%TSE105\Bin\Plugins\
 call Resources\DeployResources.bat                     %BUILDS%TSE105\
+robocopy %BUILDS%TSE107\Mods\                          %BUILDS%TSE105\Mods\ /E
 
 echo ----------------------------
 echo Copying TSE 1.07 binaries...
@@ -97,11 +101,11 @@ del TSE1.07.zip
 
 :: Assemble a TFE 1.05 package
 cd %BUILDS%TFE105\
-7z.exe a -tzip ..\TFE1.05.zip *
+7z.exe a -tzip ..\TFE1.05.zip * -x!Mods\ClassicsPatchMod\.git*
 
 :: Assemble a TSE 1.05 package
 cd %BUILDS%TSE105\
-7z.exe a -tzip ..\TSE1.05.zip *
+7z.exe a -tzip ..\TSE1.05.zip * -x!Mods\ClassicsPatchMod\.git*
 
 :: Assemble a TSE 1.07 package
 cd %BUILDS%TSE107\
