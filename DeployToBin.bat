@@ -3,46 +3,50 @@
 
 @echo off
 
+set BUILTDIR=Bin\Release_TSE107\
+set GAMEDIR=%~dp0..\
+set BINDIR=%GAMEDIR%Bin\
+
 :: Copy TSE 1.07 binaries
 echo ClassicsCore
-copy /B Bin\Release_TSE107\ClassicsCore.dll ..\Bin\
+copy /B %BUILTDIR%ClassicsCore.dll %BINDIR%
 
 echo ClassicsPatches
-copy /B Bin\Release_TSE107\ClassicsPatches.dll ..\Bin\
+copy /B %BUILTDIR%ClassicsPatches.dll %BINDIR%
 
 echo DedicatedServer
-copy /B Bin\Release_TSE107\DedicatedServer_Custom.exe ..\Bin\
+copy /B %BUILTDIR%DedicatedServer_Custom.exe %BINDIR%
 
 echo SeriousSam
-copy /B Bin\Release_TSE107\SeriousSam_Custom.exe ..\Bin\
+copy /B %BUILTDIR%SeriousSam_Custom.exe %BINDIR%
 
 echo SeriousEditor
-copy /B Bin\Release_TSE107\SeriousEditor_Custom.exe ..\Bin\
+copy /B %BUILTDIR%SeriousEditor_Custom.exe %BINDIR%
 
 echo Shaders
-copy /B Bin\Release_TSE107\Shaders.dll ..\Bin\
+copy /B %BUILTDIR%Shaders.dll %BINDIR%
 
 echo EngineGUI
-copy /B Bin\Release_TSE107\EngineGUI.dll ..\Bin\
+copy /B %BUILTDIR%EngineGUI.dll %BINDIR%
 
 :: Copy mod files
 echo Entities
-copy /B Bin\Release_TSE107\Entities_Custom.dll ..\Bin\
+copy /B %BUILTDIR%Entities_Custom.dll %BINDIR%
 
 echo Game
-copy /B Bin\Release_TSE107\Game_Custom.dll ..\Bin\
+copy /B %BUILTDIR%Game_Custom.dll %BINDIR%
 
 echo GameGUI
-copy /B Bin\Release_TSE107\GameGUI_Custom.dll ..\Bin\
+copy /B %BUILTDIR%GameGUI_Custom.dll %BINDIR%
 
 echo ClassicsPatchMod
-robocopy Builds\TSE107\Mods ..\Mods\ /E
+robocopy Builds\TSE107\Mods %GAMEDIR%Mods\ /E
 
 :: Copy TSE 1.07 plugins
-copy /B Bin\Release_TSE107\Plugins\*.dll ..\Bin\Plugins\
+copy /B %BUILTDIR%Plugins\*.dll %BINDIR%Plugins\
 
 :: Pack resources
-call Resources\DeployResources.bat %~dp0..\
+call Resources\DeployResources.bat %GAMEDIR%
 
 echo.
 echo Finished deploying!
