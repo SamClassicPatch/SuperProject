@@ -5,5 +5,5 @@ Name: Fiendian Reptiloid Demon
   Animation: 3
 
   Stretch: 1.4; 1.4; 1.4
-  CompPlace: 0; -1.25; -2.25f; 160; 0; 0
+  CompPlace: 0; -1.25; -2.25; 160; 0; 0
 }
