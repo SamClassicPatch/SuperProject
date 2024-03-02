@@ -4,6 +4,10 @@
 
 @echo off
 
+:: Get current date
+for /f "delims=" %%a in ('wmic OS Get localdatetime  ^| find "."') do set CURDATEFULL=%%a
+set CURDATE=%CURDATEFULL:~0,4%_%CURDATEFULL:~4,2%_%CURDATEFULL:~6,2%
+
 :: Current builds directory and a repository directory above
 set BUILDS=%~dp0
 set REPO=%BUILDS%..\
@@ -95,21 +99,21 @@ echo Zipping build packages...
 echo ----------------------------
 
 :: Remove old builds
-del TFE1.05.zip
-del TSE1.05.zip
-del TSE1.07.zip
+del TFE1.05_%CURDATE%.zip
+del TSE1.05_%CURDATE%.zip
+del TSE1.07_%CURDATE%.zip
 
 :: Assemble a TFE 1.05 package
 cd %BUILDS%TFE105\
-7z.exe a -tzip ..\TFE1.05.zip * -x!Mods\ClassicsPatchMod\.git*
+7z.exe a -tzip ..\TFE1.05_%CURDATE%.zip * -x!Mods\ClassicsPatchMod\.git*
 
 :: Assemble a TSE 1.05 package
 cd %BUILDS%TSE105\
-7z.exe a -tzip ..\TSE1.05.zip * -x!Mods\ClassicsPatchMod\.git*
+7z.exe a -tzip ..\TSE1.05_%CURDATE%.zip * -x!Mods\ClassicsPatchMod\.git*
 
 :: Assemble a TSE 1.07 package
 cd %BUILDS%TSE107\
-7z.exe a -tzip ..\TSE1.07.zip * -x!Mods\ClassicsPatchMod\.git*
+7z.exe a -tzip ..\TSE1.07_%CURDATE%.zip * -x!Mods\ClassicsPatchMod\.git*
 
 echo ----------------------------
 echo Finished assembling!
