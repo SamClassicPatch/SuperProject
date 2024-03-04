@@ -14,6 +14,9 @@ copy /B %BUILTDIR%ClassicsCore.dll %BINDIR%
 echo ClassicsPatches
 copy /B %BUILTDIR%ClassicsPatches.dll %BINDIR%
 
+echo ClassicsExtras
+copy /B %BUILTDIR%ClassicsExtras_Custom.dll %BINDIR%
+
 echo DedicatedServer
 copy /B %BUILTDIR%DedicatedServer_Custom.exe %BINDIR%
 
