@@ -1,10 +1,14 @@
 # Serious Sam Classics Patch
 
-This fan-made patch for Serious Sam Classics includes a lot of modern enhancements that aren't present in the open-source release, nor in the official Steam patches since 2014.
+This fan-made patch for **Serious Sam Classics** includes lots of enhancements and new functionality for the game client, dedicated servers, tool applications and even gameplay logic.
 
 This super project gathers everything together under a single solution for proper development.
 
-### Project structure
+> **See [Classics Patch wiki](https://github.com/SamClassicPatch/SuperProject/wiki) for various information about the entire project.**
+
+> **Want to submit an issue? Read [this guide](https://github.com/SamClassicPatch/SuperProject/wiki/How-to-Submit-issue) on how to do it!**
+
+## Project structure
 - [`CoreLib`](../../../CoreLib) - library with core functionality that's used by other projects.
 - [`DedicatedServer`](../../../DedicatedServer) - dedicated server application for launching your own classic servers.
 - [`EnginePatches`](../../../EnginePatches) - library with dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
@@ -26,22 +30,18 @@ This super project gathers everything together under a single solution for prope
 
 Original source code of `DedicatedServer`, `GameExecutable`, `Mod`, `PatchedGui`, `Shaders` and `WorldEditor` projects is taken from [Serious Engine 1.10](https://github.com/Croteam-official/Serious-Engine).
 
-## Building
+# Building
 
-Before building the code, make sure to load in all of the submodules. Use `git submodule update --init --recursive` command to load files for all projects.
+Building instructions are available here: https://github.com/DreamyCecil/SE1-ModSDK/wiki/Building
 
-To compile the code, you'll need to use a compiler from Microsoft Visual C++ 6.0.
+> [!NOTE]
+> After the project is built for the `Release_TSE107` configuration, you can apply the patch to your build of TSE 1.07 one level above by using the `DeployToBin.bat` script (e.g. to `C:/SeriousSam` if this repository resides in `C:/SeriousSam/SuperProject`).
 
-Full guide: https://github.com/DreamyCecil/SE1-ModSDK#building
-
-### Notes
-
-After the project solution is built for the `Release_TSE107` configuration, you can apply the patch to your build of TSE 1.07 one level above by using the `DeployToBin.bat` script (e.g. to `C:/SeriousSam` if this repository resides is in `C:/SeriousSam/SuperProject`).
-
-## License
+# License
 
 This project is licensed under GNU GPL v2 (see LICENSE file).
 
 Some of the code included with the SDK may not be licensed under the GNU GPL v2:
 
+- Steamworks SDK (located in `Extras/Steamworks`) by Valve Corporation
 - zlib (located in `Extras/zlib`) by Jean-loup Gailly and Mark Adler

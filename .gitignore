@@ -12,12 +12,14 @@
 *.so
 *.dylib
 *.dll
+!Extras/Steamworks/redistributable_bin/steam_api.dll
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
+!Extras/Steamworks/redistributable_bin/steam_api.lib
 
 # Executables
 *.exe
