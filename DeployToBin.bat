@@ -46,6 +46,7 @@ echo ClassicsPatchMod
 robocopy Builds\TSE107\Mods %GAMEDIR%Mods\ /E
 
 :: Copy TSE 1.07 plugins
+mkdir %BINDIR%Plugins
 copy /B %BUILTDIR%Plugins\*.dll %BINDIR%Plugins\
 
 :: Pack resources
