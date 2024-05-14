@@ -11,6 +11,7 @@ set CURDATE=%CURDATEFULL:~0,4%_%CURDATEFULL:~4,2%_%CURDATEFULL:~6,2%
 :: Current builds directory and a repository directory above
 set BUILDS=%~dp0
 set REPO=%BUILDS%..\
+set STEAMLIB=%REPO%Extras\Steamworks\redistributable_bin\steam_api.dll
 
 echo Copying TFE 1.05 binaries...
 echo ----------------------------
@@ -18,7 +19,7 @@ echo ----------------------------
 cd %REPO%
 
 :: Collect files for the TFE 1.05 build
-copy /B %BUILDS%steam_api.dll                          %BUILDS%TFE105\Bin\
+copy /B %STEAMLIB%                                     %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\ClassicsCore.dll            %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\ClassicsPatches.dll         %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\ClassicsExtras_Custom.dll   %BUILDS%TFE105\Bin\
@@ -43,7 +44,7 @@ echo ----------------------------
 cd %REPO%
 
 :: Collect files for the TSE 1.05 build
-copy /B %BUILDS%steam_api.dll                          %BUILDS%TSE105\Bin\
+copy /B %STEAMLIB%                                     %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\ClassicsCore.dll            %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\ClassicsPatches.dll         %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\ClassicsExtras_Custom.dll   %BUILDS%TSE105\Bin\
@@ -68,7 +69,7 @@ echo ----------------------------
 cd %REPO%
 
 :: Collect files for the TSE 1.07 build
-copy /B %BUILDS%steam_api.dll                          %BUILDS%TSE107\Bin\
+copy /B %STEAMLIB%                                     %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\ClassicsCore.dll            %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\ClassicsPatches.dll         %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\ClassicsExtras_Custom.dll   %BUILDS%TSE107\Bin\
