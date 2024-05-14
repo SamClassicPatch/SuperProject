@@ -27,8 +27,8 @@ typedef uint64 UGCQueryHandle_t;
 typedef uint64 UGCUpdateHandle_t;
 
 
-const UGCQueryHandle_t k_UGCQueryHandleInvalid = 0xffffffffffffffffull;
-const UGCUpdateHandle_t k_UGCUpdateHandleInvalid = 0xffffffffffffffffull;
+const UGCQueryHandle_t k_UGCQueryHandleInvalid = 0xffffffffffffffff; // [Cecil] 'ull' suffix isn't supported
+const UGCUpdateHandle_t k_UGCUpdateHandleInvalid = 0xffffffffffffffff; // [Cecil] 'ull' suffix isn't supported
 
 
 // Matching UGC types for queries

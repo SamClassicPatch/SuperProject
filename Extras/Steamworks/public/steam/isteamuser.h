@@ -429,7 +429,7 @@ struct GetTicketForWebApiResponse_t
 	HAuthTicket m_hAuthTicket;
 	EResult m_eResult;
 	int m_cubTicket;
-	static const int k_nCubTicketMaxLength = 2560;
+	#define k_nCubTicketMaxLength 2560 // [Cecil] Replaced 'static const int' variable with a macro
 	uint8 m_rgubTicket[k_nCubTicketMaxLength];
 };
 

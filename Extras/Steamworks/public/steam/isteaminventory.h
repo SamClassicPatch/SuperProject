@@ -62,7 +62,7 @@ typedef int32 SteamInventoryResult_t;
 static const SteamInventoryResult_t k_SteamInventoryResultInvalid = -1;
 
 typedef uint64 SteamInventoryUpdateHandle_t;
-const SteamInventoryUpdateHandle_t k_SteamInventoryUpdateHandleInvalid = 0xffffffffffffffffull;
+const SteamInventoryUpdateHandle_t k_SteamInventoryUpdateHandleInvalid = 0xffffffffffffffff; // [Cecil] 'ull' suffix isn't supported
 
 //-----------------------------------------------------------------------------
 // Purpose: Steam Inventory query and manipulation API

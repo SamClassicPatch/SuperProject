@@ -951,7 +951,7 @@ public:
 	}
 
 	// Not validating anything .. use IsValid()
-	explicit CGameID( uint32 nAppID, uint32 nModID, CGameID::EGameIDType nType )
+	explicit CGameID( uint32 nAppID, uint32 nModID, EGameIDType nType ) // [Cecil] 'CGameID::EGameIDType' -> 'EGameIDType'
 	{
 		m_gameID.m_nAppID = nAppID;
 		m_gameID.m_nModID = nModID;

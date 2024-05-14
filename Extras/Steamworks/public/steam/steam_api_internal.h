@@ -56,8 +56,9 @@ S_API void S_CALLTYPE SteamAPI_UnregisterCallResult( class CCallbackBase *pCallb
 
 #define _STEAM_CALLBACK_OFFSETOF( type, member ) ( (size_t)( (char *)&( (type *)0 )->member ) )
 #define _STEAM_CALLBACK_AUTO_HOOK( thisclass, func, param )
-#define _STEAM_CALLBACK_HELPER( _1, _2, SELECTED, ... )		_STEAM_CALLBACK_##SELECTED
-#define _STEAM_CALLBACK_SELECT( X, Y )						_STEAM_CALLBACK_HELPER X Y
+// [Cecil] Unusable and unneeded
+//#define _STEAM_CALLBACK_HELPER( _1, _2, SELECTED, ... )		_STEAM_CALLBACK_##SELECTED
+//#define _STEAM_CALLBACK_SELECT( X, Y )						_STEAM_CALLBACK_HELPER X Y
 #define _STEAM_CALLBACK_3( extra_code, thisclass, func, param ) \
 	struct CCallbackInternal_ ## func : private CCallbackImpl< sizeof( param ) > { \
 		CCallbackInternal_ ## func () { extra_code SteamAPI_RegisterCallback( this, param::k_iCallback ); } \

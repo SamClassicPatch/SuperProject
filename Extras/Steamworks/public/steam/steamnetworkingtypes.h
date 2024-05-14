@@ -9,7 +9,7 @@
 #pragma once
 
 #include <string.h>
-#include <stdint.h>
+//#include <stdint.h> // [Cecil] Unavailable
 #include "steamtypes.h"
 #include "steamclientpublic.h"
 
@@ -1789,10 +1789,10 @@ inline SteamNetworkingPOPID CalculateSteamNetworkingPOPIDFromString( const char 
 /// Unpack integer to string representation, including terminating '\0'
 ///
 /// See also SteamNetworkingPOPIDRender
-template <int N>
-inline void GetSteamNetworkingLocationPOPStringFromID( SteamNetworkingPOPID id, char (&szCode)[N] )
+//template <int N> // [Cecil] You better pray that the string you pass is at least 5 bytes long!
+inline void GetSteamNetworkingLocationPOPStringFromID( SteamNetworkingPOPID id, char *szCode )
 {
-	static_assert( N >= 5, "Fixed-size buffer not big enough to hold SDR POP ID" );
+	//static_assert( N >= 5, "Fixed-size buffer not big enough to hold SDR POP ID" );
 	szCode[0] = char( id >> 16U );
 	szCode[1] = char( id >> 8U );
 	szCode[2] = char( id );

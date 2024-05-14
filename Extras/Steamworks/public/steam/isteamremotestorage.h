@@ -42,12 +42,12 @@ typedef uint64 UGCHandle_t;
 typedef uint64 PublishedFileUpdateHandle_t;
 typedef uint64 PublishedFileId_t;
 const PublishedFileId_t k_PublishedFileIdInvalid = 0;
-const UGCHandle_t k_UGCHandleInvalid = 0xffffffffffffffffull;
-const PublishedFileUpdateHandle_t k_PublishedFileUpdateHandleInvalid = 0xffffffffffffffffull;
+const UGCHandle_t k_UGCHandleInvalid = 0xffffffffffffffff; // [Cecil] 'ull' suffix isn't supported
+const PublishedFileUpdateHandle_t k_PublishedFileUpdateHandleInvalid = 0xffffffffffffffff; // [Cecil] 'ull' suffix isn't supported
 
 // Handle for writing to Steam Cloud
 typedef uint64 UGCFileWriteStreamHandle_t;
-const UGCFileWriteStreamHandle_t k_UGCFileStreamHandleInvalid = 0xffffffffffffffffull;
+const UGCFileWriteStreamHandle_t k_UGCFileStreamHandleInvalid = 0xffffffffffffffff; // [Cecil] 'ull' suffix isn't supported
 
 const uint32 k_cchPublishedDocumentTitleMax = 128 + 1;
 const uint32 k_cchPublishedDocumentDescriptionMax = 8000;

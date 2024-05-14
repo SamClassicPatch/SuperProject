@@ -47,7 +47,7 @@
 #elif defined(STEAM_API_EXPORTS) && defined(API_GEN)
 #define STEAM_PRIVATE_API( ... )
 #else
-#define STEAM_PRIVATE_API( ... ) protected: __VA_ARGS__ public:
+#define STEAM_PRIVATE_API( Arg ) protected: Arg public: // [Cecil] Variadic arguments in macros aren't supported
 #endif
 
 // handle to a communication pipe to the Steam client
@@ -112,8 +112,9 @@ S_API void S_CALLTYPE SteamAPI_RunCallbacks();
 // registers the callback on object creation and unregisters on destruction.
 // The optional fourth 'var' param exists only for backwards-compatibility
 // and can be ignored.
-#define STEAM_CALLBACK( thisclass, func, .../*callback_type, [deprecated] var*/ ) \
-	_STEAM_CALLBACK_SELECT( ( __VA_ARGS__, 4, 3 ), ( /**/, thisclass, func, __VA_ARGS__ ) )
+// [Cecil] Removed deprecated 'var' because variadic arguments in macros aren't supported
+#define STEAM_CALLBACK( thisclass, func, callback_type ) \
+	_STEAM_CALLBACK_3( /**/, thisclass, func, callback_type )
 
 // Declares a callback function and a named CCallbackManual variable which
 // has Register and Unregister functions instead of automatic registration.
@@ -127,8 +128,9 @@ S_API void S_CALLTYPE SteamGameServer_RunCallbacks();
 
 // Same as STEAM_CALLBACK, but for callbacks on the gameserver interface.
 // These will be dispatched during SteamGameServer_RunCallbacks
-#define STEAM_GAMESERVER_CALLBACK( thisclass, func, /*callback_type, [deprecated] var*/... ) \
-	_STEAM_CALLBACK_SELECT( ( __VA_ARGS__, GS, 3 ), ( this->SetGameserverFlag();, thisclass, func, __VA_ARGS__ ) )
+// [Cecil] Removed deprecated 'var' because variadic arguments in macros aren't supported
+#define STEAM_GAMESERVER_CALLBACK( thisclass, func, callback_type ) \
+	_STEAM_CALLBACK_3( this->SetGameserverFlag();, thisclass, func, callback_type )
 #define STEAM_GAMESERVER_CALLBACK_MANUAL( thisclass, func, callback_type, var ) \
 	CCallbackManual< thisclass, callback_type, true > var; void func( callback_type *pParam )
 
