@@ -1,0 +1,9 @@
+Name: Reptilian Destroyer
+{
+  Model:   TFNM ModelsMP\Enemies\Demon\Demon.mdl
+  Texture: TFNM ModelsMP\Enemies\Destroyer\DestroyerBase.tex
+  Animation: 3
+
+  Stretch: 1.4; 1.4; 1.4
+  CompPlace: 0; -1.25; -2.25; 160; 0; 0
+}

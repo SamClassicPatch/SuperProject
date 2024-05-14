@@ -1,0 +1,21 @@
+Name: Beheaded Commando
+{
+  Model:   TFNM Models\Enemies\Headman\Headman.mdl
+  Texture: TFNM Models\Enemies\Headman\Commando.tex
+  Animation: 2
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Enemies\Headman\CommandoHead.mdl
+    Texture: TFNM Models\Enemies\Headman\CommandoHead.tex
+  }
+
+  Attachment: 3
+  {
+    Model:   TFNM Models\Enemies\Headman\Projectile\Bomb.mdl
+    Texture: TFNM Models\Enemies\Headman\Projectile\Bomb.tex
+  }
+
+  Stretch: 1.25; 1.25; 1.25
+  CompPlace: 0; -1; -1.75; 210; 0; 0
+}

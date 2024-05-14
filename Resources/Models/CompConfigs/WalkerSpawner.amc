@@ -1,0 +1,27 @@
+Name: Bio-Mechanoid, Spawner
+{
+  Model:   TFNM Models\Enemies\Walker\Walker.mdl
+  Texture: TFNM Models\Enemies\Walker\Walker04.tex
+  Animation: 7
+
+  Stretch: 0.5; 0.5; 0.5
+
+  Attachment: 0
+  {
+    Model:    TFNM Models\Enemies\Walker\SpawnerGun.mdl
+    Texture:  TFNM Models\Enemies\Walker\SpawnerGun.tex
+    Specular: TFNM Models\SpecularTextures\Medium.tex
+    Stretch: 2.14; 2.14; 2.14
+  }
+
+  Attachment: 1
+  {
+    Model:    TFNM Models\Enemies\Walker\SpawnerGun.mdl
+    Texture:  TFNM Models\Enemies\Walker\SpawnerGun.tex
+    Specular: TFNM Models\SpecularTextures\Medium.tex
+    Stretch: 2.14; 2.14; 2.14
+  }
+
+  CompPlace: 0; -2; -5; 210; 0; 0
+  CompColors: 0xBFBFBF00; 0x1F1F1F00
+}
