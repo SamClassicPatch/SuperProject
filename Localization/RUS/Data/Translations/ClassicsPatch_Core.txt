@@ -1,4 +1,4 @@
-125
+176
 
 \0\<
 Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
@@ -8,6 +8,10 @@ Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
 Plugin?5module?5has?5not?5been?5l@
 \0\>
 [It is all because they start with "ETRS" and get picked up by the Depend utility]
+\0\<
+Client?5?$CFd?$AA@
+\0\>
+[And this one]
 \0\<
 Cannot find '%s' symbol in '%s'!
 \0\>
@@ -657,24 +661,6 @@ Saved game: %s
 \0\>
 Сохраненная игра: %s
 \0\<
-  failed!\n
-
-\0\>
-  не удалось!\n
-
-\0\<
-  done!\n
-
-\0\>
-  готово!\n
-
-\0\<
-Initializing Steam API...\n
-
-\0\>
-Инициализация Steam API...\n
-
-\0\<
 Cannot create 'steam_appid.txt': %s\n
 
 \0\>
@@ -687,21 +673,275 @@ Successfully created 'steam_appid.txt' with %s app ID!\n
 Успешно создан 'steam_appid.txt' с идентификатором приложения %s!\n
 
 \0\<
-Successfully loaded 'steam_api.dll'!\n
+Client %d
+\0\>
+Клиент %d
+\0\<
+^cffff00Change current map to: %s^r
+\0\>
+^cffff00Сменить текущую карту на: %s^r
+\0\<
+^cffff00Changing current map to: %s^r
+\0\>
+^cffff00Смена текущей карты на: %s^r
+\0\<
+^cffff00Kick %s from the server
+\0\>
+^cffff00Выгнать %s с сервера
+\0\<
+^cffff00Kicking %s from the server...
+\0\>
+^cffff00Выгоняем %s с сервера...
+\0\<
+Couldn't find client identity in the log for kicking!\n
 
 \0\>
-Успешно загружена 'steam_api.dll'!\n
+Не удалось найти идентификатор клиента в журнале, чтобы его выгнать!\n
 
 \0\<
-Failed to load 'steam_api.dll': %s\n
+^cffff00Prevent %s from chatting
+\0\>
+^cffff00Запретить %s общаться в чате
+\0\<
+^cffff00Muting %s...
+\0\>
+^cffff00Заглушаем %s...
+\0\<
+Couldn't find client identity in the log for muting!\n
 
 \0\>
-Не удалось загрузить 'steam_api.dll': %s\n
+Не удалось найти идентификатор клиента в журнале, чтобы его заглушить!\n
 
 \0\<
-Shutting down Steam API...\n
+^cffff00Skip current round
+\0\>
+^cffff00Пропустить текущий раунд
+\0\<
+^cffff00Skipping current round...
+\0\>
+^cffff00Пропуск текущего раунда...
+\0\<
+Invalid map index!
+\0\>
+Неверный индекс карты!
+\0\<
+Removed '%s' from the map pool!\n
 
 \0\>
-Выключение Steam API...\n
+'%s' убрана из списка карт!\n
+
+\0\<
+^cffffff%d^C seconds left to vote
+\0\>
+Осталось ^cffffff%d^C секунд для голосования
+\0\<
+Voting is over! ^c00ff00Yes: %d^C / ^cff0000No: %d
+\0\>
+Голосование завершено! ^c00ff00За: %d^C / ^cff0000Против: %d
+\0\<
+Cannot add '%s' to the map pool:\n
+%s\n
+
+\0\>
+Невозможно добавить '%s' в список карт:\n
+%s\n
+
+\0\<
+^cffffffAvailable maps:
+\0\>
+^cffffffДоступные карты:
+\0\<
+^cffffffAvailable clients:
+\0\>
+^cffffffДоступные клиенты:
+\0\<
+There is already voting in progress!
+\0\>
+Уже идет голосование!
+\0\<
+To initiate a vote, type "%svotemap <map index>"
+\0\>
+Чтобы начать голосование, введите "%svotemap <индекс карты>"
+\0\<
+There are no maps in the current pool!
+\0\>
+Текущий список карт пуст!
+\0\<
+^CYou have ^cffffff%d^C seconds to vote. Type %s^C or %s^C to vote for or against it!
+\0\>
+^CУ вас есть ^cffffff%d^C секунд на голосование. Введите %s^C или %s^C для голосования за или против!
+\0\<
+%s has initiated a vote:\n
+
+\0\>
+%s начали голосование:\n
+
+\0\<
+Observers aren't allowed to initiate voting!
+\0\>
+Наблюдателям запрещено начинать голосования!
+\0\<
+Players aren't allowed to initiate voting!
+\0\>
+Игрокам запрещено начинать голосования!
+\0\<
+Invalid client index!
+\0\>
+Неверный индекс клиента!
+\0\<
+To initiate a vote, type "%s%s <client index>"
+\0\>
+Чтобы начать голосование, введите "%s%s <индекс клиента>"
+\0\<
+Observers aren't allowed to vote!
+\0\>
+Наблюдателям запрещено голосовать!
+\0\<
+Players aren't allowed to vote!
+\0\>
+Игрокам запрещено голосовать!
+\0\<
+Stop being annoying!
+\0\>
+Перестаньте раздражать!
+\0\<
+Please wait %s before starting another vote!
+\0\>
+Пожалуйста, подождите %s, прежде чем начинать новое голосование!
+\0\<
+OCAM Error: %s\n
+
+\0\>
+Ошибка OCAM: %s\n
+
+\0\<
+OCAM: Took snapshot at %s\n
+
+\0\>
+OCAM: Сделан снимок на %s\n
+
+\0\<
+Cannot change world to '%s': World file does not exist\n
+
+\0\>
+Невозможно поменять мир на '%s': Файл мира отсутствует\n
+
+\0\<
+Couldn't find index for '%s' gameplay extension!\n
+
+\0\>
+Не удалось найти индекс расширения геймплея '%s'!\n
+
+\0\<
+Expected a number value for '%s' gameplay extension!\n
+
+\0\>
+Ожидалось числовое значение для расширения геймплея '%s'!\n
+
+\0\<
+Expected a string value for '%s' gameplay extension!\n
+
+\0\>
+Ожидалось строковое значение для расширения геймплея '%s'!\n
+
+\0\<
+Take position snapshot: %s\n
+
+\0\>
+Сделать снимок позиции: %s\n
+
+\0\<
+Reset tilt and zoom: %s\n
+
+\0\>
+Сбросить угол и поле зрения: %s\n
+
+\0\<
+Teleport to current player: %s\n
+
+\0\>
+Телепортироваться к игроку: %s\n
+
+\0\<
+Follow current player: %s\n
+
+\0\>
+Следовать за игроком: %s\n
+
+\0\<
+Zoom in/out: %s\n
+
+\0\>
+Приближение: %s\n
+
+\0\<
+Mouse Wheel
+\0\>
+Колесо мыши
+\0\<
+Tilt left/right: %s / %s\n
+
+\0\>
+Наклон влево/вправо: %s / %s\n
+
+\0\<
+Move down: %s / %s\n
+
+\0\>
+Движение вниз: %s / %s\n
+
+\0\<
+Move up: %s / %s\n
+
+\0\>
+Движение вверх: %s / %s\n
+
+\0\<
+Movement: %s / %s\n
+
+\0\>
+Передвижение: %s / %s\n
+
+\0\<
+Arrow keys
+\0\>
+Стрелочки
+\0\<
+Disabled
+\0\>
+Выключено
+\0\<
+Default camera controls
+\0\>
+Стандартное управление камерой
+\0\<
+Camera properties
+\0\>
+Свойства камеры
+\0\<
+Observer camera info (ocam_iShowInfo)
+\0\>
+Информация о камере наблюдателя (ocam_iShowInfo)
+\0\<
+Client count is zero
+\0\>
+Количество клиентов равно нулю
+\0\<
+Take HQ screenshot: %s\n
+
+\0\>
+Сделать снимок экрана: %s\n
+
+\0\<
+Select resolution preset: %s\n
+
+\0\>
+Выбрать разрешение снимка: %s\n
+
+\0\<
+Local cheats can only be used in single player or on locally hosted servers!\n
+
+\0\>
+Локальные читы можно использовать только в одиночной игре или на локально размещенных севрерах!\n
 
 \0\$

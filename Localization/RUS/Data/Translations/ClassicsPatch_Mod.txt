@@ -1,4 +1,4 @@
-6
+22
 
 \0\<
 Cannot load game theme config '%s':\n
@@ -40,4 +40,68 @@ Could not locate 'SeriousSam_Custom.exe'. Please reinstall the patch or locate t
 Модификация из Classics Patch может быть запущена только через сам патч с помощью его исполняемых файлов!\n
 \n
 Не удалось найти 'SeriousSam_Custom.exe'. Пожалуйста, переустановите патч или найдите соответствующий исполняемый файл, если он был переименован.
+\0\<
+%s was shot by a Catman
+\0\>
+Кэтмэн застрелил %s
+\0\<
+Cyborg blew %s away
+\0\>
+Киборг взорвал %s
+\0\<
+%s was beaten to death by a Cyborg
+\0\>
+Киборг забил %s досмерти
+\0\<
+%s was killed by a Dragon
+\0\>
+Дракон убил %s
+\0\<
+%s was kicked to death by a Dragon
+\0\>
+Дракон запинал %s досмерти
+\0\<
+%s was killed by a Fishman
+\0\>
+Фишмэн убил %s
+\0\<
+%s was ripped apart by a Fishman
+\0\>
+Фишмэн разорвал %s на куски
+\0\<
+%s was killed by a Mammoth
+\0\>
+Мамонт убил %s
+\0\<
+%s was stabbed to death by a Mammooth
+\0\>
+Мамонт пронзил %s насквозь
+\0\<
+%s has been gunned down by a Mamutman
+\0\>
+Мамутмэн застрелил %s
+\0\<
+%s was killed by a Mantaman
+\0\>
+Мантамэн убил %s
+\0\<
+Huanman blew %s away
+\0\>
+Хуанмэн взорвал %s
+\0\<
+%s got oblitirated by a Destroyer
+\0\>
+Дестроер уничтожил %s
+\0\<
+%s was killed by a robot
+\0\>
+Робот убил %s
+\0\<
+%s was blown away by a flying robot
+\0\>
+Летающий робот взорвал %s
+\0\<
+Ughzy killed %s
+\0\>
+Угхзи убил %s
 \0\$

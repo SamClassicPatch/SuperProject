@@ -1,4 +1,4 @@
-458
+550
 
 \0\<
 Common options
@@ -749,9 +749,9 @@ Sort players
 \0\>
 Сортировка игроков
 \0\<
-sort player list by appropriate player stats
+sort player list by a specific statistic
 \0\>
-сортировать список игроков по соответствующей статистике
+сортировать список игроков по определенной статистике
 \0\<
 Show target names
 \0\>
@@ -984,6 +984,10 @@ Decorated server names
 display text decorations (e.g. color tags) in server names in the list
 \0\>
 отображать имена серверов в списке с украшениями (например, цветовые теги)
+\0\<
+Yes (all 3D projections)
+\0\>
+Да (все 3D проекции)
 \0\<
 Yes (only player view)
 \0\>
@@ -1832,4 +1836,368 @@ Vanilla query
 replace GameSpy in the engine with Legacy master server
 \0\>
 заменить GameSpy в движке Legacy мастер сервером
+\0\<
+Steam options
+\0\>
+Настройки Steam
+\0\<
+For dedicated servers
+\0\>
+Для выделенных серверов
+\0\<
+access Steam from dedicated servers
+\0\>
+доступ к Steam из выделенных серверов
+\0\<
+For tool applications
+\0\>
+Для инструментов
+\0\<
+access Steam from editor and modeler applications
+\0\>
+доступ к Steam из редактора и моделлеров
+\0\<
+Voting options
+\0\>
+Настройки голосования
+\0\<
+Enable voting system
+\0\>
+Включить голосование
+\0\<
+let clients initiate voting processes and vote in them
+\0\>
+дать клиентам возможность проводить голосования
+\0\<
+Players can initiate
+\0\>
+Игроки могут начинать
+\0\<
+allow players to initiate voting process
+\0\>
+разрешить игрокам начинать голосование
+\0\<
+Players can vote
+\0\>
+Игроки голосуют
+\0\<
+allow players to vote during voting process
+\0\>
+разрешить игрокам голосовать
+\0\<
+Observers can initiate
+\0\>
+Наблюдатели могут начинать
+\0\<
+allow spectators to initiate voting process
+\0\>
+разрешить наблюдателям начинать голосование
+\0\<
+Observers can vote
+\0\>
+Наблюдатели голосуют
+\0\<
+allow spectators to vote during voting process
+\0\>
+разрешить наблюдателям голосовать
+\0\<
+Voting time
+\0\>
+Время голосования
+\0\<
+how long each voting period lasts
+\0\>
+сколько длится каждое голосование
+\0\<
+10s
+\0\>
+10 сек.
+\0\<
+15s
+\0\>
+15 сек.
+\0\<
+20s
+\0\>
+20 сек.
+\0\<
+25s
+\0\>
+25 сек.
+\0\<
+30s (default)
+\0\>
+30 сек. (по умолчанию)
+\0\<
+40s
+\0\>
+40 сек.
+\0\<
+50s
+\0\>
+50 сек.
+\0\<
+60s
+\0\>
+60 сек.
+\0\<
+Map changing
+\0\>
+Смена карт
+\0\<
+allow voting to change current map
+\0\>
+разрешить голосование за смену текущей карты
+\0\<
+Client kicking
+\0\>
+Изгнание клиентов
+\0\<
+allow voting to kick clients off the server
+\0\>
+разрешить голосование за изгнание клиентов с сервера
+\0\<
+Kick timeout
+\0\>
+Время на изгнание
+\0\<
+how long to ban kicked players for
+\0\>
+на какое время забанить выгнанных игроков
+\0\<
+Client muting
+\0\>
+Заглушение клиентов
+\0\<
+allow voting to prevent clients from chatting
+\0\>
+разрешить голосование за заглушение клиентов из чата
+\0\<
+Mute timeout
+\0\>
+Время на заглушение
+\0\<
+how long to mute players for
+\0\>
+на какое время заглушить игроков
+\0\<
+30s
+\0\>
+30 сек.
+\0\<
+1min
+\0\>
+1 мин.
+\0\<
+2min
+\0\>
+2 мин.
+\0\<
+3min
+\0\>
+3 мин.
+\0\<
+4min
+\0\>
+4 мин.
+\0\<
+5min (default)
+\0\>
+5 мин. (default)
+\0\<
+10min
+\0\>
+10 мин.
+\0\<
+30min
+\0\>
+30 мин.
+\0\<
+1h
+\0\>
+1 ч.
+\0\<
+Forbid third person view
+\0\>
+Запретить вид от третьего лица
+\0\<
+disables ability to switch to third person view (Server Utilities)
+\0\>
+отключает возможность переключения на вид от третьего лица (Серверные утилиты)
+\0\<
+Voting timeout
+\0\>
+Тайм-аут голосования
+\0\<
+how long to wait before initiating another vote
+\0\>
+как долго ждать, прежде чем начинать новое голосование
+\0\<
+Decorated player names
+\0\>
+Украшенные имена игроков
+\0\<
+display text decorations (e.g. color tags) in player names
+\0\>
+отображать имена игроков с украшениями (например, цветовые теги)
+\0\<
+Player tags
+\0\>
+Метки над игроками
+\0\<
+display tags above players in cooperative mode
+\0\>
+отображать метки над игроками в кооперативном режиме
+\0\<
+Only marker
+\0\>
+Только метка
+\0\<
+With name
+\0\>
+С именем
+\0\<
+With name and distance
+\0\>
+С именем и расстоянием
+\0\<
+Auto
+\0\>
+Автоматически
+\0\<
+By name
+\0\>
+По имени
+\0\<
+By health
+\0\>
+По здоровью
+\0\<
+By score
+\0\>
+По очкам
+\0\<
+By mana
+\0\>
+По престижу
+\0\<
+By kills
+\0\>
+По убийствам
+\0\<
+By deaths
+\0\>
+По смертям
+\0\<
+Mounting options
+\0\>
+Настройки загрузки контента
+\0\<
+Mount The First Encounter
+\0\>
+Загрузить "Первую кровь"
+\0\<
+load content from Serious Sam: The First Encounter
+\0\>
+загрузить контент из игры "Крутой Сэм: Первая кровь"
+\0\<
+Mount Revolution
+\0\>
+Загрузить "Революцию"
+\0\<
+load content from Serious Sam Revolution
+\0\>
+загрузить контент из игры "Крутой Сэм: Революция"
+\0\<
+Mount Revolution workshop
+\0\>
+Загрузить мастерскую "Революции"
+\0\<
+load content from Revolution's workshop
+\0\>
+загрузить контент из мастерской игры "Крутой Сэм: Революция"
+\0\<
+Show tags in demos
+\0\>
+Отображать метки в демонстрациях
+\0\<
+display tags above players regardless of gamemode in demos
+\0\>
+отображать метки над игроками в демонстрациях вне зависимости от режима игры
+\0\<
+Show tags for observers
+\0\>
+Отображать метки при наблюдении
+\0\<
+display tags above players regardless of gamemode while observing
+\0\>
+отображать метки над игроками во время наблюдения вне зависимости от режима игры
+\0\<
+Disable local prediction
+\0\>
+Отключить локальное предсказание
+\0\<
+eliminates jittery player movement with latency under 50ms
+\0\>
+устраняет дрожание игрока с задержкой менее 50 мс
+\0\<
+Big console font scale
+\0\>
+Масштаб большого шрифта в консоли
+\0\<
+extra scaling for the big font in console
+\0\>
+дополнительное масштабирование для большого шрифта в консоли
+\0\<
+Big NETRICSA font scale
+\0\>
+Масштаб большого шрифта в ИНЕРТАНе
+\0\<
+extra scaling for the big font in NETRICSA
+\0\>
+дополнительное масштабирование для большого шрифта в ИНЕРТАНе
+\0\<
+Allow friends to join
+\0\>
+Разрешить друзьям присоединяться
+\0\<
+allow friends to join the server you are playing on by using "Join game" button
+\0\>
+для присоединения к серверу, на котором вы играете, с помощью кнопки "Присоединиться к игре"
+\0\<
+Use web browser
+\0\>
+Использовать веб-браузер
+\0\<
+allow opening in-game links in Steam's web browser via Steam Overlay
+\0\>
+разрешить использовать веб-браузер в Steam Overlay для открытия ссылок
+\0\<
+what debug information about interactions with Steam to output
+\0\>
+какую информацию выводить о взаимодействиях со Steam
+\0\<
+Only callbacks/single actions
+\0\>
+Только одиночные действия
+\0\<
+All interactions in real time
+\0\>
+Все действия в реальном времени
+\0\<
+Hook screenshots
+\0\>
+Снимки экрана
+\0\<
+allow taking custom screenshots instead of capturing the entire game window
+\0\>
+разрешить делать свои внутриигровые снимки вместо целого игрового окна
+\0\<
+Cannon alignment
+\0\>
+Расположение пушки
+\0\<
+how to align the cannon's viewmodel
+\0\>
+каким образом расположить модель пушки от первого лица
 \0\$

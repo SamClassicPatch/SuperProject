@@ -1,4 +1,4 @@
-53
+63
 
 \0\<
 WINDOW MODE
@@ -228,4 +228,52 @@ Format:
 All
 \0\>
 Все
+\0\<
+PROCEED
+\0\>
+ПРОДОЛЖИТЬ
+\0\<
+CANCEL
+\0\>
+ОТМЕНА
+\0\<
+The following link will open in your web browser:\n
+
+\0\>
+Следующая ссылка откроется в вашем веб-браузере:\n
+
+\0\<
+customize buttons in common game controls
+\0\>
+настройка кнопок вызова глобальных игровых действий
+\0\<
+CUSTOMIZE COMMON CONTROLS
+\0\>
+ИЗМЕНЕНИЕ ОБЩЕГО УПРАВЛЕНИЯ
+\0\<
+Cannot reload common controls:\n
+%s\n
+
+\0\>
+Невозможно перезагрузить общее управление:\n
+%s\n
+
+\0\<
+switch master server for the Legacy protocol
+\0\>
+сменить текущий мастер сервер для Legacy протокола
+\0\<
+DOCUMENTATION
+\0\>
+ДОКУМЕНТАЦИЯ
+\0\<
+^cff5f5fWARNING: Gameplay extensions are incompatible with vanilla game!
+\0\>
+^cff5f5fВНИМАНИЕ: Расширения геймплея несовместимы с ванильной игрой!
+\0\<
+Joining a game via Steam: %s\n
+
+\0\>
+Присоединение к игре через Steam: %s\n
+
 \0\$
