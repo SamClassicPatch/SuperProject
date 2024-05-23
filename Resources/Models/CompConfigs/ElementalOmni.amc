@@ -1,0 +1,46 @@
+Name: Quantum Golem
+{
+  Model:   TFNM Models\Enemies\ElementalMan\ElementalCK.mdl
+  Texture: TFNM Models\Enemies\ElementalMan\OmniMan.tex
+  Bump:    TFNM Models\Enemies\ElementalMan\OmniDetail.tex
+  Animation: 16
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\Attach\Spina.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\Attach\Spina.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\Attach\Pleche1.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\Attach\Pleche.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\Attach\Pleche2.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\Attach\Pleche.tex
+  }
+
+  Attachment: 3
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\Attach\Telo.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\Attach\Nagrrudnik.tex
+  }
+
+  Attachment: 4
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\Attach\Ruka1.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\Attach\Ruka.tex
+  }
+
+  Attachment: 5
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\Attach\Ruka2.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\Attach\Ruka.tex
+  }
+
+  Stretch: 4; 4; 4
+  CompPlace: 0; -5; -8; 150; 0; 0
+}

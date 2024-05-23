@@ -1,0 +1,28 @@
+Name: Geyser Golem
+{
+  Model:   TFNM Models\Enemies\ElementalMan\ElementalMan.mdl
+  Texture: TFNM Models\Enemies\ElementalMan\WaterMan.tex
+  Bump:    TFNM Models\Enemies\ElementalMan\WaterDetail.tex
+  Animation: 16
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\BodyFlare.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\WaterFlare.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\HandFlare.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\WaterFlare.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Enemies\ElementalMan\HandFlare.mdl
+    Texture: TFNM Models\Enemies\ElementalMan\WaterFlare.tex
+  }
+
+  Stretch: 4; 4; 4
+  CompPlace: 0; -5; -8; 150; 0; 0
+}

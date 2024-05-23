@@ -1,0 +1,10 @@
+Name: Mud Golem
+{
+  Model:   TFNM Models\Enemies\ElementalMan\ElementalEarth.mdl
+  Texture: TFNM Models\Enemies\ElementalMan\EarthMan.tex
+  Bump:    TFNM Models\Enemies\ElementalMan\EarthDetail.tex
+  Animation: 16
+
+  Stretch: 4; 4; 4
+  CompPlace: 0; -5; -8; 150; 0; 0
+}
