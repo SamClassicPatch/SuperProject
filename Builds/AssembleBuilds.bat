@@ -13,6 +13,16 @@ set BUILDS=%~dp0
 set REPO=%BUILDS%..\
 set STEAMLIB=%REPO%Extras\Steamworks\redistributable_bin\steam_api.dll
 
+echo Copying GRO archives...
+echo ----------------------------
+
+cd %REPO%
+
+:: Copy extra GRO files that are released alongside the final builds
+copy /B Localization\SE1_ClassicsPatch_RUS.gro %BUILDS%
+copy /B Resources\SE1_RevResources.gro         %BUILDS%
+
+echo ----------------------------
 echo Copying TFE 1.05 binaries...
 echo ----------------------------
 
