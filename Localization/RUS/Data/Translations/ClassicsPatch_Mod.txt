@@ -1,4 +1,4 @@
-22
+27
 
 \0\<
 Cannot load game theme config '%s':\n
@@ -104,4 +104,24 @@ Huanman blew %s away
 Ughzy killed %s
 \0\>
 Угхзи убил %s
+\0\<
+Omni Golem blew %s into quantum state
+\0\>
+Квантовый голем перевел %s в квантовое состояние
+\0\<
+%s was drowned by a Water Golem
+\0\>
+Водяной голем утопил %s
+\0\<
+Earth Golem buried %s in the ground
+\0\>
+Земляной голем закопал %s в землю
+\0\<
+%s was blown away by a Air Golem
+\0\>
+Воздушный голем сдул %s
+\0\<
+%s was killed by an elemental
+\0\>
+Стихийный голем убил %s
 \0\$
