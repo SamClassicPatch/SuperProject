@@ -38,3 +38,6 @@
 [submodule "Builds/TSE107/Mods/ClassicsPatchMod"]
 	path = Builds/TSE107/Mods/ClassicsPatchMod
 	url = https://github.com/SamClassicPatch/ModShell.git
+[submodule "Extras/XGizmo"]
+	path = Extras/XGizmo
+	url = https://github.com/SamClassicPatch/XGizmo.git
