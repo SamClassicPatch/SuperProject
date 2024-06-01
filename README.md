@@ -22,7 +22,10 @@ This super project gathers everything together under a single solution for prope
 - `Builds` - directory for assembling final builds of Serious Sam Classics Patch for every supported game version.
   - [`Builds/TSE107/Mods/ClassicsPatchMod`](../../../ModShell) - shell of a special mod that includes resources necessary for properly running it.
 - `Docs` - up-to-date contents of the [wiki](../../wiki) for any specific release.
-- `Extras` - third-party dependencies that the projects utilize.
+- `Extras` - global dependencies that the projects utilize.
+  - [`Steamworks`](https://partner.steamgames.com/) - SDK for enabling extended interactions with the Steam client
+  - [`XGizmo`](../../../XGizmo) - headers with a variety of convenient classes and functions for Serious Engine 1.
+  - [`zlib`](https://zlib.net/) - static library for working with ZIP archives
 - `Includes` - [Serious Engine 1 SDK](https://github.com/DreamyCecil/SE1-ModSDK/tree/includes) that includes static libraries and engine headers for different game versions.
 - `Localization` - translations of Serious Sam Classics Patch contents to different languages.
 - `Properties` - common properties for use in project files.
