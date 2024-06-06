@@ -41,3 +41,6 @@
 [submodule "Extras/XGizmo"]
 	path = Extras/XGizmo
 	url = https://github.com/SamClassicPatch/XGizmo.git
+[submodule "API"]
+	path = API
+	url = https://github.com/SamClassicPatch/API.git

@@ -9,6 +9,7 @@ This super project gathers everything together under a single solution for prope
 > **Want to submit an issue? Read [this guide](https://github.com/SamClassicPatch/SuperProject/wiki/How-to-Submit-issue) on how to do it!**
 
 ## Project structure
+- [`API`](../../../API) - standalone API that exposes `CoreLib` methods via C API.
 - [`CoreLib`](../../../CoreLib) - library with core functionality that's used by other projects.
 - [`DedicatedServer`](../../../DedicatedServer) - dedicated server application for launching your own classic servers.
 - [`EnginePatches`](../../../EnginePatches) - library with dynamic patches for Serious Engine functions that can be selectively applied to specific modules. 
