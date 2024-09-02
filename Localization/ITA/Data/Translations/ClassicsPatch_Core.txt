@@ -942,6 +942,6 @@ Seleziona la risoluzione: %s\n
 Local cheats can only be used in single player or on locally hosted servers!\n
 
 \0\>
-I trucchi locali possono essere utilizzati solo in modalita giocatore singolo o su server ospitati su rete locale!\n
+I trucchi locali possono essere utilizzati solo in modalità giocatore singolo o su server ospitati su rete locale!\n
 
 \0\$
