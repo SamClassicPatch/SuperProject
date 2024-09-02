@@ -1,0 +1,283 @@
+64
+
+\0\<
+WINDOW MODE
+\0\>
+MODALITÀ FINESTRA
+\0\<
+Window
+\0\>
+Finestra
+\0\<
+Borderless
+\0\>
+Senza bordi
+\0\<
+Fullscreen
+\0\>
+Schermo intero
+\0\<
+Serious Sam (Borderless %dx%d)
+\0\>
+Serious Sam (Senza bordi %dx%d)
+\0\<
+ (Native)
+\0\>
+ (Nativo)
+\0\<
+CLASSICS PATCH
+\0\>
+CLASSICS PATCH
+\0\<
+settings for the classics patch
+\0\>
+impostazioni della Classics Patch
+\0\<
+All options
+\0\>
+Tutte le opzioni
+\0\<
+This is a level in the %s format, it cannot be played!
+\0\>
+Questo è un livello nel formato %s, non è possibile giocarci!
+\0\<
+Show visible
+\0\>
+Mostra visibile
+\0\<
+Show all
+\0\>
+Mostra tutto
+\0\<
+ASPECT RATIO
+\0\>
+RAPPORTO D'ASPETTO
+\0\<
+select video mode aspect ratio
+\0\>
+seleziona il rapporto d'aspetto della modalità video
+\0\<
+make game run in a window or in full screen
+\0\>
+fa in modo che il gioco venga eseguito in modalità finestra o schermo intero
+\0\<
+ERROR: Couldn't start a new game!\n
+
+\0\>
+ERRORE: Impossibile avviare una nuova partita!\n
+
+\0\<
+This level is from Serious Sam: The First Encounter
+\0\>
+Questo livello è di Serious Sam: The First Encounter
+\0\<
+OTHER LEVELS
+\0\>
+ALTRI LIVELLI
+\0\<
+CHOOSE CATEGORY
+\0\>
+SCEGLI CATEGORIA
+\0\<
+New release is available: %s\n
+Download it here: %s\n
+
+\0\>
+Nuova versione disponibile: %s\n
+Scaricala da qui: %s\n
+
+\0\<
+DOWNLOAD
+\0\>
+SCARICA
+\0\<
+REMIND ME LATER
+\0\>
+RICORDAMELO PIÙ TARDI
+\0\<
+A new version of Classics Patch is available!\n
+   Your version: ^cff3f3f%s^r      Latest version: ^c5fff5f%s^r\n
+\n
+- "Remind me later" will show this again in a week.\n
+- '^cffffffsam_bNotifyAboutUpdates = 0^r' completely disables it.
+\0\>
+È disponibile una nuova versione di Classics Patch!\n
+   La tua versione: ^cff3f3f%s^r      Ultima versione: ^c5fff5f%s^r\n
+\n
+- "Ricordamelo più tardi" mostrerà questo messaggio di nuovo tra una settimana.\n
+- '^cffffffsam_bNotifyAboutUpdates = 0^r' disabilita le notifiche.
+\0\<
+Checking for updates...\n
+
+\0\>
+Ricerca degli aggiornamenti...\n
+
+\0\<
+unsorted user made levels
+\0\>
+livelli personalizzati non ordinati
+\0\<
+enter the password for connecting, observing or VIP access
+\0\>
+inserisci la password per connetterti, osservare o per l'accesso VIP
+\0\<
+Password:
+\0\>
+Password:
+\0\<
+adjust server settings from the classics patch
+\0\>
+regola le impostazioni del server dalla Classics Patch
+\0\<
+Server options
+\0\>
+Opzioni del server
+\0\<
+SERVER OPTIONS
+\0\>
+OPZIONI DEL SERVER
+\0\<
+This level is from Serious Sam: Revolution
+\0\>
+Questo livello è di Serious Sam: Revolution
+\0\<
+Customize game
+\0\>
+Personalizza gioco
+\0\<
+this mod has no difficulties set up
+\0\>
+questa mod non ha le impostazioni di difficoltà configurate
+\0\<
+INVALID
+\0\>
+NON VALIDO
+\0\<
+GAME CUSTOMIZATION
+\0\>
+PERSONALIZZAZIONE DEL GIOCO
+\0\<
+Config '%s' is included recursively
+\0\>
+La configurazione '%s' è inclusa in modo ricorsivo
+\0\<
+SPECIAL THANKS
+\0\>
+RINGRAZIAMENTI SPECIALI
+\0\<
+DESIGN AND PROGRAMMING
+\0\>
+PROGETTAZIONE E PROGRAMMAZIONE
+\0\<
+reload current game or mod immediately
+\0\>
+ricarica immediatamente il gioco o la mod corrente
+\0\<
+RESTART
+\0\>
+RIAVVIA
+\0\<
+credits for Classics Patch
+\0\>
+riconoscimenti per la Classics Patch
+\0\<
+PATCH CREDITS
+\0\>
+RICONOSCIMENTI PATCH
+\0\<
+credits for the game or a mod
+\0\>
+riconoscimenti per il gioco o una mod
+\0\<
+GAME CREDITS
+\0\>
+RICONOSCIMENTI DEL GIOCO
+\0\<
+EXTRAS
+\0\>
+EXTRA
+\0\<
+modifications, credits and more
+\0\>
+modifiche, riconoscimenti e altro ancora
+\0\<
+source code repository
+\0\>
+deposito del codice sorgente
+\0\<
+display title filter
+\0\>
+visualizza filtro titolo
+\0\<
+list levels only in a specific world format
+\0\>
+elenca i livelli solo in un formato specifico
+\0\<
+toggle visibility of all world files
+\0\>
+attiva la visibilità di tutti i file di livello
+\0\<
+FILTERING
+\0\>
+FILTRO
+\0\<
+Format: 
+\0\>
+Formato: 
+\0\<
+All
+\0\>
+Tutti
+\0\<
+PROCEED
+\0\>
+PROCEDI
+\0\<
+CANCEL
+\0\>
+ANNULLA
+\0\<
+The following link will open in your web browser:\n
+
+\0\>
+Il seguente collegamento si aprirà nel tuo browser web:\n
+
+\0\<
+customize buttons in common game controls
+\0\>
+personalizza i comandi di gioco globali
+\0\<
+CUSTOMIZE COMMON CONTROLS
+\0\>
+PERSONALIZZA COMANDI GLOBALI
+\0\<
+Cannot reload common controls:\n
+%s\n
+
+\0\>
+Impossibile ricaricare i comandi di gioco globali:\n
+%s\n
+
+\0\<
+switch master server for the Legacy protocol
+\0\>
+cambia server principale per il protocollo Legacy
+\0\<
+DOCUMENTATION
+\0\>
+DOCUMENTAZIONE
+\0\<
+visit classics patch wiki for documentation
+\0\>
+per la documentazione completa, visita la pagina wiki di Classics Patch
+\0\<
+^cff5f5fWARNING: Gameplay extensions are incompatible with vanilla game!
+\0\>
+^cff5f5fATTENZIONE: le estensioni di gioco non sono compatibili con il gioco originale!
+\0\<
+Joining a game via Steam: %s\n
+
+\0\>
+Partecipa ad una partita tramite Steam: %s\n
+
+\0\$

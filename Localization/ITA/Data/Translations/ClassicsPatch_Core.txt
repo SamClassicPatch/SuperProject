@@ -1,0 +1,947 @@
+176
+
+\0\<
+Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
+\0\>
+[These strings aren't supposed to be here and I don't know how to get rid of them]
+\0\<
+Plugin?5module?5has?5not?5been?5l@
+\0\>
+[It is all because they start with "ETRS" and get picked up by the Depend utility]
+\0\<
+Client?5?$CFd?$AA@
+\0\>
+[And this one]
+\0\<
+Cannot find '%s' symbol in '%s'!
+\0\>
+Impossibile trovare il simbolo '%s' in '%s'!
+\0\<
+Plugin module has not been loaded yet!
+\0\>
+Il componente aggiuntivo non è stato ancora caricato!
+\0\<
+Loading Game library '%s'...\n
+
+\0\>
+Caricamento libreria di gioco '%s'...\n
+
+\0\<
+Loading Game GUI library '%s'...\n
+
+\0\>
+Caricamento libreria GUI di gioco '%s'...\n
+
+\0\<
+Available function patches:\n
+
+\0\>
+Patch di funzionalità disponibili:\n
+
+\0\<
+No function patches available!\n
+
+\0\>
+Nessuna patch di funzionalità disponibile!\n
+
+\0\<
+Invalid patch index!\n
+
+\0\>
+Indice patch non valido!\n
+
+\0\<
+Cannot set '%s' function patch!\n
+
+\0\>
+Impossibile applicare la patch di funzionalità '%s'!\n
+
+\0\<
+Successfully set '%s' function patch!\n
+
+\0\>
+Patch di funzionalità '%s' applicata con successo!\n
+
+\0\<
+Successfully removed '%s' function patch!\n
+
+\0\>
+Patch di funzionalità '%s' rimossa con successo!\n
+
+\0\<
+  Description: %s\n
+
+\0\>
+  Descrizione: %s\n
+
+\0\<
+  Version: %s\n
+
+\0\>
+  Versione: %s\n
+
+\0\<
+  Author: %s\n
+
+\0\>
+  Autore: %s\n
+
+\0\<
+  Name: %s\n
+
+\0\>
+  Nome: %s\n
+
+\0\<
+^cffffffLoaded plugins:\n
+
+\0\>
+^cffffffComponenti aggiuntivi caricati:\n
+
+\0\<
+No plugins have been loaded!\n
+
+\0\>
+Nessun componente aggiuntivo caricato!\n
+
+\0\<
+Invalid plugin index!\n
+
+\0\>
+Indice componente aggiuntivo non valido!\n
+
+\0\<
+Cannot enable '%s' plugin!\n
+
+\0\>
+Impossibile abilitare il componente aggiuntivo '%s'!\n
+
+\0\<
+Successfully enabled '%s' plugin!\n
+
+\0\>
+Componente aggiuntivo '%s' abilitato con successo!\n
+
+\0\<
+'%s' plugin is already enabled!\n
+
+\0\>
+Il componente aggiuntivo '%s' è già abilitato!\n
+
+\0\<
+Successfully disabled '%s' plugin!\n
+
+\0\>
+Componente aggiuntivo '%s' disabilitato con successo!\n
+
+\0\<
+'%s' plugin is already disabled!\n
+
+\0\>
+Il componente aggiuntivo '%s' è già disabilitato!\n
+
+\0\<
+'%s' loading cancelled: Mismatching utility flags (0x%X)\n
+
+\0\>
+Caricamento '%s' annullato: Flag di utilita non corrispondenti (0x%X)\n
+
+\0\<
+'%s' loading cancelled: Wrong API version (%u)\n
+
+\0\>
+Caricamento '%s' annullato: Versione API errata (%u)\n
+
+\0\<
+Cannot load module '%s':\n
+%s
+\0\>
+Impossibile caricare il modulo '%s':\n
+%s
+\0\<
+Cannot format error message!\n
+Original error code: %d\n
+Formatting error code: %d\n
+
+\0\>
+Impossibile formattare il messaggio di errore!\n
+Codice errore originale: %d\n
+Codice errore di formattazione: %d\n
+
+\0\<
+Chatting is disabled in this session!
+\0\>
+I messaggi sono disabilitati in questa sessione!
+\0\<
+Too many chat messages at once!
+\0\>
+Troppi messaggi!
+\0\<
+You are not allowed to chat for %s!
+\0\>
+Non ti è consentito comunicare in %s!
+\0\<
+\n
+^cffffffFurther attempts may lead to a kick!
+\0\>
+\n
+^cffffffUlteriori tentativi potrebbero farti espellere dal server!
+\0\<
+indefinite time
+\0\>
+tempo indefinito
+\0\<
+Client %d has been banned for %s!
+\0\>
+Il client %d è stato bandito da %s!
+\0\<
+You have been banned for %s!
+\0\>
+Sei stato bandito da %s!
+\0\<
+Client %d has been muted for %s!
+\0\>
+Il client %d non è autorizzato a comunicare in %s!
+\0\<
+Client %d has been kicked! Reason: "%s"
+\0\>
+Il client %d è stato espulso! Motivo: "%s"
+\0\<
+You have been kicked!
+\0\>
+Sei stato espulso!
+\0\<
+You are not allowed on this server!
+\0\>
+Non ti è consentito accedere a questo server!
+\0\<
+Server received PCK_EXTENSION of an invalid (%u) type!\n
+
+\0\>
+Il server ha ricevuto un PCK_EXTENSION di un tipo (%u) non valido!\n
+
+\0\<
+Client received PCK_EXTENSION of an invalid (%u) type!\n
+
+\0\>
+Il client ha ricevuto un PCK_EXTENSION di un tipo (%u) non valido!\n
+
+\0\<
+Too many split-screen players (more than %d)!
+\0\>
+Troppi giocatori in modalità schermo diviso (più di %d)!
+\0\<
+Split-screen isn't allowed in this session!
+\0\>
+In questa sessione non è consentita la modalità schermo diviso!
+\0\<
+%s^r - wall walking: %s\n
+
+\0\>
+%s^r - camminare sui muri: %s\n
+
+\0\<
+%s^r - noclip: %s\n
+
+\0\>
+%s^r - nessun proiettile: %s\n
+
+\0\<
+Set %s^r health to %d\n
+
+\0\>
+Imposta salute %s^r a %d\n
+
+\0\<
+%s^r created '%s' item (%u)\n
+
+\0\>
+%s^r ha creato l'oggetto '%s' (%u)\n
+
+\0\<
+<unknown>
+\0\>
+<sconosciuto>
+\0\<
+Executing scheduled sandbox commands...\n
+
+\0\>
+Esecuzione dei comandi sandbox pianificati...\n
+
+\0\<
+Scheduled command for the server:\n
+
+\0\>
+Comandi pianificati per il server:\n
+
+\0\<
+Scheduled commands for the next server start:\n
+
+\0\>
+Comandi pianificati per il prossimo avvio del server:\n
+
+\0\<
+No commands have been scheduled\n
+
+\0\>
+Non è stato pianificato alcun comando\n
+
+\0\<
+Cleared %d scheduled commands\n
+
+\0\>
+%d comandi pianificati rimossi\n
+
+\0\<
+Destroyed '%s' entity under ID: %d\n
+
+\0\>
+Distrutta l'entità '%s' con ID: %d\n
+
+\0\<
+Could not find entity under ID: %d\n
+
+\0\>
+Impossibile trovare l'entità con ID: %d\n
+
+\0\<
+Invalid entity ID: %d\n
+
+\0\>
+ID entità non valido: %d\n
+
+\0\<
+Reinitialized '%s' entity under ID: %d\n
+
+\0\>
+Entità '%s' reinizializzata con ID: %d\n
+
+\0\<
+Initialized '%s' entity under ID: %d\n
+
+\0\>
+Entità '%s' inizializzata con ID: %d\n
+
+\0\<
+Could not set '%s' value to '%s' property\n
+
+\0\>
+Impossibile impostare il valore '%s' sulla proprietà '%s'\n
+
+\0\<
+Could not find entity property with the name '%s' in %s\n
+
+\0\>
+Impossibile trovare la proprietà dell'entità con il nome '%s' in %s\n
+
+\0\<
+'%s' (%u) : Cannot retrieve '%s' property!\n
+
+\0\>
+'%s' (%u) : Impossibile recuperare la proprietà '%s'!\n
+
+\0\<
+Restart the game for the new settings to take effect!\n
+
+\0\>
+Riavvia il gioco affinché le nuove impostazioni abbiano effetto!\n
+
+\0\<
+Received invalid entity ID!\n
+
+\0\>
+Ricevuto ID entità non valido!\n
+
+\0\<
+Copied %u entity: 
+\0\>
+Entità %u copiata: 
+\0\<
+Cannot create entity: %s\n
+
+\0\>
+Impossibile creare l'entità: %s\n
+
+\0\<
+Created '%s' entity (%u)\n
+
+\0\>
+Entità '%s' creata (%u)\n
+
+\0\<
+Deleted %u entity\n
+
+\0\>
+Entità %u rimossa\n
+
+\0\<
+Deleted %d "%s" entities\n
+
+\0\>
+Rimosse %d entità "%s"\n
+
+\0\<
+Changed collision flags of %u entity: 0x%08X -> 0x%08X\n
+
+\0\>
+Modificati i parametri di collisione dell'entità %u: 0x%08X -> 0x%08X\n
+
+\0\<
+Changed physical flags of %u entity: 0x%08X -> 0x%08X\n
+
+\0\>
+Modificati i parametri fisici dell'entità %u: 0x%08X -> 0x%08X\n
+
+\0\<
+Changed flags of %u entity: 0x%08X -> 0x%08X\n
+
+\0\>
+Modificati i parametri dell'entità %u: 0x%08X -> 0x%08X\n
+
+\0\<
+Set health of %u entity to %.2f\n
+
+\0\>
+Imposta salute dell'entità %u a %.2f\n
+
+\0\<
+Cannot set health for %u entity: not a live entity\n
+
+\0\>
+Impossibile impostare lo stato di salute per l'entità %u: non è un'entità vivente\n
+
+\0\<
+Reinitialized %u entity\n
+
+\0\>
+Entità %u reinizializzata\n
+
+\0\<
+Initialized %u entity\n
+
+\0\>
+Entità %u inizializzata\n
+
+\0\<
+Changed movement speed of %u entity to [%.2f, %.2f, %.2f]\n
+
+\0\>
+Modificata la velocità di movimento dell'entità %u in [%.2f, %.2f, %.2f]\n
+
+\0\<
+Changed rotation speed of %u entity to [%.2f, %.2f, %.2f]\n
+
+\0\>
+Modificata la velocità di rotazione dell'entità %u in [%.2f, %.2f, %.2f]\n
+
+\0\<
+Parented %u entity to %u\n
+
+\0\>
+Entità %u associata a %u\n
+
+\0\<
+Unparented %u entity\n
+
+\0\>
+Entità %u non associata\n
+
+\0\<
+Teleported %u entity to [%.2f, %.2f, %.2f;  %.2f, %.2f, %.2f]\n
+
+\0\>
+Teletrasporto entità %u in [%.2f, %.2f, %.2f;  %.2f, %.2f, %.2f]\n
+
+\0\<
+Expected number property type but got %d\n
+
+\0\>
+Prevista proprietà di tipo numerico ma è stato ottenuto invece %d\n
+
+\0\<
+Expected string property type but got %d\n
+
+\0\>
+Prevista proprietà di tipo stringa ma è stato ottenuto invece %d\n
+
+\0\<
+Error %u in HttpRequest()\n
+
+\0\>
+Errore %u in HttpRequest()\n
+
+\0\<
+Error %u in WinHttpReadData()\n
+
+\0\>
+Errore %u in WinHttpReadData()\n
+
+\0\<
+Error %u in WinHttpQueryDataAvailable()\n
+
+\0\>
+Errore %u in WinHttpQueryDataAvailable()\n
+
+\0\<
+Cannot save client log file: %s\n
+
+\0\>
+Impossibile salvare il file di registro del client: %s\n
+
+\0\<
+Cannot load client log file: %s\n
+
+\0\>
+Impossibile caricare il file di registro del client: %s\n
+
+\0\<
+Cannot load %s class:\n
+%s
+\0\>
+Impossibile caricare la classe %s:\n
+%s
+\0\<
+Cannot change the value of this shell symbol while the server is running!\n
+
+\0\>
+Impossibile modificare il valore di questo simbolo mentre il server è in esecuzione!\n
+
+\0\<
+Cannot hook '%s'!\n
+Aborting HUD initialization...\n
+
+\0\>
+Impossibile connettersi a '%s'!\n
+Interruzione dell'inizializzazione dell'HUD...\n
+
+\0\<
+Cannot change movement speed for %u entity: %s\n
+
+\0\>
+Impossibile modificare la velocità di movimento per l'entità %u: %s\n
+
+\0\<
+not a movable entity
+\0\>
+non è un'entità mobile
+\0\<
+Cannot change rotation speed for %u entity: %s\n
+
+\0\>
+Impossibile modificare la velocità di rotazione per l'entità %u: %s\n
+
+\0\<
+Cannot give impulse to %u entity: %s\n
+
+\0\>
+Impossibile dare impulso all'entità %u: %s\n
+
+\0\<
+Gave impulse to %u entity: [%.2f, %.2f, %.2f]\n
+
+\0\>
+Impulso dato all'entità %u: [%.2f, %.2f, %.2f]\n
+
+\0\<
+Cannot save patch configuration file: %s\n
+
+\0\>
+Impossibile salvare il file di configurazione della patch: %s\n
+
+\0\<
+Config properties have been resaved into '%s'!\n
+
+\0\>
+Le proprietà di configurazione sono state salvate nuovamente in '%s'!\n
+
+\0\<
+'%s' (%u) : Item type %d is invalid!\n
+
+\0\>
+'%s' (%u) : Il tipo di oggetto %d non è valido!\n
+
+\0\<
+Entity %u inflicted %.2f damage to entity %u\n
+
+\0\>
+L'entità %u ha inflitto un danno di %.2f all'entita %u\n
+
+\0\<
+Entity %u inflicted %.2f damage in a %.1f range\n
+
+\0\>
+L'entità %u ha inflitto un danno di %.2f in un intervallo di %.1f\n
+
+\0\<
+Entity %u inflicted %.2f damage in a [%.2f, %.2f, %.2f] sized area\n
+
+\0\>
+L'entità %u ha inflitto un danno di %.2f in un'area di dimensioni [%.2f, %.2f, %.2f]\n
+
+\0\<
+Please wait until you are fully connected to change your character.
+\0\>
+Si prega di attendere affinchè la connessione sia pienamente stabilita per cambiare personaggio.
+\0\<
+SYNCBAD: Sequence %d Tick %.2f - bad %d
+\0\>
+SYNCBAD: Sequenza %d Tick %.2f - non valido %d
+\0\<
+Server: Client '%s' hasn't provided an identification tag\n
+
+\0\>
+Server: Il client '%s' non ha fornito un etichetta identificativa\n
+
+\0\<
+Server: Client '%s' has provided an identification tag:\n
+  Tag match: %d | Version match: %d\n
+
+\0\>
+Server: Il client '%s' ha fornito un etichetta identificativa:\n
+  Corrispondenza etichetta: %d | Corrispondenza versione: %d\n
+
+\0\<
+Cannot read server info from session state:\n
+%s\n
+
+\0\>
+Impossibile leggere le informazioni del server dallo stato della sessione:\n
+%s\n
+
+\0\<
+Cannot load user difficulty config '%s':\n
+%s
+\0\>
+Impossibile caricare le impostazioni della difficoltà personalizzate '%s':\n
+%s
+\0\<
+Client '%s' (identity %d) is attempting to authorize as an admin with '%s':\n
+
+\0\>
+Il client '%s' (identità %d) sta cercando di accedere come amministratore con la password '%s':\n
+
+\0\<
+Password is incorrect! Login attempt was logged.
+\0\>
+La password non è corretta! Il tentativo di accesso è stato registrato.
+\0\<
+Successfully authorized as a server administrator!
+\0\>
+Autorizzazione come amministratore del server concessa!
+\0\<
+Successfully authorized as a server operator!
+\0\>
+Autorizzazione come operatore del server concessa!
+\0\<
+You are already a server operator!
+\0\>
+Sei già un operatore del server!
+\0\<
+See server log for the command output.
+\0\>
+Per la lista dei comandi eseguiti, osserva il registro del server.
+\0\<
+Client '%s' (identity %d) is executing a command:\n
+
+\0\>
+Client '%s' (identità %d) sta eseguendo un comando:\n
+
+\0\<
+You are not a server operator!
+\0\>
+Non sei un operatore del server!
+\0\<
+Client '%s' (identity %d) is trying to execute a command:\n
+
+\0\>
+Client '%s' (identità %d) sta tentando di eseguire un comando:\n
+
+\0\<
+Saved game: %s
+\0\>
+Partita salvata: %s
+\0\<
+Cannot create 'steam_appid.txt': %s\n
+
+\0\>
+Impossibile creare il file 'steam_appid.txt': %s\n
+
+\0\<
+Successfully created 'steam_appid.txt' with %s app ID!\n
+
+\0\>
+File 'steam_appid.txt' creato con successo con ID applicazione %s!\n
+
+\0\<
+Client %d
+\0\>
+Client %d
+\0\<
+^cffff00Change current map to: %s^r
+\0\>
+^cffff00Modifica mappa corrente in: %s^r
+\0\<
+^cffff00Changing current map to: %s^r
+\0\>
+^cffff00Modifica della mappa corrente in: %s^r
+\0\<
+^cffff00Kick %s from the server
+\0\>
+^cffff00Espelli %s dal server
+\0\<
+^cffff00Kicking %s from the server...
+\0\>
+^cffff00Espulsione di %s dal server...
+\0\<
+Couldn't find client identity in the log for kicking!\n
+
+\0\>
+Impossibile trovare l'identità del client nel registro per eseguire l'espulsione dal server!\n
+
+\0\<
+^cffff00Prevent %s from chatting
+\0\>
+^cffff00Impedisci a %s di inviare messaggi
+\0\<
+^cffff00Muting %s...
+\0\>
+^cffff00Disattivazione messaggi di %s...
+\0\<
+Couldn't find client identity in the log for muting!\n
+
+\0\>
+Impossibile trovare l'identità del client nel registro per eseguire la disattivazione dei messaggi!\n
+
+\0\<
+^cffff00Skip current round
+\0\>
+^cffff00Salta il turno corrente
+\0\<
+^cffff00Skipping current round...
+\0\>
+^cffff00Salto del turno corrente...
+\0\<
+Invalid map index!
+\0\>
+Indice mappa non valido!
+\0\<
+Removed '%s' from the map pool!\n
+
+\0\>
+'%s' è stato rimosso dall'elenco delle mappe!\n
+
+\0\<
+^cffffff%d^C seconds left to vote
+\0\>
+^cffffff%d^C secondi rimasti per votare
+\0\<
+Voting is over! ^c00ff00Yes: %d^C / ^cff0000No: %d
+\0\>
+Le votazioni sono terminate! ^c00ff00Sì: %d^C / ^cff0000No: %d
+\0\<
+Cannot add '%s' to the map pool:\n
+%s\n
+
+\0\>
+Impossibile aggiungere '%s' nell'elenco delle mappe:\n
+%s\n
+
+\0\<
+^cffffffAvailable maps:
+\0\>
+^cffffffMappe disponibili:
+\0\<
+^cffffffAvailable clients:
+\0\>
+^cffffffClient disponibili:
+\0\<
+There is already voting in progress!
+\0\>
+La votazione è già in corso!
+\0\<
+To initiate a vote, type "%svotemap <map index>"
+\0\>
+Per avviare una votazione, digita "%svotemap <indice mappa>"
+\0\<
+There are no maps in the current pool!
+\0\>
+Nessuna mappa elencata!
+\0\<
+^CYou have ^cffffff%d^C seconds to vote. Type %s^C or %s^C to vote for or against it!
+\0\>
+^CHai ^cffffff%d^C secondi per votare. Digita %s^C o %s^C per votare a favore o contro!
+\0\<
+%s has initiated a vote:\n
+
+\0\>
+%s ha avviato una votazione:\n
+
+\0\<
+Observers aren't allowed to initiate voting!
+\0\>
+Agli osservatori non è consentito dare inizio alle votazioni!
+\0\<
+Players aren't allowed to initiate voting!
+\0\>
+I giocatori non sono autorizzati a dare inizio alle votazioni!
+\0\<
+Invalid client index!
+\0\>
+Indice client non valido!
+\0\<
+To initiate a vote, type "%s%s <client index>"
+\0\>
+Per avviare una votazione, digita "%s%s <indice client>"
+\0\<
+Observers aren't allowed to vote!
+\0\>
+Agli osservatori non è consentito votare!
+\0\<
+Players aren't allowed to vote!
+\0\>
+Ai giocatori non è consentito votare!
+\0\<
+Stop being annoying!
+\0\>
+Smettila di essere fastidioso!
+\0\<
+Please wait %s before starting another vote!
+\0\>
+Attendi %s prima di iniziare un'altra votazione!
+\0\<
+OCAM Error: %s\n
+
+\0\>
+Errore OCAM: %s\n
+
+\0\<
+OCAM: Took snapshot at %s\n
+
+\0\>
+OCAM: Scattata un'istantanea a %s\n
+
+\0\<
+Cannot change world to '%s': World file does not exist\n
+
+\0\>
+Impossibile cambiare il livello in '%s': il file del livello non esiste\n
+
+\0\<
+Couldn't find index for '%s' gameplay extension!\n
+
+\0\>
+Impossibile trovare l'indice per l'estensione di gioco '%s'!\n
+
+\0\<
+Expected a number value for '%s' gameplay extension!\n
+
+\0\>
+Era previsto un valore numerico per l'estensione di gioco '%s'!\n
+
+\0\<
+Expected a string value for '%s' gameplay extension!\n
+
+\0\>
+Era previsto un valore stringa per l'estensione di gioco '%s'!\n
+
+\0\<
+Take position snapshot: %s\n
+
+\0\>
+Acquisizione della posizione: %s\n
+
+\0\<
+Reset tilt and zoom: %s\n
+
+\0\>
+Ripristina inclinazione e ingrandimento: %s\n
+
+\0\<
+Teleport to current player: %s\n
+
+\0\>
+Teletrasporto al giocatore corrente: %s\n
+
+\0\<
+Follow current player: %s\n
+
+\0\>
+Segui il giocatore corrente: %s\n
+
+\0\<
+Zoom in/out: %s\n
+
+\0\>
+Ingrandisci/riduci: %s\n
+
+\0\<
+Mouse Wheel
+\0\>
+Rotellina del mouse
+\0\<
+Tilt left/right: %s / %s\n
+
+\0\>
+Inclinazione a sinistra/destra: %s / %s\n
+
+\0\<
+Move down: %s / %s\n
+
+\0\>
+Muovi giù: %s / %s\n
+
+\0\<
+Move up: %s / %s\n
+
+\0\>
+Muovi sù: %s / %s\n
+
+\0\<
+Movement: %s / %s\n
+
+\0\>
+Movimento: %s / %s\n
+
+\0\<
+Arrow keys
+\0\>
+Tasti freccia
+\0\<
+Disabled
+\0\>
+Disabilitato
+\0\<
+Default camera controls
+\0\>
+Controlli telecamera predefiniti
+\0\<
+Camera properties
+\0\>
+Proprieta telecamera
+\0\<
+Observer camera info (ocam_iShowInfo)
+\0\>
+Informazioni sulla telecamera dell'osservatore (ocam_iShowInfo)
+\0\<
+Client count is zero
+\0\>
+Il numero di client è zero
+\0\<
+Take HQ screenshot: %s\n
+
+\0\>
+Scatta un'istantanea dello schermo: %s\n
+
+\0\<
+Select resolution preset: %s\n
+
+\0\>
+Seleziona la risoluzione: %s\n
+
+\0\<
+Local cheats can only be used in single player or on locally hosted servers!\n
+
+\0\>
+I trucchi locali possono essere utilizzati solo in modalita giocatore singolo o su server ospitati su rete locale!\n
+
+\0\$

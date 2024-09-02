@@ -1,0 +1,127 @@
+27
+
+\0\<
+Cannot load game theme config '%s':\n
+%s\n
+
+\0\>
+Impossibile caricare la configurazione del tema di gioco '%s':\n
+%s\n
+
+\0\<
+Trying to load a sync theme during an ongoing synchronization!
+\0\>
+Tentativo di caricare un tema con sincronizzazione durante una sincronizzazione in corso!
+\0\<
+Unknown property '%s'
+\0\>
+Proprietà sconosciuta '%s'
+\0\<
+Cannot load model config:\n
+%s (%d) : %s\n
+
+\0\>
+Impossibile caricare la configurazione del modello:\n
+%s (%d) : %s\n
+
+\0\<
+Cannot setup model '%s':\n
+%s\n
+
+\0\>
+Impossibile configurare il modello '%s':\n
+%s\n
+
+\0\<
+Mod from Classics Patch can only be launched from the patch itself by using its executables!\n
+\n
+Could not locate 'SeriousSam_Custom.exe'. Please reinstall the patch or locate the appropriate executable, if it has been renamed.
+\0\>
+La mod di Classics Patch può essere avviata solo tramite la patch stessa, utilizzando i suoi file eseguibili!\n
+\n
+Impossibile trovare 'SeriousSam_Custom.exe'. Reinstallare la patch o trovare l'eseguibile corrispondente, se è stato rinominato.
+\0\<
+%s was shot by a Catman
+\0\>
+%s è stato colpito da un Uomo-gatto
+\0\<
+Cyborg blew %s away
+\0\>
+Il Cyborg ha fatto impazzire %s
+\0\<
+%s was beaten to death by a Cyborg
+\0\>
+%s è stato picchiato a morte da un Cyborg
+\0\<
+%s was killed by a Dragon
+\0\>
+%s è stato ucciso da un Dragone
+\0\<
+%s was kicked to death by a Dragon
+\0\>
+%s è stato preso a calci da un Dragone
+\0\<
+%s was killed by a Fishman
+\0\>
+%s è stato ucciso da un Uomo-pesce
+\0\<
+%s was ripped apart by a Fishman
+\0\>
+%s è stato fatto a pezzi da un Uomo-pesce
+\0\<
+%s was killed by a Mammoth
+\0\>
+%s è stato ucciso da un Mammut
+\0\<
+%s was stabbed to death by a Mammooth
+\0\>
+%s è stato pugnalato a morte da un Mammut
+\0\<
+%s has been gunned down by a Mamutman
+\0\>
+%s è stato ucciso a colpi di arma da fuoco da un Uomo-mammut
+\0\<
+%s was killed by a Mantaman
+\0\>
+%s è stato ucciso da un Uomo-manta
+\0\<
+Huanman blew %s away
+\0\>
+Il Serpentoide ha fatto impazzire %s
+\0\<
+%s got oblitirated by a Destroyer
+\0\>
+%s è stato annientato da un Distruttore
+\0\<
+%s was killed by a robot
+\0\>
+%s è stato ucciso da un robot
+\0\<
+%s was blown away by a flying robot
+\0\>
+%s è stato spazzato via da un robot volante
+\0\<
+Ughzy killed %s
+\0\>
+Ughzy ha ucciso %s
+\0\<
+Omni Golem blew %s into quantum state
+\0\>
+Omni Golem ha fatto esplodere %s in uno stato quantico
+\0\<
+%s was drowned by a Water Golem
+\0\>
+%s è stato annegato da un Golem d'Acqua
+\0\<
+Earth Golem buried %s in the ground
+\0\>
+Il Golem di Terra ha seppellito %s
+\0\<
+%s was blown away by a Air Golem
+\0\>
+%s è stato spazzato via da un Golem d'Aria
+\0\<
+%s was killed by an elemental
+\0\>
+%s è stato ucciso da un elementale
+\0\$
