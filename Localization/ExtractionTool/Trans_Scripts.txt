@@ -1,0 +1,7 @@
+..\Resources\Scripts\ClassicsPatch\00_ConfigProperties.cfg
+..\Resources\Scripts\ClassicsPatch\01_PatchSettings.cfg
+..\Resources\Scripts\ClassicsPatch\02_ServerSettings.cfg
+..\Resources\Scripts\ClassicsPatch\03_GameplaySettings.cfg
+..\Resources\Scripts\ClassicsPatch\20_PluginSettings.cfg
+..\Resources\Scripts\ClassicsPatch\50_ModSettings.cfg
+..\Resources\Scripts\ClassicsPatch\90_VanillaSettings.cfg
