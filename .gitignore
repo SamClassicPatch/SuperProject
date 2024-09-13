@@ -59,3 +59,8 @@ Builds/**/*.gro
 Builds/**/*.zip
 !Builds/**/EngineGUI_OG.dll
 !Builds/**/Shaders_OG.dll
+
+# Localization tools
+!Localization/ExtractionTool/Depend.exe
+!Localization/ExtractionTool/Engine.dll
+Localization/*.log
