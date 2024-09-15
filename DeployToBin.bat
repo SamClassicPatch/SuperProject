@@ -49,6 +49,9 @@ robocopy Builds\TSE107\Mods %GAMEDIR%Mods\ /E
 mkdir %BINDIR%Plugins
 copy /B %BUILTDIR%Plugins\*.dll %BINDIR%Plugins\
 
+:: Copy SDL library
+copy /B Extras\SDL2\lib\x86\SDL2.dll %BINDIR%
+
 :: Pack resources
 call Resources\DeployResources.bat %GAMEDIR%
 
