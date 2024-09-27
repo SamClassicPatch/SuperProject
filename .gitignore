@@ -13,6 +13,7 @@
 *.dylib
 *.dll
 !Extras/Steamworks/redistributable_bin/steam_api.dll
+!Extras/SDL2/lib/**/*.dll
 
 # Compiled Static libraries
 *.lai
@@ -20,6 +21,7 @@
 *.a
 *.lib
 !Extras/Steamworks/redistributable_bin/steam_api.lib
+!Extras/SDL2/lib/**/*.lib
 
 # Executables
 *.exe
@@ -59,3 +61,8 @@ Builds/**/*.gro
 Builds/**/*.zip
 !Builds/**/EngineGUI_OG.dll
 !Builds/**/Shaders_OG.dll
+
+# Localization tools
+!Localization/ExtractionTool/Depend.exe
+!Localization/ExtractionTool/Engine.dll
+Localization/*.log

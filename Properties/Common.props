@@ -4,8 +4,11 @@
     <BinDir>$(SolutionDir)Bin\$(Configuration)\</BinDir>
     <ObjDir>$(SolutionDir)Obj\$(Configuration)\$(ProjectName)\</ObjDir>
 
+    <SDLInclPath>$(SolutionDir)Extras\SDL2\include\</SDLInclPath>
+    <SDLLibPath>$(SolutionDir)Extras\SDL2\lib\x86\</SDLLibPath>
+
     <SdkExe>$(SolutionDir)Includes;$(ExecutablePath);</SdkExe>
-    <SdkIncl>$(SolutionDir);$(SolutionDir)Mod\;$(ProjectDir);$(IncludePath);</SdkIncl>
-    <SdkLibs>$(SolutionDir)Bin\$(Configuration);$(LibraryPath);</SdkLibs>
+    <SdkIncl>$(SolutionDir);$(SolutionDir)Mod\;$(ProjectDir);$(SDLInclPath);$(IncludePath);</SdkIncl>
+    <SdkLibs>$(SolutionDir)Bin\$(Configuration);$(SDLLibPath);$(LibraryPath);</SdkLibs>
   </PropertyGroup>
 </Project>

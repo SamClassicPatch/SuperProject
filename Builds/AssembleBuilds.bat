@@ -12,6 +12,7 @@ set CURDATE=%CURDATEFULL:~0,4%_%CURDATEFULL:~4,2%_%CURDATEFULL:~6,2%
 set BUILDS=%~dp0
 set REPO=%BUILDS%..\
 set STEAMLIB=%REPO%Extras\Steamworks\redistributable_bin\steam_api.dll
+set SDLLIB=%REPO%Extras\SDL2\lib\x86\SDL2.dll
 
 echo Copying GRO archives...
 echo ----------------------------
@@ -30,6 +31,7 @@ cd %REPO%
 
 :: Collect files for the TFE 1.05 build
 copy /B %STEAMLIB%                                     %BUILDS%TFE105\Bin\
+copy /B %SDLLIB%                                       %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\ClassicsCore.dll            %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\ClassicsPatches.dll         %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\ClassicsExtras_Custom.dll   %BUILDS%TFE105\Bin\
@@ -55,6 +57,7 @@ cd %REPO%
 
 :: Collect files for the TSE 1.05 build
 copy /B %STEAMLIB%                                     %BUILDS%TSE105\Bin\
+copy /B %SDLLIB%                                       %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\ClassicsCore.dll            %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\ClassicsPatches.dll         %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\ClassicsExtras_Custom.dll   %BUILDS%TSE105\Bin\
@@ -80,6 +83,7 @@ cd %REPO%
 
 :: Collect files for the TSE 1.07 build
 copy /B %STEAMLIB%                                     %BUILDS%TSE107\Bin\
+copy /B %SDLLIB%                                       %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\ClassicsCore.dll            %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\ClassicsPatches.dll         %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\ClassicsExtras_Custom.dll   %BUILDS%TSE107\Bin\

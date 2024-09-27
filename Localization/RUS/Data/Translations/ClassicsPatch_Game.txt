@@ -1,9 +1,5 @@
-63
+72
 
-\0\<
-WINDOW MODE
-\0\>
-РЕЖИМ ОКНА
 \0\<
 Window
 \0\>
@@ -49,18 +45,6 @@ Show all
 \0\>
 Показать все
 \0\<
-ASPECT RATIO
-\0\>
-СООТНОШЕНИЕ СТОРОН
-\0\<
-select video mode aspect ratio
-\0\>
-выбор соотношения сторон для видеорежима
-\0\<
-make game run in a window or in full screen
-\0\>
-запуск игры в оконном или полноэкранном режиме
-\0\<
 ERROR: Couldn't start a new game!\n
 
 \0\>
@@ -99,13 +83,13 @@ A new version of Classics Patch is available!\n
    Your version: ^cff3f3f%s^r      Latest version: ^c5fff5f%s^r\n
 \n
 - "Remind me later" will show this again in a week.\n
-- '^cffffffsam_bNotifyAboutUpdates = 0^r' completely disables it.
+- Use '^cffffffNotifyAboutUpdates^r' config property to toggle it.
 \0\>
 Доступна новая версия Classics Patch!\n
    Ваша версия: ^cff3f3f%s^r      Последняя версия: ^c5fff5f%s^r\n
 \n
 - "Напомнить позже" снова покажет это окно через неделю.\n
-- '^cffffffsam_bNotifyAboutUpdates = 0^r' полностью отключает его.
+- Свойство конфига '^cffffffNotifyAboutUpdates^r' переключает его.
 \0\<
 Checking for updates...\n
 
@@ -160,6 +144,10 @@ GAME CUSTOMIZATION
 Config '%s' is included recursively
 \0\>
 Конфиг '%s' рекурсивно вложен
+\0\<
+THIRD PARTY RESOURCES
+\0\>
+СТОРОННИЕ РЕСУРСЫ
 \0\<
 SPECIAL THANKS
 \0\>
@@ -267,6 +255,10 @@ DOCUMENTATION
 \0\>
 ДОКУМЕНТАЦИЯ
 \0\<
+visit classics patch wiki for documentation
+\0\>
+посетить онлайн-документацию патча для классики
+\0\<
 ^cff5f5fWARNING: Gameplay extensions are incompatible with vanilla game!
 \0\>
 ^cff5f5fВНИМАНИЕ: Расширения геймплея несовместимы с ванильной игрой!
@@ -276,4 +268,48 @@ Joining a game via Steam: %s\n
 \0\>
 Присоединение к игре через Steam: %s\n
 
+\0\<
+Range: step value is too low
+\0\>
+Range: значение шага слишком малое
+\0\<
+Range: max value is too high
+\0\>
+Range: макс. значение слишком большое
+\0\<
+Range: min value is too low
+\0\>
+Range: мин. значение слишком малое
+\0\<
+Range property requires three numbers: min, max and step
+\0\>
+Свойство "Range" требует три числа: минимальное, максимальное и шаг
+\0\<
+AutoValue: Unknown variable '%s'
+\0\>
+AutoValue: Неизвестная переменная '%s'
+\0\<
+AutoValue: Expected display adapter index
+\0\>
+AutoValue: Ожидался индекс графического адаптера
+\0\<
+AutoValue: Cannot load resolution list
+\0\>
+AutoValue: Невозможно загрузить список разрешений экрана
+\0\<
+PROPERTIES
+\0\>
+СВОЙСТВА
+\0\<
+Press Escape, RMB or B/Back on a controller to cancel
+\0\>
+Нажмите Escape, ПКМ или B/Back на контроллере для отмены
+\0\<
+Move your mouse or controller joystick in any direction
+\0\>
+Двиньте мышь или джойстик контроллера в любом направлении
+\0\<
+select axis automatically from any movement
+\0\>
+автоматический выбор оси от любого движения
 \0\$

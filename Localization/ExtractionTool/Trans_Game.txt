@@ -1,0 +1,2 @@
+..\Bin\Release_TSE107\SeriousSam_Custom.exe
+..\Bin\Release_TSE107\DedicatedServer_Custom.exe
