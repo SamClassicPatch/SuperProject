@@ -16,7 +16,7 @@ Localization creation tools are located under the `ExtractionTool/` directory, w
 Run `Update<lang code>.bat` script in order to fill translation tables with new strings and remove ones that don't exist anymore.
 
 > [!IMPORTANT]
-> In order to update translation tables, you need to compile the project under the `Release_TSE107` configuration to allow the extraction tool to scan the binaries for strings!
+> In order to update translation tables, you need to compile the project under the `Release_TSE107` configuration to allow the extraction tool to scan the binaries for strings!  
 > Alternatively, to scan binaries of an existing build (packaged in a `.zip` file), place all the files from the `Bin/` directory under `Bin/Release_TSE107` of the `SuperProject` repository.
 
 # How to assemble GRO packages with localization

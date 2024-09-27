@@ -9,6 +9,15 @@ set LOCALEDIR=%MAINDIR%%LANGCODE%\
 set UPDATESCRIPT=Update%LANGCODE%.bat
 set PACKSCRIPT=Assemble%LANGCODE%.bat
 
+:: Controls
+echo.
+echo Copying "Controls" files...
+
+xcopy "%RESDIR%Controls\06-ClassicsPatchCtrl1.des" "%LOCALEDIR%Controls\"
+xcopy "%RESDIR%Controls\06-ClassicsPatchCtrl2.des" "%LOCALEDIR%Controls\"
+xcopy "%RESDIR%Controls\06-ClassicsPatchCtrl3.des" "%LOCALEDIR%Controls\"
+xcopy "%RESDIR%Controls\06-ClassicsPatchCtrl4.des" "%LOCALEDIR%Controls\"
+
 :: Data
 echo.
 echo Copying "Data" files...
