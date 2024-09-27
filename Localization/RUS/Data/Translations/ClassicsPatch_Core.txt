@@ -1,17 +1,5 @@
-176
+182
 
-\0\<
-Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
-\0\>
-[These strings aren't supposed to be here and I don't know how to get rid of them]
-\0\<
-Plugin?5module?5has?5not?5been?5l@
-\0\>
-[It is all because they start with "ETRS" and get picked up by the Depend utility]
-\0\<
-Client?5?$CFd?$AA@
-\0\>
-[And this one]
 \0\<
 Cannot find '%s' symbol in '%s'!
 \0\>
@@ -147,10 +135,10 @@ Successfully disabled '%s' plugin!\n
 Загрузка '%s' отменена: Несоответствие служебных флагов (0x%X)\n
 
 \0\<
-'%s' loading cancelled: Wrong API version (%u)\n
+'%s' loading cancelled: API version is too new (%u)\n
 
 \0\>
-Загрузка '%s' отменена: Неправильная версия API (%u)\n
+Загрузка '%s' отменена: Версия API слишком новая (%u)\n
 
 \0\<
 Cannot load module '%s':\n
@@ -423,16 +411,16 @@ Initialized %u entity\n
 Инициализирован объект %u\n
 
 \0\<
-Changed movement speed of %u entity to [%.2f, %.2f, %.2f]\n
+Changed movement speed of %u entity to %s\n
 
 \0\>
-Скорость движения объекта %u изменена на [%.2f, %.2f, %.2f]\n
+Скорость движения объекта %u изменена на %s\n
 
 \0\<
-Changed rotation speed of %u entity to [%.2f, %.2f, %.2f]\n
+Changed rotation speed of %u entity to %s\n
 
 \0\>
-Скорость вращения объекта %u изменена на [%.2f, %.2f, %.2f]\n
+Скорость вращения объекта %u изменена на %s\n
 
 \0\<
 Parented %u entity to %u\n
@@ -447,10 +435,10 @@ Unparented %u entity\n
 Объект %u откреплен\n
 
 \0\<
-Teleported %u entity to [%.2f, %.2f, %.2f;  %.2f, %.2f, %.2f]\n
+Teleported %u entity to %s\n
 
 \0\>
-Объект %u телепортирован на [%.2f, %.2f, %.2f;  %.2f, %.2f, %.2f]\n
+Объект %u телепортирован на %s\n
 
 \0\<
 Expected number property type but got %d\n
@@ -537,10 +525,10 @@ Cannot give impulse to %u entity: %s\n
 Невозможно дать импульс объекту %u: %s\n
 
 \0\<
-Gave impulse to %u entity: [%.2f, %.2f, %.2f]\n
+Gave impulse to %u entity: %s\n
 
 \0\>
-Объекту %u дан импульс [%.2f, %.2f, %.2f]\n
+Объекту %u дан импульс %s\n
 
 \0\<
 Cannot save patch configuration file: %s\n
@@ -943,5 +931,59 @@ Local cheats can only be used in single player or on locally hosted servers!\n
 
 \0\>
 Локальные читы можно использовать только в одиночной игре или на локально размещенных севрерах!\n
+
+\0\<
+Invalid channel index: %d\n
+
+\0\>
+Неверный индекс канала: %d\n
+
+\0\<
+Cannot play '%s' sound: %s\n
+
+\0\>
+Невозможно воспроизвести звук '%s': %s\n
+
+\0\<
+Disconnected '%s' from controller slot %d\n
+
+\0\>
+Контроллер '%s' отключен от слота %d\n
+
+\0\<
+not connected\n
+
+\0\>
+не подключен\n
+
+\0\<
+%d controller slots:\n
+
+\0\>
+%d слотов для контроллеров:\n
+
+\0\<
+Connected '%s' to controller slot %d\n
+
+\0\>
+Контроллер '%s' подключен к слоту %d\n
+
+\0\<
+Cannot open another game controller! SDL Error: %s\n
+
+\0\>
+Невозможно открыть еще один игровой контроллер! Ошибка SDL: %s\n
+
+\0\<
+Cannot open another game controller due to all %d slots being occupied!\n
+
+\0\>
+Невозможно открыть еще один игровой контроллер из-за того, что все %d слотов заняты!\n
+
+\0\<
+ %d axes, %d buttons, %d hats\n
+
+\0\>
+ %d осей, %d кнопок, %d хаток\n
 
 \0\$

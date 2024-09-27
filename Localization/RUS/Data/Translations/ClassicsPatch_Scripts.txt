@@ -1,4 +1,4 @@
-550
+559
 
 \0\<
 Common options
@@ -1483,7 +1483,7 @@ Movement speed
 \0\<
 multiply player movement speed (gex_fMoveSpeed)
 \0\>
-умножение скорость передвижения игрока (gex_fMoveSpeed)
+умножение скорости передвижения игрока (gex_fMoveSpeed)
 \0\<
 Standing still
 \0\>
@@ -2200,4 +2200,40 @@ Cannon alignment
 how to align the cannon's viewmodel
 \0\>
 каким образом расположить модель пушки от первого лица
+\0\<
+Extreme quality
+\0\>
+Наилучшее качество
+\0\<
+CUSTOM RESOLUTION
+\0\>
+СВОЕ РАЗРЕШЕНИЕ ЭКРАНА
+\0\<
+for specifying custom screen resolution (for example: 1440x720)
+\0\>
+для задавания любого разрешения экрана (например: 1440x720)
+\0\<
+WINDOW MODE
+\0\>
+РЕЖИМ ОКНА
+\0\<
+make game run in a window or in full screen
+\0\>
+запуск игры в оконном или полноэкранном режиме
+\0\<
+HINT: To enable "dualhead" mode, type in a custom resolution with
+\0\>
+ПОДСКАЗКА: Для включения "dualhead" режима, введите разрешение экрана
+\0\<
+a 8:3 aspect ratio (e.g. 1600x600 for two 800x600 screens side by side)
+\0\>
+с соотношением сторон 8:3 (например: 1600x600 для двух экранов 800x600)
+\0\<
+Drop-down lists
+\0\>
+Выпадающие списки
+\0\<
+use drop-down lists for options with more than 2 values
+\0\>
+использовать выпадающие списки для опций, в которых больше двух значений
 \0\$
