@@ -1,0 +1,2239 @@
+559
+
+\0\<
+Common options
+\0\>
+Opzioni comuni
+\0\<
+The First Encounter directory
+\0\>
+Cartella di The First Encounter
+\0\<
+specify directory with The First Encounter installation
+\0\>
+specifica la cartella di installazione di The First Encounter
+\0\<
+Background game render
+\0\>
+Renderizza gioco sullo sfondo
+\0\<
+render current game in the back instead of the menu background
+\0\>
+renderizza il gioco sullo sfondo invece di utilizzare lo sfondo dei menù
+\0\<
+Adjust for aspect ratio
+\0\>
+Regola il rapporto d'aspetto
+\0\<
+display 2D elements properly on wider resolutions (fixes HUD)
+\0\>
+visualizza correttamente gli elementi 2D su risoluzioni più ampie (corregge l'HUD)
+\0\<
+Option tabs
+\0\>
+Schede delle opzioni
+\0\<
+display tabs for config options on the left
+\0\>
+visualizza nella parte sinistra dello schermo le schede per le opzioni di configurazione
+\0\<
+Fix field of view
+\0\>
+Correggi il campo visivo
+\0\<
+always preserve vertical FOV via adjusting horizontal FOV on wider resolutions
+\0\>
+preserva sempre il campo visivo verticale regolando il campo visivo orizzontale su risoluzioni più ampie
+\0\<
+Field of view
+\0\>
+Campo visivo
+\0\<
+set custom FOV for the player view regardless of gamemode
+\0\>
+imposta un campo visivo personalizzato per la visuale del giocatore, indipendentemente dalla modalità di gioco
+\0\<
+Ignore (use plr_fFOV)
+\0\>
+Ignora (usa plr_fFOV)
+\0\<
+90 (default)
+\0\>
+90 (predefinito)
+\0\<
+3rd person view FOV
+\0\>
+Campo visivo visuale in terza persona
+\0\<
+separate FOV for the third person view
+\0\>
+Campo visivo separato per la visuale in terza persona
+\0\<
+Ignore (use sam_fCustomFOV)
+\0\>
+Ignora (usa sam_fCustomFOV)
+\0\<
+Query manager
+\0\>
+Protocolli di rete
+\0\<
+Master server protocol
+\0\>
+Protocollo del server principale
+\0\<
+which master server protocol to use (Legacy is for classic servers)
+\0\>
+protocollo del server principale da utilizzare (Legacy è per i server classici)
+\0\<
+Legacy (GameSpy replacement)
+\0\>
+Legacy (Sostituzione di GameSpy)
+\0\<
+DarkPlaces
+\0\>
+DarkPlaces
+\0\<
+GameAgent
+\0\>
+GameAgent
+\0\<
+Legacy master server
+\0\>
+Server principale legacy
+\0\<
+which master server to use for Legacy protocol
+\0\>
+server principale da utilizzare per il protocollo Legacy
+\0\<
+333networks (recommended)
+\0\>
+333networks (consigliato)
+\0\<
+The Errorist Network
+\0\>
+The Errorist Network
+\0\<
+GoneSpy
+\0\>
+GoneSpy
+\0\<
+42amsterdam
+\0\>
+42amsterdam
+\0\<
+Debug output
+\0\>
+Mostra debug
+\0\<
+output master server actions in console
+\0\>
+mostra le azioni del server principale nella console
+\0\<
+Server options
+\0\>
+Opzioni del server
+\0\<
+VIP password
+\0\>
+Password VIP
+\0\<
+specify password for VIP clients
+\0\>
+specifica la password per i client VIP
+\0\<
+Connect password
+\0\>
+Password per la connessione
+\0\<
+specify password for player connections
+\0\>
+specifica la password per le connessioni dei giocatori
+\0\<
+Observer password
+\0\>
+Password osservatore
+\0\<
+specify password for observer connections
+\0\>
+specifica la password per le connessioni degli osservatori
+\0\<
+Enable anti-flood system
+\0\>
+Abilita sistema anti-sovraccarico
+\0\<
+kick clients for attempted packet flood
+\0\>
+espelli i client per tentativo di sovraccarico di pacchetti
+\0\<
+Packet flood threshold
+\0\>
+Soglia di sovraccarico dei pacchetti
+\0\<
+maximum amount of packets a client may send before kicking them
+\0\>
+numero massimo di pacchetti che un client può inviare
+\0\<
+Unlimited
+\0\>
+Illimitato
+\0\<
+Max chat messages
+\0\>
+Numero massimo di messaggi
+\0\<
+maximum amount of chat messages a client may send per second
+\0\>
+numero massimo di messaggi che un client può inviare ogni secondo
+\0\<
+Chat command prefix
+\0\>
+Prefisso comandi discussioni
+\0\<
+what prefix should chat commands start with (e.g. "!" for "!dummy")
+\0\>
+specifica quale prefisso utilizzare per i comandi delle discussioni (es. "!" per "!dummy")
+\0\<
+Accessibility
+\0\>
+Accessibilità
+\0\<
+Red screen on damage
+\0\>
+Schermo rosso con i danni
+\0\<
+blend screen into red color upon taking damage, if supported
+\0\>
+sfuma lo schermo in rosso quando subisci danni, se supportato
+\0\<
+World options (SUTL)
+\0\>
+Opzioni di gioco (SUTL)
+\0\<
+Start health
+\0\>
+Livello salute iniziale
+\0\<
+change start health (sutl_fStartHealth)
+\0\>
+modifica il livello di salute iniziale (sutl_fStartHealth)
+\0\<
+100 (default)
+\0\>
+100 (predefinito)
+\0\<
+Start armor
+\0\>
+Livello di armatura iniziale
+\0\<
+change start armor (sutl_fStartArmor)
+\0\>
+modifica il livello di armatura iniziale (sutl_fStartArmor)
+\0\<
+0 (default)
+\0\>
+0 (predefinito)
+\0\<
+Enemy multiplier
+\0\>
+Moltiplicatore nemici
+\0\<
+increase enemy count (sutl_fEnemyMultiplier)
+\0\>
+aumenta il numero di nemici (sutl_fEnemyMultiplier)
+\0\<
+1 (default)
+\0\>
+1 (predefinito)
+\0\<
+Maximum ammo
+\0\>
+Munizioni massime
+\0\<
+give maximum amount of ammo on start
+\0\>
+fornisce la massima quantità di munizioni all'inizio del livello
+\0\<
+Weapon options (SUTL)
+\0\>
+Opzioni armi (SUTL)
+\0\<
+Give Knife
+\0\>
+Assegna Coltello
+\0\<
+give/take knife on start (no effect in vanilla game)
+\0\>
+assegna/rimuove il coltello all'inizio del livello (nessun effetto nel gioco originale)
+\0\<
+Ignore
+\0\>
+Ignora
+\0\<
+Give
+\0\>
+Assegna
+\0\<
+Take
+\0\>
+Rimuovi
+\0\<
+Give Chainsaw
+\0\>
+Assegna Sega elettrica "Spaccaossa" P-LAH
+\0\<
+give/take chainsaw on start
+\0\>
+assegna/rimuove la sega elettrica "Spaccaossa" P-LAH all'inizio del livello
+\0\<
+Give Colt
+\0\>
+Assegna Shofield .45 + RTM
+\0\<
+give/take colt on start (no effect in vanilla game)
+\0\>
+assegna/rimuove la Shofield .45 + RTM all'inizio del livello (nessun effetto nel gioco originale)
+\0\<
+Give Double Colt
+\0\>
+Assegna coppia di Shofield .45 + RTM
+\0\<
+give/take double colt on start
+\0\>
+assegna/rimuove una coppia di Shofield .45 + RTM all'inizio del livello
+\0\<
+Give Single Shotgun
+\0\>
+Assegna Fucile a pompa calibro 12
+\0\<
+give/take single shotgun on start
+\0\>
+assegna/rimuove il fucile a pompa calibro 12 all'inizio del livello
+\0\<
+Give Double Shotgun
+\0\>
+Assegna Doppietta
+\0\<
+give/take double shotgun on start
+\0\>
+assegna/rimuove la doppietta all'inizio del livello
+\0\<
+Give Tommygun
+\0\>
+Assegna Mitragliatrice M1-A2
+\0\<
+give/take tommygun on start
+\0\>
+assegna/rimuove la mitragliatrice M1-A2 all'inizio del livello
+\0\<
+Give Minigun
+\0\>
+Assegna Mitragliatore XM214-A
+\0\<
+give/take minigun on start
+\0\>
+assegna/rimuove il mitragliatore XM214-A all'inizio del livello
+\0\<
+Give Rocket Launcher
+\0\>
+Assegna Lanciamissili XPML21
+\0\<
+give/take rocket launcher on start
+\0\>
+assegna/rimuove il lanciamissili XPML21 all'inizio del livello
+\0\<
+Give Grenade Launcher
+\0\>
+Assegna Lanciagranate MKIII
+\0\<
+give/take grenade launcher on start
+\0\>
+assegna/rimuove il lanciagranate MKIII all'inizio del livello
+\0\<
+Give Flamer
+\0\>
+Assegna Lanciafiamme XOP
+\0\<
+give/take flamer on start
+\0\>
+assegna/rimuove il lanciafiamme XOP all'inizio del livello
+\0\<
+Give Sniper
+\0\>
+Assegna Fucile di precisione RAPTOR
+\0\<
+give/take sniper on start
+\0\>
+assegna/rimuove il fucile di precisione RAPTOR da 16mm all'inizio del livello
+\0\<
+Give Laser
+\0\>
+Assegna Pistola laser XL2
+\0\<
+give/take laser on start
+\0\>
+assegna/rimuove la pistola laser XL2 all'inizio del livello
+\0\<
+Give Cannon
+\0\>
+Assegna Cannone SBC
+\0\<
+give/take cannon on start
+\0\>
+assegna/rimuove il cannone SBC all'inizio del livello
+\0\<
+Item options (SUTL)
+\0\>
+Opzioni oggetti (SUTL)
+\0\<
+Weapon replacement
+\0\>
+Sostituzione armi
+\0\<
+which weapon to replace the items with
+\0\>
+Specifica con quale arma effettuare la sostituzione
+\0\<
+Knife (no effect in vanilla game)
+\0\>
+Coltello (nessun effetto nel gioco originale)
+\0\<
+Chainsaw
+\0\>
+Sega elettrica "Spaccaossa" P-LAH
+\0\<
+Colt
+\0\>
+Shofield .45 + RTM
+\0\<
+Single Shotgun
+\0\>
+Fucile a pompa calibro 12
+\0\<
+Double Shotgun
+\0\>
+Doppietta
+\0\<
+Tommygun
+\0\>
+Mitragliatrice M1-A2
+\0\<
+Minigun
+\0\>
+Mitragliatore XM214-A
+\0\<
+Rocket Launcher
+\0\>
+Lanciamissili XPML21
+\0\<
+Grenade Launcher
+\0\>
+Lanciagranate MKIII
+\0\<
+Sniper
+\0\>
+Fucile di precisione RAPTOR da 16mm
+\0\<
+Flamer
+\0\>
+Lanciafiamme XOP
+\0\<
+Laser
+\0\>
+Pistola laser XL2
+\0\<
+Cannon
+\0\>
+Cannone SBC
+\0\<
+Health replacement
+\0\>
+Sostituzione oggetti salute
+\0\<
+which health item to replace other health with
+\0\>
+Specifica con quale oggetto salute sostituire un altro oggetto salute
+\0\<
+Pill (+1)
+\0\>
+Pillola (+1)
+\0\<
+Small (+10)
+\0\>
+Piccolo (+10)
+\0\<
+Medium (+25)
+\0\>
+Medio (+25)
+\0\<
+Large (+50)
+\0\>
+Grande (+50)
+\0\<
+Super (+100)
+\0\>
+Super (+100)
+\0\<
+Armor replacement
+\0\>
+Sostituzione oggetti armatura
+\0\<
+which armor item to replace other armor with
+\0\>
+Specifica con quale oggetto armatura sostituire un altro oggetto armatura
+\0\<
+Shard (+1)
+\0\>
+Frammento (+1)
+\0\<
+Helm (+5)
+\0\>
+Elmetto (+5)
+\0\<
+Small (+25)
+\0\>
+Piccolo (+25)
+\0\<
+Medium (+50)
+\0\>
+Medio (+50)
+\0\<
+Strong (+100)
+\0\>
+Forte (+100)
+\0\<
+Super (+200)
+\0\>
+Super (+200)
+\0\<
+Replace Knife Item
+\0\>
+Sostituisci Coltello
+\0\<
+replace knife specifically (no effect in vanilla game)
+\0\>
+sostituisce il coltello (nessun effetto nel gioco originale)
+\0\<
+Remove
+\0\>
+Rimuovi
+\0\<
+Knife
+\0\>
+Coltello
+\0\<
+Replace Chainsaw Item
+\0\>
+Sostituisci Sega elettrica "Spaccaossa" P-LAH
+\0\<
+replace chainsaw specifically
+\0\>
+sostituisce la sega elettrica "Spaccaossa" P-LAH
+\0\<
+Replace Colt Item
+\0\>
+Sostituisci Shofield .45 + RTM
+\0\<
+replace colt specifically
+\0\>
+sostituisce la Shofield .45 + RTM
+\0\<
+Replace Single Shotgun Item
+\0\>
+Sostituisci Fucile a pompa calibro 12
+\0\<
+replace single shotgun specifically
+\0\>
+sostituisce il fucile a pompa calibro 12
+\0\<
+Replace Double Shotgun Item
+\0\>
+Sostituisci Doppietta
+\0\<
+replace double shotgun specifically
+\0\>
+sostituisce la doppietta
+\0\<
+Replace Tommygun Item
+\0\>
+Sostituisci Mitragliatrice M1-A2
+\0\<
+replace tommygun specifically
+\0\>
+sostituisce la mitragliatrice M1-A2
+\0\<
+Replace Minigun Item
+\0\>
+Sostituisci Mitragliatore XM214-A
+\0\<
+replace minigun specifically
+\0\>
+sostituisce il mitragliatore XM214-A
+\0\<
+Replace Rocket Launcher Item
+\0\>
+Sostituisci Lanciamissili XPML21
+\0\<
+replace rocket launcher specifically
+\0\>
+sostituisce il lanciamissili XPML21
+\0\<
+Replace Grenade Launcher Item
+\0\>
+Sostituisci Lanciagranate MKIII
+\0\<
+replace grenade launcher specifically
+\0\>
+sostituisce il lanciagranate MKIII
+\0\<
+Replace Flamer Item
+\0\>
+Sostituisci Lanciafiamme XOP
+\0\<
+replace flamer specifically
+\0\>
+sostituisce il lanciafiamme XOP
+\0\<
+Replace Sniper Item
+\0\>
+Sostituisci Fucile di precisione RAPTOR
+\0\<
+replace sniper specifically
+\0\>
+sostituisce il fucile di precisione RAPTOR da 16mm
+\0\<
+Replace Laser Item
+\0\>
+Sostituisci Pistola laser XL2
+\0\<
+replace laser specifically
+\0\>
+sostituisce la pistola laser XL2
+\0\<
+Replace Cannon Item
+\0\>
+Sostituisci Cannone SBC
+\0\<
+replace cannon specifically
+\0\>
+sostituisce il cannone SBC
+\0\<
+Replace Invisibility
+\0\>
+Sostituisci oggetto Invisibilità
+\0\<
+replace invisibility specifically
+\0\>
+sostituisce l'oggetto invisibilità
+\0\<
+Invisibility
+\0\>
+Invisibilità
+\0\<
+Invulnerability
+\0\>
+Invulnerabilità
+\0\<
+Serious Damage
+\0\>
+Danno Serio
+\0\<
+Serious Speed
+\0\>
+Velocità Seria
+\0\<
+Serious Bomb
+\0\>
+Bomba Seria
+\0\<
+Replace Invulnerability
+\0\>
+Sostituisci oggetto Invulnerabilità
+\0\<
+replace invulnerability specifically
+\0\>
+sostituisce l'oggetto invulnerabilità
+\0\<
+Replace Serious Damage
+\0\>
+Sostituisci oggetto Danno Serio
+\0\<
+replace serious damage specifically
+\0\>
+sostituisce l'oggetto danno serio
+\0\<
+Replace Serious Speed
+\0\>
+Sostituisci oggetto Velocità Seria
+\0\<
+replace serious speed specifically
+\0\>
+sostituisce l'oggetto velocità seria
+\0\<
+Replace Serious Bomb
+\0\>
+Sostituisci Bomba Seria
+\0\<
+replace serious bomb specifically
+\0\>
+sostituisce l'oggetto bomba seria
+\0\<
+Display options
+\0\>
+Opzioni di visualizzazione
+\0\<
+Decorated text
+\0\>
+Testo decorato
+\0\<
+display text decorations (e.g. color tags)
+\0\>
+visualizza le decorazioni del testo (es. etichette colorate)
+\0\<
+Show everything
+\0\>
+Mostra tutto
+\0\<
+toggle visibility of the entire interface and viewmodels
+\0\>
+abilita/disabilita la visualizzazione dell'intera interfaccia e dei modelli delle armi
+\0\<
+HUD size
+\0\>
+Dimensioni HUD
+\0\<
+set size of HUD boxes
+\0\>
+imposta la dimensione delle caselle dell'HUD
+\0\<
+75% (recommended)
+\0\>
+75% (consigliato)
+\0\<
+HUD opacity
+\0\>
+Opacità HUD
+\0\<
+set opacity factor of HUD boxes
+\0\>
+imposta il fattore di opacità delle caselle dell'HUD
+\0\<
+90% (default)
+\0\>
+90% (predefinito)
+\0\<
+Show HUD
+\0\>
+Mostra HUD
+\0\<
+toggle visibility of the heads-up display
+\0\>
+abilita/disabilita la visualizzazione dell'HUD
+\0\<
+Show messages
+\0\>
+Mostra messaggi
+\0\<
+display NETRICSA message notifications
+\0\>
+visualizza le notifiche dei messaggi di NETRICSA
+\0\<
+Player list
+\0\>
+Elenco dei giocatori
+\0\<
+toggle visibility of the player list in multiplayer
+\0\>
+abilita/disabilita la visualizzazione dell'elenco dei giocatori in modalità multigiocatore
+\0\<
+Sort players
+\0\>
+Ordina i giocatori
+\0\<
+sort player list by a specific statistic
+\0\>
+ordina l'elenco dei giocatori in base a una statistica specifica
+\0\<
+Show target names
+\0\>
+Mostra i nomi degli obiettivi
+\0\<
+display player names upon targeting them
+\0\>
+visualizza i nomi dei giocatori quando li prendi di mira
+\0\<
+Weapon list timeout
+\0\>
+Durata elenco delle armi
+\0\<
+how long to show the weapon selection list for
+\0\>
+specifica per quanto tempo mostrare l'elenco di selezione delle armi
+\0\<
+Disabled
+\0\>
+Disabilitato
+\0\<
+0.5s
+\0\>
+0.5s.
+\0\<
+1s
+\0\>
+1s.
+\0\<
+2s
+\0\>
+2s.
+\0\<
+3s (default)
+\0\>
+3s. (predefinito)
+\0\<
+4s
+\0\>
+4s.
+\0\<
+5s
+\0\>
+5s.
+\0\<
+6s
+\0\>
+6s.
+\0\<
+Miscellaneous information
+\0\>
+Informazioni varie
+\0\<
+Show game time
+\0\>
+Mostra tempo di gioco
+\0\<
+show current game time
+\0\>
+mostra il tempo di gioco corrente
+\0\<
+Show clock
+\0\>
+Mostra orologio
+\0\<
+show computer clock
+\0\>
+mostra l'orologio del computer
+\0\<
+Show match info
+\0\>
+Mostra informazioni sulla partita
+\0\<
+display information about the current game
+\0\>
+visualizza informazioni sulla partita corrente
+\0\<
+Show coordinates
+\0\>
+Mostra coordinate
+\0\<
+display crosshair coordinates
+\0\>
+visualizza le coordinate del mirino
+\0\<
+Show resolution
+\0\>
+Mostra risoluzione
+\0\<
+display current resolution
+\0\>
+visualizza la risoluzione corrente
+\0\<
+Show benchmark info
+\0\>
+Mostra informazioni di benchmark
+\0\<
+display information for benchmarking
+\0\>
+visualizza informazioni per il benchmark
+\0\<
+FPS
+\0\>
+Contatore dei fotogrammi
+\0\<
+FPS & Benchmark
+\0\>
+Contatore di fotogrammi e Benchmark
+\0\<
+Network information
+\0\>
+Informazioni di rete
+\0\<
+Show ping
+\0\>
+Mostra ping
+\0\<
+display latency to the server in milliseconds
+\0\>
+visualizza la latenza del server in millisecondi
+\0\<
+Latency update
+\0\>
+Aggiornamento contatore della latenza
+\0\<
+how often to update the latency counter
+\0\>
+specifica con quale frequenza aggiornare il contatore della latenza
+\0\<
+Real time
+\0\>
+Tempo reale
+\0\<
+Normal (1s)
+\0\>
+Normale (1s)
+\0\<
+Sometimes (5s)
+\0\>
+Minore (5s)
+\0\<
+Show network graph
+\0\>
+Mostra grafico di rete
+\0\<
+display network graph
+\0\>
+visualizza il grafico di rete
+\0\<
+Network graph size
+\0\>
+Dimensione buffer del grafico di rete
+\0\<
+set buffer size of the network graph
+\0\>
+imposta la dimensione del buffer del grafico di rete
+\0\<
+Crosshair options
+\0\>
+Opzioni del mirino
+\0\<
+Fixed crosshair
+\0\>
+Mirino fisso
+\0\<
+toggle fixed crosshair position
+\0\>
+abilita/disabilita la posizione fissa del mirino
+\0\<
+Crosshair coloring
+\0\>
+Colore del mirino
+\0\<
+colorize crosshair based on the health level of a target
+\0\>
+colora il mirino in base al livello di salute di un bersaglio
+\0\<
+Crosshair ratio
+\0\>
+Rapporto distanza del mirino
+\0\<
+how much the crosshair should change depending on the distance
+\0\>
+specifica quanto dovrebbe cambiare la dimensione del mirino a seconda della distanza dell'obiettivo
+\0\<
+No change
+\0\>
+Nessun cambiamento
+\0\<
+50% (default)
+\0\>
+50% (predefinito)
+\0\<
+Crosshair scale
+\0\>
+Scala del mirino
+\0\<
+size of the crosshair
+\0\>
+specifica la dimensione del mirino
+\0\<
+No crosshair
+\0\>
+Nessun mirino
+\0\<
+Crosshair opacity
+\0\>
+Opacità del mirino
+\0\<
+how transparent the crosshair should be
+\0\>
+specifica quanto dovrebbe essere trasparente il mirino
+\0\<
+Player options
+\0\>
+Opzioni del giocatore
+\0\<
+Vanilla FOV
+\0\>
+Campo visivo originale
+\0\<
+vanilla command for changing field of view in Cooperative mode
+\0\>
+comando originale per modificare il campo visivo in modalità Cooperativa
+\0\<
+Decorated server names
+\0\>
+Decorazioni nome del server
+\0\<
+display text decorations (e.g. color tags) in server names in the list
+\0\>
+visualizza le decorazioni del testo (es. etichette colorate) nei nomi dei server nell'elenco
+\0\<
+Yes (all 3D projections)
+\0\>
+Sì (tutte le proiezioni 3D)
+\0\<
+Yes (only player view)
+\0\>
+Sì (solo visuale giocatore)
+\0\<
+Advanced HUD
+\0\>
+HUD avanzato
+\0\<
+Replace HUD
+\0\>
+Sostituisci HUD
+\0\<
+replace vanilla or modded HUD with the plugin one
+\0\>
+sostituisce l'HUD originale o modificato con quello del componente aggiuntivo
+\0\<
+Vanilla
+\0\>
+Originale
+\0\<
+Vanilla and modded (experimental)
+\0\>
+Originale e modificato (sperimentale)
+\0\<
+HUD theme
+\0\>
+Tema HUD
+\0\<
+stylize HUD in a specific way
+\0\>
+scegli uno stile per l'interfaccia
+\0\<
+The First Encounter
+\0\>
+The First Encounter
+\0\<
+Seriously Warped Deathmatch
+\0\>
+Seriously Warped Deathmatch
+\0\<
+The Second Encounter
+\0\>
+The Second Encounter
+\0\<
+Screen edges X
+\0\>
+Bordi dello schermo X
+\0\<
+define how far the horizontal screen edges should be
+\0\>
+definisce quanto devono essere distanti i bordi orizzontali dello schermo
+\0\<
+5 (default)
+\0\>
+5 (predefinito)
+\0\<
+Screen edges Y
+\0\>
+Bordi dello schermo Y
+\0\<
+define how far the vertical screen edges should be
+\0\>
+definisce quanto devono essere distanti i bordi verticali dello schermo
+\0\<
+Sniper scope opacity
+\0\>
+Opacità del mirino del fucile di precisione
+\0\<
+how transparent the sniper scope should be
+\0\>
+specifica quanto dovrebbe essere trasparente il mirino del fucile di precisione
+\0\<
+Revolution
+\0\>
+Revolution
+\0\<
+Show player ping
+\0\>
+Mostra ping del giocatore
+\0\<
+display latency of each player next to their stats in the list
+\0\>
+visualizza la latenza di ogni giocatore accanto alle sue statistiche nell'elenco
+\0\<
+Milliseconds
+\0\>
+Millisecondi
+\0\<
+Signal strength
+\0\>
+Potenza del segnale
+\0\<
+Show ammo row
+\0\>
+Mostra le munizioni
+\0\<
+display a row of available ammunition in the bottom right corner
+\0\>
+visualizza le munizioni disponibili nell'angolo in basso a destra
+\0\<
+Colorize HUD
+\0\>
+Colora HUD
+\0\<
+use custom colors for the HUD
+\0\>
+usa colori personalizzati per l'HUD
+\0\<
+HUD color preset
+\0\>
+Preimpostazione colore HUD
+\0\<
+select preset for HUD colorization
+\0\>
+seleziona una preimpostazione per la colorazione dell'HUD
+\0\<
+Display patch version
+\0\>
+Visualizza la versione della patch
+\0\<
+display current version of the patch in the main menu
+\0\>
+visualizza la versione corrente della patch nel menu principale
+\0\<
+Notify about updates
+\0\>
+Notifica gli aggiornamenti
+\0\<
+notify about new patch versions upon starting the game
+\0\>
+mostra all'avvio del gioco una notifica se è disponibile una nuova versione della patch
+\0\<
+Level categories
+\0\>
+Categorie dei livelli
+\0\<
+separate levels in the list by custom categories
+\0\>
+divide i livelli elencati in categorie personalizzate
+\0\<
+Mask character GUID
+\0\>
+Nascondi GUID
+\0\<
+hide unique identifiers of other players from server clients
+\0\>
+nasconde gli identificatori univoci degli altri giocatori
+\0\<
+HUD icon shake
+\0\>
+Vibrazione delle icone HUD
+\0\<
+shake HUD icons whenever values that they represent change
+\0\>
+le icone dell'HUD vibrano ogni volta che i valori visualizzati cambiano
+\0\<
+Sniper scope coloring
+\0\>
+Colorazione del mirino del Fucile di precisione
+\0\<
+colorize zoom wheel based on the health level of a target
+\0\>
+Colora il mirino del fucile di precisione in base alla salute del bersaglio
+\0\<
+Show depleted ammo
+\0\>
+Mostra munizioni esaurite
+\0\<
+display icon in the ammunition row even when the weapon is out of ammo
+\0\>
+visualizza l'icona delle munizioni anche quando l'arma è senza munizioni
+\0\<
+Show high score
+\0\>
+Mostra punteggio
+\0\<
+display high score on the top of the screen
+\0\>
+visualizza il punteggio più alto nella parte superiore dello schermo
+\0\<
+Game theme
+\0\>
+Tema di gioco
+\0\<
+theme for menu elements, console and NETRICSA
+\0\>
+tema per gli elementi del menu, console e NETRICSA
+\0\<
+Pointer in borderless
+\0\>
+Puntatore in modalità senza bordi
+\0\<
+display game's mouse pointer in borderless window mode
+\0\>
+visualizza il puntatore del mouse del gioco in modalità finestra senza bordi
+\0\<
+Console fade time
+\0\>
+Tempo di dissolvenza della console
+\0\<
+animation speed for opening and closing the console
+\0\>
+velocità dell'animazione per l'apertura e la chiusura della console
+\0\<
+0.25s
+\0\>
+0.25s.
+\0\<
+0.5s (default)
+\0\>
+0.5s (predefinito)
+\0\<
+Report bad syncs to clients
+\0\>
+Segnala sincronizzazione errata
+\0\<
+notify clients whenever their game state doesn't sync with the server
+\0\>
+avvisa i client ogni volta che lo stato del loro gioco non è sincronizzato con il server
+\0\<
+Big NETRICSA font
+\0\>
+Caratteri grandi in NETRICSA
+\0\<
+make message font in NETRICSA bigger and scale it with resolution
+\0\>
+fa in modo che i caratteri dei messaggi in NETRICSA siano più grandi e si ridimensionino in base alla risoluzione
+\0\<
+Multiple player views
+\0\>
+Visuali giocatore multiple
+\0\<
+Main view overlay
+\0\>
+Sovrapposizione della visuale principale
+\0\<
+placement of observer view windows during the game
+\0\>
+posizionamento delle finestre dell'osservatore durante la partita
+\0\<
+On the side
+\0\>
+Di lato
+\0\<
+On top of main view
+\0\>
+In cima alla visuale principale
+\0\<
+Empty space background
+\0\>
+Sfondo spazio vuoto
+\0\<
+cover empty space with a simple background under the observer views
+\0\>
+copre lo spazio vuoto sotto le finestre dell'osservatore con uno sfondo semplice
+\0\<
+View window size
+\0\>
+Dimensioni finestra visuale
+\0\<
+size of observer view windows relative to the screen resolution
+\0\>
+dimensione delle finestre dell'osservatore rispetto alla risoluzione dello schermo
+\0\<
+25% (default)
+\0\>
+25% (predefinito)
+\0\<
+Global options
+\0\>
+Opzioni globali
+\0\<
+Custom mod libraries
+\0\>
+Librerie mod personalizzate
+\0\<
+replace vanilla Entities, Game & GameGUI libraries
+\0\>
+sostituisce le librerie Entities, Game e GameGUI
+\0\<
+Yes (recommended)
+\0\>
+Sì (consigliato)
+\0\<
+DPI awareness
+\0\>
+Usa DPI
+\0\<
+scale the game window according to monitor settings
+\0\>
+ridimensiona la finestra di gioco in base alle impostazioni dello schermo
+\0\<
+Extended file system
+\0\>
+File system esteso
+\0\<
+load content from other directories or use custom mod libraries
+\0\>
+carica i contenuti da altre cartelle o utilizza le librerie mod personalizzate
+\0\<
+Debug patcher
+\0\>
+Debug patcher
+\0\<
+print actions of the function patcher for debugging purposes
+\0\>
+stampa le azioni del patcher di funzione per scopi di debug
+\0\<
+Forbid vanilla clients
+\0\>
+Vieta client senza Classics Patch
+\0\<
+make the server exclusive to clients with the patch for better compatibility
+\0\>
+per la migliore compatibilità, rende il server esclusivo per i client con la patch
+\0\<
+Game options
+\0\>
+Opzioni di gioco
+\0\<
+Gameplay options
+\0\>
+Opzioni giocabilità
+\0\<
+Auto update shadows
+\0\>
+Aggiornamento automatico delle ombre
+\0\<
+automatically update shadow maps upon loading into games, playing demos etc.
+\0\>
+aggiorna automaticamente le mappe delle ombre durante il caricamento delle partite, nelle demo, ecc.
+\0\<
+Custom connection setting
+\0\>
+Impostazioni di connessione
+\0\<
+Prediction
+\0\>
+Previsione
+\0\<
+enable prediction of movable entities
+\0\>
+abilita la previsione di entità mobili
+\0\<
+Buffer action count
+\0\>
+Quantità di azioni nel buffer
+\0\<
+set amount of actions to buffer
+\0\>
+Imposta la quantità di azioni da inserire nel buffer
+\0\<
+1 (lowest ping)
+\0\>
+1 (ping più basso)
+\0\<
+2 (most stable)
+\0\>
+2 (il più stabile)
+\0\<
+3 (slower connection)
+\0\>
+3 (connessione più lenta)
+\0\<
+4 (slow connection)
+\0\>
+4 (connessione lenta)
+\0\<
+5 (slowest connection)
+\0\>
+5 (connessione lentissima)
+\0\<
+Minimum BPS
+\0\>
+BPS minimo
+\0\<
+set minimum bytes per second that can be sent (cli_iCustomMinBPS)
+\0\>
+imposta il numero minimo di byte al secondo che possono essere inviati (cli_iCustomMinBPS)
+\0\<
+5 kB (least stable)
+\0\>
+5 kB (meno stabile)
+\0\<
+10 kB
+\0\>
+10 kB
+\0\<
+25 kB
+\0\>
+25 kB
+\0\<
+50 kB (default)
+\0\>
+50 kB (predefinito)
+\0\<
+100 kB
+\0\>
+100 kB
+\0\<
+500 kB
+\0\>
+500 kB
+\0\<
+1000 kB (most stable)
+\0\>
+1000 kB (il più stabile)
+\0\<
+Maximum BPS
+\0\>
+BPS massimo
+\0\<
+set maximum bytes per second that can be sent (cli_iCustomMaxBPS)
+\0\>
+imposta il numero massimo di byte al secondo che possono essere inviati (cli_iCustomMaxBPS)
+\0\<
+10 kB (least stable)
+\0\>
+10 kB (meno stabile)
+\0\<
+50 kB
+\0\>
+50 kB
+\0\<
+100 kB (default)
+\0\>
+100 kB (predefinito)
+\0\<
+250 kB
+\0\>
+250 kB
+\0\<
+Revolution directory
+\0\>
+Cartella Revolution
+\0\<
+specify directory with Serious Sam Revolution installation
+\0\>
+specifica la cartella di installazione di Serious Sam Revolution
+\0\<
+Revolution workshop directory
+\0\>
+Cartella workshop Revolution
+\0\<
+specify Revolution's workshop directory (leave blank for automatic)
+\0\>
+specifica la cartella del workshop di Revolution (lasciare vuoto per la selezione automatica)
+\0\<
+No
+\0\>
+No
+\0\<
+Yes
+\0\>
+Sì
+\0\<
+None
+\0\>
+Nessuno
+\0\<
+Gameplay extensions
+\0\>
+Estensioni di gioco
+\0\<
+Enable extensions
+\0\>
+Abilita estensioni
+\0\<
+extend gameplay by enabling new patched logic (incompatible with vanilla)
+\0\>
+estende il gameplay abilitando una nuova logica di gioco (incompatibile con il gioco originale)
+\0\<
+Fix timers
+\0\>
+Correggi temporizzazione
+\0\<
+fix logic timers to delay the slowdown bug
+\0\>
+Correggi i temporizzatori logici per ritardare il bug del rallentamento del gioco
+\0\<
+Unlimited air control
+\0\>
+Controllo illimitato in aria
+\0\<
+let players move while in air indefinitely
+\0\>
+consente ai giocatori di muoversi in aria liberamente
+\0\<
+Movement speed
+\0\>
+Velocità di movimento
+\0\<
+multiply player movement speed (gex_fMoveSpeed)
+\0\>
+moltiplica la velocità di movimento del giocatore (gex_fMoveSpeed)
+\0\<
+Standing still
+\0\>
+Stare fermi
+\0\<
+Jump height
+\0\>
+Altezza del salto
+\0\<
+multiply player jump height (gex_fJumpHeight)
+\0\>
+moltiplica l'altezza del salto del giocatore (gex_fJumpHeight)
+\0\<
+No jumping
+\0\>
+Niente salti
+\0\<
+Ammo replacement
+\0\>
+Sostituzione delle munizioni
+\0\<
+which ammo item to replace other ammo with
+\0\>
+Specifica con quale tipo di munizioni effettuare la sostituzione
+\0\<
+Shells
+\0\>
+Cartucce
+\0\<
+Bullets
+\0\>
+Proiettili
+\0\<
+Rockets
+\0\>
+Missili
+\0\<
+Grenades
+\0\>
+Granate
+\0\<
+Electricity
+\0\>
+Batterie
+\0\<
+Iron balls
+\0\>
+Palle di cannone
+\0\<
+Napalm
+\0\>
+Napalm
+\0\<
+Sniper bullets
+\0\>
+Proiettili di precisione
+\0\<
+Weapon items (SUTL)
+\0\>
+Oggetti arma (SUTL)
+\0\<
+Ammo items (SUTL)
+\0\>
+Oggetti munizioni (SUTL)
+\0\<
+Replace Shells
+\0\>
+Sostituisci Cartucce
+\0\<
+replace shells specifically
+\0\>
+Sostituisce le cartucce
+\0\<
+Replace Bullets
+\0\>
+Sostituisci Proiettili
+\0\<
+replace bullets specifically
+\0\>
+sostituisce i proiettili
+\0\<
+Replace Rockets
+\0\>
+Sostutuisci Missili
+\0\<
+replace rockets specifically
+\0\>
+sostituisce i missili
+\0\<
+Replace Grenades
+\0\>
+Sostituisci Granate
+\0\<
+replace grenades specifically
+\0\>
+sostituisce le granate
+\0\<
+Replace Electricity
+\0\>
+Sostituisci Batterie
+\0\<
+replace electricity specifically
+\0\>
+sostituisce le batterie
+\0\<
+Replace Iron balls
+\0\>
+Sostituisci Palle di cannone
+\0\<
+replace iron balls specifically
+\0\>
+sostituisce le palle di cannone
+\0\<
+Replace Napalm
+\0\>
+Sostituisci Napalm
+\0\<
+replace napalm specifically
+\0\>
+Sostituisce il Napalm
+\0\<
+Replace Sniper bullets
+\0\>
+Sostituisci Proiettili di precisione
+\0\<
+replace sniper bullets specifically
+\0\>
+sostituisce i proiettili di precisione
+\0\<
+Show lives
+\0\>
+Mostra la salute
+\0\<
+display amount of remaining lives above the messages
+\0\>
+visualizza la quantità di salute rimanente sopra i messaggi
+\0\<
+Big console font
+\0\>
+Caratteri console grandi
+\0\<
+make console font bigger and scale it with resolution
+\0\>
+fa in modo che i caratteri della console siano più grandi e si ridimensionino in base alla risoluzione
+\0\<
+Never
+\0\>
+Mai
+\0\<
+Only last lines
+\0\>
+Solo le ultime righe
+\0\<
+Always
+\0\>
+Sempre
+\0\<
+Spawn invulnerability indicator
+\0\>
+Indicatore di invulnerabilità di resurrezione
+\0\<
+toggle spawn invulnerability indication for the player
+\0\>
+abilita/disabilita l'indicatore di invulnerabilità di resurrezione per il giocatore
+\0\<
+Active power-up
+\0\>
+Potenziamento attivo
+\0\<
+Active power-up + sound
+\0\>
+Potenziamento + suono attivi
+\0\<
+Extras menu
+\0\>
+Menù extra
+\0\<
+replace "mods" button with "extras" in the main menu
+\0\>
+sostituisci la voce "mods" con "extra" nel menu principale
+\0\<
+Admin login password
+\0\>
+Password amministratore
+\0\<
+for authorization using "!login" chat command (leave blank to disable admin rights)
+\0\>
+per ottenere l'autorizzazione, usa il comando "!login" nella discussione (lasciare vuoto per disabilitare)
+\0\<
+Operator login password
+\0\>
+Password operatore
+\0\<
+for authorization using "!login" chat command (leave blank to disable operator rights)
+\0\>
+per ottenere l'autorizzazione, usa il comando "!login" nella discussione (lasciare vuoto per disabilitare)
+\0\<
+Level filtering
+\0\>
+Filtro livelli
+\0\<
+show filtering options in the level selection menu
+\0\>
+mostra le opzioni di filtro nel menu di selezione del livello
+\0\<
+Yes (with seconds)
+\0\>
+Sì (con secondi)
+\0\<
+Gravity acceleration
+\0\>
+Accelerazione di gravità
+\0\<
+multiply gravity acceleration (gex_fGravityAcc)
+\0\>
+moltiplica l'accelerazione di gravità (gex_fGravityAcc)
+\0\<
+Zero-G
+\0\>
+Assenza di gravità
+\0\<
+These options are only available in the custom mod
+\0\>
+Queste opzioni sono disponibili solo nella Classics Patch
+\0\<
+Blood color
+\0\>
+Colore del sangue
+\0\<
+set local blood color for enemies and players
+\0\>
+imposta il colore del sangue per i nemici e i giocatori
+\0\<
+Red (default)
+\0\>
+Rosso (predefinito)
+\0\<
+Green
+\0\>
+Verde
+\0\<
+Yellow
+\0\>
+Giallo
+\0\<
+Blue
+\0\>
+Blu
+\0\<
+Hot pink
+\0\>
+Rosa caldo
+\0\<
+Pumpkin
+\0\>
+Zucca
+\0\<
+Brutal red
+\0\>
+Rosso brutale
+\0\<
+Crude oil
+\0\>
+Petrolio greggio
+\0\<
+Milk
+\0\>
+Latte
+\0\<
+Invisible
+\0\>
+Invisibile
+\0\<
+Blood theme
+\0\>
+Tema del sangue
+\0\<
+set special theme for blood and gib coloring
+\0\>
+imposta un tema speciale per la colorazione del sangue e di altre parti del corpo
+\0\<
+Based on seasonal event
+\0\>
+In base all'evento stagionale
+\0\<
+Red blood -> own color
+\0\>
+Sangue rosso -> il tuo colore
+\0\<
+All blood -> own brightened color
+\0\>
+Tutto il sangue -> il tuo colore più chiaro
+\0\<
+Hippie
+\0\>
+Hippie
+\0\<
+Birthday party
+\0\>
+Festa di compleanno
+\0\<
+Christmas
+\0\>
+Natale
+\0\<
+Connect to Steam
+\0\>
+Connettiti a Steam
+\0\<
+establish connection with the Steam client (only if you own the game there)
+\0\>
+stabilisci una connessione con il client Steam (solo se possiedi il gioco lì)
+\0\<
+Mirror weapon viewmodel
+\0\>
+Modello dell'arma a specchio
+\0\<
+toggle left-handed mode for the first person view
+\0\>
+abilita/disabilita la modalità per mancini per la visuale in prima persona
+\0\<
+Power-up particles on weapons
+\0\>
+Effetto potenziamento sulle armi
+\0\<
+display particles of active power-ups on the weapon viewmodel
+\0\>
+visualizza l'effetto grafico del potenziamento attivo sul modello dell'arma
+\0\<
+Fix player info sound
+\0\>
+Correzione del suono di notifica
+\0\<
+prevent notification sound from playing after killing every enemy
+\0\>
+impedisce la riproduzione del suono di notifica dopo l'uccisione di ogni nemico
+\0\<
+Vertical split-screen split
+\0\>
+Schermo diviso in verticale
+\0\<
+place views side by side for two players on a single screen
+\0\>
+posiziona le visuali per due giocatori affiancate sullo stesso schermo
+\0\<
+Vanilla query
+\0\>
+Sostituisci GameSpy
+\0\<
+replace GameSpy in the engine with Legacy master server
+\0\>
+sostituisce GameSpy con il server principale Legacy
+\0\<
+Steam options
+\0\>
+Opzioni di Steam
+\0\<
+For dedicated servers
+\0\>
+Server dedicati
+\0\<
+access Steam from dedicated servers
+\0\>
+accedi a Steam da server dedicati
+\0\<
+For tool applications
+\0\>
+Applicazioni di sviluppo
+\0\<
+access Steam from editor and modeler applications
+\0\>
+accedi a Steam dalle applicazioni Editor e Modeler
+\0\<
+Voting options
+\0\>
+Opzioni di voto
+\0\<
+Enable voting system
+\0\>
+Abilita il sistema di votazione
+\0\<
+let clients initiate voting processes and vote in them
+\0\>
+consente ai client di avviare le votazioni e di votare in essi
+\0\<
+Players can initiate
+\0\>
+Consenti avvio votazione ai giocatori
+\0\<
+allow players to initiate voting process
+\0\>
+consente ai giocatori di avviare le votazioni
+\0\<
+Players can vote
+\0\>
+Consenti voto ai giocatori
+\0\<
+allow players to vote during voting process
+\0\>
+consente ai giocatori di votare
+\0\<
+Observers can initiate
+\0\>
+Consenti avvio votazione agli osservatori
+\0\<
+allow spectators to initiate voting process
+\0\>
+consente agli osservatori di avviare le votazioni
+\0\<
+Observers can vote
+\0\>
+Consenti voto agli osservatori
+\0\<
+allow spectators to vote during voting process
+\0\>
+consente agli osservatori di votare
+\0\<
+Voting time
+\0\>
+Durata votazione
+\0\<
+how long each voting period lasts
+\0\>
+Specifica la durata di ogni votazione
+\0\<
+10s
+\0\>
+10s.
+\0\<
+15s
+\0\>
+15s.
+\0\<
+20s
+\0\>
+20s.
+\0\<
+25s
+\0\>
+25s.
+\0\<
+30s (default)
+\0\>
+30s (predefinito)
+\0\<
+40s
+\0\>
+40s.
+\0\<
+50s
+\0\>
+50s.
+\0\<
+60s
+\0\>
+60s.
+\0\<
+Map changing
+\0\>
+Cambio mappa
+\0\<
+allow voting to change current map
+\0\>
+consente il voto per cambiare la mappa corrente
+\0\<
+Client kicking
+\0\>
+Espulsione client
+\0\<
+allow voting to kick clients off the server
+\0\>
+consente il voto per espellere i client dal server
+\0\<
+Kick timeout
+\0\>
+Durata espulsione
+\0\<
+how long to ban kicked players for
+\0\>
+Specifica la durata dell'espulsione dei giocatori
+\0\<
+Client muting
+\0\>
+Disattivazione messaggi client
+\0\<
+allow voting to prevent clients from chatting
+\0\>
+consente il voto per impedire ai client di inviare messaggi
+\0\<
+Mute timeout
+\0\>
+Durata disattivazione messaggi
+\0\<
+how long to mute players for
+\0\>
+Specifica la durata della disattivazione dei messaggi dei giocatori
+\0\<
+30s
+\0\>
+30s.
+\0\<
+1min
+\0\>
+1min.
+\0\<
+2min
+\0\>
+2min.
+\0\<
+3min
+\0\>
+3min.
+\0\<
+4min
+\0\>
+4min.
+\0\<
+5min (default)
+\0\>
+5min (predefinito)
+\0\<
+10min
+\0\>
+10min.
+\0\<
+30min
+\0\>
+30min.
+\0\<
+1h
+\0\>
+1 ora.
+\0\<
+Forbid third person view
+\0\>
+Vieta visuale in terza persona
+\0\<
+disables ability to switch to third person view (Server Utilities)
+\0\>
+disabilita la possibilità di passare alla visuale in terza persona (Utilità del Server)
+\0\<
+Voting timeout
+\0\>
+Tempo di attesa votazione
+\0\<
+how long to wait before initiating another vote
+\0\>
+Specifica il tempo di attesa prima di iniziare una nuova votazione
+\0\<
+Decorated player names
+\0\>
+Nomi dei giocatori con decorazioni
+\0\<
+display text decorations (e.g. color tags) in player names
+\0\>
+visualizza le decorazioni del testo (es. etichette colorate) nei nomi dei giocatori
+\0\<
+Player tags
+\0\>
+Etichette giocatori
+\0\<
+display tags above players in cooperative mode
+\0\>
+visualizza le etichette sopra i giocatori in modalità cooperativa
+\0\<
+Only marker
+\0\>
+Solo marcatore
+\0\<
+With name
+\0\>
+Con nome
+\0\<
+With name and distance
+\0\>
+Con nome e distanza
+\0\<
+Auto
+\0\>
+Auto
+\0\<
+By name
+\0\>
+Per nome
+\0\<
+By health
+\0\>
+Per salute
+\0\<
+By score
+\0\>
+Per punteggio
+\0\<
+By mana
+\0\>
+Per prestigio
+\0\<
+By kills
+\0\>
+Per uccisioni
+\0\<
+By deaths
+\0\>
+Per morti
+\0\<
+Mounting options
+\0\>
+Opzioni di montaggio
+\0\<
+Mount The First Encounter
+\0\>
+Monta The First Encounter
+\0\<
+load content from Serious Sam: The First Encounter
+\0\>
+carica i contenuti da Serious Sam: The First Encounter
+\0\<
+Mount Revolution
+\0\>
+Monta Revolution
+\0\<
+load content from Serious Sam Revolution
+\0\>
+carica i contenuti da Serious Sam Revolution
+\0\<
+Mount Revolution workshop
+\0\>
+Monta workshop di Revolution
+\0\<
+load content from Revolution's workshop
+\0\>
+carica i contenuti dal workshop di Revolution
+\0\<
+Show tags in demos
+\0\>
+Mostra etichette nelle demo
+\0\<
+display tags above players regardless of gamemode in demos
+\0\>
+visualizza le etichette sopra i giocatori nelle demo, indipendentemente dalla modalità di gioco
+\0\<
+Show tags for observers
+\0\>
+Mostra etichette per gli osservatori
+\0\<
+display tags above players regardless of gamemode while observing
+\0\>
+visualizza le etichette sopra i giocatori mentre sei un'osservatore, indipendentemente dalla modalità di gioco
+\0\<
+Disable local prediction
+\0\>
+Disabilita la previsione locale
+\0\<
+eliminates jittery player movement with latency under 50ms
+\0\>
+elimina i movimenti scattosi del giocatore con una latenza inferiore a 50 ms
+\0\<
+Big console font scale
+\0\>
+Scala caratteri grandi nella console
+\0\<
+extra scaling for the big font in console
+\0\>
+ridimensionamento aggiuntivo per i caratteri grandi nella console
+\0\<
+Big NETRICSA font scale
+\0\>
+Scala caratteri grandi NETRICSA
+\0\<
+extra scaling for the big font in NETRICSA
+\0\>
+ridimensionamento aggiuntivo per i caratteri grandi in NETRICSA
+\0\<
+Allow friends to join
+\0\>
+Consenti agli amici di partecipare
+\0\<
+allow friends to join the server you are playing on by using "Join game" button
+\0\>
+consente agli amici di unirsi al server su cui stai giocando utilizzando il pulsante "Partecipa"
+\0\<
+Use web browser
+\0\>
+Utilizza il browser web
+\0\<
+allow opening in-game links in Steam's web browser via Steam Overlay
+\0\>
+consente l'apertura dei collegamenti in gioco nel browser web di Steam tramite la Sovrapposizione di Steam
+\0\<
+what debug information about interactions with Steam to output
+\0\>
+informazioni di debug da visualizzare sulle interazioni con Steam
+\0\<
+Only callbacks/single actions
+\0\>
+Solo azioni singole
+\0\<
+All interactions in real time
+\0\>
+Tutte le interazioni in tempo reale
+\0\<
+Hook screenshots
+\0\>
+Istantanee personalizzate
+\0\<
+allow taking custom screenshots instead of capturing the entire game window
+\0\>
+consente di acquisire istantanee dello schermo personalizzate invece di catturare l'intera finestra di gioco
+\0\<
+Cannon alignment
+\0\>
+Allineamento cannone
+\0\<
+how to align the cannon's viewmodel
+\0\>
+Specifica l'allineamento del modello del cannone
+\0\<
+Extreme quality
+\0\>
+Qualità estrema
+\0\<
+CUSTOM RESOLUTION
+\0\>
+RISOLUZIONE PERSONALIZZATA
+\0\<
+for specifying custom screen resolution (for example: 1440x720)
+\0\>
+per specificare una risoluzione dello schermo personalizzata (ad esempio: 1440x720)
+\0\<
+WINDOW MODE
+\0\>
+MODALITÀ FINESTRA
+\0\<
+make game run in a window or in full screen
+\0\>
+fa in modo che il gioco venga eseguito in modalità finestra o schermo intero
+\0\<
+HINT: To enable "dualhead" mode, type in a custom resolution with
+\0\>
+SUGGERIMENTO: per abilitare la modalità doppio schermo, digitare una risoluzione personalizzata
+\0\<
+a 8:3 aspect ratio (e.g. 1600x600 for two 800x600 screens side by side)
+\0\>
+con un rapporto d'aspetto di 8:3 (ad esempio 1600x600 per due schermi 800x600 affiancati)
+\0\<
+Drop-down lists
+\0\>
+Elenchi a discesa
+\0\<
+use drop-down lists for options with more than 2 values
+\0\>
+usa gli elenchi a discesa per le opzioni con più di 2 valori
+\0\$
