@@ -24,9 +24,10 @@ This super project gathers everything together under a single solution for prope
   - [`Builds/TSE107/Mods/ClassicsPatchMod`](../../../ModShell) - shell of a special mod that includes resources necessary for properly running it.
 - `Docs` - up-to-date contents of the [wiki](../../wiki) for any specific release.
 - `Extras` - global dependencies that the projects utilize.
-  - [`Steamworks`](https://partner.steamgames.com/) - SDK for enabling extended interactions with the Steam client
+  - [`SDL2`](https://libsdl.org/) - cross-platform abstraction library for implementing proper support of game controllers.
+  - [`Steamworks`](https://partner.steamgames.com/) - SDK for enabling extended interactions with the Steam client.
   - [`XGizmo`](../../../XGizmo) - headers with a variety of convenient classes and functions for Serious Engine 1.
-  - [`zlib`](https://zlib.net/) - static library for working with ZIP archives
+  - [`zlib`](https://zlib.net/) - static library for working with ZIP archives.
 - `Includes` - [Serious Engine 1 SDK](https://github.com/DreamyCecil/SE1-ModSDK/tree/includes) that includes static libraries and engine headers for different game versions.
 - `Localization` - translations of Serious Sam Classics Patch contents to different languages.
 - `Properties` - common properties for use in project files.
@@ -39,6 +40,9 @@ Original source code of `DedicatedServer`, `GameExecutable`, `Mod`, `PatchedGui`
 Building instructions are available here: https://github.com/DreamyCecil/SE1-ModSDK/wiki/Building
 
 > [!NOTE]
+> A lot of batch scripts in the repository (`.bat`) utilize [7-Zip](https://www.7-zip.org/) in order to pack files into ZIP archives. Make sure to install it and specify a path to it in the environment variables for the scripts to work.
+
+> [!TIP]
 > After the project is built for the `Release_TSE107` configuration, you can apply the patch to your build of TSE 1.07 one level above by using the `DeployToBin.bat` script (e.g. to `C:/SeriousSam` if this repository resides in `C:/SeriousSam/SuperProject`).
 
 # License
@@ -47,5 +51,6 @@ This project is licensed under GNU GPL v2 (see LICENSE file).
 
 Some of the code included with the SDK may not be licensed under the GNU GPL v2:
 
+- Simple DirectMedia Layer (located in `Extras/SDL2`) from https://libsdl.org/
 - Steamworks SDK (located in `Extras/Steamworks`) by Valve Corporation
 - zlib (located in `Extras/zlib`) by Jean-loup Gailly and Mark Adler
