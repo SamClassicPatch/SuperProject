@@ -20,6 +20,7 @@ echo ----------------------------
 cd %REPO%
 
 :: Copy extra GRO files that are released alongside the final builds
+copy /B Localization\SE1_ClassicsPatch_ITA.gro %BUILDS%
 copy /B Localization\SE1_ClassicsPatch_RUS.gro %BUILDS%
 copy /B Resources\SE1_RevResources.gro         %BUILDS%
 
