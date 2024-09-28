@@ -1,9 +1,5 @@
-64
+72
 
-\0\<
-WINDOW MODE
-\0\>
-MODALITÀ FINESTRA
 \0\<
 Window
 \0\>
@@ -49,18 +45,6 @@ Show all
 \0\>
 Mostra tutto
 \0\<
-ASPECT RATIO
-\0\>
-RAPPORTO D'ASPETTO
-\0\<
-select video mode aspect ratio
-\0\>
-seleziona il rapporto d'aspetto della modalità video
-\0\<
-make game run in a window or in full screen
-\0\>
-fa in modo che il gioco venga eseguito in modalità finestra o schermo intero
-\0\<
 ERROR: Couldn't start a new game!\n
 
 \0\>
@@ -99,13 +83,13 @@ A new version of Classics Patch is available!\n
    Your version: ^cff3f3f%s^r      Latest version: ^c5fff5f%s^r\n
 \n
 - "Remind me later" will show this again in a week.\n
-- '^cffffffsam_bNotifyAboutUpdates = 0^r' completely disables it.
+- Use '^cffffffNotifyAboutUpdates^r' config property to toggle it.
 \0\>
 È disponibile una nuova versione di Classics Patch!\n
    La tua versione: ^cff3f3f%s^r      Ultima versione: ^c5fff5f%s^r\n
 \n
 - "Ricordamelo più tardi" mostrerà questo messaggio di nuovo tra una settimana.\n
-- '^cffffffsam_bNotifyAboutUpdates = 0^r' disabilita le notifiche.
+- Usa l'opzione '^cffffffNotifyAboutUpdates^r' per abilitare/disabilitare le notifiche.
 \0\<
 Checking for updates...\n
 
@@ -127,7 +111,7 @@ Password:
 \0\<
 adjust server settings from the classics patch
 \0\>
-regola le impostazioni del server dalla Classics Patch
+regola le impostazioni del server della Classics Patch
 \0\<
 Server options
 \0\>
@@ -161,6 +145,10 @@ Config '%s' is included recursively
 \0\>
 La configurazione '%s' è inclusa in modo ricorsivo
 \0\<
+THIRD PARTY RESOURCES
+\0\>
+RISORSE DI TERZE PARTI
+\0\<
 SPECIAL THANKS
 \0\>
 RINGRAZIAMENTI SPECIALI
@@ -191,7 +179,7 @@ riconoscimenti per il gioco o una mod
 \0\<
 GAME CREDITS
 \0\>
-RICONOSCIMENTI DEL GIOCO
+RICONOSCIMENTI GIOCO
 \0\<
 EXTRAS
 \0\>
@@ -280,4 +268,48 @@ Joining a game via Steam: %s\n
 \0\>
 Partecipa ad una partita tramite Steam: %s\n
 
+\0\<
+AutoValue: Unknown variable '%s'
+\0\>
+AutoValue: Variabile sconosciuta '%s'
+\0\<
+AutoValue: Expected display adapter index
+\0\>
+AutoValue: Previsto l'indice della scheda grafica
+\0\<
+AutoValue: Cannot load resolution list
+\0\>
+AutoValue: Impossibile caricare l'elenco delle risoluzioni
+\0\<
+Range: step value is too low
+\0\>
+Range: il valore di incremento è troppo basso
+\0\<
+Range: max value is too high
+\0\>
+Range: il valore massimo è troppo alto
+\0\<
+Range: min value is too low
+\0\>
+Range: il valore minimo è troppo basso
+\0\<
+Range property requires three numbers: min, max and step
+\0\>
+La proprietà "Range" richiede tre valori: minimo, massimo e incremento
+\0\<
+PROPERTIES
+\0\>
+PROPRIETÀ
+\0\<
+Press Escape, RMB or B/Back on a controller to cancel
+\0\>
+Premi Esc, il tasto destro del mouse o B/Indietro su un controller per annullare
+\0\<
+Move your mouse or controller joystick in any direction
+\0\>
+Muovi il mouse o il joystick del controller in qualsiasi direzione
+\0\<
+select axis automatically from any movement
+\0\>
+effettua la selezione automatica dell'asse da qualsiasi movimento
 \0\$

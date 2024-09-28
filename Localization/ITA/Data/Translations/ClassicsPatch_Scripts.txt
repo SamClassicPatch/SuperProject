@@ -1,4 +1,4 @@
-550
+559
 
 \0\<
 Common options
@@ -595,7 +595,7 @@ sostituisce il lanciafiamme XOP
 \0\<
 Replace Sniper Item
 \0\>
-Sostituisci Fucile di precisione RAPTOR da 16mm
+Sostituisci Fucile di precisione RAPTOR
 \0\<
 replace sniper specifically
 \0\>
@@ -979,7 +979,7 @@ comando originale per modificare il campo visivo in modalità Cooperativa
 \0\<
 Decorated server names
 \0\>
-Decorazioni del nome del server
+Decorazioni nome del server
 \0\<
 display text decorations (e.g. color tags) in server names in the list
 \0\>
@@ -1151,7 +1151,7 @@ Colorazione del mirino del Fucile di precisione
 \0\<
 colorize zoom wheel based on the health level of a target
 \0\>
-Colora in base alla salute del bersaglio il mirino del fucile di precisione ingrandito con la rotellina del mouse
+Colora il mirino del fucile di precisione in base alla salute del bersaglio
 \0\<
 Show depleted ammo
 \0\>
@@ -1487,7 +1487,7 @@ moltiplica la velocità di movimento del giocatore (gex_fMoveSpeed)
 \0\<
 Standing still
 \0\>
-Stare fermo
+Stare fermi
 \0\<
 Jump height
 \0\>
@@ -1499,7 +1499,7 @@ moltiplica l'altezza del salto del giocatore (gex_fJumpHeight)
 \0\<
 No jumping
 \0\>
-Non saltare
+Niente salti
 \0\<
 Ammo replacement
 \0\>
@@ -1943,7 +1943,7 @@ Specifica la durata di ogni votazione
 \0\<
 Map changing
 \0\>
-Cambia mappa
+Cambio mappa
 \0\<
 allow voting to change current map
 \0\>
@@ -1951,7 +1951,7 @@ consente il voto per cambiare la mappa corrente
 \0\<
 Client kicking
 \0\>
-Espulsione dei client
+Espulsione client
 \0\<
 allow voting to kick clients off the server
 \0\>
@@ -1967,7 +1967,7 @@ Specifica la durata dell'espulsione dei giocatori
 \0\<
 Client muting
 \0\>
-Disattivazione messaggi dei client
+Disattivazione messaggi client
 \0\<
 allow voting to prevent clients from chatting
 \0\>
@@ -2175,7 +2175,7 @@ consente l'apertura dei collegamenti in gioco nel browser web di Steam tramite l
 \0\<
 what debug information about interactions with Steam to output
 \0\>
-informazioni di debug sulle interazioni con Steam da visualizzare
+informazioni di debug da visualizzare sulle interazioni con Steam
 \0\<
 Only callbacks/single actions
 \0\>
@@ -2200,4 +2200,40 @@ Allineamento cannone
 how to align the cannon's viewmodel
 \0\>
 Specifica l'allineamento del modello del cannone
+\0\<
+Extreme quality
+\0\>
+Qualità estrema
+\0\<
+CUSTOM RESOLUTION
+\0\>
+RISOLUZIONE PERSONALIZZATA
+\0\<
+for specifying custom screen resolution (for example: 1440x720)
+\0\>
+per specificare una risoluzione dello schermo personalizzata (ad esempio: 1440x720)
+\0\<
+WINDOW MODE
+\0\>
+MODALITÀ FINESTRA
+\0\<
+make game run in a window or in full screen
+\0\>
+fa in modo che il gioco venga eseguito in modalità finestra o schermo intero
+\0\<
+HINT: To enable "dualhead" mode, type in a custom resolution with
+\0\>
+SUGGERIMENTO: per abilitare la modalità doppio schermo, digitare una risoluzione personalizzata
+\0\<
+a 8:3 aspect ratio (e.g. 1600x600 for two 800x600 screens side by side)
+\0\>
+con un rapporto d'aspetto di 8:3 (ad esempio 1600x600 per due schermi 800x600 affiancati)
+\0\<
+Drop-down lists
+\0\>
+Elenchi a discesa
+\0\<
+use drop-down lists for options with more than 2 values
+\0\>
+usa gli elenchi a discesa per le opzioni con più di 2 valori
 \0\$

@@ -1,17 +1,5 @@
-176
+182
 
-\0\<
-Cannot?5find?5?8?$CFs?8?5symbol?5in?5?8@
-\0\>
-[These strings aren't supposed to be here and I don't know how to get rid of them]
-\0\<
-Plugin?5module?5has?5not?5been?5l@
-\0\>
-[It is all because they start with "ETRS" and get picked up by the Depend utility]
-\0\<
-Client?5?$CFd?$AA@
-\0\>
-[And this one]
 \0\<
 Cannot find '%s' symbol in '%s'!
 \0\>
@@ -144,13 +132,13 @@ Il componente aggiuntivo '%s' è già disabilitato!\n
 '%s' loading cancelled: Mismatching utility flags (0x%X)\n
 
 \0\>
-Caricamento '%s' annullato: Flag di utilita non corrispondenti (0x%X)\n
+Caricamento '%s' annullato: Parametri di utilita non corrispondenti (0x%X)\n
 
 \0\<
-'%s' loading cancelled: Wrong API version (%u)\n
+'%s' loading cancelled: API version is too new (%u)\n
 
 \0\>
-Caricamento '%s' annullato: Versione API errata (%u)\n
+Caricamento '%s' annullato: Versione API troppo nuova (%u)\n
 
 \0\<
 Cannot load module '%s':\n
@@ -179,7 +167,7 @@ Troppi messaggi!
 \0\<
 You are not allowed to chat for %s!
 \0\>
-Non ti è consentito comunicare in %s!
+Non ti è consentito comunicare per %s!
 \0\<
 \n
 ^cffffffFurther attempts may lead to a kick!
@@ -193,15 +181,15 @@ tempo indefinito
 \0\<
 Client %d has been banned for %s!
 \0\>
-Il client %d è stato bandito da %s!
+Il client %d è stato bandito per %s!
 \0\<
 You have been banned for %s!
 \0\>
-Sei stato bandito da %s!
+Sei stato bandito per %s!
 \0\<
 Client %d has been muted for %s!
 \0\>
-Il client %d non è autorizzato a comunicare in %s!
+Il client %d non è autorizzato a comunicare per %s!
 \0\<
 Client %d has been kicked! Reason: "%s"
 \0\>
@@ -423,16 +411,16 @@ Initialized %u entity\n
 Entità %u inizializzata\n
 
 \0\<
-Changed movement speed of %u entity to [%.2f, %.2f, %.2f]\n
+Changed movement speed of %u entity to %s\n
 
 \0\>
-Modificata la velocità di movimento dell'entità %u in [%.2f, %.2f, %.2f]\n
+Modificata la velocità di movimento dell'entità %u in %s\n
 
 \0\<
-Changed rotation speed of %u entity to [%.2f, %.2f, %.2f]\n
+Changed rotation speed of %u entity to %s\n
 
 \0\>
-Modificata la velocità di rotazione dell'entità %u in [%.2f, %.2f, %.2f]\n
+Modificata la velocità di rotazione dell'entità %u in %s\n
 
 \0\<
 Parented %u entity to %u\n
@@ -447,10 +435,10 @@ Unparented %u entity\n
 Entità %u non associata\n
 
 \0\<
-Teleported %u entity to [%.2f, %.2f, %.2f;  %.2f, %.2f, %.2f]\n
+Teleported %u entity to %s\n
 
 \0\>
-Teletrasporto entità %u in [%.2f, %.2f, %.2f;  %.2f, %.2f, %.2f]\n
+Teletrasporto entità %u in %s\n
 
 \0\<
 Expected number property type but got %d\n
@@ -537,10 +525,10 @@ Cannot give impulse to %u entity: %s\n
 Impossibile dare impulso all'entità %u: %s\n
 
 \0\<
-Gave impulse to %u entity: [%.2f, %.2f, %.2f]\n
+Gave impulse to %u entity: %s\n
 
 \0\>
-Impulso dato all'entità %u: [%.2f, %.2f, %.2f]\n
+Impulso dato all'entità %u: %s\n
 
 \0\<
 Cannot save patch configuration file: %s\n
@@ -581,7 +569,7 @@ L'entità %u ha inflitto un danno di %.2f in un'area di dimensioni [%.2f, %.2f, %
 \0\<
 Please wait until you are fully connected to change your character.
 \0\>
-Si prega di attendere affinchè la connessione sia pienamente stabilita per cambiare personaggio.
+Si prega di attendere affinché la connessione sia pienamente stabilita prima di cambiare personaggio.
 \0\<
 SYNCBAD: Sequence %d Tick %.2f - bad %d
 \0\>
@@ -943,5 +931,59 @@ Local cheats can only be used in single player or on locally hosted servers!\n
 
 \0\>
 I trucchi locali possono essere utilizzati solo in modalità giocatore singolo o su server ospitati su rete locale!\n
+
+\0\<
+Invalid channel index: %d\n
+
+\0\>
+Indice canale non valido: %d\n
+
+\0\<
+Cannot play '%s' sound: %s\n
+
+\0\>
+Impossibile riprodurre il suono '%s': %s\n
+
+\0\<
+Disconnected '%s' from controller slot %d\n
+
+\0\>
+'%s' disconnesso dallo slot controller %d\n
+
+\0\<
+ %d axes, %d buttons, %d hats\n
+
+\0\>
+ %d assi, %d pulsanti, %d interruttori a cappello\n
+
+\0\<
+not connected\n
+
+\0\>
+non connesso\n
+
+\0\<
+%d controller slots:\n
+
+\0\>
+%d slot controller:\n
+
+\0\<
+Connected '%s' to controller slot %d\n
+
+\0\>
+'%s' connesso allo slot controller %d\n
+
+\0\<
+Cannot open another game controller! SDL Error: %s\n
+
+\0\>
+Impossibile utilizzare un altro controller di gioco! Errore SDL: %s\n
+
+\0\<
+Cannot open another game controller due to all %d slots being occupied!\n
+
+\0\>
+Impossibile utilizzare un altro controller di gioco poiché tutti i %d slot sono occupati!\n
 
 \0\$
