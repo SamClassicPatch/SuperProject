@@ -110,6 +110,23 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExtraEntities", "Mod\ExtraE
 		{4E768DEE-319A-43AB-8D52-7079E270D91C} = {4E768DEE-319A-43AB-8D52-7079E270D91C}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{88EB707F-1923-4FEF-82B1-2BE9DC66F864}"
+	ProjectSection(SolutionItems) = preProject
+		API\include\classicspatch_api.h = API\include\classicspatch_api.h
+		API\include\classicspatch_common.h = API\include\classicspatch_common.h
+		API\include\extpackets.h = API\include\extpackets.h
+		API\include\functionpatches.h = API\include\functionpatches.h
+		API\include\ichat.h = API\include\ichat.h
+		API\include\iconfig.h = API\include\iconfig.h
+		API\include\icore.h = API\include\icore.h
+		API\include\igame.h = API\include\igame.h
+		API\include\imoddata.h = API\include\imoddata.h
+		API\include\iplugins.h = API\include\iplugins.h
+		API\include\plugineventfunctions.h = API\include\plugineventfunctions.h
+		API\include\pluginevents.h = API\include\pluginevents.h
+		API\include\plugintypes.h = API\include\plugintypes.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_TSE107|x86 = Debug_TSE107|x86
