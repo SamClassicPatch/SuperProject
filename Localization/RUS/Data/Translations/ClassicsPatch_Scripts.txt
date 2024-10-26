@@ -1,4 +1,4 @@
-559
+563
 
 \0\<
 Common options
@@ -2236,4 +2236,20 @@ Drop-down lists
 use drop-down lists for options with more than 2 values
 \0\>
 использовать выпадающие списки для опций, в которых больше двух значений
+\0\<
+Fast knife in Cooperative
+\0\>
+Быстрый нож в кооперативе
+\0\<
+increase movement speed while holding a knife in Cooperative mode
+\0\>
+увеличить скорость бега с ножом в руках в кооперативном режиме
+\0\<
+Gradual crosshair coloring
+\0\>
+Постепенное окрашивание прицела
+\0\<
+gradually change crosshair color depending on the target's health
+\0\>
+постепенно менять цвет прицела в зависимости от здоровья цели
 \0\$
