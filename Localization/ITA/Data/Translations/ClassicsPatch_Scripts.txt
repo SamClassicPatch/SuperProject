@@ -1,4 +1,4 @@
-559
+563
 
 \0\<
 Common options
@@ -2236,4 +2236,20 @@ Elenchi a discesa
 use drop-down lists for options with more than 2 values
 \0\>
 usa gli elenchi a discesa per le opzioni con più di 2 valori
+\0\<
+Fast knife in Cooperative
+\0\>
+Velocità con coltello in Cooperativa
+\0\<
+increase movement speed while holding a knife in Cooperative mode
+\0\>
+aumenta la velocità di movimento mentre si tiene in mano un coltello in modalità Cooperativa
+\0\<
+Gradual crosshair coloring
+\0\>
+Colorazione graduale del mirino
+\0\<
+gradually change crosshair color depending on the target's health
+\0\>
+cambia gradualmente il colore del mirino a seconda della salute del bersaglio
 \0\$
