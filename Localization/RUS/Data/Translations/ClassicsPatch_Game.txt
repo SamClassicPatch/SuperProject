@@ -1,4 +1,4 @@
-72
+90
 
 \0\<
 Window
@@ -312,4 +312,124 @@ Move your mouse or controller joystick in any direction
 select axis automatically from any movement
 \0\>
 автоматический выбор оси от любого движения
+\0\<
+SERIOUSLY AWESOME!
+\0\>
+КРУТО!
+\0\<
+SERIOUSLY LAME...
+\0\>
+СКУКА...
+\0\<
+^cffffffEvent period: %s - %s
+\0\>
+^cffffffПродолжительность события: %s - %s
+\0\<
+January 15
+\0\>
+15 января
+\0\<
+December 15
+\0\>
+15 декабря
+\0\<
+Merry Christmas & Happy Holidays!\n
+\n
+Enjoy the snowy winter wonderland as you pulp Mental's horde\n
+into festive-looking chunks!\n
+That Kleer skull will look beautiful on the Christmas tree...
+\0\>
+С рождеством и с новым годом!\n
+\n
+Наслаждайтесь зимней страной чудес, попутно разрывая орду\n
+Ментала на праздничные кусочки!\n
+Этот череп Клира будет прекрасно смотреться на верхушке елки...
+\0\<
+October 31
+\0\>
+31 октября
+\0\<
+October 1
+\0\>
+1 октября
+\0\<
+Happy Halloween!\n
+\n
+On this special occasion, Mental's horde ate so much candy and\n
+pumpkins that all of their internal organs turned into them!\n
+Although, as delicious as it looks, I wouldn't recommend eating it.
+\0\>
+С хэллоуином!\n
+\n
+В этот особый день орда Ментала наелась стольким количеством\n
+конфет и тыкв, что все их внутренности превратились в тыкву!\n
+Но, как бы вкусно они ни выглядели, их лучше не есть.
+\0\<
+June 24
+\0\>
+24 июня
+\0\<
+June 20
+\0\>
+20 июня
+\0\<
+Happy Anniversary to Classics Patch!\n
+\n
+The very first release of Classics Patch was on June 22, 2022.\n
+Mental was so excited about this anniversary that he simply could\n
+not resist the temptation to throw his own party for his horde,\n
+who had eaten their fill of cakes and other colorful pastries.\n
+It's time to crash this party!
+\0\>
+С годовщиной, Classics Patch!\n
+\n
+Самый первый релиз патча для классики состоялся 22 июня 2022 г.\n
+Ментал был настолько взволнован этой годовщиной, что просто не мог\n
+не устроить собственную вечеринку для своей орды, которая объелась\n
+тортов и другой красочной выпечки.\n
+Время ворваться на эту вечеринку!
+\0\<
+March 23
+\0\>
+23 марта
+\0\<
+March 19
+\0\>
+19 марта
+\0\<
+Happy Birthday to Serious Sam!\n
+\n
+March 21st saw the birth of a man who vowed to save all of\n
+humanity by any means necessary!\n
+But unfortunately for Sam, Mental stole all the cakes and stuffed\n
+them into his horde. It's time for a real birthday bash!
+\0\>
+С днем рождения, Крутой Сэм!\n
+\n
+21 марта родился человек, который поклялся спасти все человечество\n
+несмотря ни на что!\n
+Но, к несчастью для Сэма, Ментал украл все торты и накормил ими\n
+свою орду. Время для серьезного праздника!
+\0\<
+February 18
+\0\>
+18 февраля
+\0\<
+February 10
+\0\>
+10 февраля
+\0\<
+Happy Valentine's Day!\n
+\n
+Love is in the air? WRONG! Smoke and the smell of napalm are in\n
+the air as you tear through Mental's horde, killing everyone in\n
+your path for what they did to your loved ones!\n
+It's the perfect time to break alien hearts... with your bare hands!
+\0\>
+С днем святого Валентина!\n
+\n
+Любовь витает в воздухе? ЛОЖЬ! Запах дыма и напалма наполняет воздух,\n
+оставленным вашим прорывом сквозь орду Ментала, убивая всех, кто\n
+когда-либо вставал на пути ваших близких!\n
+Пришло время разбить инопланетные сердца... голыми руками!
 \0\$

@@ -1,4 +1,4 @@
-182
+181
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -246,10 +246,6 @@ Set %s^r health to %d\n
 \0\>
 %s^r создали предмет '%s' (%u)\n
 
-\0\<
-<unknown>
-\0\>
-<неизвестно>
 \0\<
 Executing scheduled sandbox commands...\n
 

@@ -1,4 +1,4 @@
-563
+576
 
 \0\<
 Common options
@@ -2252,4 +2252,56 @@ Gradual crosshair coloring
 gradually change crosshair color depending on the target's health
 \0\>
 постепенно менять цвет прицела в зависимости от здоровья цели
+\0\<
+Extended input
+\0\>
+Расширенный ввод
+\0\<
+proper support of game controllers and other input functionality
+\0\>
+полная поддержка геймпадов и другой функциональности ввода
+\0\<
+Force seasonal event
+\0\>
+Принудительное сезонное событие
+\0\<
+activate a specific seasonal event regardless of the current date
+\0\>
+активация определенного сезонного события вне зависимости от текущей даты
+\0\<
+Disable all events
+\0\>
+Выключить все события
+\0\<
+Valentine's Day
+\0\>
+День святого Валентина
+\0\<
+Sam's Birthday
+\0\>
+День рождения Сэма
+\0\<
+Classics Patch Anniversary
+\0\>
+Годовщина патча для классики
+\0\<
+Halloween
+\0\>
+Хэллоуин
+\0\<
+Modern scrollbars
+\0\>
+Современные полосы прокрутки
+\0\<
+replace "Page Up" and "Page Down" buttons with proper scrollbars
+\0\>
+замена кнопок "Стр. вверх" и "Стр. вниз" полноценными полосами прокрутки
+\0\<
+Adjust mip factor of models
+\0\>
+Регулировка mip-фактора моделей
+\0\<
+allow static models to fade into the distance for optimization purposes
+\0\>
+разрешить статическим моделям исчезать вдали в целях оптимизации
 \0\$

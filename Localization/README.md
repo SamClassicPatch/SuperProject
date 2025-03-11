@@ -1,6 +1,7 @@
 # Classics Patch localization
 
-This directory is used for creating localizations for new strings from **Classics Patch** in order to translate it into other languages. These localizations should be installed alongside official game localizations.
+This directory is used for creating localizations for new strings from **Classics Patch** in order to translate it into other languages. These localizations should be installed alongside official game localizations, which have been archived here:  
+https://github.com/DreamyCecil/SE1-Localization
 
 Each localization sits under its own folder named after a language code according to the [ISO 639-2 standard](https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes) in uppercase (e.g. "English" becomes "ENG").
 

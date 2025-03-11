@@ -1,4 +1,4 @@
-182
+181
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -246,10 +246,6 @@ Imposta salute %s^r a %d\n
 \0\>
 %s^r ha creato l'oggetto '%s' (%u)\n
 
-\0\<
-<unknown>
-\0\>
-<sconosciuto>
 \0\<
 Executing scheduled sandbox commands...\n
 
