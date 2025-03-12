@@ -1,0 +1,162 @@
+/* Copyright (c) 2023-2024 Dreamy Cecil
+This program is free software; you can redistribute it and/or modify
+it under the terms of version 2 of the GNU General Public License as published by
+the Free Software Foundation
+
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
+
+#include "StdH.h"
+
+#define VANILLA_EVENTS_ENTITY_ID
+#include <Extras/XGizmo/Vanilla/EntityEvents.h>
+
+// Declare various extra symbols for use with extension packets
+void DeclareExtraSymbolsForExtPackets(void)
+{
+  #define DECLARE_SYMBOL(_Symbol, _Value) _pShell->DeclareSymbol("const INDEX " _Symbol ";", (void *)&_Value)
+  #define DECLARE_FLAG(_Flag) { static const INDEX i##_Flag = _Flag; DECLARE_SYMBOL(#_Flag, i##_Flag); }
+
+  // Vanilla event types
+  DECLARE_SYMBOL("EVENTCODE_EStop",                 EVENTCODE_VNL_EStop);
+  DECLARE_SYMBOL("EVENTCODE_EStart",                EVENTCODE_VNL_EStart);
+  DECLARE_SYMBOL("EVENTCODE_EActivate",             EVENTCODE_VNL_EActivate);
+  DECLARE_SYMBOL("EVENTCODE_EDeactivate",           EVENTCODE_VNL_EDeactivate);
+  DECLARE_SYMBOL("EVENTCODE_EEnvironmentStart",     EVENTCODE_VNL_EEnvironmentStart);
+  DECLARE_SYMBOL("EVENTCODE_EEnvironmentStop",      EVENTCODE_VNL_EEnvironmentStop);
+  DECLARE_SYMBOL("EVENTCODE_EEnd",                  EVENTCODE_VNL_EEnd);
+  DECLARE_SYMBOL("EVENTCODE_ETrigger",              EVENTCODE_VNL_ETrigger);
+  DECLARE_SYMBOL("EVENTCODE_ETeleportMovingBrush",  EVENTCODE_VNL_ETeleportMovingBrush);
+  DECLARE_SYMBOL("EVENTCODE_EReminder",             EVENTCODE_VNL_EReminder);
+  DECLARE_SYMBOL("EVENTCODE_EStartAttack",          EVENTCODE_VNL_EStartAttack);
+  DECLARE_SYMBOL("EVENTCODE_EStopAttack",           EVENTCODE_VNL_EStopAttack);
+  DECLARE_SYMBOL("EVENTCODE_EStopBlindness",        EVENTCODE_VNL_EStopBlindness);
+  DECLARE_SYMBOL("EVENTCODE_EStopDeafness",         EVENTCODE_VNL_EStopDeafness);
+  DECLARE_SYMBOL("EVENTCODE_EReceiveScore",         EVENTCODE_VNL_EReceiveScore);
+  DECLARE_SYMBOL("EVENTCODE_EKilledEnemy",          EVENTCODE_VNL_EKilledEnemy);
+  DECLARE_SYMBOL("EVENTCODE_ESecretFound",          EVENTCODE_VNL_ESecretFound);
+
+  DECLARE_SYMBOL("EVENTCODE_ESound",                EVENTCODE_VNL_ESound);
+  DECLARE_SYMBOL("EVENTCODE_EScroll",               EVENTCODE_VNL_EScroll);
+  DECLARE_SYMBOL("EVENTCODE_ETextFX",               EVENTCODE_VNL_ETextFX);
+  DECLARE_SYMBOL("EVENTCODE_EHudPicFX",             EVENTCODE_VNL_EHudPicFX);
+  DECLARE_SYMBOL("EVENTCODE_ECredits",              EVENTCODE_VNL_ECredits);
+  DECLARE_SYMBOL("EVENTCODE_ECenterMessage",        EVENTCODE_VNL_ECenterMessage);
+  DECLARE_SYMBOL("EVENTCODE_EComputerMessage",      EVENTCODE_VNL_EComputerMessage);
+  DECLARE_SYMBOL("EVENTCODE_EVoiceMessage",         EVENTCODE_VNL_EVoiceMessage);
+  DECLARE_SYMBOL("EVENTCODE_EHitBySpaceShipBeam",   EVENTCODE_VNL_EHitBySpaceShipBeam);
+
+  DECLARE_SYMBOL("EVENTCODE_EAmmoItem",             EVENTCODE_VNL_EAmmoItem);
+  DECLARE_SYMBOL("EVENTCODE_EAmmoPackItem",         EVENTCODE_VNL_EAmmoPackItem);
+  DECLARE_SYMBOL("EVENTCODE_EArmor",                EVENTCODE_VNL_EArmor);
+  DECLARE_SYMBOL("EVENTCODE_EHealth",               EVENTCODE_VNL_EHealth);
+  DECLARE_SYMBOL("EVENTCODE_EKey",                  EVENTCODE_VNL_EKey);
+  DECLARE_SYMBOL("EVENTCODE_EMessageItem",          EVENTCODE_VNL_EMessageItem);
+  DECLARE_SYMBOL("EVENTCODE_EPowerUp",              EVENTCODE_VNL_EPowerUp);
+  DECLARE_SYMBOL("EVENTCODE_EWeaponItem",           EVENTCODE_VNL_EWeaponItem);
+
+  DECLARE_SYMBOL("EVENTCODE_ERestartAttack",        EVENTCODE_VNL_ERestartAttack);
+  DECLARE_SYMBOL("EVENTCODE_EReconsiderBehavior",   EVENTCODE_VNL_EReconsiderBehavior);
+  DECLARE_SYMBOL("EVENTCODE_EForceWound",           EVENTCODE_VNL_EForceWound);
+  DECLARE_SYMBOL("EVENTCODE_ESelectWeapon",         EVENTCODE_VNL_ESelectWeapon);
+  DECLARE_SYMBOL("EVENTCODE_EBoringWeapon",         EVENTCODE_VNL_EBoringWeapon);
+  DECLARE_SYMBOL("EVENTCODE_EFireWeapon",           EVENTCODE_VNL_EFireWeapon);
+  DECLARE_SYMBOL("EVENTCODE_EReleaseWeapon",        EVENTCODE_VNL_EReleaseWeapon);
+  DECLARE_SYMBOL("EVENTCODE_EReloadWeapon",         EVENTCODE_VNL_EReloadWeapon);
+  DECLARE_SYMBOL("EVENTCODE_EWeaponChanged",        EVENTCODE_VNL_EWeaponChanged);
+
+  DECLARE_SYMBOL("EVENTCODE_EAirShockwave",         EVENTCODE_VNL_EAirShockwave);
+  DECLARE_SYMBOL("EVENTCODE_EAirWave",              EVENTCODE_VNL_EAirWave);
+  DECLARE_SYMBOL("EVENTCODE_ESpawnEffect",          EVENTCODE_VNL_ESpawnEffect);
+  DECLARE_SYMBOL("EVENTCODE_ESpawnSpray",           EVENTCODE_VNL_ESpawnSpray);
+  DECLARE_SYMBOL("EVENTCODE_EBulletInit",           EVENTCODE_VNL_EBulletInit);
+  DECLARE_SYMBOL("EVENTCODE_ELaunchCannonBall",     EVENTCODE_VNL_ELaunchCannonBall);
+  DECLARE_SYMBOL("EVENTCODE_ECyborgBike",           EVENTCODE_VNL_ECyborgBike);
+  DECLARE_SYMBOL("EVENTCODE_ESpawnDebris",          EVENTCODE_VNL_ESpawnDebris);
+  DECLARE_SYMBOL("EVENTCODE_EDevilProjectile",      EVENTCODE_VNL_EDevilProjectile);
+  DECLARE_SYMBOL("EVENTCODE_ESpawnEffector",        EVENTCODE_VNL_ESpawnEffector);
+  DECLARE_SYMBOL("EVENTCODE_EFlame",                EVENTCODE_VNL_EFlame);
+  DECLARE_SYMBOL("EVENTCODE_ELaunchLarvaOffspring", EVENTCODE_VNL_ELaunchLarvaOffspring);
+  DECLARE_SYMBOL("EVENTCODE_EAnimatorInit",         EVENTCODE_VNL_EAnimatorInit);
+  DECLARE_SYMBOL("EVENTCODE_EViewInit",             EVENTCODE_VNL_EViewInit);
+  DECLARE_SYMBOL("EVENTCODE_EWeaponsInit",          EVENTCODE_VNL_EWeaponsInit);
+  DECLARE_SYMBOL("EVENTCODE_EWeaponEffectInit",     EVENTCODE_VNL_EWeaponEffectInit);
+  DECLARE_SYMBOL("EVENTCODE_ELaunchProjectile",     EVENTCODE_VNL_ELaunchProjectile);
+  DECLARE_SYMBOL("EVENTCODE_EReminderInit",         EVENTCODE_VNL_EReminderInit);
+  DECLARE_SYMBOL("EVENTCODE_ESeriousBomb",          EVENTCODE_VNL_ESeriousBomb);
+  DECLARE_SYMBOL("EVENTCODE_ESpawnerProjectile",    EVENTCODE_VNL_ESpawnerProjectile);
+  DECLARE_SYMBOL("EVENTCODE_ESpinnerInit",          EVENTCODE_VNL_ESpinnerInit);
+  DECLARE_SYMBOL("EVENTCODE_ETwister",              EVENTCODE_VNL_ETwister);
+  DECLARE_SYMBOL("EVENTCODE_EWatcherInit",          EVENTCODE_VNL_EWatcherInit);
+  DECLARE_SYMBOL("EVENTCODE_EWater",                EVENTCODE_VNL_EWater);
+
+  // Entity flags
+  DECLARE_FLAG(ENF_SELECTED);
+  DECLARE_FLAG(ENF_ZONING);
+  DECLARE_FLAG(ENF_DELETED);
+  DECLARE_FLAG(ENF_ALIVE);
+  DECLARE_FLAG(ENF_INRENDERING);
+  DECLARE_FLAG(ENF_VALIDSHADINGINFO);
+  DECLARE_FLAG(ENF_SEETHROUGH);
+  DECLARE_FLAG(ENF_FOUNDINGRIDSEARCH);
+  DECLARE_FLAG(ENF_CLUSTERSHADOWS);
+  DECLARE_FLAG(ENF_BACKGROUND);
+  DECLARE_FLAG(ENF_ANCHORED);
+  DECLARE_FLAG(ENF_HASPARTICLES);
+  DECLARE_FLAG(ENF_INVISIBLE);
+  DECLARE_FLAG(ENF_DYNAMICSHADOWS);
+  DECLARE_FLAG(ENF_NOTIFYLEVELCHANGE);
+  DECLARE_FLAG(ENF_CROSSESLEVELS);
+  DECLARE_FLAG(ENF_PREDICTABLE);
+  DECLARE_FLAG(ENF_PREDICTOR);
+  DECLARE_FLAG(ENF_PREDICTED);
+  DECLARE_FLAG(ENF_WILLBEPREDICTED);
+  DECLARE_FLAG(ENF_TEMPPREDICTOR);
+  DECLARE_FLAG(ENF_HIDDEN);
+  DECLARE_FLAG(ENF_NOSHADINGINFO);
+
+  // Entity physics flags
+  DECLARE_FLAG(EPF_ORIENTEDBYGRAVITY);
+  DECLARE_FLAG(EPF_TRANSLATEDBYGRAVITY);
+  DECLARE_FLAG(EPF_PUSHABLE);
+  DECLARE_FLAG(EPF_STICKYFEET);
+  DECLARE_FLAG(EPF_RT_SYNCHRONIZED);
+  DECLARE_FLAG(EPF_ABSOLUTETRANSLATE);
+  DECLARE_FLAG(EPF_NOACCELERATION);
+  DECLARE_FLAG(EPF_HASLUNGS);
+  DECLARE_FLAG(EPF_HASGILLS);
+  DECLARE_FLAG(EPF_MOVABLE);
+  DECLARE_FLAG(EPF_NOIMPACT);
+  DECLARE_FLAG(EPF_NOIMPACTTHISTICK);
+  DECLARE_FLAG(EPF_CANFADESPINNING);
+  DECLARE_FLAG(EPF_ONSTEEPSLOPE);
+  DECLARE_FLAG(EPF_ORIENTINGTOGRAVITY);
+  DECLARE_FLAG(EPF_FLOATING);
+  DECLARE_FLAG(EPF_FORCEADDED);
+  DECLARE_FLAG(EPF_ONBLOCK_MASK);
+  DECLARE_FLAG(EPF_ONBLOCK_STOP);
+  DECLARE_FLAG(EPF_ONBLOCK_SLIDE);
+  DECLARE_FLAG(EPF_ONBLOCK_CLIMBORSLIDE);
+  DECLARE_FLAG(EPF_ONBLOCK_BOUNCE);
+  DECLARE_FLAG(EPF_ONBLOCK_PUSH);
+  DECLARE_FLAG(EPF_ONBLOCK_STOPEXACT);
+
+  // Sound flags
+  DECLARE_FLAG(SOF_NONE);
+  DECLARE_FLAG(SOF_LOOP);
+  DECLARE_FLAG(SOF_3D);
+  DECLARE_FLAG(SOF_VOLUMETRIC);
+  DECLARE_FLAG(SOF_SURROUND);
+  DECLARE_FLAG(SOF_LOCAL);
+  DECLARE_FLAG(SOF_SMOOTHCHANGE);
+  DECLARE_FLAG(SOF_MUSIC);
+  DECLARE_FLAG(SOF_NONGAME);
+  DECLARE_FLAG(SOF_NOFILTER);
+};

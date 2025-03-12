@@ -2,9 +2,6 @@
 	path = Includes
 	url = https://github.com/DreamyCecil/SE1-ModSDK.git
 	branch = includes
-[submodule "CoreLib"]
-	path = CoreLib
-	url = https://github.com/SamClassicPatch/CoreLib.git
 [submodule "Docs"]
 	path = Docs
 	url = https://github.com/SamClassicPatch/SuperProject.wiki.git

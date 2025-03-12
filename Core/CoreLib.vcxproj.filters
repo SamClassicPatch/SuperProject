@@ -1,0 +1,422 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{64bed835-70a3-4780-817a-37550f9beafe}</UniqueIdentifier>
+      <Extensions>cpp</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{bfe6b5ec-94ca-4771-b4ae-6d29a8e62dc6}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{f483e665-b347-4776-8c97-9c8eae695c22}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Source Files\API">
+      <UniqueIdentifier>{ca1f2c70-a877-4207-8790-5aded94ab4bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\API headers">
+      <UniqueIdentifier>{f5b497e5-e2e8-4277-8b6e-a2e25223b593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Query">
+      <UniqueIdentifier>{22f79e87-670b-4173-ad3b-6b017841ce5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Query headers">
+      <UniqueIdentifier>{09b746b9-5938-4d3c-a0ed-e0149901a281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects headers">
+      <UniqueIdentifier>{5dbc8b17-0de1-41ce-8097-fd417cff859d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modules">
+      <UniqueIdentifier>{12f6770e-7303-4988-ae7b-5ffef1eb5b0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modules headers">
+      <UniqueIdentifier>{2434eee2-671f-4922-9585-a78765297f7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Networking headers">
+      <UniqueIdentifier>{abd04f40-58f5-4608-8e31-4671f92ce063}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Networking">
+      <UniqueIdentifier>{b52d21a6-5ecf-4731-a79d-b5d6988148df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interfaces headers">
+      <UniqueIdentifier>{5945bde2-51e1-4f08-aa8c-6764975d76ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Definitions headers">
+      <UniqueIdentifier>{2db3b272-e752-4781-b80d-add576249bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Definitions">
+      <UniqueIdentifier>{72c3b40a-c044-400f-ac18-816894dbd3e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compatibility headers">
+      <UniqueIdentifier>{ab696bd7-cab8-4911-ae6c-e03beff1c913}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Base">
+      <UniqueIdentifier>{2b2b2b15-12df-4bb2-9b38-35c1cf49ebdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Base headers">
+      <UniqueIdentifier>{b52060bd-6184-498b-832a-c880d6837c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Networking headers\Modules headers">
+      <UniqueIdentifier>{d478dacd-19f8-4a3e-9b42-0db0d4cf502f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Networking\Modules">
+      <UniqueIdentifier>{6bbf8899-5c0a-4664-8f0f-20e8df2cda71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Networking\ExtPackets">
+      <UniqueIdentifier>{d5fe430c-2d78-400f-8e35-e9d0ac760a57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{ce304848-dbd0-4512-89b8-693806287d40}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StdH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Query\QueryManager.h">
+      <Filter>Header Files\Query headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\PluginModule.h">
+      <Filter>Header Files\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\PluginStock.h">
+      <Filter>Header Files\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="API\IGame.h">
+      <Filter>Header Files\API headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\CommInterface.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetworkFunctions.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\StreamBlock.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
+    <ClInclude Include="API\IPlugins.h">
+      <Filter>Header Files\API headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSpecific.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions\BaseDefs.h">
+      <Filter>Header Files\Definitions headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions\EntitiesDefs.h">
+      <Filter>Header Files\Definitions headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions\ActionBufferDefs.inl">
+      <Filter>Header Files\Definitions headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions\PlayerActionDefs.inl">
+      <Filter>Header Files\Definitions headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions\PlayerCharacterDefs.inl">
+      <Filter>Header Files\Definitions headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions\PlayerTargetDefs.inl">
+      <Filter>Header Files\Definitions headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\MessageProcessing.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Compatibility\Game.h">
+      <Filter>Header Files\Compatibility headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Compatibility\PlayerSettings.h">
+      <Filter>Header Files\Compatibility headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\CoreTimerHandler.h">
+      <Filter>Header Files\Base headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Query\MasterServer.h">
+      <Filter>Header Files\Query headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Query\ServerRequest.h">
+      <Filter>Header Files\Query headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\GfxFunctions.h">
+      <Filter>Header Files\Interfaces headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\Unzip.h">
+      <Filter>Header Files\Base headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\PropertyPtr.h">
+      <Filter>Header Files\Objects headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\MessageCompression.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\ActiveClients.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\AntiFlood.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\ClientIdentity.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\ClientLogging.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\ClientRestrictions.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\SplitScreenClients.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\StockCommands.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\ExtPackets.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\HttpRequests.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\PacketCommands.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\ResourceFunctions.h">
+      <Filter>Header Files\Interfaces headers</Filter>
+    </ClInclude>
+    <ClInclude Include="API\IHooks.h">
+      <Filter>Header Files\API headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\GameDirectories.h">
+      <Filter>Header Files\Base headers</Filter>
+    </ClInclude>
+    <ClInclude Include="API\IConfig.h">
+      <Filter>Header Files\API headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Compatibility\GameControls.h">
+      <Filter>Header Files\Compatibility headers</Filter>
+    </ClInclude>
+    <ClInclude Include="API\ISteam.h">
+      <Filter>Header Files\API headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\VotingSystem.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Modules\VoteTypes.h">
+      <Filter>Header Files\Networking headers\Modules headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\ObserverCamera.h">
+      <Filter>Header Files\Base headers</Filter>
+    </ClInclude>
+    <ClInclude Include="API\ICore.h">
+      <Filter>Header Files\API headers</Filter>
+    </ClInclude>
+    <ClInclude Include="API\IChat.h">
+      <Filter>Header Files\API headers</Filter>
+    </ClInclude>
+    <ClInclude Include="API\IPatches.h">
+      <Filter>Header Files\API headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StdH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="API\ICore.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Query\GameAgentQuery.cpp">
+      <Filter>Source Files\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="Query\LegacyFunctions.cpp">
+      <Filter>Source Files\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="Query\LegacyClientQuery.cpp">
+      <Filter>Source Files\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="Query\LegacyServerQuery.cpp">
+      <Filter>Source Files\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="Query\QueryManager.cpp">
+      <Filter>Source Files\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="Query\DarkPlacesQuery.cpp">
+      <Filter>Source Files\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\PluginModule.cpp">
+      <Filter>Source Files\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\PluginStock.cpp">
+      <Filter>Source Files\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="API\IGame.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetworkFunctions.cpp">
+      <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\StreamBlock.cpp">
+      <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="API\IPlugins.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\IPatches.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Definitions\InlineDefinitions.cpp">
+      <Filter>Source Files\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\MessageProcessing.cpp">
+      <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\CoreTimerHandler.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Query\MasterServer.cpp">
+      <Filter>Source Files\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="Query\ServerRequest.cpp">
+      <Filter>Source Files\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Unzip.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\SplitScreenClients.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\StockCommands.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\ActiveClients.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\AntiFlood.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\ClientIdentity.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\ClientLogging.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\ClientRestrictions.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets.cpp">
+      <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\HttpRequests.cpp">
+      <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityInit.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityParent.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityProp.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityTeleport.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityCopy.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityCreate.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityDelete.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityPosition.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityEvent.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\PacketCommands.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityFlags.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityHealth.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityMoveRotate.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtEntityDamage.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="API\IHooks.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\GameDirectories.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\SessionStateServerInfo.cpp">
+      <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPacketsSymbols.cpp">
+      <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="API\ISteam.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\VotingSystem.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Modules\VoteTypes.cpp">
+      <Filter>Source Files\Networking\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\ObserverCamera.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtChangeWorld.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtSessionProps.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtGameplayExt.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\PropertyPtr.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="API\IConfig.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="API\IChat.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\ExtPackets\ExtPlaySound.cpp">
+      <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Definitions\TextureEffectsDefs.inl">
+      <Filter>Header Files\Definitions headers</Filter>
+    </None>
+    <None Include="Definitions\GraphicsDefs.inl">
+      <Filter>Header Files\Definitions headers</Filter>
+    </None>
+    <None Include="Definitions\NetworkDefs.inl">
+      <Filter>Header Files\Definitions headers</Filter>
+    </None>
+  </ItemGroup>
+</Project>
