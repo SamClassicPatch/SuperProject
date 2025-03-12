@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "MServers.h"
 
 // [Cecil] Classics patch
-#include <CoreLib/Query/QueryManager.h>
+#include <Core/Query/QueryManager.h>
 
 CTString _strServerFilter[7];
 CMGButton mgServerColumn[7];

@@ -21,11 +21,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #include <EntitiesTFE/Enemies/EnemyFly.h>
   #include <EntitiesTFE/Items/Item.h>
 #else
-  #include <Entities/EntitiesAPI.h>
-  #include <Entities/Enemies/EnemyBase.h>
-  #include <Entities/Enemies/EnemyDive.h>
-  #include <Entities/Enemies/EnemyFly.h>
-  #include <Entities/Items/Item.h>
+  #include <EntitiesTSE/EntitiesAPI.h>
+  #include <EntitiesTSE/Enemies/EnemyBase.h>
+  #include <EntitiesTSE/Enemies/EnemyDive.h>
+  #include <EntitiesTSE/Enemies/EnemyFly.h>
+  #include <EntitiesTSE/Items/Item.h>
 #endif
 
 #undef DECL_DLL

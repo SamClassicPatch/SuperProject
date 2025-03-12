@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "StdH.h"
 
 // [Cecil] Classics Patch
-#include <CoreLib/Networking/Modules/VotingSystem.h>
+#include <Core/Networking/Modules/VotingSystem.h>
 
 // Game state properties
 INDEX _iRound = 1;

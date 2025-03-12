@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "UpdateCheck.h"
 
-#include <CoreLib/Networking/HttpRequests.h>
+#include <Core/Networking/HttpRequests.h>
 
 // Version of the latest release
 static PatchVer_t _ulLatestVersion = 0;

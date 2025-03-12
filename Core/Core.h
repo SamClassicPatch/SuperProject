@@ -45,8 +45,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Extras/XGizmo/Objects/SymbolPtr.h>
 
 // Classics Patch configuration
-#include <CoreLib/Config.h>
-#include <CoreLib/GameSpecific.h>
+#include <Core/Config.h>
+#include <Core/GameSpecific.h>
 
 #if SE1_VER != SE1_110
   // Declare shell function arguments
@@ -80,15 +80,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 // C++ API
-#include <CoreLib/API/IChat.h>
-#include <CoreLib/API/IConfig.h>
-#include <CoreLib/API/ICore.h>
-#include <CoreLib/API/IGame.h>
-#include <CoreLib/API/IHooks.h>
-#include <CoreLib/API/IPatches.h>
-#include <CoreLib/API/IPlugins.h>
-#include <CoreLib/API/ISteam.h>
+#include <Core/API/IChat.h>
+#include <Core/API/IConfig.h>
+#include <Core/API/ICore.h>
+#include <Core/API/IGame.h>
+#include <Core/API/IHooks.h>
+#include <Core/API/IPatches.h>
+#include <Core/API/IPlugins.h>
+#include <Core/API/ISteam.h>
 
 // Common components
-#include <CoreLib/Base/GameDirectories.h>
-#include <CoreLib/Objects/PropertyPtr.h>
+#include <Core/Base/GameDirectories.h>
+#include <Core/Objects/PropertyPtr.h>

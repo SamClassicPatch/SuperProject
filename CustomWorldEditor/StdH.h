@@ -45,7 +45,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define SE1_RAYHITBRUSHES SE1_NEWFEATURES // cr_bHitBrushes setting for CCastRay
 
 #define ENGINE_INTERNAL 1
-#include <PatchedGui/EngineGUI.h>
+#include <CustomEngineGUI/EngineGUI.h>
 #include <Engine/GameShell.h>
 #include <Engine/Base/ChangeableRT.h>
 #include <Engine/Base/UpdateableRT.h>

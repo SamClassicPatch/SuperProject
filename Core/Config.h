@@ -68,7 +68,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define _APCT_NREV (SE1_GAME != SS_REV) // Feature should be disabled for Revolution
 #define _APCT_N110 (SE1_VER != SE1_110 || !_APCT_NREV) // Feature should be disabled for 1.10 forks (but not Revolution)
 
-// CoreLib
+// Core
 
   // API
   #define _PATCHCONFIG_STEAM_API (1 && _APCT_NREV) // Enable interactions with Steam
@@ -89,7 +89,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   // Query
   #define _PATCHCONFIG_NEW_QUERY (1 && _APCT_NREV && _APCT_N110) // Utilize new query manager and switch master servers
 
-// EnginePatches
+// CorePatches
 
   // Global
   #define _PATCHCONFIG_ENGINEPATCHES (1) // Patch any engine functions at all or not

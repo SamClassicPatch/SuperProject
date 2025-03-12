@@ -15,8 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // [Cecil] Include the core library and patches
 #define CORE_NO_GAME_HEADER
-#include <CoreLib/Core.h>
-#include <EnginePatches/Patches.h>
+#include <Core/Core.h>
+#include <CorePatches/Patches.h>
 
 // [Cecil] Custom mod entities are disabled
 #if !_PATCHCONFIG_CUSTOM_MOD || !_PATCHCONFIG_CUSTOM_MOD_ENTITIES

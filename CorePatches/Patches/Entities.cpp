@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "Entities.h"
 #include "../MapConversion.h"
 
-#include <CoreLib/Interfaces/ResourceFunctions.h>
+#include <Core/Interfaces/ResourceFunctions.h>
 
 // Original function pointers
 void (CEntity::*pSendEvent)(const CEntityEvent &) = NULL;

@@ -14,6 +14,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
 // Link the library for direct use
-#include <CoreLib/Core.h>
+#include <Core/Core.h>
 
-#include <CoreLib/Networking/ExtPackets.h>
+#include <Core/Networking/ExtPackets.h>

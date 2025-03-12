@@ -15,7 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#include <CoreLib/Networking/ExtPackets.h>
+#include <Core/Networking/ExtPackets.h>
 
 // Notify about not being able to retrieve some entity property
 static void ReportPropError(CEntity *pen, const char *strPropertyName) {

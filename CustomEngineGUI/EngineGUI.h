@@ -14,11 +14,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
 // [Cecil] Include the core library and patches
-#include <CoreLib/Core.h>
-#include <EnginePatches/Patches.h>
+#include <Core/Core.h>
+#include <CorePatches/Patches.h>
 
 // [Cecil] Use patched textures
-#include <EnginePatches/Patches/Textures.h>
+#include <CorePatches/Patches/Textures.h>
 
 #ifdef ENGINEGUI_EXPORTS
   #define ENGINEGUI_API __declspec(dllexport)

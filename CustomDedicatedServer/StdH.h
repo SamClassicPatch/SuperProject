@@ -14,8 +14,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
 // [Cecil] Include the core library and patches
-#include <CoreLib/Core.h>
-#include <EnginePatches/Patches.h>
+#include <Core/Core.h>
+#include <CorePatches/Patches.h>
 
 #include "AppState.h"
 #include "GameHandling.h"

@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <EnginePatches/MapConversion.h>
+#include <CorePatches/MapConversion.h>
 
 #if _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE
 

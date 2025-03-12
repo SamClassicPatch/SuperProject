@@ -15,7 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#include <CoreLib/Base/Unzip.h>
+#include <Core/Base/Unzip.h>
 
 #if _PATCHCONFIG_ENGINEPATCHES
 

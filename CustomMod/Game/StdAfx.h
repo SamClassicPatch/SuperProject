@@ -15,8 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // [Cecil] Include the core library and patches
 #define CORE_NO_GAME_HEADER
-#include <CoreLib/Core.h>
-#include <EnginePatches/Patches.h>
+#include <Core/Core.h>
+#include <CorePatches/Patches.h>
 
 // [Cecil] Custom mod is disabled
 #if !_PATCHCONFIG_CUSTOM_MOD
@@ -42,8 +42,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // [Cecil] Include common header for Entities
 #elif SE1_GAME != SS_TFE
-  #include <Entities/EntitiesAPI.h>
-  #include <Entities/Players/Player.h>
+  #include <EntitiesTSE/EntitiesAPI.h>
+  #include <EntitiesTSE/Players/Player.h>
 #else
   #include <EntitiesTFE/EntitiesAPI.h>
   #include <EntitiesTFE/Players/Player.h>

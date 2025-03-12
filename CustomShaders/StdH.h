@@ -14,8 +14,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
 // [Cecil] Include the core library and patches
-#include <CoreLib/Core.h>
-#include <EnginePatches/Patches.h>
+#include <Core/Core.h>
+#include <CorePatches/Patches.h>
 
 #include <Engine/Graphics/Shader.h>
 
@@ -30,7 +30,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_FIX_SKA
 
 // [Cecil] Replace engine methods with patches
-#include <EnginePatches/Patches/Ska.h>
+#include <CorePatches/Patches/Ska.h>
 
 // [Cecil] TODO: Make SKA patches work in Debug
 #ifdef NDEBUG

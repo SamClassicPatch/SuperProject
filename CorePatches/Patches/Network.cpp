@@ -19,12 +19,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "Network.h"
 
-#include <CoreLib/Query/QueryManager.h>
-#include <CoreLib/Networking/NetworkFunctions.h>
+#include <Core/Query/QueryManager.h>
+#include <Core/Networking/NetworkFunctions.h>
 
-#include <CoreLib/Definitions/ActionBufferDefs.inl>
-#include <CoreLib/Definitions/PlayerCharacterDefs.inl>
-#include <CoreLib/Definitions/PlayerTargetDefs.inl>
+#include <Core/Definitions/ActionBufferDefs.inl>
+#include <Core/Definitions/PlayerCharacterDefs.inl>
+#include <Core/Definitions/PlayerTargetDefs.inl>
 
 #if _PATCHCONFIG_EXTEND_NETWORK
 

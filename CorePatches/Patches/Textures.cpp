@@ -21,9 +21,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include <Engine/Graphics/TextureEffects.h>
 
-#include <CoreLib/Definitions/BaseDefs.h>
-#include <CoreLib/Definitions/GraphicsDefs.inl>
-#include <CoreLib/Definitions/TextureEffectsDefs.inl>
+#include <Core/Definitions/BaseDefs.h>
+#include <Core/Definitions/GraphicsDefs.inl>
+#include <Core/Definitions/TextureEffectsDefs.inl>
 
 #if _PATCHCONFIG_EXTEND_TEXTURES
 

@@ -44,7 +44,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // [Cecil] Use patched EngineGUI
 #define CORE_NO_GAME_HEADER
-#include <PatchedGui/EngineGUI.h>
+#include <CustomEngineGUI/EngineGUI.h>
 
 #include <Game/Game.h>
 #include <GameGUI/GameGUI.h>

@@ -21,7 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "../MapConversion.h"
 
 #include <Engine/Templates/Stock_CEntityClass.h>
-#include <CoreLib/Interfaces/ResourceFunctions.h>
+#include <Core/Interfaces/ResourceFunctions.h>
 
 // [Cecil] Determine world format before loading the world itself
 void CWorldPatch::DetermineWorldFormat(const CTFileName &fnmWorld, CTFileStream &strmFile) {

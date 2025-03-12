@@ -22,7 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <CoreLib/Networking/MessageCompression.h>
+#include <Core/Networking/MessageCompression.h>
 
 #if _PATCHCONFIG_FUNC_DEFINITIONS
 

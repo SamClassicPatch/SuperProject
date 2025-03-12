@@ -119,8 +119,8 @@ class IMapConverter {
 };
 
 // Specific converters
-#include <EnginePatches/Converters/TFEMaps.h>
-#include <EnginePatches/Converters/RevMaps.h>
+#include <CorePatches/Converters/TFEMaps.h>
+#include <CorePatches/Converters/RevMaps.h>
 
 #endif // _PATCHCONFIG_CONVERT_MAPS
 

@@ -20,8 +20,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <CoreLib/Networking/CommInterface.h>
-#include <CoreLib/Networking/MessageProcessing.h>
+#include <Core/Networking/CommInterface.h>
+#include <Core/Networking/MessageProcessing.h>
 
 #if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_EXTEND_NETWORK
 

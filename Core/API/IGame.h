@@ -20,11 +20,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <CoreLib/Base/ObserverCamera.h>
+#include <Core/Base/ObserverCamera.h>
 
 // Compatibility with vanilla Game interface
 #ifndef CORE_NO_GAME_HEADER
-  #include <CoreLib/Compatibility/Game.h>
+  #include <Core/Compatibility/Game.h>
 #endif
 
 CORE_API extern class CGame *_pGame;

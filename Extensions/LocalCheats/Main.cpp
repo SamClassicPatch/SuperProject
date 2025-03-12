@@ -15,7 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#include <CoreLib/Networking/ExtPackets.h>
+#include <Core/Networking/ExtPackets.h>
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
 // Define plugin

@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <CoreLib/Modules/PluginModule.h>
+#include <Core/Modules/PluginModule.h>
 
 // API for handling plugin modules
 class CORE_API CPluginAPI : public IClassicsPlugins {

@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "FileSystem.h"
 #include "../MapConversion.h"
 
-#include <CoreLib/Base/Unzip.h>
+#include <Core/Base/Unzip.h>
 
 #include <STLIncludesBegin.h>
 #include <fstream>

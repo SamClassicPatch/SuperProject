@@ -30,8 +30,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "GUI/Menus/MenuStuff.h"
 
 // [Cecil] Classics patch
-#include <CoreLib/Query/QueryManager.h>
-#include <CoreLib/Networking/Modules/VotingSystem.h>
+#include <Core/Query/QueryManager.h>
+#include <Core/Networking/Modules/VotingSystem.h>
 #include <Engine/Sound/SoundData.h>
 
 #include "Cecil/UpdateCheck.h"

@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <CoreLib/Interfaces/GfxFunctions.h>
+#include <Core/Interfaces/GfxFunctions.h>
 
 #if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_FIX_SKA
 

@@ -15,7 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#include <CoreLib/Networking/Modules/ActiveClients.h>
+#include <Core/Networking/Modules/ActiveClients.h>
 
 // Handle third person option on character change
 static void HandleThirdPerson(INDEX iClient, CPlayerCharacter &pc)

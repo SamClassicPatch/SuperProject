@@ -25,7 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Engine/Network/SessionSocket.h>
 #include <Engine/Network/SessionState.h>
 
-#include <CoreLib/Networking/StreamBlock.h>
+#include <Core/Networking/StreamBlock.h>
 
 #if _PATCHCONFIG_FUNC_DEFINITIONS
 

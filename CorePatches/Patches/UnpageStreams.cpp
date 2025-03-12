@@ -22,8 +22,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include <Engine/Base/Unzip.h>
 
-#include <CoreLib/Base/Unzip.h>
-#include <CoreLib/Interfaces/ResourceFunctions.h>
+#include <Core/Base/Unzip.h>
+#include <Core/Interfaces/ResourceFunctions.h>
 
 #if _PATCHCONFIG_FIX_STREAMPAGING
 

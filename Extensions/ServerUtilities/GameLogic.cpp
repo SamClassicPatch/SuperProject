@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "StartActions.h"
 #include "Sandbox.h"
 
-#include <CoreLib/Networking/MessageProcessing.h>
+#include <Core/Networking/MessageProcessing.h>
 
 #include <EntitiesV/StdH/StdH.h>
 #include <EntitiesV/AmmoItem.h>
