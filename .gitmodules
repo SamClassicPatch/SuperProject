@@ -11,9 +11,6 @@
 [submodule "ExamplePlugin"]
 	path = ExamplePlugin
 	url = https://github.com/SamClassicPatch/ExamplePlugin.git
-[submodule "EngineGUI"]
-	path = PatchedGui
-	url = https://github.com/SamClassicPatch/EngineGUI.git
 [submodule "Plugins"]
 	path = Plugins
 	url = https://github.com/SamClassicPatch/Plugins.git
