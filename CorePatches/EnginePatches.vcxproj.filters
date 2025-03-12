@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{64bed835-70a3-4780-817a-37550f9beafe}</UniqueIdentifier>
+      <Extensions>cpp</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{bfe6b5ec-94ca-4771-b4ae-6d29a8e62dc6}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{f483e665-b347-4776-8c97-9c8eae695c22}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Patches">
+      <UniqueIdentifier>{b751760f-43ab-4897-a68a-8ebfc568ead7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Patches headers">
+      <UniqueIdentifier>{25a9adce-b4ce-48a9-aa55-9ca54a662ccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Converters headers">
+      <UniqueIdentifier>{59220842-0bb2-49d8-b1e7-1bd8620fcc09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Converters">
+      <UniqueIdentifier>{ab5ae0ca-6338-4c97-a193-38d66bfdcadb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{6e89bef3-3244-423c-af98-169482ecf56c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Input headers">
+      <UniqueIdentifier>{1b92488e-a1d8-474f-ade9-b3f6c382b162}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Patches.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\UnpageStreams.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Strings.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\SoundLibrary.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyMethods.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Network.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Rendering.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Textures.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Ska.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\FileSystem.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Worlds.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MapConversion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Entities.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Converters\TFEMaps.h">
+      <Filter>Header Files\Converters headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\LogicTimers.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Converters\RevMaps.h">
+      <Filter>Header Files\Converters headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Input.h">
+      <Filter>Header Files\Input headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\ApiCompatibility.h">
+      <Filter>Header Files\Input headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Patches.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Network.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Rendering.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\SoundLibrary.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Strings.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\UnpageStreams.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Textures.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Ska.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\FileSystem.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Worlds.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="MapConversion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Entities.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\TFEMaps.cpp">
+      <Filter>Source Files\Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\TFERain.cpp">
+      <Filter>Source Files\Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\LogicTimers.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters\RevMaps.cpp">
+      <Filter>Source Files\Converters</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputJoystick.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Input.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Input2ndMouse.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
