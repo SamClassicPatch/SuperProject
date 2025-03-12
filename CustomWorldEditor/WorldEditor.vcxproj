@@ -1,0 +1,645 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_TSE107|Win32">
+      <Configuration>Debug_TSE107</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_SSR110|Win32">
+      <Configuration>Release_SSR110</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_TFE105|Win32">
+      <Configuration>Release_TFE105</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_TSE105|Win32">
+      <Configuration>Release_TSE105</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_TSE107|Win32">
+      <Configuration>Release_TSE107</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_TSE110|Win32">
+      <Configuration>Release_TSE110</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <Keyword>MFCProj</Keyword>
+    <ProjectGuid>{DC47DA88-14E2-0634-61C5-7CEEC46A45C2}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'" Label="Configuration">
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v60</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SSR110|Win32'" Label="Configuration">
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE110|Win32'" Label="Configuration">
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'" Label="Configuration">
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v60</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'" Label="Configuration">
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v60</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'" Label="Configuration">
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v60</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+    <Import Project="..\Includes\Properties\TSE107.props" />
+    <Import Project="..\Properties\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_SSR110|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+    <Import Project="..\Includes\Properties\SSR110.props" />
+    <Import Project="..\Properties\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE110|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+    <Import Project="..\Includes\Properties\TSE110.props" />
+    <Import Project="..\Properties\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+    <Import Project="..\Includes\Properties\TFE105.props" />
+    <Import Project="..\Properties\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+    <Import Project="..\Includes\Properties\TSE105.props" />
+    <Import Project="..\Properties\Common.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+    <Import Project="..\Includes\Properties\TSE107.props" />
+    <Import Project="..\Properties\Common.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
+    <OutDir>$(BinDir)</OutDir>
+    <IntDir>$(ObjDir)</IntDir>
+    <TargetName>SeriousEditor_Custom</TargetName>
+    <ExecutablePath>$(SdkExe)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
+    <OutDir>$(BinDir)</OutDir>
+    <IntDir>$(ObjDir)</IntDir>
+    <TargetName>SeriousEditor_Custom</TargetName>
+    <ExecutablePath>$(SdkExe)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SSR110|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
+    <OutDir>$(BinDir)</OutDir>
+    <IntDir>$(ObjDir)</IntDir>
+    <TargetName>SeriousEditor_Custom</TargetName>
+    <ExecutablePath>$(SdkExe)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE110|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
+    <OutDir>$(BinDir)</OutDir>
+    <IntDir>$(ObjDir)</IntDir>
+    <TargetName>SeriousEditor_Custom</TargetName>
+    <ExecutablePath>$(SdkExe)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
+    <OutDir>$(BinDir)</OutDir>
+    <IntDir>$(ObjDir)</IntDir>
+    <TargetName>SeriousEditor_Custom</TargetName>
+    <ExecutablePath>$(SdkExe)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
+    <OutDir>$(BinDir)</OutDir>
+    <IntDir>$(ObjDir)</IntDir>
+    <TargetName>SeriousEditor_Custom</TargetName>
+    <ExecutablePath>$(SdkExe)</ExecutablePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <MinimalRebuild>true</MinimalRebuild>
+      <PreprocessorDefinitions>$(SamEnginePreproc);%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake />
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <PreprocessorDefinitions>$(SamEnginePreproc);%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake />
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_SSR110|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <PreprocessorDefinitions>$(SamEnginePreproc);%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake />
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE110|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <PreprocessorDefinitions>$(SamEnginePreproc);%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake />
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <PreprocessorDefinitions>$(SamEnginePreproc);%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake />
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <PreprocessorDefinitions>$(SamEnginePreproc);%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake />
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ActiveTextureWnd.cpp" />
+    <ClCompile Include="Browser.cpp" />
+    <ClCompile Include="BrowseWindow.cpp" />
+    <ClCompile Include="BrushPaletteWnd.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ChildFrm.cpp" />
+    <ClCompile Include="ColoredButton.cpp" />
+    <ClCompile Include="ColorPaletteWnd.cpp" />
+    <ClCompile Include="Controls\CtlTipOfTheDayText.cpp" />
+    <ClCompile Include="Controls\CtrlAxisRadio.cpp" />
+    <ClCompile Include="Controls\CtrlBrowseFile.cpp" />
+    <ClCompile Include="Controls\CtrlEditBoolean.cpp" />
+    <ClCompile Include="Controls\CtrlEditFlags.cpp" />
+    <ClCompile Include="Controls\CtrlEditFloat.cpp" />
+    <ClCompile Include="Controls\CtrlEditString.cpp" />
+    <ClCompile Include="Controls\CtrlEnumCombo.cpp" />
+    <ClCompile Include="CSGDesitnationCombo.cpp" />
+    <ClCompile Include="CustomComboWnd.cpp" />
+    <ClCompile Include="Dialogs\DlgAllignVertices.cpp" />
+    <ClCompile Include="Dialogs\DlgAutoDeltaCSG.cpp" />
+    <ClCompile Include="Dialogs\DlgAutTexturize.cpp" />
+    <ClCompile Include="Dialogs\DlgBrowseByClass.cpp" />
+    <ClCompile Include="Dialogs\DlgComment.cpp" />
+    <ClCompile Include="Dialogs\DlgCreateVirtualDirectory.cpp" />
+    <ClCompile Include="Dialogs\DlgDisplaceMapSize.cpp" />
+    <ClCompile Include="Dialogs\DlgEditFloat.cpp" />
+    <ClCompile Include="Dialogs\DlgEditTerrainBrush.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Dialogs\DlgEditTerrainLayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Dialogs\DlgFilterPolygonSelection.cpp" />
+    <ClCompile Include="Dialogs\DlgFilterVertexSelection.cpp" />
+    <ClCompile Include="Dialogs\DlgGenerateFBM.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Dialogs\DlgLightAnimationEditor.cpp" />
+    <ClCompile Include="Dialogs\DlgLinkTree.cpp" />
+    <ClCompile Include="Dialogs\DlgMirrorAndStretch.cpp" />
+    <ClCompile Include="Dialogs\DlgNumericAlpha.cpp" />
+    <ClCompile Include="Dialogs\DlgPgGlobal.cpp" />
+    <ClCompile Include="Dialogs\DlgPgPolygon.cpp" />
+    <ClCompile Include="Dialogs\DlgPgPosition.cpp" />
+    <ClCompile Include="Dialogs\DlgPgPrimitive.cpp" />
+    <ClCompile Include="Dialogs\DlgPgRenderingStatistics.cpp" />
+    <ClCompile Include="Dialogs\DlgPgSector.cpp" />
+    <ClCompile Include="Dialogs\DlgPgShadow.cpp" />
+    <ClCompile Include="Dialogs\DlgPgTerrain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Dialogs\DlgPgTexture.cpp" />
+    <ClCompile Include="Dialogs\DlgPreferences.cpp" />
+    <ClCompile Include="Dialogs\DlgProgress.cpp" />
+    <ClCompile Include="Dialogs\DlgRenderingPreferences.cpp" />
+    <ClCompile Include="Dialogs\DlgSelectByName.cpp" />
+    <ClCompile Include="Dialogs\DlgSnapVertex.cpp" />
+    <ClCompile Include="Dialogs\DlgStretchChildOffset.cpp" />
+    <ClCompile Include="Dialogs\DlgTEOperationSettings.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Dialogs\DlgTerrainProperties.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Dialogs\DlgTipOfTheDay.cpp" />
+    <ClCompile Include="Dialogs\DlgTreeShortcuts.cpp" />
+    <ClCompile Include="Dialogs\DlgWorldSettings.cpp" />
+    <ClCompile Include="EditMipSwitchDistance.cpp" />
+    <ClCompile Include="EntitySelectionListBox.cpp" />
+    <ClCompile Include="InfoFrame.cpp" />
+    <ClCompile Include="InfoSheet.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="PrimitiveHistoryCombo.cpp" />
+    <ClCompile Include="PropertyComboBar.cpp" />
+    <ClCompile Include="PropertyComboBox.cpp" />
+    <ClCompile Include="SkyFloat.cpp" />
+    <ClCompile Include="StdH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_SSR110|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_TSE110|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TerrainEditing.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="TerrainInterface.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ToolTipWnd.cpp" />
+    <ClCompile Include="TriangularisationCombo.cpp" />
+    <ClCompile Include="Viewers.cpp" />
+    <ClCompile Include="ViewTexture.cpp" />
+    <ClCompile Include="VirtualTreeCtrl.cpp" />
+    <ClCompile Include="VirtualTreeNode.cpp" />
+    <ClCompile Include="WndAnimationFrames.cpp" />
+    <ClCompile Include="WndDisplayTexture.cpp" />
+    <ClCompile Include="WndTerrainTilePalette.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="WndTestAnimation.cpp" />
+    <ClCompile Include="WorldEditor.cpp" />
+    <ClCompile Include="WorldEditorDoc.cpp" />
+    <ClCompile Include="WorldEditorView.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="arrowcop.cur" />
+    <CustomBuild Include="res\bmp00001.bmp" />
+    <CustomBuild Include="res\bmp00002.bmp" />
+    <CustomBuild Include="res\bmp00003.bmp" />
+    <CustomBuild Include="RES\bmp00004.bmp" />
+    <CustomBuild Include="res\bmp00005.bmp" />
+    <CustomBuild Include="res\bmp00006.bmp" />
+    <CustomBuild Include="res\csg_tool.bmp" />
+    <CustomBuild Include="RES\cur00001.cur" />
+    <CustomBuild Include="RES\cur00002.cur" />
+    <CustomBuild Include="RES\cur00003.cur" />
+    <CustomBuild Include="RES\cur00004.cur" />
+    <CustomBuild Include="res\cut_curs.ico" />
+    <CustomBuild Include="res\cut_line.cur" />
+    <CustomBuild Include="res\director.bmp" />
+    <CustomBuild Include="res\ico00001.ico" />
+    <CustomBuild Include="res\ico00002.ico" />
+    <CustomBuild Include="res\ico00003.ico" />
+    <CustomBuild Include="res\ico00004.ico" />
+    <CustomBuild Include="res\ico00005.ico" />
+    <CustomBuild Include="res\ico00006.ico" />
+    <CustomBuild Include="res\ico00007.ico" />
+    <CustomBuild Include="res\ico00008.ico" />
+    <CustomBuild Include="res\ico00009.ico" />
+    <CustomBuild Include="res\ico00010.ico" />
+    <CustomBuild Include="res\ico00011.ico" />
+    <CustomBuild Include="res\ico00012.ico" />
+    <CustomBuild Include="res\ico00013.ico" />
+    <CustomBuild Include="res\ico00014.ico" />
+    <CustomBuild Include="res\ico00015.ico" />
+    <CustomBuild Include="res\ico00016.ico" />
+    <CustomBuild Include="res\ico00017.ico" />
+    <CustomBuild Include="res\ico00018.ico" />
+    <CustomBuild Include="res\ico00019.ico" />
+    <CustomBuild Include="res\ico00020.ico" />
+    <CustomBuild Include="res\ico00021.ico" />
+    <CustomBuild Include="res\ico00022.ico" />
+    <CustomBuild Include="res\ico00023.ico" />
+    <CustomBuild Include="res\ico00024.ico" />
+    <CustomBuild Include="res\ico00025.ico" />
+    <CustomBuild Include="res\ico00026.ico" />
+    <CustomBuild Include="RES\ico00027.ico" />
+    <CustomBuild Include="res\icon1.ico" />
+    <CustomBuild Include="res\idr_icon.ico" />
+    <CustomBuild Include="res\mainfram.bmp" />
+    <CustomBuild Include="res\mirror1.cur" />
+    <CustomBuild Include="RES\te_erase.cur" />
+    <CustomBuild Include="RES\te_heigh.cur" />
+    <CustomBuild Include="RES\te_layer.cur" />
+    <CustomBuild Include="RES\te_max1.cur" />
+    <CustomBuild Include="RES\te_min1.cur" />
+    <CustomBuild Include="RES\te_noise.cur" />
+    <CustomBuild Include="RES\te_pick.cur" />
+    <CustomBuild Include="RES\te_pick1.cur" />
+    <CustomBuild Include="RES\te_poste.cur" />
+    <CustomBuild Include="res\TipOfTheDay.bmp" />
+    <CustomBuild Include="res\Toolbar.bmp" />
+    <CustomBuild Include="res\toolbar1.bmp" />
+    <CustomBuild Include="res\view_too.bmp" />
+    <CustomBuild Include="res\WorldEditor.ico" />
+    <CustomBuild Include="res\WorldEditor.rc2">
+      <FileType>RC</FileType>
+    </CustomBuild>
+    <CustomBuild Include="res\WorldEditorDoc.ico" />
+    <CustomBuild Include="WorldEditor.clw">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="WorldEditor.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ActiveTextureWnd.h" />
+    <ClInclude Include="Browser.h" />
+    <ClInclude Include="browsewindow.h" />
+    <ClInclude Include="BrushPaletteWnd.h" />
+    <ClInclude Include="ChildFrm.h" />
+    <ClInclude Include="coloredbutton.h" />
+    <ClInclude Include="ColorPaletteWnd.h" />
+    <ClInclude Include="Controls\CtlTipOfTheDayText.h" />
+    <ClInclude Include="Controls\CtrlAxisRadio.h" />
+    <ClInclude Include="Controls\CtrlBrowseFile.h" />
+    <ClInclude Include="Controls\CtrlEditBoolean.h" />
+    <ClInclude Include="Controls\CtrlEditFlags.h" />
+    <ClInclude Include="Controls\CtrlEditFloat.h" />
+    <ClInclude Include="Controls\CtrlEditString.h" />
+    <ClInclude Include="Controls\CtrlEnumCombo.h" />
+    <ClInclude Include="CSGDesitnationCombo.h" />
+    <ClInclude Include="CustomComboWnd.h" />
+    <ClInclude Include="Dialogs\DlgAllignVertices.h" />
+    <ClInclude Include="Dialogs\DlgAutoDeltaCSG.h" />
+    <ClInclude Include="Dialogs\DlgAutTexturize.h" />
+    <ClInclude Include="Dialogs\DlgBrowseByClass.h" />
+    <ClInclude Include="Dialogs\DlgComment.h" />
+    <ClInclude Include="Dialogs\DlgCreateVirtualDirectory.h" />
+    <ClInclude Include="Dialogs\DlgDisplaceMapSize.h" />
+    <ClInclude Include="Dialogs\DlgEditFloat.h" />
+    <ClInclude Include="Dialogs\DlgEditTerrainBrush.h" />
+    <ClInclude Include="Dialogs\DlgEditTerrainLayer.h" />
+    <ClInclude Include="Dialogs\DlgFilterPolygonSelection.h" />
+    <ClInclude Include="Dialogs\DlgFilterVertexSelection.h" />
+    <ClInclude Include="Dialogs\DlgGenerateFBM.h" />
+    <ClInclude Include="Dialogs\DlgLightAnimationEditor.h" />
+    <ClInclude Include="Dialogs\DlgLinkTree.h" />
+    <ClInclude Include="Dialogs\DlgMirrorAndStretch.h" />
+    <ClInclude Include="Dialogs\DlgNumericAlpha.h" />
+    <ClInclude Include="Dialogs\DlgPgGlobal.h" />
+    <ClInclude Include="Dialogs\DlgPgPolygon.h" />
+    <ClInclude Include="Dialogs\DlgPgPosition.h" />
+    <ClInclude Include="Dialogs\DlgPgPrimitive.h" />
+    <ClInclude Include="Dialogs\DlgPgRenderingStatistics.h" />
+    <ClInclude Include="Dialogs\DlgPgSector.h" />
+    <ClInclude Include="Dialogs\DlgPgShadow.h" />
+    <ClInclude Include="Dialogs\DlgPgTerrain.h" />
+    <ClInclude Include="Dialogs\DlgPgTexture.h" />
+    <ClInclude Include="Dialogs\DlgPreferences.h" />
+    <ClInclude Include="Dialogs\DlgProgress.h" />
+    <ClInclude Include="Dialogs\DlgRenderingPreferences.h" />
+    <ClInclude Include="Dialogs\DlgSelectByName.h" />
+    <ClInclude Include="Dialogs\DlgSnapVertex.h" />
+    <ClInclude Include="Dialogs\DlgStretchChildOffset.h" />
+    <ClInclude Include="Dialogs\DlgTEOperationSettings.h" />
+    <ClInclude Include="Dialogs\DlgTerrainProperties.h" />
+    <ClInclude Include="Dialogs\DlgTipOfTheDay.h" />
+    <ClInclude Include="Dialogs\DlgTreeShortcuts.h" />
+    <ClInclude Include="Dialogs\DlgWorldSettings.h" />
+    <ClInclude Include="EditMipSwitchDistance.h" />
+    <ClInclude Include="EntitySelectionListBox.h" />
+    <ClInclude Include="InfoFrame.h" />
+    <ClInclude Include="InfoSheet.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="PrimitiveHistoryCombo.h" />
+    <ClInclude Include="PropertyComboBar.h" />
+    <ClInclude Include="PropertyComboBox.h" />
+    <CustomBuild Include="Resource.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 Resource.h &gt;&gt;"hlp\resources.hm"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">Building help ids from %(FullPath)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">hlp\resources.hm;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="SkyFloat.h" />
+    <ClInclude Include="StdH.h" />
+    <ClInclude Include="TerrainEditing.h" />
+    <ClInclude Include="TerrainInterface.h" />
+    <ClInclude Include="ToolTipWnd.h" />
+    <ClInclude Include="TriangularisationCombo.h" />
+    <ClInclude Include="Viewers.h" />
+    <ClInclude Include="ViewTexture.h" />
+    <ClInclude Include="VirtualTreeCtrl.h" />
+    <ClInclude Include="VirtualTreeNode.h" />
+    <ClInclude Include="WndAnimationFrames.h" />
+    <ClInclude Include="WndDisplayTexture.h" />
+    <ClInclude Include="WndTerrainTilePalette.h" />
+    <ClInclude Include="WndTestAnimation.h" />
+    <ClInclude Include="WorldEditor.h" />
+    <ClInclude Include="WorldEditorDoc.h" />
+    <ClInclude Include="WorldEditorView.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

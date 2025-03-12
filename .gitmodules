@@ -11,9 +11,6 @@
 [submodule "Plugins"]
 	path = Plugins
 	url = https://github.com/SamClassicPatch/Plugins.git
-[submodule "WorldEditor"]
-	path = WorldEditor
-	url = https://github.com/SamClassicPatch/WorldEditor.git
 [submodule "EnginePatches"]
 	path = EnginePatches
 	url = https://github.com/SamClassicPatch/EnginePatches.git
