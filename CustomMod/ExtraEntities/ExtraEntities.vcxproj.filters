@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{e7d59bc4-af0d-42fb-80c4-0a3810d10b3b}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{40c44e31-3be4-44a9-8aef-92eb0d62e66c}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Class Files">
+      <UniqueIdentifier>{d652878a-c578-4041-b62b-f0edb3642a60}</UniqueIdentifier>
+      <Extensions>es</Extensions>
+    </Filter>
+    <Filter Include="Class Files\Enemies">
+      <UniqueIdentifier>{80a55b57-0a3c-4e6e-877c-499b03e05fef}</UniqueIdentifier>
+      <Extensions>es</Extensions>
+    </Filter>
+    <Filter Include="Class Files\Weapons">
+      <UniqueIdentifier>{306a9fdd-9552-40eb-b911-73bcd3cc4ef0}</UniqueIdentifier>
+      <Extensions>es</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Entity sources">
+      <UniqueIdentifier>{6432fa98-fede-4062-b006-07d4eb9b0371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Brushes">
+      <UniqueIdentifier>{6f374ef7-9395-41f6-8d4f-2157c79fa58e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Tools">
+      <UniqueIdentifier>{ec87d045-f8fd-4638-8a95-4227a37e4029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Class Files\Items">
+      <UniqueIdentifier>{e6b484b1-f6cf-4ec1-b57d-c27c118c5b6b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LibMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapons\AirWave.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Catman.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Cyborg.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\CyborgBike.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Dragonman.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Fishman.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Huanman.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Mamut.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Mamutman.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Mantaman.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RobotDriving.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RobotFixed.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RobotFlying.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Brushes\Terrain.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Achievement.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\ControlZone.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\SpectatorCamera.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\WorldInfo.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\FlagItem.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Destroyer.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Ughzy.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Elemental.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Headman.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Walker.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\Damager.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\SoundHolderRev.cpp">
+      <Filter>Source Files\Entity sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StdH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntitiesAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Enemies\Catman.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Cyborg.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\CyborgBike.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Dragonman.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Fishman.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Huanman.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Mamut.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Mamutman.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Mantaman.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\RobotDriving.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\RobotFixed.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\RobotFlying.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Weapons\AirWave.es">
+      <Filter>Class Files\Weapons</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Brushes\Terrain.es">
+      <Filter>Class Files\Brushes</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Tools\Achievement.es">
+      <Filter>Class Files\Tools</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Tools\ControlZone.es">
+      <Filter>Class Files\Tools</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Tools\SpectatorCamera.es">
+      <Filter>Class Files\Tools</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Tools\WorldInfo.es">
+      <Filter>Class Files\Tools</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Ughzy.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Items\FlagItem.es">
+      <Filter>Class Files\Items</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Destroyer.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Headman.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Walker.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Enemies\Elemental.es">
+      <Filter>Class Files\Enemies</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Tools\SoundHolderRev.es">
+      <Filter>Class Files\Tools</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Tools\Damager.es">
+      <Filter>Class Files\Tools</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

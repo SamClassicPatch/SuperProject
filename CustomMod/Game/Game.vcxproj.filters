@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{2af66556-2796-41a8-82fb-3de2723c89b4}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{8f2a13d5-c447-4d3f-925e-fe8dfae9261b}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Cecil headers">
+      <UniqueIdentifier>{a2c1dd79-3fca-4956-99c2-3a9980c0d5a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Cecil">
+      <UniqueIdentifier>{3f5b3c01-379e-4cbc-84de-946340ac8daf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CompMessage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CompModels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Computer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LCDDrawing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionProperties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WEDInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cecil\GameThemes.cpp">
+      <Filter>Source Files\Cecil</Filter>
+    </ClCompile>
+    <ClCompile Include="Cecil\Module.cpp">
+      <Filter>Source Files\Cecil</Filter>
+    </ClCompile>
+    <ClCompile Include="Cecil\SimpleConfigs.cpp">
+      <Filter>Source Files\Cecil</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CompMessage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Computer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionProperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cecil\GameColors.h">
+      <Filter>Header Files\Cecil headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cecil\GameThemes.h">
+      <Filter>Header Files\Cecil headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cecil\Map.h">
+      <Filter>Header Files\Cecil headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cecil\SimpleConfigs.h">
+      <Filter>Header Files\Cecil headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
