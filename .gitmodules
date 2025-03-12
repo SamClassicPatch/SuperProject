@@ -5,9 +5,6 @@
 [submodule "CoreLib"]
 	path = CoreLib
 	url = https://github.com/SamClassicPatch/CoreLib.git
-[submodule "ExamplePlugin"]
-	path = ExamplePlugin
-	url = https://github.com/SamClassicPatch/ExamplePlugin.git
 [submodule "EnginePatches"]
 	path = EnginePatches
 	url = https://github.com/SamClassicPatch/EnginePatches.git
