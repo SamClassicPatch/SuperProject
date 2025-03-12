@@ -17,9 +17,6 @@
 [submodule "EnginePatches"]
 	path = EnginePatches
 	url = https://github.com/SamClassicPatch/EnginePatches.git
-[submodule "Shaders"]
-	path = Shaders
-	url = https://github.com/SamClassicPatch/Shaders.git
 [submodule "Docs"]
 	path = Docs
 	url = https://github.com/SamClassicPatch/SuperProject.wiki.git
