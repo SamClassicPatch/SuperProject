@@ -81,7 +81,6 @@
     <SccLocalPath>
     </SccLocalPath>
     <ProjectGuid>{5DD7A05E-73EC-46F5-ABC1-A5CFECE7D306}</ProjectGuid>
-    <ProjectName>PatchedGui</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'" Label="Configuration">

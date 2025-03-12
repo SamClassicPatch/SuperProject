@@ -8,7 +8,7 @@
     <SDLLibPath>$(SolutionDir)Extras\SDL2\lib\x86\</SDLLibPath>
 
     <SdkExe>$(SolutionDir)Includes;$(ExecutablePath);</SdkExe>
-    <SdkIncl>$(SolutionDir);$(SolutionDir)Mod\;$(ProjectDir);$(SDLInclPath);$(IncludePath);</SdkIncl>
+    <SdkIncl>$(SolutionDir);$(SolutionDir)CustomMod\;$(ProjectDir);$(SDLInclPath);$(IncludePath);</SdkIncl>
     <SdkLibs>$(SolutionDir)Bin\$(Configuration);$(SDLLibPath);$(LibraryPath);</SdkLibs>
   </PropertyGroup>
 </Project>
