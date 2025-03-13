@@ -222,8 +222,12 @@ void ClassicsPatch_Shutdown(void)
     // Save configuration properties
     IConfig::global.Save();
 
+    // [Cecil] NOTE: Forcefully releasing all potentially used plugins because it's already painful enough to load them with
+    // the appropriate flags from wherever I need, so I'm not even gonna bother freeing them with the same flags manually.
+    // At this point nothing should be using the patch (or the plugins) anyway since it's being shut down.
+
     // Release all loaded plugins
-    GetPluginAPI()->ReleasePlugins(k_EPluginFlagAll);
+    GetPluginAPI()->ReleasePlugins(k_EPluginFlagAll, TRUE);
 
     // Shutdown Steam API
     GetSteamAPI()->End();

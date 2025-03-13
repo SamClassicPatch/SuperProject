@@ -24,6 +24,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // API for handling plugin modules
 class CORE_API CPluginAPI : public IClassicsPlugins {
+  private:
+    // Handles to Game & GameGUI plugins
+    CPluginModule *m_pGamePlugin;
+    CPluginModule *m_pGameGuiPlugin;
+
   public:
     // Constructor
     CPluginAPI();
@@ -47,7 +52,7 @@ class CORE_API CPluginAPI : public IClassicsPlugins {
     void LoadPlugins(ULONG ulUtilityFlags);
 
     // Release all user plugins of specific utility types (EPluginFlags)
-    void ReleasePlugins(ULONG ulUtilityFlags);
+    void ReleasePlugins(ULONG ulUtilityFlags, BOOL bForce = FALSE);
 
     // Obtain pointer to a plugin module of specific utility types
     CPluginModule *ObtainPlugin_t(const CTFileName &fnmModule, ULONG ulUtilityFlags);

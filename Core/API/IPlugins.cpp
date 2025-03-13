@@ -162,6 +162,9 @@ static INDEX GetExtensionIndex(SHELL_FUNC_ARGS) {
 // Constructor
 CPluginAPI::CPluginAPI()
 {
+  m_pGamePlugin = NULL;
+  m_pGameGuiPlugin = NULL;
+
   // Create stock of plugin modules
   _pPluginStock = new CPluginStock;
 
@@ -176,6 +179,14 @@ CPluginAPI::CPluginAPI()
 // Destructor
 CPluginAPI::~CPluginAPI()
 {
+  // Free Game & GameGUI plugins
+  if (m_pGamePlugin != NULL) _pPluginStock->Release(m_pGamePlugin);
+  if (m_pGameGuiPlugin != NULL) _pPluginStock->Release(m_pGameGuiPlugin);
+
+  m_pGamePlugin = NULL;
+  m_pGameGuiPlugin = NULL;
+
+  // Destroy the stock of plugin modules
   delete _pPluginStock;
   _pPluginStock = NULL;
 
@@ -250,12 +261,15 @@ void *CPluginAPI::LoadGameGuiLib(const char *strSettingsFile) {
 };
 
 CPluginModule *CPluginAPI::LoadGamePlugin(void) {
+  // Return existing plugin
+  if (m_pGamePlugin != NULL) return m_pGamePlugin;
+
   // Obtain Game library
-  CPluginModule *pLib = GetPluginAPI()->LoadPlugin_t(IDir::FullLibPath("Game" + _strModExt));
-  CPrintF(TRANS("Loading Game library '%s'...\n"), pLib->GetName());
+  m_pGamePlugin = LoadPlugin_t(IDir::FullLibPath("Game" + _strModExt));
+  CPrintF(TRANS("Loading Game library '%s'...\n"), m_pGamePlugin->GetName());
 
   // Set metadata for vanilla library
-  PluginInfo_t *pInfo = &pLib->pm_info;
+  PluginInfo_t *pInfo = &m_pGamePlugin->pm_info;
 
   if (pInfo->m_ulVersion == 0) {
     // [Cecil] NOTE: Vanilla libraries aren't registered as extensions because they lack required functionality
@@ -265,16 +279,19 @@ CPluginModule *CPluginAPI::LoadGamePlugin(void) {
       "Croteam", "Game library", "Main component that provides game logic.");
   }
 
-  return pLib;
+  return m_pGamePlugin;
 };
 
 CPluginModule *CPluginAPI::LoadGameGuiPlugin(void) {
+  // Return existing plugin
+  if (m_pGameGuiPlugin != NULL) return m_pGameGuiPlugin;
+
   // Obtain Game library
-  CPluginModule *pLib = GetPluginAPI()->LoadPlugin_t(IDir::FullLibPath("GameGUI" + _strModExt));
-  CPrintF(TRANS("Loading Game GUI library '%s'...\n"), pLib->GetName());
+  m_pGameGuiPlugin = LoadPlugin_t(IDir::FullLibPath("GameGUI" + _strModExt));
+  CPrintF(TRANS("Loading Game GUI library '%s'...\n"), m_pGameGuiPlugin->GetName());
 
   // Set metadata for vanilla library
-  PluginInfo_t *pInfo = &pLib->pm_info;
+  PluginInfo_t *pInfo = &m_pGameGuiPlugin->pm_info;
 
   if (pInfo->m_ulVersion == 0) {
     // [Cecil] NOTE: Vanilla libraries aren't registered as extensions because they lack required functionality
@@ -284,7 +301,7 @@ CPluginModule *CPluginAPI::LoadGameGuiPlugin(void) {
       "Croteam", "Game GUI library", "Serious Editor component that provides custom game interfaces.");
   }
 
-  return pLib;
+  return m_pGameGuiPlugin;
 };
 
 void CPluginAPI::LoadPlugins(ULONG ulUtilityFlags) {
@@ -306,7 +323,7 @@ void CPluginAPI::LoadPlugins(ULONG ulUtilityFlags) {
 
     try {
       // Try to load the plugin
-      GetPluginAPI()->ObtainPlugin_t(afnmGameDir[i], ulUtilityFlags);
+      ObtainPlugin_t(afnmGameDir[i], ulUtilityFlags);
 
     } catch (char *strError) {
       // Plugin initialization failed
@@ -317,7 +334,7 @@ void CPluginAPI::LoadPlugins(ULONG ulUtilityFlags) {
   CPrintF("--- Done! ---\n");
 };
 
-void CPluginAPI::ReleasePlugins(ULONG ulUtilityFlags) {
+void CPluginAPI::ReleasePlugins(ULONG ulUtilityFlags, BOOL bForce) {
   CPrintF("--- Releasing user plugins (flags: 0x%X) ---\n", ulUtilityFlags);
 
   // Gather plugins that need to be released
@@ -334,7 +351,17 @@ void CPluginAPI::ReleasePlugins(ULONG ulUtilityFlags) {
 
   // Release plugin modules one by one
   FOREACHINDYNAMICCONTAINER(cToRelease, CPluginModule, itRelease) {
-    _pPluginStock->Release(itRelease);
+    ASSERT(itRelease->GetUsedCount() != 0);
+
+    // Release one use under the specified flag
+    INDEX ctUsed = 1;
+
+    // Forcefully release all uses
+    if (bForce) ctUsed = itRelease->GetUsedCount();
+
+    while (--ctUsed >= 0) {
+      _pPluginStock->Release(itRelease);
+    }
   }
 
   CPrintF("--- Done! ---\n");
