@@ -16,5 +16,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "StdAfx.h"
 
 // Define plugin
-CLASSICSPATCH_DEFINE_PLUGIN(k_EPluginFlagManual, CORE_PATCH_VERSION,
+CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_game", k_EPluginFlagManual, CORE_PATCH_VERSION,
   "Croteam, Dreamy Cecil", "Game library", "Main component that provides game logic.");

@@ -258,6 +258,9 @@ CPluginModule *CPluginAPI::LoadGamePlugin(void) {
   PluginInfo_t *pInfo = &pLib->pm_info;
 
   if (pInfo->m_ulVersion == 0) {
+    // [Cecil] NOTE: Vanilla libraries aren't registered as extensions because they lack required functionality
+    pInfo->m_strExtensionIdentifier = NULL;
+
     pInfo->SetMetadata(MakeVersion(1, 0, _SE_BUILD_MINOR),
       "Croteam", "Game library", "Main component that provides game logic.");
   }
@@ -274,6 +277,9 @@ CPluginModule *CPluginAPI::LoadGameGuiPlugin(void) {
   PluginInfo_t *pInfo = &pLib->pm_info;
 
   if (pInfo->m_ulVersion == 0) {
+    // [Cecil] NOTE: Vanilla libraries aren't registered as extensions because they lack required functionality
+    pInfo->m_strExtensionIdentifier = NULL;
+
     pInfo->SetMetadata(MakeVersion(1, 0, _SE_BUILD_MINOR),
       "Croteam", "Game GUI library", "Serious Editor component that provides custom game interfaces.");
   }
