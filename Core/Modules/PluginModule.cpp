@@ -17,6 +17,34 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "PluginModule.h"
 
+// Separate references to extensions
+static CDynamicContainer<CPluginModule> _cExtensions;
+
+int CPluginAPI::GetExtensionCount(void) {
+  return (int)_cExtensions.Count();
+};
+
+HPatchPlugin *CPluginAPI::GetExtensionByIndex(int iExtension) {
+  if (iExtension < 0 || iExtension >= _cExtensions.Count()) return NULL;
+
+  return reinterpret_cast<HPatchPlugin *>(_cExtensions.Pointer(iExtension));
+};
+
+HPatchPlugin *CPluginAPI::GetExtensionByName(const char *strExtension) {
+  FOREACHINDYNAMICCONTAINER(_cExtensions, CPluginModule, itPlugin) {
+    CPluginModule *pPlugin = itPlugin;
+    const PluginInfo_t &info = pPlugin->pm_info;
+
+    ASSERT(info.m_strExtensionIdentifier != NULL);
+
+    if (strcmp(info.m_strExtensionIdentifier, strExtension) == 0) {
+      return reinterpret_cast<HPatchPlugin *>(pPlugin);
+    }
+  }
+
+  return NULL;
+};
+
 // Current plugin in the process of initialization
 CPluginModule *_pInitializingPlugin = NULL;
 
@@ -166,6 +194,11 @@ void *CPluginModule::GetSymbol_t(const char *strSymbolName) {
 
 // Module cleanup
 void CPluginModule::Clear(void) {
+  // Remove from the list of extensions
+  if (_cExtensions.IsMember(this)) {
+    _cExtensions.Remove(this);
+  }
+
   // Release DLL
   if (pm_hLibrary != NULL) {
     Deactivate();
@@ -232,10 +265,17 @@ void CPluginModule::Load_t(const CTFileName &fnmDLL)
   }
 
   // Try to get information about the plugin immediately
-  if (pm_pGetInfoFunc != NULL) {
-    pm_pGetInfoFunc(&pm_info);
-
-  } else {
+  if (pm_pGetInfoFunc == NULL) {
     ThrowF_t(TRANS("Cannot retrieve any info about the plugin!"));
+  }
+
+  pm_pGetInfoFunc(&pm_info);
+
+  // Add to the list of extensions
+  if (pm_info.m_strExtensionIdentifier != NULL) {
+    ASSERTMSG(pm_info.m_strExtensionIdentifier[0] != '\0', "Extension identifier is an empty string!");
+
+    ASSERT(!_cExtensions.IsMember(this));
+    _cExtensions.Add(this);
   }
 };
