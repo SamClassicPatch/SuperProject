@@ -264,11 +264,10 @@ void CPluginModule::Load_t(const CTFileName &fnmDLL)
     pm_pShutdownFunc = (CModuleShutdownFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_SHUTDOWN));
   }
 
-  // Try to get information about the plugin immediately
-  if (pm_pGetInfoFunc == NULL) {
-    ThrowF_t(TRANS("Cannot retrieve any info about the plugin!"));
-  }
+  // [Cecil] NOTE: Don't throw anything here, otherwise non-plugin libraries cannot be loaded (such as vanilla Game & GameGUI)
+  if (pm_pGetInfoFunc == NULL) return;
 
+  // Try to get information about the plugin immediately
   pm_pGetInfoFunc(&pm_info);
 
   // Add to the list of extensions
