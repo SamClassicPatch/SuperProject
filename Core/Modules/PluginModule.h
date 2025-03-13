@@ -24,9 +24,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 class CORE_API CPluginModule : public CSerial {
   public:
     // Plugin method types
-    typedef void (*CInfoFunc)(PluginInfo_t *pOutInfo);
-    typedef void (*CModuleStartupFunc)(CIniConfig &props, PluginEvents_t &events);
-    typedef void (*CModuleShutdownFunc)(CIniConfig &props);
+    typedef PLUGINMODULEPROTOTYPE_GETINFO((*CInfoFunc));
+    typedef PLUGINMODULEPROTOTYPE_STARTUP((*CModuleStartupFunc));
+    typedef PLUGINMODULEPROTOTYPE_SHUTDOWN((*CModuleShutdownFunc));
 
   private:
     HINSTANCE pm_hLibrary; // Library handle

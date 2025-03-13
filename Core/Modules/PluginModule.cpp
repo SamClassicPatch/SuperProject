@@ -128,6 +128,10 @@ void CPluginModule::ResetFields(void) {
   pm_pStartupFunc = NULL;
   pm_pShutdownFunc = NULL;
 
+  pm_info.m_ulFlags = k_EPluginFlagManual;
+  pm_info.SetMetadata(0, "Unknown", "No name", "None");
+  pm_info.m_strExtensionIdentifier = NULL;
+
   pm_props.Clear();
   ResetPluginEvents(&pm_events);
 };
@@ -201,13 +205,37 @@ void CPluginModule::Load_t(const CTFileName &fnmDLL)
   // Load dll
   pm_hLibrary = ILib::LoadLib(fnmExpanded);
 
-  // Main plugin methods
-  pm_pGetInfoFunc  = (CInfoFunc)          GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_GETINFO));
-  pm_pStartupFunc  = (CModuleStartupFunc) GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_STARTUP));
-  pm_pShutdownFunc = (CModuleShutdownFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_SHUTDOWN));
+  // Pointers to the main plugin methods
+  CInfoFunc           *ppGetInfoFunc  = (CInfoFunc *)          GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_GETINFO));
+  CModuleStartupFunc  *ppStartupFunc  = (CModuleStartupFunc *) GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_STARTUP));
+  CModuleShutdownFunc *ppShutdownFunc = (CModuleShutdownFunc *)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_SHUTDOWN));
+
+  if (ppGetInfoFunc != NULL) {
+    pm_pGetInfoFunc = *ppGetInfoFunc;
+  } else {
+    // Try looking up the function itself
+    pm_pGetInfoFunc = (CInfoFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_GETINFO));
+  }
+
+  if (ppStartupFunc != NULL) {
+    pm_pStartupFunc = *ppStartupFunc;
+  } else {
+    // Try looking up the function itself
+    pm_pStartupFunc = (CModuleStartupFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_STARTUP));
+  }
+
+  if (ppShutdownFunc != NULL) {
+    pm_pShutdownFunc = *ppShutdownFunc;
+  } else {
+    // Try looking up the function itself
+    pm_pShutdownFunc = (CModuleShutdownFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_SHUTDOWN));
+  }
 
   // Try to get information about the plugin immediately
   if (pm_pGetInfoFunc != NULL) {
     pm_pGetInfoFunc(&pm_info);
+
+  } else {
+    ThrowF_t(TRANS("Cannot retrieve any info about the plugin!"));
   }
 };
