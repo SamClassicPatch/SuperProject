@@ -54,6 +54,11 @@ static void ListPlugins(void) {
     CPrintF(TRANS("  Author: %s\n"), info.m_strAuthor);
     CPrintF(TRANS("  Version: %s\n"), strVersion);
     CPrintF(TRANS("  Description: %s\n"), info.m_strDescription);
+
+    if (info.m_strExtensionIdentifier != NULL) {
+      CPrintF(TRANS("  Extension: %s\n"), info.m_strExtensionIdentifier);
+    }
+
     CPutString("---\n");
   }
 };
@@ -129,6 +134,31 @@ static INDEX GetPluginIndex(SHELL_FUNC_ARGS) {
   return -1;
 };
 
+// Get plugin index by its extension identifier
+static INDEX GetExtensionIndex(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  const CTString &strExt = *NEXT_ARG(CTString *);
+
+  const INDEX ctPlugins = _pPluginStock->GetTotalCount();
+
+  for (INDEX iPlugin = 0; iPlugin < ctPlugins; iPlugin++) {
+    CPluginModule *pPlugin = _pPluginStock->st_ctObjects.Pointer(iPlugin);
+
+    // Check extension name
+    const PluginInfo_t &info = pPlugin->pm_info;
+
+    if (info.m_strExtensionIdentifier == NULL) {
+      continue;
+    }
+
+    if (info.m_strExtensionIdentifier == strExt) {
+      return iPlugin;
+    }
+  }
+
+  return -1;
+};
+
 // Constructor
 CPluginAPI::CPluginAPI()
 {
@@ -140,6 +170,7 @@ CPluginAPI::CPluginAPI()
   _pShell->DeclareSymbol("user void EnablePlugin(INDEX);",  &EnablePlugin);
   _pShell->DeclareSymbol("user void DisablePlugin(INDEX);", &DisablePlugin);
   _pShell->DeclareSymbol("user INDEX GetPluginIndex(CTString);", &GetPluginIndex);
+  _pShell->DeclareSymbol("user INDEX GetExtensionIndex(CTString);", &GetExtensionIndex);
 };
 
 // Destructor
