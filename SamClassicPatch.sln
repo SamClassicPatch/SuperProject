@@ -119,6 +119,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{88EB707F-192
 		API\include\ichat.h = API\include\ichat.h
 		API\include\iconfig.h = API\include\iconfig.h
 		API\include\icore.h = API\include\icore.h
+		API\include\iextensions.h = API\include\iextensions.h
 		API\include\igame.h = API\include\igame.h
 		API\include\imoddata.h = API\include\imoddata.h
 		API\include\iplugins.h = API\include\iplugins.h

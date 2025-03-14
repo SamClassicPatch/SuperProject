@@ -249,6 +249,7 @@ class CInternalClassicsPatchAPI : public IClassicsPatchAPI {
     IClassicsModData m_apiModData;
     IClassicsFuncPatches m_apiFuncPatches;
     IClassicsPackets m_apiPackets;
+    IClassicsExtensions m_apiExtensions;
 
   public:
     virtual IClassicsChat *Chat(void) { return &m_apiChat; };
@@ -260,6 +261,7 @@ class CInternalClassicsPatchAPI : public IClassicsPatchAPI {
     virtual IClassicsPlugins *Plugins(void) { return _pPluginAPI; };
     virtual IClassicsFuncPatches *FuncPatches(void) { return &m_apiFuncPatches; };
     virtual IClassicsPackets *Packets(void) { return &m_apiPackets; };
+    virtual IClassicsExtensions *Extensions(void) { return &m_apiExtensions; };
 };
 
 static CInternalClassicsPatchAPI _ClassicsPatchAPI;

@@ -190,7 +190,7 @@ CPluginAPI::~CPluginAPI()
   delete _pPluginStock;
   _pPluginStock = NULL;
 
-  ASSERT(GetExtensionCount() == 0);
+  ASSERT(ClassicsExtensions_GetExtensionCount() == 0);
 };
 
 void CPluginAPI::LoadGameLib(const char *strSettingsFile) {

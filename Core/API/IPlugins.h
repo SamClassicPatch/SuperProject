@@ -66,9 +66,6 @@ class CORE_API CPluginAPI : public IClassicsPlugins {
     // Overridden API methods
     virtual void RegisterSymbol(PluginSymbol_t &ps, const char *strSymbolName, const char *strDefaultValue);
     virtual void RegisterMethod(bool bUser, const char *strReturnType, const char *strFunctionName, const char *strArgumentTypes, void *pFunction);
-    virtual int GetExtensionCount(void);
-    virtual HPatchPlugin *GetExtensionByIndex(int iExtension);
-    virtual HPatchPlugin *GetExtensionByName(const char *strExtension);
 };
 
 // Full interface getter

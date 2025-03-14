@@ -24,9 +24,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 class CORE_API CPluginModule : public CSerial {
   public:
     // Plugin method types
-    typedef PLUGINMODULEPROTOTYPE_GETINFO((*CInfoFunc));
-    typedef PLUGINMODULEPROTOTYPE_STARTUP((*CModuleStartupFunc));
-    typedef PLUGINMODULEPROTOTYPE_SHUTDOWN((*CModuleShutdownFunc));
+    typedef PLUGINMODULEPROTOTYPE_GETINFO((*FInfoFunc));
+    typedef PLUGINMODULEPROTOTYPE_STARTUP((*FModuleStartupFunc));
+    typedef PLUGINMODULEPROTOTYPE_SHUTDOWN((*FModuleShutdownFunc));
 
   private:
     HINSTANCE pm_hLibrary; // Library handle
@@ -35,14 +35,17 @@ class CORE_API CPluginModule : public CSerial {
     CStaticStackArray<HFuncPatch> pm_aPatches; // Custom patches added on plugin startup
 
     // Hooked methods
-    CInfoFunc pm_pGetInfoFunc; // Retrieve information about the plugin
-    CModuleStartupFunc pm_pStartupFunc; // Entry point for the plugin
-    CModuleShutdownFunc pm_pShutdownFunc; // Plugin cleanup before releasing it
+    FInfoFunc pm_pGetInfoFunc; // Retrieve information about the plugin
+    FModuleStartupFunc pm_pStartupFunc; // Entry point for the plugin
+    FModuleShutdownFunc pm_pShutdownFunc; // Plugin cleanup before releasing it
 
   public:
     PluginInfo_t pm_info; // Plugin information
     CIniConfig pm_props; // Loaded plugin properties
     PluginEvents_t pm_events; // Interface of plugin events
+
+    ExtensionProp_t *pm_aExtensionProps; // Array of properties for communicating with the extension
+    size_t pm_ctExtensionProps; // Amount of extension properties in the array
 
   public:
     // Constructor

@@ -20,17 +20,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Separate references to extensions
 static CDynamicContainer<CPluginModule> _cExtensions;
 
-int CPluginAPI::GetExtensionCount(void) {
+int ClassicsExtensions_GetExtensionCount(void) {
   return (int)_cExtensions.Count();
 };
 
-HPatchPlugin *CPluginAPI::GetExtensionByIndex(int iExtension) {
+HPatchPlugin ClassicsExtensions_GetExtensionByIndex(int iExtension) {
   if (iExtension < 0 || iExtension >= _cExtensions.Count()) return NULL;
 
-  return reinterpret_cast<HPatchPlugin *>(_cExtensions.Pointer(iExtension));
+  return _cExtensions.Pointer(iExtension);
 };
 
-HPatchPlugin *CPluginAPI::GetExtensionByName(const char *strExtension) {
+HPatchPlugin ClassicsExtensions_GetExtensionByName(const char *strExtension) {
   FOREACHINDYNAMICCONTAINER(_cExtensions, CPluginModule, itPlugin) {
     CPluginModule *pPlugin = itPlugin;
     const PluginInfo_t &info = pPlugin->pm_info;
@@ -38,11 +38,134 @@ HPatchPlugin *CPluginAPI::GetExtensionByName(const char *strExtension) {
     ASSERT(info.m_strExtensionIdentifier != NULL);
 
     if (strcmp(info.m_strExtensionIdentifier, strExtension) == 0) {
-      return reinterpret_cast<HPatchPlugin *>(pPlugin);
+      return pPlugin;
     }
   }
 
   return NULL;
+};
+
+ExtensionProp_t *ClassicsExtensions_FindProperty(HPatchPlugin hPlugin, const char *strProperty) {
+  const size_t ct = hPlugin->pm_ctExtensionProps;
+  if (ct == 0 || hPlugin->pm_aExtensionProps == NULL) return false;
+
+  for (size_t i = 0; i < ct; i++) {
+    ExtensionProp_t &prop = hPlugin->pm_aExtensionProps[i];
+
+    if (strcmp(prop.m_strProperty, strProperty) == 0) return &prop;
+  }
+
+  return NULL;
+};
+
+ExtensionProp_t *ClassicsExtensions_FindPropertyOfType(HPatchPlugin hPlugin, const char *strProperty, ExtensionProp_t::EType eType) {
+  const size_t ct = hPlugin->pm_ctExtensionProps;
+  if (ct == 0 || hPlugin->pm_aExtensionProps == NULL) return false;
+
+  for (size_t i = 0; i < ct; i++) {
+    ExtensionProp_t &prop = hPlugin->pm_aExtensionProps[i];
+
+    if (prop.m_eType != eType) continue;
+    if (strcmp(prop.m_strProperty, strProperty) == 0) return &prop;
+  }
+
+  return NULL;
+};
+
+bool ClassicsExtensions_GetBool(HPatchPlugin hPlugin, const char *strProperty, bool *pValue) {
+  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Bool);
+  if (pProp == NULL) return false;
+
+  *pValue = pProp->m_value._bool;
+  return true;
+};
+
+bool ClassicsExtensions_GetInt(HPatchPlugin hPlugin, const char *strProperty, int *pValue) {
+  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Int);
+  if (pProp == NULL) return false;
+
+  *pValue = pProp->m_value._int;
+  return true;
+};
+
+bool ClassicsExtensions_GetFloat(HPatchPlugin hPlugin, const char *strProperty, float *pValue) {
+  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Float);
+  if (pProp == NULL) return false;
+
+  *pValue = pProp->m_value._float;
+  return true;
+};
+
+bool ClassicsExtensions_GetDouble(HPatchPlugin hPlugin, const char *strProperty, double *pValue) {
+  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Double);
+  if (pProp == NULL) return false;
+
+  *pValue = pProp->m_value._double;
+  return true;
+};
+
+bool ClassicsExtensions_GetString(HPatchPlugin hPlugin, const char *strProperty, const char **pValue) {
+  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_String);
+  if (pProp == NULL) return false;
+
+  *pValue = pProp->m_value._string;
+  return true;
+};
+
+bool ClassicsExtensions_GetData(HPatchPlugin hPlugin, const char *strProperty, void **pValue) {
+  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Data);
+  if (pProp == NULL) return false;
+
+  *pValue = pProp->m_value._data;
+  return true;
+};
+
+bool ClassicsExtensions_SetBool(HPatchPlugin hPlugin, const char *strProperty, bool bValue) {
+  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Bool);
+  if (pProp == NULL) return false;
+
+  pProp->m_value._bool = bValue;
+  return true;
+};
+
+bool ClassicsExtensions_SetInt(HPatchPlugin hPlugin, const char *strProperty, int iValue) {
+  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Int);
+  if (pProp == NULL) return false;
+
+  pProp->m_value._int = iValue;
+  return true;
+};
+
+bool ClassicsExtensions_SetFloat(HPatchPlugin hPlugin, const char *strProperty, float fValue) {
+  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Float);
+  if (pProp == NULL) return false;
+
+  pProp->m_value._float = fValue;
+  return true;
+};
+
+bool ClassicsExtensions_SetDouble(HPatchPlugin hPlugin, const char *strProperty, double fValue) {
+  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Double);
+  if (pProp == NULL) return false;
+
+  pProp->m_value._double = fValue;
+  return true;
+};
+
+bool ClassicsExtensions_SetString(HPatchPlugin hPlugin, const char *strProperty, const char *strValue) {
+  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_String);
+  if (pProp == NULL) return false;
+
+  pProp->m_value._string = strValue;
+  return true;
+};
+
+bool ClassicsExtensions_SetData(HPatchPlugin hPlugin, const char *strProperty, void *pValue) {
+  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Data);
+  if (pProp == NULL) return false;
+
+  pProp->m_value._data = pValue;
+  return true;
 };
 
 // Current plugin in the process of initialization
@@ -114,6 +237,25 @@ void CPluginModule::Initialize(void) {
   CPluginModule *pLastPlugin = _pInitializingPlugin;
   _pInitializingPlugin = this;
 
+  // Prepare the extension
+  if (pm_info.m_strExtensionIdentifier != NULL) {
+    // Set handle to the extension
+    HPatchPlugin *phExtension = (HPatchPlugin *)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(EXTENSIONMODULE_LOCALHANDLE));
+
+    if (phExtension != NULL) {
+      *phExtension = this;
+    }
+
+    // Retrieve array of extension properties
+    ExtensionProp_t *aPropsArray = (ExtensionProp_t *)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(EXTENSIONMODULE_PROPSARRAY));
+    size_t *pctPropsCount = (size_t *)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(EXTENSIONMODULE_PROPSCOUNT));
+
+    if (aPropsArray != NULL && pctPropsCount != NULL) {
+      pm_aExtensionProps = aPropsArray;
+      pm_ctExtensionProps = *pctPropsCount;
+    }
+  }
+
   // Start the plugin
   if (pm_pStartupFunc != NULL) {
     pm_pStartupFunc(pm_props, pm_events);
@@ -144,6 +286,10 @@ void CPluginModule::Deactivate(void) {
   // Unregister plugin events
   ResetPluginEvents(&pm_events);
 
+  // Reset extension properties
+  pm_aExtensionProps = NULL;
+  pm_ctExtensionProps = 0;
+
   pm_bInitialized = FALSE;
 };
 
@@ -162,6 +308,9 @@ void CPluginModule::ResetFields(void) {
 
   pm_props.Clear();
   ResetPluginEvents(&pm_events);
+
+  pm_aExtensionProps = NULL;
+  pm_ctExtensionProps = 0;
 };
 
 // Add new function patch on startup
@@ -239,29 +388,29 @@ void CPluginModule::Load_t(const CTFileName &fnmDLL)
   pm_hLibrary = ILib::LoadLib(fnmExpanded);
 
   // Pointers to the main plugin methods
-  CInfoFunc           *ppGetInfoFunc  = (CInfoFunc *)          GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_GETINFO));
-  CModuleStartupFunc  *ppStartupFunc  = (CModuleStartupFunc *) GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_STARTUP));
-  CModuleShutdownFunc *ppShutdownFunc = (CModuleShutdownFunc *)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_SHUTDOWN));
+  FInfoFunc           *ppGetInfoFunc  = (FInfoFunc *)          GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_GETINFO));
+  FModuleStartupFunc  *ppStartupFunc  = (FModuleStartupFunc *) GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_STARTUP));
+  FModuleShutdownFunc *ppShutdownFunc = (FModuleShutdownFunc *)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEPOINTER_SHUTDOWN));
 
   if (ppGetInfoFunc != NULL) {
     pm_pGetInfoFunc = *ppGetInfoFunc;
   } else {
     // Try looking up the function itself
-    pm_pGetInfoFunc = (CInfoFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_GETINFO));
+    pm_pGetInfoFunc = (FInfoFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_GETINFO));
   }
 
   if (ppStartupFunc != NULL) {
     pm_pStartupFunc = *ppStartupFunc;
   } else {
     // Try looking up the function itself
-    pm_pStartupFunc = (CModuleStartupFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_STARTUP));
+    pm_pStartupFunc = (FModuleStartupFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_STARTUP));
   }
 
   if (ppShutdownFunc != NULL) {
     pm_pShutdownFunc = *ppShutdownFunc;
   } else {
     // Try looking up the function itself
-    pm_pShutdownFunc = (CModuleShutdownFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_SHUTDOWN));
+    pm_pShutdownFunc = (FModuleShutdownFunc)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(PLUGINMODULEMETHOD_SHUTDOWN));
   }
 
   // [Cecil] NOTE: Don't throw anything here, otherwise non-plugin libraries cannot be loaded (such as vanilla Game & GameGUI)
