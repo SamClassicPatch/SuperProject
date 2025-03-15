@@ -67,7 +67,7 @@ void CExtrasMenu::Initialize_t(void) {
   gm_mgMods.mg_bfsFontSize = BFS_LARGE;
   gm_mgMods.mg_boxOnScreen = BoxBigRow(1.0f);
 
-  gm_mgMods.mg_pmgUp = &gm_mgDocs;
+  gm_mgMods.mg_pmgUp = &gm_mgRestart;
   gm_mgMods.mg_pmgDown = &gm_mgPatchCredits;
   gm_mgMods.mg_pActivatedFunction = &StartModsLoadMenu;
   AddChild(&gm_mgMods);
@@ -88,7 +88,7 @@ void CExtrasMenu::Initialize_t(void) {
   gm_mgGameCredits.mg_boxOnScreen = BoxBigRow(3.0f);
 
   gm_mgGameCredits.mg_pmgUp = &gm_mgPatchCredits;
-  gm_mgGameCredits.mg_pmgDown = &gm_mgRestart;
+  gm_mgGameCredits.mg_pmgDown = &gm_mgDocs;
   gm_mgGameCredits.mg_pActivatedFunction = &StartGameCreditsMenu;
   AddChild(&gm_mgGameCredits);
 
