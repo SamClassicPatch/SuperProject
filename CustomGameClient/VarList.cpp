@@ -183,7 +183,7 @@ static void ParseAutoValue(CVarSetting *pvs, CTString &strLine) {
       CTString &strText = pvs->vs_astrTexts.Push();
 
       if (iDisplayType == 1) {
-        strText.PrintF("%d%%", INDEX(fRatio * 100));
+        strText.PrintF("%d%%", (INDEX)floor(fRatio * 100.0 + 0.5));
       } else {
         strText = strValue;
       }
