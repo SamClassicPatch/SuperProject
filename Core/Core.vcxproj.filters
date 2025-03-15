@@ -225,6 +225,9 @@
     <ClInclude Include="API\IPatches.h">
       <Filter>Header Files\API headers</Filter>
     </ClInclude>
+    <ClInclude Include="Base\InputApiCompatibility.h">
+      <Filter>Header Files\Base headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdH.cpp">

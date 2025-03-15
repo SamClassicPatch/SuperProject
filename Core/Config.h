@@ -98,7 +98,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   // Patch modules
   #define _PATCHCONFIG_EXTEND_ENTITIES   (1) // Extend entities functionality by patching their methods
   #define _PATCHCONFIG_ENTITY_FORCE      (1) // Hook force methods of some vanilla entities for modifying the gravity
-  #define _PATCHCONFIG_EXTEND_INPUT      (1) // Extend input functionality by patching its methods
   #define _PATCHCONFIG_EXTEND_FILESYSTEM (1) // Extend file system functionality by patching its methods
   #define _PATCHCONFIG_EXTEND_NETWORK    (1) // Extend networking functionality by patching its methods
   #define _PATCHCONFIG_FIX_RENDERING     (1) // Fix FOV and other rendering issues by patching methods

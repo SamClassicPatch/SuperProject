@@ -18,8 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "Input.h"
 
-#if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_EXTEND_INPUT
-
 GameController_t::GameController_t() : handle(NULL), iInfoSlot(-1)
 {
 };
@@ -436,5 +434,3 @@ void CInputPatch::P_PollJoysticks(BOOL bPreScan) {
     P_ScanJoystick(i, bPreScan);
   }
 };
-
-#endif // _PATCHCONFIG_EXTEND_INPUT

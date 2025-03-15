@@ -18,8 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "Input.h"
 
-#if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_EXTEND_INPUT
-
 #define MOUSECOMBUFFERSIZE 256L
 
 static HANDLE _h2ndMouse = NONE;
@@ -265,5 +263,3 @@ void CInputPatch::Mouse2_Update(void) {
   InputDeviceAction::SetReading(CECIL_FIRST_AXIS_ACTION + EIA_MOUSE2_X, fMouseRelX);
   InputDeviceAction::SetReading(CECIL_FIRST_AXIS_ACTION + EIA_MOUSE2_Y, fMouseRelY);
 };
-
-#endif // _PATCHCONFIG_EXTEND_INPUT

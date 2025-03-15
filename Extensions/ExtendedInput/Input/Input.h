@@ -22,9 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 #include <SDL.h>
-#include "ApiCompatibility.h"
-
-#if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_EXTEND_INPUT
+#include <Core/Base/InputApiCompatibility.h>
 
 // For mimicking Win32 wheel scrolling
 #define MOUSEWHEEL_SCROLL_INTERVAL 120
@@ -49,7 +47,7 @@ enum EInputAxis {
 };
 
 // Information about a single input action
-struct PATCHES_API InputDeviceAction {
+struct InputDeviceAction {
   DOUBLE ida_fReading; // Current reading of the action (from -1 to +1)
   BOOL ida_bExists; // Whether this action (controller axis) can be used
 
@@ -61,7 +59,7 @@ struct PATCHES_API InputDeviceAction {
 };
 
 // [Cecil] Individual game controller
-struct PATCHES_API GameController_t {
+struct GameController_t {
   SDL_GameController *handle; // Opened controller
   INDEX iInfoSlot; // Used controller slot for info output
 
@@ -74,15 +72,15 @@ struct PATCHES_API GameController_t {
 };
 
 // [Cecil] All possible actions that can be used as controls
-PATCHES_API extern InputDeviceAction inp_aInputActions[MAX_OVERALL_BUTTONS];
+extern InputDeviceAction inp_aInputActions[MAX_OVERALL_BUTTONS];
 
 // [Cecil] Game controllers
-PATCHES_API extern CStaticArray<GameController_t> inp_aControllers;
+extern CStaticArray<GameController_t> inp_aControllers;
 
 // [Cecil] Threshold for moving any axis to consider it as being "held down"
-PATCHES_API extern FLOAT inp_fAxisPressThreshold;
+extern FLOAT inp_fAxisPressThreshold;
 
-class PATCHES_API CInputPatch : public CInput {
+class CInputPatch : public CInput {
   public:
     // [Cecil] Mimicking constructor and destructor
     static void Construct(void);
@@ -163,7 +161,5 @@ class PATCHES_API CInputPatch : public CInput {
       return inp_aInputActions[CECIL_FIRST_AXIS_ACTION + iAxisNo].ida_fReading;
     };
 };
-
-#endif // _PATCHCONFIG_EXTEND_INPUT
 
 #endif

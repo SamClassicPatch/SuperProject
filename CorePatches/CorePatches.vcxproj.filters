@@ -25,12 +25,6 @@
     <Filter Include="Source Files\Converters">
       <UniqueIdentifier>{ab5ae0ca-6338-4c97-a193-38d66bfdcadb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Input">
-      <UniqueIdentifier>{6e89bef3-3244-423c-af98-169482ecf56c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Input headers">
-      <UniqueIdentifier>{1b92488e-a1d8-474f-ade9-b3f6c382b162}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Patches.h">
@@ -84,12 +78,6 @@
     <ClInclude Include="Converters\RevMaps.h">
       <Filter>Header Files\Converters headers</Filter>
     </ClInclude>
-    <ClInclude Include="Input\Input.h">
-      <Filter>Header Files\Input headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Input\ApiCompatibility.h">
-      <Filter>Header Files\Input headers</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Patches.cpp">
@@ -142,15 +130,6 @@
     </ClCompile>
     <ClCompile Include="Converters\RevMaps.cpp">
       <Filter>Source Files\Converters</Filter>
-    </ClCompile>
-    <ClCompile Include="Input\InputJoystick.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Input\Input.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Input\Input2ndMouse.cpp">
-      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

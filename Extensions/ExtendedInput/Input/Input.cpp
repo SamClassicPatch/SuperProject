@@ -18,8 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "Input.h"
 
-#if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_EXTEND_INPUT
-
 #pragma comment(lib, "SDL2.lib")
 
 /*
@@ -756,5 +754,3 @@ void CInputPatch::P_ClearInput(void)
     InputDeviceAction::SetReading(i, 0);
   }
 };
-
-#endif // _PATCHCONFIG_EXTEND_INPUT

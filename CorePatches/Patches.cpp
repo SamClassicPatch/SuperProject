@@ -54,7 +54,6 @@ void CPatches::CorePatches(void) {
   // Patch for the game and the editor
   if (bGame || bEditor) {
     Entities();
-    Input();
     LogicTimers();
     Network();
     Rendering();
@@ -169,59 +168,6 @@ void CPatches::Entities(void) {
 #endif // _PATCHCONFIG_ENTITY_FORCE
 
 #endif // _PATCHCONFIG_EXTEND_ENTITIES
-};
-
-#include "Input/Input.h"
-
-void CPatches::Input(void) {
-#if _PATCHCONFIG_EXTEND_INPUT
-
-  // Don't patch input
-  if (!IConfig::global[k_EConfigProps_ExtendedInput]) return;
-
-  // Initialization
-  void (CInput::*pInitialize)(void) = &CInput::Initialize;
-  CreatePatch(pInitialize, &CInputPatch::P_Initialize, "CInput::Initialize()");
-
-  // Input
-  void (CInput::*pEnableInput)(HWND) = &CInput::EnableInput;
-  CreatePatch(pEnableInput, &CInputPatch::P_EnableInput, "CInput::EnableInput(HWND)");
-
-  void (CInput::*pDisableInput)(void) = &CInput::DisableInput;
-  CreatePatch(pDisableInput, &CInputPatch::P_DisableInput, "CInput::DisableInput()");
-
-  void (CInput::*pGetInput)(BOOL) = &CInput::GetInput;
-  CreatePatch(pGetInput, &CInputPatch::P_GetInput, "CInput::GetInput(...)");
-
-  void (CInput::*pClearInput)(void) = &CInput::ClearInput;
-  CreatePatch(pClearInput, &CInputPatch::P_ClearInput, "CInput::ClearInput()");
-
-  // Joysticks
-  void (CInput::*pSetKeyNames)(void) = &CInput::SetKeyNames;
-  CreatePatch(pSetKeyNames, &CInputPatch::P_SetKeyNames, "CInput::SetKeyNames()");
-
-  void (CInput::*pAddJoystickAbbilities)(INDEX) = &CInput::AddJoystickAbbilities;
-  CreatePatch(pAddJoystickAbbilities, &CInputPatch::P_AddJoystickAbbilities, "CInput::AddJoystickAbbilities()");
-
-  BOOL (CInput::*pScanJoystick)(INDEX, BOOL) = &CInput::ScanJoystick;
-  CreatePatch(pScanJoystick, &CInputPatch::P_ScanJoystick, "CInput::ScanJoystick()");
-
-  // Getters
-  const CTString &(CInput::*pGetAxisTransName)(INDEX) const = &CInput::GetAxisTransName;
-  CreatePatch(pGetAxisTransName, &CInputPatch::P_GetAxisTransName, "CInput::GetAxisTransName()");
-
-  FLOAT (CInput::*pGetAxisValue)(INDEX) const = &CInput::GetAxisValue;
-  CreatePatch(pGetAxisValue, &CInputPatch::P_GetAxisValue, "CInput::GetAxisValue()");
-
-  // Initialize the new input system after patching the old one
-  CInputPatch::Construct();
-  _pInput->Initialize();
-
-  // Custom symbols
-  _pShell->DeclareSymbol("persistent user FLOAT inp_fAxisPressThreshold;", &inp_fAxisPressThreshold);
-  _pShell->DeclareSymbol("user void inp_JoysticksInfo(void);", &CInputPatch::PrintJoysticksInfo);
-
-#endif // _PATCHCONFIG_EXTEND_INPUT
 };
 
 #include "Patches/LogicTimers.h"
@@ -604,10 +550,8 @@ void CPatches::FileSystem(void) {
 };
 
 // Clean up on Core shutdown (only for patches set by CorePatches() method)
-void CPatches::Cleanup(void) {
-#if _PATCHCONFIG_EXTEND_INPUT
-  CInputPatch::Destruct();
-#endif
+void CPatches::Cleanup(void)
+{
 };
 
 #endif // _PATCHCONFIG_ENGINEPATCHES

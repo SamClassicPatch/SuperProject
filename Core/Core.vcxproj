@@ -37,6 +37,7 @@
     <ClInclude Include="API\ISteam.h" />
     <ClInclude Include="Base\CoreTimerHandler.h" />
     <ClInclude Include="Base\GameDirectories.h" />
+    <ClInclude Include="Base\InputApiCompatibility.h" />
     <ClInclude Include="Base\ObserverCamera.h" />
     <ClInclude Include="Base\Unzip.h" />
     <ClInclude Include="Compatibility\Game.h" />

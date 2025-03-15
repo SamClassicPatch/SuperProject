@@ -27,9 +27,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Input\Input.h" />
     <ClInclude Include="StdH.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Input\Input.cpp" />
+    <ClCompile Include="Input\Input2ndMouse.cpp" />
+    <ClCompile Include="Input\InputJoystick.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StdH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">Create</PrecompiledHeader>
