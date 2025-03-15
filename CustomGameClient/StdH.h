@@ -18,7 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <CorePatches/Patches.h>
 
 // [Cecil] New input
-#include <CorePatches/Input/Input.h>
+#include <SDL.h>
+#include <Core/Base/InputApiCompatibility.h>
 
 // [Cecil] Moved from many individual files
 #include <Engine/Base/KeyNames.h>

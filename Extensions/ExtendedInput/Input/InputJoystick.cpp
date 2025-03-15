@@ -240,15 +240,15 @@ BOOL CInputPatch::SetupControllerEvent(INDEX iCtrl, MSG &msg)
 };
 
 // [Cecil] Update SDL joysticks manually (if SDL_PollEvent() isn't being used)
-void CInputPatch::UpdateJoysticks(void) {
+int CInputPatch::UpdateJoysticks(void *pMsg) {
   // Update SDL joysticks
   SDL_JoystickUpdate();
 
   // Open all valid controllers
-  const INDEX ctControllers = (INDEX)SDL_NumJoysticks();
+  const INDEX ctJoysticks = (INDEX)SDL_NumJoysticks();
 
-  for (INDEX iController = 0; iController < ctControllers; iController++) {
-    OpenGameController(iController);
+  for (INDEX iJoy = 0; iJoy < ctJoysticks; iJoy++) {
+    OpenGameController(iJoy);
   }
 
   // Go through connected controllers
@@ -262,6 +262,18 @@ void CInputPatch::UpdateJoysticks(void) {
       it->Disconnect();
     }
   }
+
+  // Process event for the first controller that sends it
+  const INDEX ctControllers = inp_aControllers.Count();
+  MSG &msg = *(MSG *)pMsg;
+
+  for (INDEX iCtrl = 0; iCtrl < ctControllers; iCtrl++) {
+    if (SetupControllerEvent(iCtrl, msg)) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 };
 
 // [Cecil] Joystick setup on initialization

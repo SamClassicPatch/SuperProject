@@ -57,10 +57,11 @@ void CMGAxisDetector::Think(void) {
     }
   }
 
-  // Compatibility
-  #if !_PATCHCONFIG_EXTEND_INPUT
-    static const FLOAT inp_fAxisPressThreshold = 0.2f;
-  #endif
+  // Get axis press threshold from the extension's command
+  FLOAT fAxisPressThreshold = 0.2f;
+
+  static CSymbolPtr pfThreshold("inp_fAxisPressThreshold");
+  if (pfThreshold.Exists()) fAxisPressThreshold = pfThreshold.GetFloat();
 
   // Check every axis
   for (INDEX iAxis = 1; iAxis < MAX_OVERALL_AXES; iAxis++) {
@@ -70,7 +71,7 @@ void CMGAxisDetector::Think(void) {
     if (iAxis < FIRST_JOYAXIS) {
       bDetected = fReading >= 5.0f;
     } else {
-      bDetected = fReading >= Clamp(inp_fAxisPressThreshold, 0.01f, 1.0f);
+      bDetected = fReading >= Clamp(fAxisPressThreshold, 0.01f, 1.0f);
     }
 
     if (bDetected) {

@@ -321,9 +321,6 @@ InputDeviceAction inp_aInputActions[MAX_OVERALL_BUTTONS];
 // [Cecil] Game controllers
 CStaticArray<GameController_t> inp_aControllers;
 
-// [Cecil] Threshold for moving any axis to consider it as being "held down"
-FLOAT inp_fAxisPressThreshold = 0.2f;
-
 // [Cecil]
 void InputDeviceAction::SetReading(INDEX iActionIndex, DOUBLE fSetReading) {
   // Set internal reading
@@ -341,7 +338,8 @@ void InputDeviceAction::SetReading(INDEX iActionIndex, DOUBLE fSetReading) {
 
     // Set button state only for controller axes
     if (iActionIndex >= iAxisOffset + EIA_CONTROLLER_OFFSET && iActionIndex < iAxisOffset + EIA_MAX_ALL) {
-      bSetButtonState = ida.IsActive(inp_fAxisPressThreshold);
+      extern CPluginSymbol _psAxisPressThreshold;
+      bSetButtonState = ida.IsActive(_psAxisPressThreshold.GetFloat());
     }
 
   // Buttons
@@ -359,13 +357,21 @@ bool InputDeviceAction::IsActive(DOUBLE fThreshold) const {
 };
 
 // [Cecil] State switch
-static BOOL _bPatchedInput = FALSE;
+static bool _bPatchedInput = false;
+
+static void SetPatchedInput(bool bState) {
+  _bPatchedInput = bState;
+
+  // Reflect the input state in the extension property
+  static ExtensionPropRef_t<bool> propref(EXTENSIONMODULE_LOCALHANDLE, "initialized");
+  propref.SetValue(bState);
+};
 
 // deafult constructor
 void CInputPatch::Construct(void)
 {
-  if (IsInitialized()) return;
-  _bPatchedInput = TRUE;
+  if (_bPatchedInput) return;
+  SetPatchedInput(true);
 
   // [Cecil] Compatibility checks
   ASSERT(EIA_NONE == AXIS_NONE);
@@ -405,8 +411,8 @@ void CInputPatch::Construct(void)
 // Destructor
 void CInputPatch::Destruct()
 {
-  if (!IsInitialized()) return;
-  _bPatchedInput = FALSE;
+  if (!_bPatchedInput) return;
+  SetPatchedInput(false);
 
   // [Cecil] Various cleanups
   ShutdownJoysticks();
@@ -414,11 +420,6 @@ void CInputPatch::Destruct()
 
   // [Cecil] End SDL
   SDL_Quit();
-};
-
-// [Cecil] Check if input patch has been initialized
-BOOL CInputPatch::IsInitialized(void) {
-  return _bPatchedInput;
 };
 
 /*

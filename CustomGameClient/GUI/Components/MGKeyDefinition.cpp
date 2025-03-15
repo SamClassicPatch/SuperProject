@@ -156,8 +156,12 @@ void CMGKeyDefinition::Think(void) {
     if (_pInput->IsInputEnabled()) {
       BOOL bActivationKey = !!_pInput->GetButtonState(KID_ENTER) || !!_pInput->GetButtonState(KID_MOUSE1);
 
-    #if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_EXTEND_INPUT
-      if (CInputPatch::IsInitialized() && !bActivationKey) {
+      // [Cecil] Check if extended input patches are initialized
+      bool bInputInit = false;
+      static ExtensionPropRef_t<bool> propref("PATCH_EXT_input", "initialized");
+      propref.GetValue(&bInputInit);
+
+      if (bInputInit && !bActivationKey) {
         // [Cecil] See if any controller buttons for binding activation are being held
         for (INDEX iCtrl = 0; iCtrl < MAX_JOYSTICKS; iCtrl++) {
           const INDEX iFirstButton = FIRST_JOYBUTTON + iCtrl * SDL_CONTROLLER_BUTTON_MAX;
@@ -169,7 +173,6 @@ void CMGKeyDefinition::Think(void) {
           }
         }
       }
-    #endif // _PATCHCONFIG_EXTEND_INPUT
 
       if (!bActivationKey) {
         mg_iState = PRESS_KEY_WAITING;

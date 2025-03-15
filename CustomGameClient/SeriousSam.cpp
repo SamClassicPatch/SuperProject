@@ -932,23 +932,23 @@ void TeleportPlayer(int iPosition) {
 
 // [Cecil] Poll input & window events
 static BOOL PollEvent(MSG &msg) {
-#if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_EXTEND_INPUT
+  // Check if extended input patches are initialized
+  static HPatchPlugin hInput = ClassicsExtensions_GetExtensionByName("PATCH_EXT_input");
 
-  if (CInputPatch::IsInitialized()) {
+  bool bInputInit = false;
+  static ExtensionPropRef_t<bool> propref(hInput, "initialized");
+  propref.GetValue(&bInputInit);
+
+  if (bInputInit) {
     // Manual joystick update
-    CInputPatch::UpdateJoysticks();
+    static FExtensionSignal pUpdateJoysticks = hInput->FindSignal("UpdateJoysticks");
+    ASSERT(pUpdateJoysticks != NULL);
 
-    // Process event for the first controller that sends it
-    const INDEX ctControllers = inp_aControllers.Count();
-
-    for (INDEX iCtrl = 0; iCtrl < ctControllers; iCtrl++) {
-      if (CInputPatch::SetupControllerEvent(iCtrl, msg)) {
-        return TRUE;
-      }
+    if (pUpdateJoysticks(&msg)) {
+      // Polled a controller event
+      return TRUE;
     }
   }
-
-#endif // _PATCHCONFIG_EXTEND_INPUT
 
   if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
     // If it's not a mouse message
@@ -969,9 +969,12 @@ static BOOL PollEvent(MSG &msg) {
 
 // [Cecil] Check any significant controller button
 static BOOL AnyControllerButton(MSG &msg) {
-#if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_EXTEND_INPUT
+  // [Cecil] Check if extended input patches are initialized
+  bool bInputInit = false;
+  static ExtensionPropRef_t<bool> propref("PATCH_EXT_input", "initialized");
+  propref.GetValue(&bInputInit);
 
-  if (CInputPatch::IsInitialized() && msg.message == WM_CTRLBUTTONDOWN) {
+  if (bInputInit && msg.message == WM_CTRLBUTTONDOWN) {
     switch (msg.wParam) {
       case SDL_CONTROLLER_BUTTON_A: case SDL_CONTROLLER_BUTTON_B:
       case SDL_CONTROLLER_BUTTON_X: case SDL_CONTROLLER_BUTTON_Y:
@@ -979,8 +982,6 @@ static BOOL AnyControllerButton(MSG &msg) {
         return TRUE;
     }
   }
-
-#endif // _PATCHCONFIG_EXTEND_INPUT
 
   return FALSE;
 };

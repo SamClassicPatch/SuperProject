@@ -22,6 +22,16 @@ CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_input", k_EPluginFlagGame | k_EPluginF
   "Dreamy Cecil", "Extended Input",
   "Extended input functionality that includes proper support of game controllers.");
 
+CLASSICSPATCH_DEFINE_EXTENSION_HANDLE;
+
+CLASSICSPATCH_EXTENSION_PROPS_BEGIN {
+  ExtensionProp_t("initialized", false), // State switch for the patched input
+} CLASSICSPATCH_EXTENSION_PROPS_END;
+
+CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
+  { "UpdateJoysticks", &CInputPatch::UpdateJoysticks }, // Argument type: 'MSG *'
+} CLASSICSPATCH_EXTENSION_SIGNALS_END;
+
 // Threshold for moving any axis to consider it as being "held down"
 CPluginSymbol _psAxisPressThreshold(SSF_PERSISTENT | SSF_USER, FLOAT(0.2f));
 

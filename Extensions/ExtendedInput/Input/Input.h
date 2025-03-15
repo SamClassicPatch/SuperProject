@@ -77,17 +77,11 @@ extern InputDeviceAction inp_aInputActions[MAX_OVERALL_BUTTONS];
 // [Cecil] Game controllers
 extern CStaticArray<GameController_t> inp_aControllers;
 
-// [Cecil] Threshold for moving any axis to consider it as being "held down"
-extern FLOAT inp_fAxisPressThreshold;
-
 class CInputPatch : public CInput {
   public:
     // [Cecil] Mimicking constructor and destructor
     static void Construct(void);
     static void Destruct(void);
-
-    // [Cecil] Check if input patch has been initialized
-    static BOOL IsInitialized(void);
 
     // Sets name for every key
     void P_SetKeyNames(void);
@@ -132,7 +126,7 @@ class CInputPatch : public CInput {
     static BOOL SetupControllerEvent(INDEX iCtrl, MSG &msg);
 
     // [Cecil] Update SDL joysticks manually (if SDL_PollEvent() isn't being used)
-    static void UpdateJoysticks(void);
+    static int UpdateJoysticks(void *pMsg);
 
     // [Cecil] Joystick setup on initialization
     static void StartupJoysticks(void);
