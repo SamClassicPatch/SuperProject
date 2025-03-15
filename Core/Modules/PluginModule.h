@@ -47,6 +47,9 @@ class CORE_API CPluginModule : public CSerial {
     ExtensionProp_t *pm_aExtensionProps; // Array of properties for communicating with the extension
     size_t pm_ctExtensionProps; // Amount of extension properties in the array
 
+    ExtensionSignal_t *pm_aExtensionSignals; // Array of signals for interacting with the extension
+    size_t pm_ctExtensionSignals; // Amount of extension signals in the array
+
   public:
     // Constructor
     CPluginModule();

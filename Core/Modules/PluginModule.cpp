@@ -168,6 +168,19 @@ bool ClassicsExtensions_SetData(HPatchPlugin hPlugin, const char *strProperty, v
   return true;
 };
 
+FExtensionSignal ClassicsExtensions_FindSignal(HPatchPlugin hPlugin, const char *strSignal) {
+  const size_t ct = hPlugin->pm_ctExtensionSignals;
+  if (ct == 0 || hPlugin->pm_aExtensionSignals == NULL) return false;
+
+  for (size_t i = 0; i < ct; i++) {
+    ExtensionSignal_t &signal = hPlugin->pm_aExtensionSignals[i];
+
+    if (strcmp(signal.m_strSignal, strSignal) == 0) return signal.m_pHandler;
+  }
+
+  return NULL;
+};
+
 // Current plugin in the process of initialization
 CPluginModule *_pInitializingPlugin = NULL;
 
@@ -254,6 +267,15 @@ void CPluginModule::Initialize(void) {
       pm_aExtensionProps = aPropsArray;
       pm_ctExtensionProps = *pctPropsCount;
     }
+
+    // Retrieve array of extension signals
+    ExtensionSignal_t *aSignalsArray = (ExtensionSignal_t *)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(EXTENSIONMODULE_SIGNALARRAY));
+    size_t *pctSignalsCount = (size_t *)GetProcAddress(GetHandle(), CLASSICSPATCH_STRINGIFY(EXTENSIONMODULE_SIGNALCOUNT));
+
+    if (aSignalsArray != NULL && pctSignalsCount != NULL) {
+      pm_aExtensionSignals = aSignalsArray;
+      pm_ctExtensionSignals = *pctSignalsCount;
+    }
   }
 
   // Start the plugin
@@ -286,9 +308,12 @@ void CPluginModule::Deactivate(void) {
   // Unregister plugin events
   ResetPluginEvents(&pm_events);
 
-  // Reset extension properties
+  // Reset extension properties and signals
   pm_aExtensionProps = NULL;
   pm_ctExtensionProps = 0;
+
+  pm_aExtensionSignals = NULL;
+  pm_ctExtensionSignals = 0;
 
   pm_bInitialized = FALSE;
 };
@@ -311,6 +336,9 @@ void CPluginModule::ResetFields(void) {
 
   pm_aExtensionProps = NULL;
   pm_ctExtensionProps = 0;
+
+  pm_aExtensionSignals = NULL;
+  pm_ctExtensionSignals = 0;
 };
 
 // Add new function patch on startup
