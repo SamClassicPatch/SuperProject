@@ -265,7 +265,7 @@ static void CreatePowerUp(SHELL_FUNC_ARGS) {
 };
 
 // Module entry point
-CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
+CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Register plugin events
   events.m_processing->OnStep = &IProcessingEvents_OnStep;
@@ -287,6 +287,6 @@ CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
 };
 
 // Module cleanup
-CLASSICSPATCH_PLUGIN_SHUTDOWN(CIniConfig &props)
+CLASSICSPATCH_PLUGIN_SHUTDOWN(HIniConfig props)
 {
 };

@@ -250,6 +250,7 @@ class CInternalClassicsPatchAPI : public IClassicsPatchAPI {
     IClassicsFuncPatches m_apiFuncPatches;
     IClassicsPackets m_apiPackets;
     IClassicsExtensions m_apiExtensions;
+    IClassicsINI m_apiINI;
 
   public:
     virtual IClassicsChat *Chat(void) { return &m_apiChat; };
@@ -262,6 +263,7 @@ class CInternalClassicsPatchAPI : public IClassicsPatchAPI {
     virtual IClassicsFuncPatches *FuncPatches(void) { return &m_apiFuncPatches; };
     virtual IClassicsPackets *Packets(void) { return &m_apiPackets; };
     virtual IClassicsExtensions *Extensions(void) { return &m_apiExtensions; };
+    virtual IClassicsINI *INI(void) { return &m_apiINI; };
 };
 
 static CInternalClassicsPatchAPI _ClassicsPatchAPI;

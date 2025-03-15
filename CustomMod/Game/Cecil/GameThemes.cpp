@@ -58,7 +58,7 @@ static inline void SetColor(const CTString &strKey, COLOR &colVariable) {
 
 // Set flag from a config to a variable
 static inline void SetFlag(const CTString &strKey, BOOL &bVariable, BOOL bDefValue) {
-  bVariable = _pini->GetBoolValue("Flags", strKey, bDefValue);
+  bVariable = _pini->GetBoolValue("Flags", strKey, !!bDefValue);
 };
 
 // Reload textures ("*" for default TSE)

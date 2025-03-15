@@ -15,6 +15,78 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+HIniConfig ClassicsINI_Create(void) {
+  return new CIniConfig;
+};
+
+void ClassicsINI_Destroy(HIniConfig hINI) {
+  delete hINI;
+};
+
+void ClassicsINI_Clear(HIniConfig hINI) {
+  hINI->Clear();
+};
+
+bool ClassicsINI_IsEmpty(HIniConfig hINI) {
+  return hINI->IsEmpty();
+};
+
+bool ClassicsINI_SectionExists(HIniConfig hINI, const char *strSection) {
+  return hINI->SectionExists(strSection);
+};
+
+bool ClassicsINI_KeyExists(HIniConfig hINI, const char *strSection, const char *strKey) {
+  return hINI->KeyExists(strSection, strKey);
+};
+
+bool ClassicsINI_Delete(HIniConfig hINI, const char *strSection, const char *strKey) {
+  return hINI->Delete(strSection, strKey);
+};
+
+void ClassicsINI_SetValue(HIniConfig hINI, const char *strSection, const char *strKey, const char *strValue) {
+  hINI->SetValue(strSection, strKey, strValue);
+};
+
+void ClassicsINI_SetBoolValue(HIniConfig hINI, const char *strSection, const char *strKey, bool bValue) {
+  hINI->SetBoolValue(strSection, strKey, bValue);
+};
+
+void ClassicsINI_SetIntValue(HIniConfig hINI, const char *strSection, const char *strKey, int iValue) {
+  hINI->SetIntValue(strSection, strKey, iValue);
+};
+
+void ClassicsINI_SetDoubleValue(HIniConfig hINI, const char *strSection, const char *strKey, double dValue) {
+  hINI->SetDoubleValue(strSection, strKey, dValue);
+};
+
+const char *ClassicsINI_GetValue(HIniConfig hINI, const char *strSection, const char *strKey, const char *strDefValue) {
+  static CTString strTemp;
+  strTemp = hINI->GetValue(strSection, strKey, strDefValue);
+  return strTemp.str_String;
+};
+
+bool ClassicsINI_GetBoolValue(HIniConfig hINI, const char *strSection, const char *strKey, bool bDefValue) {
+  return hINI->GetBoolValue(strSection, strKey, bDefValue);
+};
+
+int ClassicsINI_GetIntValue(HIniConfig hINI, const char *strSection, const char *strKey, int iDefValue) {
+  return hINI->GetIntValue(strSection, strKey, iDefValue);
+};
+
+double ClassicsINI_GetDoubleValue(HIniConfig hINI, const char *strSection, const char *strKey, double dDefValue) {
+  return hINI->GetDoubleValue(strSection, strKey, dDefValue);
+};
+
+void ClassicsINI_Read(HIniConfig hINI, const char *str) {
+  hINI->Read(str);
+};
+
+const char *ClassicsINI_Write(HIniConfig hINI) {
+  static IniStr strData;
+  hINI->Write(strData);
+  return strData.c_str();
+};
+
 namespace IConfig {
 
 // Define global configs
@@ -95,7 +167,7 @@ void GlobalProps::Load(void) {
     CAnyValue &val = it->val;
 
     switch (val.GetType()) {
-      case CAnyValue::E_VAL_BOOL: val = !!iniConfig.GetBoolValue(it->strSection, it->strKey, val.GetIndex()); break;
+      case CAnyValue::E_VAL_BOOL: val = iniConfig.GetBoolValue(it->strSection, it->strKey, !!val.GetIndex()); break;
       case CAnyValue::E_VAL_INDEX: val = (int)iniConfig.GetIntValue(it->strSection, it->strKey, val.GetIndex()); break;
       case CAnyValue::E_VAL_FLOAT: val = (float)iniConfig.GetDoubleValue(it->strSection, it->strKey, val.GetFloat()); break;
       case CAnyValue::E_VAL_STRING: val = iniConfig.GetValue(it->strSection, it->strKey, val.GetString()); break;
@@ -243,7 +315,7 @@ void ModData::LoadConfigs(void) {
       CAnyValue &val = it->val;
 
       switch (val.GetType()) {
-        case CAnyValue::E_VAL_BOOL: val = !!iniModData.GetBoolValue(it->strSection, it->strKey, val.GetIndex()); break;
+        case CAnyValue::E_VAL_BOOL: val = iniModData.GetBoolValue(it->strSection, it->strKey, !!val.GetIndex()); break;
         case CAnyValue::E_VAL_INDEX: val = (int)iniModData.GetIntValue(it->strSection, it->strKey, val.GetIndex()); break;
         case CAnyValue::E_VAL_FLOAT: val = (float)iniModData.GetDoubleValue(it->strSection, it->strKey, val.GetFloat()); break;
         case CAnyValue::E_VAL_STRING: val = iniModData.GetValue(it->strSection, it->strKey, val.GetString()); break;

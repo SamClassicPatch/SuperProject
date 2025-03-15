@@ -20,7 +20,7 @@ CLASSICSPATCH_DEFINE_PLUGIN(k_EPluginFlagGame | k_EPluginFlagEditor, CORE_PATCH_
   "Dreamy Cecil", "Accessibility", "Various toggleable options for enhanced accessibility.");
 
 // Module entry point
-CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
+CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Initialize accessibility modules
   InitPlayerInfoSound();

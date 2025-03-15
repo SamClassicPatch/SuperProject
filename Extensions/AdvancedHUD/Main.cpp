@@ -74,13 +74,13 @@ CPluginSymbol _psColorMid(SSF_PERSISTENT | SSF_USER, INDEX(0x00FF00));
 CPluginSymbol _psColorLow(SSF_PERSISTENT | SSF_USER, INDEX(0xFF0000));
 
 // Module entry point
-CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
+CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Check if standard entities are modified
   if (_fnmMod != "" && ClassicsCore_IsEntitiesModded())
   {
     // Enabling "SameHook" means that it's safe to replace mod's HUD, so it counts as non-modified entities
-    _bModdedEntities = !props.GetBoolValue("", "SameHook", false);
+    _bModdedEntities = !props->GetBoolValue("", "SameHook", false);
   }
 
   // Custom symbols
@@ -131,7 +131,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
 };
 
 // Module cleanup
-CLASSICSPATCH_PLUGIN_SHUTDOWN(CIniConfig &props)
+CLASSICSPATCH_PLUGIN_SHUTDOWN(HIniConfig props)
 {
   // Clean up the HUD
   _HUD.End();

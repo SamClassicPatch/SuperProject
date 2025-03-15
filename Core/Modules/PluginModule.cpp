@@ -258,7 +258,7 @@ void CPluginModule::Initialize(void) {
 
   // Start the plugin
   if (pm_pStartupFunc != NULL) {
-    pm_pStartupFunc(pm_props, pm_events);
+    pm_pStartupFunc(&pm_props, pm_events);
   }
 
   // Restore last plugin
@@ -280,7 +280,7 @@ void CPluginModule::Deactivate(void) {
 
   // Stop the plugin
   if (pm_pShutdownFunc != NULL) {
-    pm_pShutdownFunc(pm_props);
+    pm_pShutdownFunc(&pm_props);
   }
 
   // Unregister plugin events

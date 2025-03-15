@@ -91,7 +91,7 @@ CPluginSymbol _psReplaceHealth (SSF_PERSISTENT | SSF_USER, INDEX(-1));
 CPluginSymbol _psReplaceArmor  (SSF_PERSISTENT | SSF_USER, INDEX(-1));
 
 // Module entry point
-CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
+CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Register plugin events
   events.m_game->OnGameStart   = &IGameEvents_OnGameStart;
@@ -161,6 +161,6 @@ CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
 };
 
 // Module cleanup
-CLASSICSPATCH_PLUGIN_SHUTDOWN(CIniConfig &props)
+CLASSICSPATCH_PLUGIN_SHUTDOWN(HIniConfig props)
 {
 };
