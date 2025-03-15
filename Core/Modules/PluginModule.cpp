@@ -46,34 +46,15 @@ HPatchPlugin ClassicsExtensions_GetExtensionByName(const char *strExtension) {
 };
 
 ExtensionProp_t *ClassicsExtensions_FindProperty(HPatchPlugin hPlugin, const char *strProperty) {
-  const size_t ct = hPlugin->pm_ctExtensionProps;
-  if (ct == 0 || hPlugin->pm_aExtensionProps == NULL) return false;
-
-  for (size_t i = 0; i < ct; i++) {
-    ExtensionProp_t &prop = hPlugin->pm_aExtensionProps[i];
-
-    if (strcmp(prop.m_strProperty, strProperty) == 0) return &prop;
-  }
-
-  return NULL;
+  return hPlugin->FindProperty(strProperty);
 };
 
 ExtensionProp_t *ClassicsExtensions_FindPropertyOfType(HPatchPlugin hPlugin, const char *strProperty, ExtensionProp_t::EType eType) {
-  const size_t ct = hPlugin->pm_ctExtensionProps;
-  if (ct == 0 || hPlugin->pm_aExtensionProps == NULL) return false;
-
-  for (size_t i = 0; i < ct; i++) {
-    ExtensionProp_t &prop = hPlugin->pm_aExtensionProps[i];
-
-    if (prop.m_eType != eType) continue;
-    if (strcmp(prop.m_strProperty, strProperty) == 0) return &prop;
-  }
-
-  return NULL;
+  return hPlugin->FindPropertyOfType(strProperty, eType);
 };
 
 bool ClassicsExtensions_GetBool(HPatchPlugin hPlugin, const char *strProperty, bool *pValue) {
-  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Bool);
+  const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Bool);
   if (pProp == NULL) return false;
 
   *pValue = pProp->m_value._bool;
@@ -81,7 +62,7 @@ bool ClassicsExtensions_GetBool(HPatchPlugin hPlugin, const char *strProperty, b
 };
 
 bool ClassicsExtensions_GetInt(HPatchPlugin hPlugin, const char *strProperty, int *pValue) {
-  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Int);
+  const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Int);
   if (pProp == NULL) return false;
 
   *pValue = pProp->m_value._int;
@@ -89,7 +70,7 @@ bool ClassicsExtensions_GetInt(HPatchPlugin hPlugin, const char *strProperty, in
 };
 
 bool ClassicsExtensions_GetFloat(HPatchPlugin hPlugin, const char *strProperty, float *pValue) {
-  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Float);
+  const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Float);
   if (pProp == NULL) return false;
 
   *pValue = pProp->m_value._float;
@@ -97,7 +78,7 @@ bool ClassicsExtensions_GetFloat(HPatchPlugin hPlugin, const char *strProperty, 
 };
 
 bool ClassicsExtensions_GetDouble(HPatchPlugin hPlugin, const char *strProperty, double *pValue) {
-  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Double);
+  const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Double);
   if (pProp == NULL) return false;
 
   *pValue = pProp->m_value._double;
@@ -105,7 +86,7 @@ bool ClassicsExtensions_GetDouble(HPatchPlugin hPlugin, const char *strProperty,
 };
 
 bool ClassicsExtensions_GetString(HPatchPlugin hPlugin, const char *strProperty, const char **pValue) {
-  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_String);
+  const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_String);
   if (pProp == NULL) return false;
 
   *pValue = pProp->m_value._string;
@@ -113,7 +94,7 @@ bool ClassicsExtensions_GetString(HPatchPlugin hPlugin, const char *strProperty,
 };
 
 bool ClassicsExtensions_GetData(HPatchPlugin hPlugin, const char *strProperty, void **pValue) {
-  const ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Data);
+  const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Data);
   if (pProp == NULL) return false;
 
   *pValue = pProp->m_value._data;
@@ -121,7 +102,7 @@ bool ClassicsExtensions_GetData(HPatchPlugin hPlugin, const char *strProperty, v
 };
 
 bool ClassicsExtensions_SetBool(HPatchPlugin hPlugin, const char *strProperty, bool bValue) {
-  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Bool);
+  ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Bool);
   if (pProp == NULL) return false;
 
   pProp->m_value._bool = bValue;
@@ -129,7 +110,7 @@ bool ClassicsExtensions_SetBool(HPatchPlugin hPlugin, const char *strProperty, b
 };
 
 bool ClassicsExtensions_SetInt(HPatchPlugin hPlugin, const char *strProperty, int iValue) {
-  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Int);
+  ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Int);
   if (pProp == NULL) return false;
 
   pProp->m_value._int = iValue;
@@ -137,7 +118,7 @@ bool ClassicsExtensions_SetInt(HPatchPlugin hPlugin, const char *strProperty, in
 };
 
 bool ClassicsExtensions_SetFloat(HPatchPlugin hPlugin, const char *strProperty, float fValue) {
-  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Float);
+  ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Float);
   if (pProp == NULL) return false;
 
   pProp->m_value._float = fValue;
@@ -145,7 +126,7 @@ bool ClassicsExtensions_SetFloat(HPatchPlugin hPlugin, const char *strProperty, 
 };
 
 bool ClassicsExtensions_SetDouble(HPatchPlugin hPlugin, const char *strProperty, double fValue) {
-  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Double);
+  ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Double);
   if (pProp == NULL) return false;
 
   pProp->m_value._double = fValue;
@@ -153,7 +134,7 @@ bool ClassicsExtensions_SetDouble(HPatchPlugin hPlugin, const char *strProperty,
 };
 
 bool ClassicsExtensions_SetString(HPatchPlugin hPlugin, const char *strProperty, const char *strValue) {
-  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_String);
+  ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_String);
   if (pProp == NULL) return false;
 
   pProp->m_value._string = strValue;
@@ -161,7 +142,7 @@ bool ClassicsExtensions_SetString(HPatchPlugin hPlugin, const char *strProperty,
 };
 
 bool ClassicsExtensions_SetData(HPatchPlugin hPlugin, const char *strProperty, void *pValue) {
-  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(hPlugin, strProperty, ExtensionProp_t::k_EType_Data);
+  ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Data);
   if (pProp == NULL) return false;
 
   pProp->m_value._data = pValue;
@@ -169,16 +150,11 @@ bool ClassicsExtensions_SetData(HPatchPlugin hPlugin, const char *strProperty, v
 };
 
 FExtensionSignal ClassicsExtensions_FindSignal(HPatchPlugin hPlugin, const char *strSignal) {
-  const size_t ct = hPlugin->pm_ctExtensionSignals;
-  if (ct == 0 || hPlugin->pm_aExtensionSignals == NULL) return false;
+  return hPlugin->FindSignal(strSignal);
+};
 
-  for (size_t i = 0; i < ct; i++) {
-    ExtensionSignal_t &signal = hPlugin->pm_aExtensionSignals[i];
-
-    if (strcmp(signal.m_strSignal, strSignal) == 0) return signal.m_pHandler;
-  }
-
-  return NULL;
+bool ClassicsExtensions_CallSignal(HPatchPlugin hPlugin, const char *strSignal, int *piResult, void *pData) {
+  return hPlugin->CallSignal(strSignal, piResult, pData);
 };
 
 // Current plugin in the process of initialization
@@ -367,6 +343,64 @@ void *CPluginModule::GetSymbol_t(const char *strSymbolName) {
   }
 
   return pSymbol;
+};
+
+// Find extension property in the plugin
+ExtensionProp_t *CPluginModule::FindProperty(const char *strProperty) {
+  const size_t ct = pm_ctExtensionProps;
+  if (ct == 0 || pm_aExtensionProps == NULL) return false;
+
+  for (size_t i = 0; i < ct; i++) {
+    ExtensionProp_t &prop = pm_aExtensionProps[i];
+
+    if (strcmp(prop.m_strProperty, strProperty) == 0) return &prop;
+  }
+
+  return NULL;
+};
+
+// Find extension property of a specific type in the plugin
+ExtensionProp_t *CPluginModule::FindPropertyOfType(const char *strProperty, ExtensionProp_t::EType eType) {
+  const size_t ct = pm_ctExtensionProps;
+  if (ct == 0 || pm_aExtensionProps == NULL) return false;
+
+  for (size_t i = 0; i < ct; i++) {
+    ExtensionProp_t &prop = pm_aExtensionProps[i];
+
+    if (prop.m_eType != eType) continue;
+    if (strcmp(prop.m_strProperty, strProperty) == 0) return &prop;
+  }
+
+  return NULL;
+};
+
+// Find function of some extension signal in the plugin
+FExtensionSignal CPluginModule::FindSignal(const char *strSignal) {
+  const size_t ct = pm_ctExtensionSignals;
+  if (ct == 0 || pm_aExtensionSignals == NULL) return false;
+
+  for (size_t i = 0; i < ct; i++) {
+    ExtensionSignal_t &signal = pm_aExtensionSignals[i];
+
+    if (strcmp(signal.m_strSignal, strSignal) == 0) return signal.m_pHandler;
+  }
+
+  return NULL;
+};
+
+// Call function of some extension signal in the plugin
+bool CPluginModule::CallSignal(const char *strSignal, int *piResult, void *pData) {
+  FExtensionSignal pSignal = FindSignal(strSignal);
+  if (pSignal == NULL) return false;
+
+  // Optional result
+  if (piResult != NULL) {
+    *piResult = pSignal(pData);
+  } else {
+    pSignal(pData);
+  }
+
+  return true;
 };
 
 // Module cleanup

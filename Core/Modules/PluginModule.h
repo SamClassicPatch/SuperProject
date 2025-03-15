@@ -87,6 +87,21 @@ class CORE_API CPluginModule : public CSerial {
       *ppSymbol = (Type)GetSymbol_t(strSymbolName);
     };
 
+    // Find extension property in the plugin
+    ExtensionProp_t *FindProperty(const char *strProperty);
+
+    // Find extension property of a specific type in the plugin
+    ExtensionProp_t *FindPropertyOfType(const char *strProperty, ExtensionProp_t::EType eType);
+
+    // Find function of some extension signal in the plugin
+    FExtensionSignal FindSignal(const char *strSignal);
+
+    // Call function of some extension signal in the plugin
+    // Returns false if the signal cannot be called (not found)
+    // piResult - pointer to the variable that will hold the result from the function call (may be NULL)
+    // pData - optional data that will be passed into the signal call (see FExtensionSignal prototype)
+    bool CallSignal(const char *strSignal, int *piResult, void *pData);
+
   // CSerial overrides
   public:
 
