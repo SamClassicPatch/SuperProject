@@ -46,14 +46,18 @@ HPatchPlugin ClassicsExtensions_GetExtensionByName(const char *strExtension) {
 };
 
 ExtensionProp_t *ClassicsExtensions_FindProperty(HPatchPlugin hPlugin, const char *strProperty) {
+  if (hPlugin == NULL) return NULL;
   return hPlugin->FindProperty(strProperty);
 };
 
 ExtensionProp_t *ClassicsExtensions_FindPropertyOfType(HPatchPlugin hPlugin, const char *strProperty, ExtensionProp_t::EType eType) {
+  if (hPlugin == NULL) return NULL;
   return hPlugin->FindPropertyOfType(strProperty, eType);
 };
 
 bool ClassicsExtensions_GetBool(HPatchPlugin hPlugin, const char *strProperty, bool *pValue) {
+  if (hPlugin == NULL) return false;
+
   const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Bool);
   if (pProp == NULL) return false;
 
@@ -62,6 +66,8 @@ bool ClassicsExtensions_GetBool(HPatchPlugin hPlugin, const char *strProperty, b
 };
 
 bool ClassicsExtensions_GetInt(HPatchPlugin hPlugin, const char *strProperty, int *pValue) {
+  if (hPlugin == NULL) return false;
+
   const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Int);
   if (pProp == NULL) return false;
 
@@ -70,6 +76,8 @@ bool ClassicsExtensions_GetInt(HPatchPlugin hPlugin, const char *strProperty, in
 };
 
 bool ClassicsExtensions_GetFloat(HPatchPlugin hPlugin, const char *strProperty, float *pValue) {
+  if (hPlugin == NULL) return false;
+
   const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Float);
   if (pProp == NULL) return false;
 
@@ -78,6 +86,8 @@ bool ClassicsExtensions_GetFloat(HPatchPlugin hPlugin, const char *strProperty, 
 };
 
 bool ClassicsExtensions_GetDouble(HPatchPlugin hPlugin, const char *strProperty, double *pValue) {
+  if (hPlugin == NULL) return false;
+
   const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Double);
   if (pProp == NULL) return false;
 
@@ -86,6 +96,8 @@ bool ClassicsExtensions_GetDouble(HPatchPlugin hPlugin, const char *strProperty,
 };
 
 bool ClassicsExtensions_GetString(HPatchPlugin hPlugin, const char *strProperty, const char **pValue) {
+  if (hPlugin == NULL) return false;
+
   const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_String);
   if (pProp == NULL) return false;
 
@@ -94,6 +106,8 @@ bool ClassicsExtensions_GetString(HPatchPlugin hPlugin, const char *strProperty,
 };
 
 bool ClassicsExtensions_GetData(HPatchPlugin hPlugin, const char *strProperty, void **pValue) {
+  if (hPlugin == NULL) return false;
+
   const ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Data);
   if (pProp == NULL) return false;
 
@@ -102,6 +116,8 @@ bool ClassicsExtensions_GetData(HPatchPlugin hPlugin, const char *strProperty, v
 };
 
 bool ClassicsExtensions_SetBool(HPatchPlugin hPlugin, const char *strProperty, bool bValue) {
+  if (hPlugin == NULL) return false;
+
   ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Bool);
   if (pProp == NULL) return false;
 
@@ -110,6 +126,8 @@ bool ClassicsExtensions_SetBool(HPatchPlugin hPlugin, const char *strProperty, b
 };
 
 bool ClassicsExtensions_SetInt(HPatchPlugin hPlugin, const char *strProperty, int iValue) {
+  if (hPlugin == NULL) return false;
+
   ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Int);
   if (pProp == NULL) return false;
 
@@ -118,6 +136,8 @@ bool ClassicsExtensions_SetInt(HPatchPlugin hPlugin, const char *strProperty, in
 };
 
 bool ClassicsExtensions_SetFloat(HPatchPlugin hPlugin, const char *strProperty, float fValue) {
+  if (hPlugin == NULL) return false;
+
   ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Float);
   if (pProp == NULL) return false;
 
@@ -126,6 +146,8 @@ bool ClassicsExtensions_SetFloat(HPatchPlugin hPlugin, const char *strProperty, 
 };
 
 bool ClassicsExtensions_SetDouble(HPatchPlugin hPlugin, const char *strProperty, double fValue) {
+  if (hPlugin == NULL) return false;
+
   ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Double);
   if (pProp == NULL) return false;
 
@@ -134,6 +156,8 @@ bool ClassicsExtensions_SetDouble(HPatchPlugin hPlugin, const char *strProperty,
 };
 
 bool ClassicsExtensions_SetString(HPatchPlugin hPlugin, const char *strProperty, const char *strValue) {
+  if (hPlugin == NULL) return false;
+
   ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_String);
   if (pProp == NULL) return false;
 
@@ -142,6 +166,8 @@ bool ClassicsExtensions_SetString(HPatchPlugin hPlugin, const char *strProperty,
 };
 
 bool ClassicsExtensions_SetData(HPatchPlugin hPlugin, const char *strProperty, void *pValue) {
+  if (hPlugin == NULL) return false;
+
   ExtensionProp_t *pProp = hPlugin->FindPropertyOfType(strProperty, ExtensionProp_t::k_EType_Data);
   if (pProp == NULL) return false;
 
@@ -150,10 +176,12 @@ bool ClassicsExtensions_SetData(HPatchPlugin hPlugin, const char *strProperty, v
 };
 
 FExtensionSignal ClassicsExtensions_FindSignal(HPatchPlugin hPlugin, const char *strSignal) {
+  if (hPlugin == NULL) return false;
   return hPlugin->FindSignal(strSignal);
 };
 
 bool ClassicsExtensions_CallSignal(HPatchPlugin hPlugin, const char *strSignal, int *piResult, void *pData) {
+  if (hPlugin == NULL) return false;
   return hPlugin->CallSignal(strSignal, piResult, pData);
 };
 
