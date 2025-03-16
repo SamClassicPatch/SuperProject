@@ -18,7 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #if _PATCHCONFIG_ENGINEPATCHES
 
 #include "FileSystem.h"
-#include "../MapConversion.h"
 
 #include <Core/Base/Unzip.h>
 
@@ -53,93 +52,6 @@ void CEntityClassPatch::P_ObtainComponents(void)
       if (iPolicy == PRECACHE_PARANOIA) throw;
     }
   }
-};
-
-// Replace nonexistent vanilla classes
-static inline void ReplaceMissingClasses(CTString &strClassName, CTFileName &fnmDLL) {
-  // Classes available in ExtraEntities library
-  static ClassReplacementPair aExtras[] = {
-    // Alpha enemies
-    { "CAirWave",       NULL },
-    { "CCatman",        NULL },
-    { "CCyborg",        NULL },
-    { "CCyborgBike",    NULL },
-    { "CDragonman",     NULL },
-    { "CFishman",       NULL },
-    { "CHuanman",       NULL },
-    { "CMamut",         NULL },
-    { "CMamutman",      NULL },
-    { "CMantaman",      NULL },
-    { "CRobotDriving",  NULL },
-    { "CRobotFixed",    NULL },
-    { "CRobotFlying",   NULL },
-    { "CTerrainEntity", NULL },
-
-    // Revolution entities (commented ones aren't finished)
-    { "CAchievementEntity",    NULL },
-    { "CControlZoneEntity",    NULL },
-    { "CDestroyer",            NULL },
-    { "CFlagItem",             NULL },
-    //{ "CModelHolder2Movable",  NULL },
-    //{ "CPostProcessingEffect", NULL },
-    { "CSpectatorCamera",      NULL },
-    { "CUghzy",                NULL },
-    //{ "CVehicle",              NULL },
-    { "CWorldInfoEntity",      NULL },
-    { NULL, NULL }
-  };
-
-  // Replace classes with something from ExtraEntities
-  if (LoadClassFromExtras(strClassName, fnmDLL, aExtras)) return;
-
-  // It should only reach this point when custom mod is disabled,
-  // which means that in Revolution these entities already exist
-#if SE1_GAME != SS_REV
-
-  // Not a Revolution map
-  if (_EnginePatches._eWorldFormat != E_LF_SSR) return;
-
-  // Replace some vanilla entities with those from ExtraEntities library
-  static ClassReplacementPair aRevEntities[] = {
-    { "CDamager",     NULL },
-    { "CElemental",   NULL },
-    { "CHeadman",     NULL },
-    { "CSoundHolder", "CSoundHolderRev" },
-    { "CWalker",      NULL },
-    { NULL, NULL },
-  };
-
-  if (LoadClassFromExtras(strClassName, fnmDLL, aRevEntities)) return;
-
-  // Replace classes from Revolution
-  static ClassReplacementPair aRevReplace[] = {
-    // Alpha enemies
-    { "CCatman",               "CGrunt" },
-    { "CCyborg",               "CWalker" },
-    { "CDragonman",            "CWoman" },
-    { "CFishman",              "CHeadman" },
-    { "CHuanman",              "CGrunt" },
-    { "CMamut",                "CWerebull" },
-    { "CMamutman",             "CHeadman" },
-    { "CMantaman",             "CFish" },
-    { "CRobotDriving",         "CGrunt" },
-    { "CRobotFlying",          "CWoman" },
-
-    // Revolution entities
-    { "CAchievementEntity",    "CTrigger" },
-    { "CControlZoneEntity",    "CTrigger" },
-    { "CDestroyer",            "CDemon" },
-    { "CFlagItem",             "CHealthItem" },
-    { "CPostProcessingEffect", "CMarker" },
-    { "CSpectatorCamera",      "CMarker" },
-    { "CUghzy",                "CGuffy" },
-    { "CWorldInfoEntity",      "CMarker" },
-    { NULL, NULL },
-  };
-
-  ReplaceClassFromTable(strClassName, aRevReplace);
-
-#endif // SE1_GAME != SS_REV
 };
 
 // Load entity class from a library

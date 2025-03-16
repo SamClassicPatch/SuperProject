@@ -20,10 +20,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#if _PATCHCONFIG_CONVERT_MAPS
-
 // Common data for converters
 #include <Extras/XGizmo/Vanilla/EnumTypes.h>
+
+// Dummy placement
+const CPlacement3D _plWorldCenter(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0));
 
 // Abstract base for different map converters
 class IMapConverter {
@@ -119,10 +120,8 @@ class IMapConverter {
 };
 
 // Specific converters
-#include <CorePatches/Converters/TFEMaps.h>
-#include <CorePatches/Converters/RevMaps.h>
-
-#endif // _PATCHCONFIG_CONVERT_MAPS
+#include "Converters/TFEMaps.h"
+#include "Converters/RevMaps.h"
 
 // Pair of class names for a replacement table
 struct ClassReplacementPair {
@@ -130,10 +129,10 @@ struct ClassReplacementPair {
   const char *strNew;
 };
 
-// Load some class from patch's ExtraEntities library instead of vanilla entities, if required
-BOOL LoadClassFromExtras(CTString &strClassName, CTFileName &fnmDLL, ClassReplacementPair *aTable);
+// Replace nonexistent vanilla classes upon loading them from ECL classes
+void ReplaceMissingClasses(CTString &strClassName, CTFileName &fnmDLL);
 
-// Load another class in place of the current one, if it's found in the replacement table
-BOOL ReplaceClassFromTable(CTString &strClassName, ClassReplacementPair *aTable);
+// Replace nonexistent Revolution classes before loading them from ECL files
+void ReplaceRevolutionClasses(CTFileName &fnmCopy);
 
 #endif

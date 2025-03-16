@@ -20,9 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <CorePatches/MapConversion.h>
-
-#if _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE
+#include "../MapConversion.h"
 
 // Interface for converting worlds from The First Encounter
 class IConvertTFE : public IMapConverter {
@@ -92,7 +90,5 @@ class IConvertTFE : public IMapConverter {
 
 // Converter instance
 extern IConvertTFE _convTFE;
-
-#endif // _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE
 
 #endif

@@ -93,7 +93,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
   // Global
   #define _PATCHCONFIG_ENGINEPATCHES (1) // Patch any engine functions at all or not
-  #define _PATCHCONFIG_CONVERT_MAPS  (1) // Implement functionality for converting loaded worlds
 
   // Patch modules
   #define _PATCHCONFIG_EXTEND_ENTITIES   (1) // Extend entities functionality by patching their methods

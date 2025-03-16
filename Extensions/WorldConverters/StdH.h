@@ -1,4 +1,4 @@
-/* Copyright (c) 2022-2025 Dreamy Cecil
+/* Copyright (c) 2025 Dreamy Cecil
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as published by
 the Free Software Foundation
@@ -13,26 +13,5 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#ifndef CECIL_INCL_PATCHES_DUMMY_H
-#define CECIL_INCL_PATCHES_DUMMY_H
-
-#ifdef PRAGMA_ONCE
-  #pragma once
-#endif
-
-// Interface of various dummy methods
-namespace IDummy {
-
-// Empty method
-inline void Void(void) {
-  NOTHING;
-};
-
-// Empty stream page method
-inline void PageFunc(INDEX iPage) {
-  (void)iPage;
-};
-
-}; // namespace
-
-#endif
+// Utilize Core
+#include <Core/Core.h>

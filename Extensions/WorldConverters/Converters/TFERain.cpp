@@ -15,9 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#include "MapConversion.h"
-
-#if _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE
+#include "../MapConversion.h"
 
 // Clear rain variables
 void IConvertTFE::ClearRainVariables(void) {
@@ -68,7 +66,7 @@ static CEntity *CreateStormTrigger(CPropertyPtr *apProps, INDEX iEvent, CEntity 
 
   try {
     static const CTString strEnvClass = "Classes\\Trigger.ecl";
-    penTrigger = IWorld::GetWorld()->CreateEntity_t(IDummy::plCenter, strEnvClass);
+    penTrigger = IWorld::GetWorld()->CreateEntity_t(_plWorldCenter, strEnvClass);
 
     // Set first two targets and target events
     ENTITYPROPERTY(penTrigger, apProps[0].Offset(), CEntityPointer) = penStorm;
@@ -103,7 +101,7 @@ void IConvertTFE::ApplyRainProperties(void) {
 
     try {
       static const CTString strEnvClass = "Classes\\EnvironmentParticlesHolder.ecl";
-      CEntity *penEnv = IWorld::GetWorld()->CreateEntity_t(IDummy::plCenter, strEnvClass);
+      CEntity *penEnv = IWorld::GetWorld()->CreateEntity_t(_plWorldCenter, strEnvClass);
 
       // Set first EPH
       if (penFirstEPH == NULL) penFirstEPH = penEnv;
@@ -204,5 +202,3 @@ void IConvertTFE::ApplyRainProperties(void) {
   // Clear the rain
   ClearRainVariables();
 };
-
-#endif // _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE

@@ -27,34 +27,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DummyMethods.h" />
-    <ClInclude Include="Patches.h" />
-    <ClInclude Include="Patches\Entities.h" />
-    <ClInclude Include="Patches\FileSystem.h" />
-    <ClInclude Include="Patches\LogicTimers.h" />
-    <ClInclude Include="Patches\Network.h" />
-    <ClInclude Include="Patches\Rendering.h" />
-    <ClInclude Include="Patches\Ska.h" />
-    <ClInclude Include="Patches\SoundLibrary.h" />
-    <ClInclude Include="Patches\Strings.h" />
-    <ClInclude Include="Patches\Textures.h" />
-    <ClInclude Include="Patches\UnpageStreams.h" />
-    <ClInclude Include="Patches\Worlds.h" />
+    <ClInclude Include="Converters\RevMaps.h" />
+    <ClInclude Include="Converters\TFEMaps.h" />
+    <ClInclude Include="MapConversion.h" />
     <ClInclude Include="StdH.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Patches.cpp" />
-    <ClCompile Include="Patches\Entities.cpp" />
-    <ClCompile Include="Patches\FileSystem.cpp" />
-    <ClCompile Include="Patches\LogicTimers.cpp" />
-    <ClCompile Include="Patches\Ska.cpp" />
-    <ClCompile Include="Patches\Textures.cpp" />
-    <ClCompile Include="Patches\UnpageStreams.cpp" />
-    <ClCompile Include="Patches\Network.cpp" />
-    <ClCompile Include="Patches\Rendering.cpp" />
-    <ClCompile Include="Patches\SoundLibrary.cpp" />
-    <ClCompile Include="Patches\Strings.cpp" />
-    <ClCompile Include="Patches\Worlds.cpp" />
+    <ClCompile Include="Converters\RevMaps.cpp" />
+    <ClCompile Include="Converters\TFEMaps.cpp" />
+    <ClCompile Include="Converters\TFERain.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MapConversion.cpp" />
     <ClCompile Include="StdH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">Create</PrecompiledHeader>
@@ -69,7 +52,7 @@
     </SccProjectName>
     <SccLocalPath>
     </SccLocalPath>
-    <ProjectGuid>{016909B5-B8F5-4394-8013-8B1EAD9E3914}</ProjectGuid>
+    <ProjectGuid>{E6BD3490-574E-4CEF-BE35-09328265684A}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'" Label="Configuration">
@@ -108,38 +91,38 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
-    <Import Project="..\Includes\Properties\TSE107.props" />
-    <Import Project="..\Properties\Common.props" />
+    <Import Project="..\..\Includes\Properties\TSE107.props" />
+    <Import Project="..\..\Properties\Common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_SSR110|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
-    <Import Project="..\Includes\Properties\SSR110.props" />
-    <Import Project="..\Properties\Common.props" />
+    <Import Project="..\..\Includes\Properties\SSR110.props" />
+    <Import Project="..\..\Properties\Common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE110|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
-    <Import Project="..\Includes\Properties\TSE110.props" />
-    <Import Project="..\Properties\Common.props" />
+    <Import Project="..\..\Includes\Properties\TSE110.props" />
+    <Import Project="..\..\Properties\Common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
-    <Import Project="..\Includes\Properties\TFE105.props" />
-    <Import Project="..\Properties\Common.props" />
+    <Import Project="..\..\Includes\Properties\TFE105.props" />
+    <Import Project="..\..\Properties\Common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
-    <Import Project="..\Includes\Properties\TSE105.props" />
-    <Import Project="..\Properties\Common.props" />
+    <Import Project="..\..\Includes\Properties\TSE105.props" />
+    <Import Project="..\..\Properties\Common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
-    <Import Project="..\Includes\Properties\TSE107.props" />
-    <Import Project="..\Properties\Common.props" />
+    <Import Project="..\..\Includes\Properties\TSE107.props" />
+    <Import Project="..\..\Properties\Common.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">
@@ -148,9 +131,9 @@
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <GenerateManifest>true</GenerateManifest>
     <EmbedManifest>true</EmbedManifest>
-    <OutDir>$(BinDir)</OutDir>
+    <OutDir>$(BinDir)Plugins\</OutDir>
     <IntDir>$(ObjDir)</IntDir>
-    <TargetName>ClassicsPatches</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'">
@@ -159,9 +142,9 @@
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <GenerateManifest>true</GenerateManifest>
     <EmbedManifest>true</EmbedManifest>
-    <OutDir>$(BinDir)</OutDir>
+    <OutDir>$(BinDir)Plugins\</OutDir>
     <IntDir>$(ObjDir)</IntDir>
-    <TargetName>ClassicsPatches</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SSR110|Win32'">
@@ -170,9 +153,9 @@
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <GenerateManifest>true</GenerateManifest>
     <EmbedManifest>true</EmbedManifest>
-    <OutDir>$(BinDir)</OutDir>
+    <OutDir>$(BinDir)Plugins\</OutDir>
     <IntDir>$(ObjDir)</IntDir>
-    <TargetName>ClassicsPatches</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE110|Win32'">
@@ -181,9 +164,9 @@
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <GenerateManifest>true</GenerateManifest>
     <EmbedManifest>true</EmbedManifest>
-    <OutDir>$(BinDir)</OutDir>
+    <OutDir>$(BinDir)Plugins\</OutDir>
     <IntDir>$(ObjDir)</IntDir>
-    <TargetName>ClassicsPatches</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">
@@ -192,9 +175,9 @@
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <GenerateManifest>true</GenerateManifest>
     <EmbedManifest>true</EmbedManifest>
-    <OutDir>$(BinDir)</OutDir>
+    <OutDir>$(BinDir)Plugins\</OutDir>
     <IntDir>$(ObjDir)</IntDir>
-    <TargetName>ClassicsPatches</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">
@@ -203,9 +186,9 @@
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <GenerateManifest>true</GenerateManifest>
     <EmbedManifest>true</EmbedManifest>
-    <OutDir>$(BinDir)</OutDir>
+    <OutDir>$(BinDir)Plugins\</OutDir>
     <IntDir>$(ObjDir)</IntDir>
-    <TargetName>ClassicsPatches</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">

@@ -15,9 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#include "MapConversion.h"
-
-#if _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE
+#include "../MapConversion.h"
 
 // Classes that need to be converted
 #include <EntitiesV/StdH/StdH.h>
@@ -287,5 +285,3 @@ void IConvertTFE::ConvertWorld(CWorld *pwo) {
   // Fix shadow issues
   CreateGlobalLight();
 };
-
-#endif // _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE

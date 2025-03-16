@@ -19,12 +19,6 @@
     <Filter Include="Header Files\Patches headers">
       <UniqueIdentifier>{25a9adce-b4ce-48a9-aa55-9ca54a662ccf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Converters headers">
-      <UniqueIdentifier>{59220842-0bb2-49d8-b1e7-1bd8620fcc09}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Converters">
-      <UniqueIdentifier>{ab5ae0ca-6338-4c97-a193-38d66bfdcadb}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Patches.h">
@@ -63,20 +57,11 @@
     <ClInclude Include="Patches\Worlds.h">
       <Filter>Header Files\Patches headers</Filter>
     </ClInclude>
-    <ClInclude Include="MapConversion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Patches\Entities.h">
       <Filter>Header Files\Patches headers</Filter>
     </ClInclude>
-    <ClInclude Include="Converters\TFEMaps.h">
-      <Filter>Header Files\Converters headers</Filter>
-    </ClInclude>
     <ClInclude Include="Patches\LogicTimers.h">
       <Filter>Header Files\Patches headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Converters\RevMaps.h">
-      <Filter>Header Files\Converters headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -113,23 +98,11 @@
     <ClCompile Include="Patches\Worlds.cpp">
       <Filter>Source Files\Patches</Filter>
     </ClCompile>
-    <ClCompile Include="MapConversion.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Patches\Entities.cpp">
       <Filter>Source Files\Patches</Filter>
     </ClCompile>
-    <ClCompile Include="Converters\TFEMaps.cpp">
-      <Filter>Source Files\Converters</Filter>
-    </ClCompile>
-    <ClCompile Include="Converters\TFERain.cpp">
-      <Filter>Source Files\Converters</Filter>
-    </ClCompile>
     <ClCompile Include="Patches\LogicTimers.cpp">
       <Filter>Source Files\Patches</Filter>
-    </ClCompile>
-    <ClCompile Include="Converters\RevMaps.cpp">
-      <Filter>Source Files\Converters</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

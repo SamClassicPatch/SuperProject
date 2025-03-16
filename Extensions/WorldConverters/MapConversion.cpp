@@ -17,7 +17,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "MapConversion.h"
 
-#if _PATCHCONFIG_CONVERT_MAPS
+// [Cecil] TEMP: For TSE_FUSION_MODE macro
+#include <CorePatches/Patches.h>
 
 // Currently used converter
 static IMapConverter *_pconvCurrent = NULL;
@@ -64,7 +65,7 @@ void IMapConverter::CreateGlobalLight(void) {
   // Create an invisible light that covers the whole map
   try {
     static const CTString strLightClass = "Classes\\Light.ecl";
-    CEntity *penLight = IWorld::GetWorld()->CreateEntity_t(IDummy::plCenter, strLightClass);
+    CEntity *penLight = IWorld::GetWorld()->CreateEntity_t(_plWorldCenter, strLightClass);
 
     // Retrieve light properties
     static CPropertyPtr pptrType(penLight); // CLight::m_ltType
@@ -89,10 +90,8 @@ void IMapConverter::CreateGlobalLight(void) {
 #endif
 };
 
-#endif // _PATCHCONFIG_CONVERT_MAPS
-
 // Load some class from patch's ExtraEntities library instead of vanilla entities, if required
-BOOL LoadClassFromExtras(CTString &strClassName, CTFileName &fnmDLL, ClassReplacementPair *aTable) {
+static BOOL LoadClassFromExtras(CTString &strClassName, CTFileName &fnmDLL, ClassReplacementPair *aTable) {
   // ExtraEntities library is part of the custom mod
 #if _PATCHCONFIG_CUSTOM_MOD && _PATCHCONFIG_CUSTOM_MOD_ENTITIES
   if (!ClassicsCore_IsCustomModActive()) return FALSE;
@@ -121,7 +120,7 @@ BOOL LoadClassFromExtras(CTString &strClassName, CTFileName &fnmDLL, ClassReplac
 };
 
 // Load another class in place of the current one, if it's found in the replacement table
-BOOL ReplaceClassFromTable(CTString &strClassName, ClassReplacementPair *aTable) {
+static BOOL ReplaceClassFromTable(CTString &strClassName, ClassReplacementPair *aTable) {
   INDEX i = 0;
 
   while (aTable[i].strOld != NULL) {
@@ -137,4 +136,101 @@ BOOL ReplaceClassFromTable(CTString &strClassName, ClassReplacementPair *aTable)
 
   // Class not found
   return FALSE;
+};
+
+// Replace nonexistent vanilla classes upon loading them from ECL classes
+void ReplaceMissingClasses(CTString &strClassName, CTFileName &fnmDLL) {
+  // Classes available in ExtraEntities library
+  static ClassReplacementPair aExtras[] = {
+    // Alpha enemies
+    { "CAirWave",       NULL },
+    { "CCatman",        NULL },
+    { "CCyborg",        NULL },
+    { "CCyborgBike",    NULL },
+    { "CDragonman",     NULL },
+    { "CFishman",       NULL },
+    { "CHuanman",       NULL },
+    { "CMamut",         NULL },
+    { "CMamutman",      NULL },
+    { "CMantaman",      NULL },
+    { "CRobotDriving",  NULL },
+    { "CRobotFixed",    NULL },
+    { "CRobotFlying",   NULL },
+    { "CTerrainEntity", NULL },
+
+    // Revolution entities (commented ones aren't finished)
+    { "CAchievementEntity",    NULL },
+    { "CControlZoneEntity",    NULL },
+    { "CDestroyer",            NULL },
+    { "CFlagItem",             NULL },
+    //{ "CModelHolder2Movable",  NULL },
+    //{ "CPostProcessingEffect", NULL },
+    { "CSpectatorCamera",      NULL },
+    { "CUghzy",                NULL },
+    //{ "CVehicle",              NULL },
+    { "CWorldInfoEntity",      NULL },
+    { NULL, NULL }
+  };
+
+  // Replace classes with something from ExtraEntities
+  if (LoadClassFromExtras(strClassName, fnmDLL, aExtras)) return;
+
+  // It should only reach this point when custom mod is disabled,
+  // which means that in Revolution these entities already exist
+#if SE1_GAME != SS_REV
+
+  // Not a Revolution map
+  if (_EnginePatches._eWorldFormat != E_LF_SSR) return;
+
+  // Replace some vanilla entities with those from ExtraEntities library
+  static ClassReplacementPair aRevEntities[] = {
+    { "CDamager",     NULL },
+    { "CElemental",   NULL },
+    { "CHeadman",     NULL },
+    { "CSoundHolder", "CSoundHolderRev" },
+    { "CWalker",      NULL },
+    { NULL, NULL },
+  };
+
+  if (LoadClassFromExtras(strClassName, fnmDLL, aRevEntities)) return;
+
+  // Replace classes from Revolution
+  static ClassReplacementPair aRevReplace[] = {
+    // Alpha enemies
+    { "CCatman",               "CGrunt" },
+    { "CCyborg",               "CWalker" },
+    { "CDragonman",            "CWoman" },
+    { "CFishman",              "CHeadman" },
+    { "CHuanman",              "CGrunt" },
+    { "CMamut",                "CWerebull" },
+    { "CMamutman",             "CHeadman" },
+    { "CMantaman",             "CFish" },
+    { "CRobotDriving",         "CGrunt" },
+    { "CRobotFlying",          "CWoman" },
+
+    // Revolution entities
+    { "CAchievementEntity",    "CTrigger" },
+    { "CControlZoneEntity",    "CTrigger" },
+    { "CDestroyer",            "CDemon" },
+    { "CFlagItem",             "CHealthItem" },
+    { "CPostProcessingEffect", "CMarker" },
+    { "CSpectatorCamera",      "CMarker" },
+    { "CUghzy",                "CGuffy" },
+    { "CWorldInfoEntity",      "CMarker" },
+    { NULL, NULL },
+  };
+
+  ReplaceClassFromTable(strClassName, aRevReplace);
+
+#endif // SE1_GAME != SS_REV
+};
+
+// Replace nonexistent Revolution classes before loading them from ECL files
+void ReplaceRevolutionClasses(CTFileName &fnmCopy) {
+  static ClassReplacementPair aRevReplace[] = {
+    { "Classes\\PostProcessingEffect.ecl", "Classes\\Marker.ecl" },
+    { NULL, NULL },
+  };
+
+  ReplaceClassFromTable(fnmCopy, aRevReplace);
 };

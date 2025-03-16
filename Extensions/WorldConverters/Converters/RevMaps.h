@@ -20,9 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <CorePatches/MapConversion.h>
-
-#if _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE
+#include "../MapConversion.h"
 
 // Interface for converting worlds from Revolution
 class IConvertSSR : public IMapConverter {
@@ -52,7 +50,5 @@ class IConvertSSR : public IMapConverter {
 
 // Converter instance
 extern IConvertSSR _convSSR;
-
-#endif // _PATCHCONFIG_CONVERT_MAPS && TSE_FUSION_MODE
 
 #endif

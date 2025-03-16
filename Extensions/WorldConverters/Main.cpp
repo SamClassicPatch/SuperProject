@@ -1,4 +1,4 @@
-/* Copyright (c) 2022-2025 Dreamy Cecil
+/* Copyright (c) 2025 Dreamy Cecil
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as published by
 the Free Software Foundation
@@ -13,26 +13,19 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#ifndef CECIL_INCL_PATCHES_DUMMY_H
-#define CECIL_INCL_PATCHES_DUMMY_H
+#include "StdH.h"
 
-#ifdef PRAGMA_ONCE
-  #pragma once
-#endif
+// Define extension
+CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_wldconverters", k_EPluginFlagGame | k_EPluginFlagServer | k_EPluginFlagEditor, CORE_PATCH_VERSION,
+  "Dreamy Cecil", "World Converters",
+  "Collection of world file converters between different game formats.");
 
-// Interface of various dummy methods
-namespace IDummy {
-
-// Empty method
-inline void Void(void) {
-  NOTHING;
+// Module entry point
+CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
+{
 };
 
-// Empty stream page method
-inline void PageFunc(INDEX iPage) {
-  (void)iPage;
+// Module cleanup
+CLASSICSPATCH_PLUGIN_SHUTDOWN(HIniConfig props)
+{
 };
-
-}; // namespace
-
-#endif

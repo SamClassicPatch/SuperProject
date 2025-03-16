@@ -18,7 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #if _PATCHCONFIG_ENGINEPATCHES
 
 #include "Worlds.h"
-#include "../MapConversion.h"
 
 #include <Engine/Templates/Stock_CEntityClass.h>
 #include <Core/Interfaces/ResourceFunctions.h>
@@ -73,13 +72,11 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
   DetermineWorldFormat(fnmWorld, strmFile);
 
   // [Cecil] Set converter for the world format and reset it
-  #if _PATCHCONFIG_CONVERT_MAPS
-    IMapConverter *pconv = IMapConverter::SetConverter(eWorld);
+  IMapConverter *pconv = IMapConverter::SetConverter(eWorld);
 
-    if (pconv != NULL) {
-      pconv->Reset();
-    }
-  #endif
+  if (pconv != NULL) {
+    pconv->Reset();
+  }
 
   // Check engine build
   BOOL bNeedsReinit;
@@ -104,12 +101,10 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
     CSetFPUPrecision FPUPrecision(FPT_24BIT);
     CTmpPrecachingNow tpn;
 
-    #if _PATCHCONFIG_CONVERT_MAPS
-      // Use map converter
-      if (pconv != NULL) {
-        pconv->ConvertWorld(this);
-      }
-    #endif
+    // Use map converter
+    if (pconv != NULL) {
+      pconv->ConvertWorld(this);
+    }
 
     // Reset every entity
     if (bReinitEverything) {
@@ -242,14 +237,8 @@ CEntity *CWorldPatch::P_CreateEntity(const CPlacement3D &plPlacement, const CTFi
 
 #if SE1_GAME != SS_REV
   // [Cecil] Replace nonexistent classes from Revolution before loading them
-  if (_EnginePatches._eWorldFormat == E_LF_SSR && !FileExists(fnmCopy))
-  {
-    static ClassReplacementPair aRevReplace[] = {
-      { "Classes\\PostProcessingEffect.ecl", "Classes\\Marker.ecl" },
-      { NULL, NULL },
-    };
-
-    ReplaceClassFromTable(fnmCopy, aRevReplace);
+  if (_EnginePatches._eWorldFormat == E_LF_SSR && !FileExists(fnmCopy)) {
+    ReplaceRevolutionClasses(fnmCopy);
   }
 #endif
 
