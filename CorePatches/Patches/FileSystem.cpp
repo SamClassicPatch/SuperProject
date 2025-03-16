@@ -56,19 +56,30 @@ void CEntityClassPatch::P_ObtainComponents(void)
 
 // Load entity class from a library
 void CEntityClassPatch::P_Read(CTStream *istr) {
-  // Read library filename and class name
-  CTFileName fnmDLL;
-  fnmDLL.ReadFromText_t(*istr, "Package: ");
+  // [Cecil] Packed structure of a DLL file and a class name
+  struct EclData {
+    CTFileName fnmDLL;
+    CTString strClassName;
+  } eclData;
 
-  CTString strClassName;
+  CTFileName &fnmDLL = eclData.fnmDLL;
+  CTString &strClassName = eclData.strClassName;
+
+  // Read library filename and class name
+  fnmDLL.ReadFromText_t(*istr, "Package: ");
   strClassName.ReadFromText_t(*istr, "Class: ");
 
   // [Cecil] Replace nonexistent vanilla classes
   const BOOL bVanillaEntities = (fnmDLL == "Bin\\Entities.dll");
 
   if (bVanillaEntities) {
+    // [Cecil] NOTE: Attempt to retrieve the extension until it succeeds because
+    // the extension isn't loaded yet when SE_InitEngine() requests "Player.ecl"
+    static HPatchPlugin hConverters = NULL;
+    if (hConverters == NULL) hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
+
     // [Cecil] NOTE: fnmDLL may be changed but 'bVanillaEntities' should NOT be recalculated!
-    ReplaceMissingClasses(strClassName, fnmDLL);
+    ClassicsExtensions_CallSignal(hConverters, "ReplaceMissingClasses", NULL, &eclData);
   }
 
   // [Cecil] Construct full path to the entities library
@@ -106,7 +117,8 @@ void CEntityClassPatch::P_Read(CTStream *istr) {
     ec_hiClassDLL = NULL;
     ec_fnmClassDLL.Clear();
 
-    ThrowF_t(LOCALIZE("Class '%s' not found in entity class package file '%s'"), strClassName, fnmDLL);
+    ThrowF_t(LOCALIZE("Class '%s' not found in entity class package file '%s'"),
+      strClassName.str_String, fnmDLL.str_String);
   }
 
   // Obtain all components needed by the class

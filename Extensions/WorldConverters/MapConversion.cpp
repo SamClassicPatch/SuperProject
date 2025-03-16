@@ -15,8 +15,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#include "MapConversion.h"
-
 // [Cecil] TEMP: For TSE_FUSION_MODE macro
 #include <CorePatches/Patches.h>
 
@@ -24,8 +22,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 static IMapConverter *_pconvCurrent = NULL;
 
 // Get map converter for a specific format
-IMapConverter *IMapConverter::SetConverter(ELevelFormat eFormat)
+int IMapConverter::SetConverterForFormat(void *pFormat)
 {
+  ELevelFormat eFormat = *(ELevelFormat *)pFormat;
+
   switch (eFormat) {
   #if TSE_FUSION_MODE
     case E_LF_TFE: _pconvCurrent = &_convTFE; break;
@@ -35,17 +35,43 @@ IMapConverter *IMapConverter::SetConverter(ELevelFormat eFormat)
   }
 
   //ASSERTMSG(_pconvCurrent != NULL, "No converter available for the desired level format!");
-  return _pconvCurrent;
+  return (_pconvCurrent != NULL);
+};
+
+// Reset a specific map converter before using it
+int IMapConverter::ResetConverter(void *) {
+  if (_pconvCurrent != NULL) {
+    _pconvCurrent->Reset();
+  }
+
+  return 0;
+};
+
+// Convert the world using the current converter
+int IMapConverter::ConvertWorld(void *pWorld) {
+  if (_pconvCurrent != NULL) {
+    _pconvCurrent->ConvertWorld((CWorld *)pWorld);
+  }
+
+  return 0;
 };
 
 // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
-void IMapConverter::HandleUnknownProperty(CEntity *pen, ULONG ulType, ULONG ulID, void *pValue)
+int IMapConverter::HandleUnknownProperty(void *pPropData)
 {
-  UnknownProp prop(ulType, ulID, pValue);
-
   if (_pconvCurrent != NULL) {
-    _pconvCurrent->HandleProperty(pen, prop);
+    struct SignalUnknownProp {
+      CEntity *pen;
+      ULONG ulType;
+      ULONG ulID;
+      void *pValue;
+    } *pArgProp = (SignalUnknownProp *)pPropData;
+
+    UnknownProp prop(pArgProp->ulType, pArgProp->ulID, pArgProp->pValue);
+    _pconvCurrent->HandleProperty(pArgProp->pen, prop);
   }
+
+  return 0;
 };
 
 // Check if the entity state doesn't match
@@ -139,7 +165,15 @@ static BOOL ReplaceClassFromTable(CTString &strClassName, ClassReplacementPair *
 };
 
 // Replace nonexistent vanilla classes upon loading them from ECL classes
-void ReplaceMissingClasses(CTString &strClassName, CTFileName &fnmDLL) {
+int ReplaceMissingClasses(void *pEclData) {
+  struct EclData {
+    CTFileName fnmDLL;
+    CTString strClassName;
+  } *pData = (EclData *)pEclData;
+
+  CTFileName &fnmDLL = pData->fnmDLL;
+  CTString &strClassName = pData->strClassName;
+
   // Classes available in ExtraEntities library
   static ClassReplacementPair aExtras[] = {
     // Alpha enemies
@@ -173,14 +207,14 @@ void ReplaceMissingClasses(CTString &strClassName, CTFileName &fnmDLL) {
   };
 
   // Replace classes with something from ExtraEntities
-  if (LoadClassFromExtras(strClassName, fnmDLL, aExtras)) return;
+  if (LoadClassFromExtras(strClassName, fnmDLL, aExtras)) return TRUE;
 
   // It should only reach this point when custom mod is disabled,
   // which means that in Revolution these entities already exist
 #if SE1_GAME != SS_REV
 
   // Not a Revolution map
-  if (_EnginePatches._eWorldFormat != E_LF_SSR) return;
+  if (_EnginePatches._eWorldFormat != E_LF_SSR) return FALSE;
 
   // Replace some vanilla entities with those from ExtraEntities library
   static ClassReplacementPair aRevEntities[] = {
@@ -192,7 +226,7 @@ void ReplaceMissingClasses(CTString &strClassName, CTFileName &fnmDLL) {
     { NULL, NULL },
   };
 
-  if (LoadClassFromExtras(strClassName, fnmDLL, aRevEntities)) return;
+  if (LoadClassFromExtras(strClassName, fnmDLL, aRevEntities)) return TRUE;
 
   // Replace classes from Revolution
   static ClassReplacementPair aRevReplace[] = {
@@ -220,17 +254,22 @@ void ReplaceMissingClasses(CTString &strClassName, CTFileName &fnmDLL) {
     { NULL, NULL },
   };
 
-  ReplaceClassFromTable(strClassName, aRevReplace);
+  return ReplaceClassFromTable(strClassName, aRevReplace);
 
 #endif // SE1_GAME != SS_REV
+
+  // No replacement
+  return FALSE;
 };
 
 // Replace nonexistent Revolution classes before loading them from ECL files
-void ReplaceRevolutionClasses(CTFileName &fnmCopy) {
+int ReplaceRevolutionClasses(void *pfnmCopy) {
+  CTFileName &fnmCopy = *(CTFileName *)pfnmCopy;
+
   static ClassReplacementPair aRevReplace[] = {
     { "Classes\\PostProcessingEffect.ecl", "Classes\\Marker.ecl" },
     { NULL, NULL },
   };
 
-  ReplaceClassFromTable(fnmCopy, aRevReplace);
+  return ReplaceClassFromTable(fnmCopy, aRevReplace);
 };

@@ -15,8 +15,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#include "../MapConversion.h"
-
 // Classes that need to be converted
 #include <EntitiesV/StdH/StdH.h>
 #include <EntitiesV/AmmoPack.h>

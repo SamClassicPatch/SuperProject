@@ -20,8 +20,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include "../MapConversion.h"
-
 // Interface for converting worlds from Revolution
 class IConvertSSR : public IMapConverter {
   public:

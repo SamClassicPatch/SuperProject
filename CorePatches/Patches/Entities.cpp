@@ -34,7 +34,24 @@ void CEntityPatch::P_ReadProperties(CTStream &istrm) {
   #define GET_PROP(_Type) ENTITYPROPERTY(this, pepProp->ep_slOffset, _Type)
   #define READ_PROP(_Type) istrm.Read_t(&GET_PROP(_Type), sizeof(_Type))
 
-  #define HANDLE_UNKNOWN(_Field) IMapConverter::HandleUnknownProperty(this, eptType, ulID, &_Field)
+  static HPatchPlugin hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
+  FExtensionSignal pHandleUnknownProperty = ClassicsExtensions_FindSignal(hConverters, "HandleUnknownProperty");
+
+  static struct SignalUnknownProp {
+    CEntity *pen;
+    ULONG ulType;
+    ULONG ulID;
+    void *pValue;
+  } argProp;
+
+  #define HANDLE_UNKNOWN(_Field) \
+    if (pHandleUnknownProperty != NULL) { \
+      argProp.pen = this; \
+      argProp.ulType = eptType; \
+      argProp.ulID = ulID; \
+      argProp.pValue = &_Field; \
+      pHandleUnknownProperty(&argProp); \
+    }
 
   #define HANDLE_SIMPLE(_Type) { \
     _Type valSkip; \

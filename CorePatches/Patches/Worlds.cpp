@@ -72,10 +72,11 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
   DetermineWorldFormat(fnmWorld, strmFile);
 
   // [Cecil] Set converter for the world format and reset it
-  IMapConverter *pconv = IMapConverter::SetConverter(eWorld);
+  static HPatchPlugin hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
+  bool bConverter = ClassicsExtensions_CallSignal(hConverters, "SetConverterForFormat", NULL, &eWorld);
 
-  if (pconv != NULL) {
-    pconv->Reset();
+  if (bConverter) {
+    ClassicsExtensions_CallSignal(hConverters, "ResetConverter", NULL, NULL);
   }
 
   // Check engine build
@@ -102,8 +103,8 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
     CTmpPrecachingNow tpn;
 
     // Use map converter
-    if (pconv != NULL) {
-      pconv->ConvertWorld(this);
+    if (bConverter) {
+      ClassicsExtensions_CallSignal(hConverters, "ConvertWorld", NULL, this);
     }
 
     // Reset every entity
@@ -237,8 +238,10 @@ CEntity *CWorldPatch::P_CreateEntity(const CPlacement3D &plPlacement, const CTFi
 
 #if SE1_GAME != SS_REV
   // [Cecil] Replace nonexistent classes from Revolution before loading them
-  if (_EnginePatches._eWorldFormat == E_LF_SSR && !FileExists(fnmCopy)) {
-    ReplaceRevolutionClasses(fnmCopy);
+  if (_EnginePatches._eWorldFormat == E_LF_SSR && !FileExists(fnmCopy))
+  {
+    static HPatchPlugin hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
+    ClassicsExtensions_CallSignal(hConverters, "ReplaceRevolutionClasses", NULL, &fnmCopy);
   }
 #endif
 

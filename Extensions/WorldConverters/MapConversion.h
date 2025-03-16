@@ -78,10 +78,16 @@ class IMapConverter {
   public:
 
     // Set current map converter for a specific format
-    static IMapConverter *SetConverter(ELevelFormat eFormat);
+    static int SetConverterForFormat(void *pFormat);
+
+    // Reset a specific map converter before using it
+    static int ResetConverter(void *);
+
+    // Convert the world using the current converter
+    static int ConvertWorld(void *pWorld);
 
     // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
-    static void HandleUnknownProperty(CEntity *pen, ULONG ulType, ULONG ulID, void *pValue);
+    static int HandleUnknownProperty(void *pPropData);
 
     // Check if the entity state doesn't match
     static BOOL CheckEntityState(CRationalEntity *pen, SLONG slState, INDEX iClassID);
@@ -130,9 +136,9 @@ struct ClassReplacementPair {
 };
 
 // Replace nonexistent vanilla classes upon loading them from ECL classes
-void ReplaceMissingClasses(CTString &strClassName, CTFileName &fnmDLL);
+int ReplaceMissingClasses(void *pEclData);
 
 // Replace nonexistent Revolution classes before loading them from ECL files
-void ReplaceRevolutionClasses(CTFileName &fnmCopy);
+int ReplaceRevolutionClasses(void *pfnmCopy);
 
 #endif

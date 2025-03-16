@@ -20,6 +20,15 @@ CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_wldconverters", k_EPluginFlagGame | k_
   "Dreamy Cecil", "World Converters",
   "Collection of world file converters between different game formats.");
 
+CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
+  { "SetConverterForFormat",    &IMapConverter::SetConverterForFormat }, // Arg ptr : ELevelFormat
+  { "ResetConverter",           &IMapConverter::ResetConverter },
+  { "ConvertWorld",             &IMapConverter::ConvertWorld }, // Arg ptr : CWorld
+  { "HandleUnknownProperty",    &IMapConverter::HandleUnknownProperty }, // Arg ptr : struct { CEntity *pen; ULONG ulType; ULONG ulID; void *pValue; }
+  { "ReplaceMissingClasses",    &ReplaceMissingClasses }, // Arg ptr : struct { CTFileName fnmDLL; CTString strClassName; }
+  { "ReplaceRevolutionClasses", &ReplaceRevolutionClasses }, // Arg ptr : CTFileName
+} CLASSICSPATCH_EXTENSION_SIGNALS_END;
+
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
