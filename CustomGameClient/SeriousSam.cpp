@@ -934,10 +934,8 @@ void TeleportPlayer(int iPosition) {
 static BOOL PollEvent(MSG &msg) {
   // Check if extended input patches are initialized
   static HPatchPlugin hInput = ClassicsExtensions_GetExtensionByName("PATCH_EXT_input");
-
-  bool bInputInit = false;
-  static ExtensionPropRef_t<bool> propref(hInput, "initialized");
-  propref.GetValue(&bInputInit);
+  BOOL bInputInit = FALSE;
+  ClassicsExtensions_CallSignal(hInput, "IsInitialized", &bInputInit, NULL);
 
   if (bInputInit) {
     // Manual joystick update
@@ -970,9 +968,9 @@ static BOOL PollEvent(MSG &msg) {
 // [Cecil] Check any significant controller button
 static BOOL AnyControllerButton(MSG &msg) {
   // [Cecil] Check if extended input patches are initialized
-  bool bInputInit = false;
-  static ExtensionPropRef_t<bool> propref("PATCH_EXT_input", "initialized");
-  propref.GetValue(&bInputInit);
+  static HPatchPlugin hInput = ClassicsExtensions_GetExtensionByName("PATCH_EXT_input");
+  BOOL bInputInit = FALSE;
+  ClassicsExtensions_CallSignal(hInput, "IsInitialized", &bInputInit, NULL);
 
   if (bInputInit && msg.message == WM_CTRLBUTTONDOWN) {
     switch (msg.wParam) {

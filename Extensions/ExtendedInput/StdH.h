@@ -15,5 +15,3 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // Utilize Core
 #include <Core/Core.h>
-
-MODULE_API HPatchPlugin EXTENSIONMODULE_LOCALHANDLE;

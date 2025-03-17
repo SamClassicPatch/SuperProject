@@ -157,9 +157,9 @@ void CMGKeyDefinition::Think(void) {
       BOOL bActivationKey = !!_pInput->GetButtonState(KID_ENTER) || !!_pInput->GetButtonState(KID_MOUSE1);
 
       // [Cecil] Check if extended input patches are initialized
-      bool bInputInit = false;
-      static ExtensionPropRef_t<bool> propref("PATCH_EXT_input", "initialized");
-      propref.GetValue(&bInputInit);
+      static HPatchPlugin hInput = ClassicsExtensions_GetExtensionByName("PATCH_EXT_input");
+      BOOL bInputInit = FALSE;
+      ClassicsExtensions_CallSignal(hInput, "IsInitialized", &bInputInit, NULL);
 
       if (bInputInit && !bActivationKey) {
         // [Cecil] See if any controller buttons for binding activation are being held

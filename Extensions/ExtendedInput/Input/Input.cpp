@@ -357,21 +357,13 @@ bool InputDeviceAction::IsActive(DOUBLE fThreshold) const {
 };
 
 // [Cecil] State switch
-static bool _bPatchedInput = false;
-
-static void SetPatchedInput(bool bState) {
-  _bPatchedInput = bState;
-
-  // Reflect the input state in the extension property
-  static ExtensionPropRef_t<bool> propref(EXTENSIONMODULE_LOCALHANDLE, "initialized");
-  propref.SetValue(bState);
-};
+static BOOL _bPatchedInput = FALSE;
 
 // deafult constructor
 void CInputPatch::Construct(void)
 {
   if (_bPatchedInput) return;
-  SetPatchedInput(true);
+  _bPatchedInput = TRUE;
 
   // [Cecil] Compatibility checks
   ASSERT(EIA_NONE == AXIS_NONE);
@@ -412,7 +404,7 @@ void CInputPatch::Construct(void)
 void CInputPatch::Destruct()
 {
   if (!_bPatchedInput) return;
-  SetPatchedInput(false);
+  _bPatchedInput = FALSE;
 
   // [Cecil] Various cleanups
   ShutdownJoysticks();
@@ -420,6 +412,11 @@ void CInputPatch::Destruct()
 
   // [Cecil] End SDL
   SDL_Quit();
+};
+
+// [Cecil] Check if input patch has been initialized
+int CInputPatch::IsInitialized(void *) {
+  return _bPatchedInput;
 };
 
 /*

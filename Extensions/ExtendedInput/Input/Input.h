@@ -83,6 +83,9 @@ class CInputPatch : public CInput {
     static void Construct(void);
     static void Destruct(void);
 
+    // [Cecil] Check if input patch has been initialized
+    static int IsInitialized(void *);
+
     // Sets name for every key
     void P_SetKeyNames(void);
     // Initializes all available devices and enumerates available controls
