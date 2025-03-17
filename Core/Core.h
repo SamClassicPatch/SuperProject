@@ -48,6 +48,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Core/Config.h>
 #include <Core/GameSpecific.h>
 
+// Check if "fusion mode" is available (only for TSE)
+#define CLASSIC_TSE_FUSION_MODE (SE1_GAME == SS_TSE)
+
 #if SE1_VER != SE1_110
   // Declare shell function arguments
   #define SHELL_FUNC_ARGS void *__pFirstArg

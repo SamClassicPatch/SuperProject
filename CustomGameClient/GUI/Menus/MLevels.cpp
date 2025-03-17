@@ -39,7 +39,7 @@ static void ToggleMountedLevels(void) {
   // Choose level format to show
   switch (sam_iShowLevelFormat) {
     case -1:           sam_iShowLevelFormat = E_LF_CURRENT; break;
-  #if TSE_FUSION_MODE
+  #if CLASSIC_TSE_FUSION_MODE
     case E_LF_CURRENT: sam_iShowLevelFormat = E_LF_TFE; break;
     case E_LF_TFE:     sam_iShowLevelFormat = E_LF_SSR; break;
   #endif

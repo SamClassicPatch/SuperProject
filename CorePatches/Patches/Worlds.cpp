@@ -28,12 +28,12 @@ void CWorldPatch::DetermineWorldFormat(const CTFileName &fnmWorld, CTFileStream 
   ELevelFormat &eWorld = _EnginePatches._eWorldFormat;
   eWorld = E_LF_CURRENT;
 
+#if CLASSIC_TSE_FUSION_MODE
   // Check if the level is being loaded from TFE
-  #if TSE_FUSION_MODE
-    if (IsFileFromDir(GAME_DIR_TFE, fnmWorld)) {
-      eWorld = E_LF_TFE;
-    }
-  #endif
+  if (IsFileFromDir(GAME_DIR_TFE, fnmWorld)) {
+    eWorld = E_LF_TFE;
+  }
+#endif
 
   // Determine world format from world info
   {

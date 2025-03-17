@@ -273,7 +273,7 @@ static BOOL SetupGameDir(CTString &strGameDir, CTString &strDirProperty, const C
 void P_InitStreams(void) {
   BOOL bRev = FALSE;
 
-#if TSE_FUSION_MODE
+#if CLASSIC_TSE_FUSION_MODE
   // Setup other game directories
   if (IConfig::global[k_EConfigProps_TFEMount]) {
     SetupGameDir(GAME_DIR_TFE, IConfig::global[k_EConfigProps_TFEDir].GetString(), IConfig::strDefaultTFE);

@@ -15,7 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-// [Cecil] TEMP: For TSE_FUSION_MODE macro
+// [Cecil] TEMP: _EnginePatches._eWorldFormat
 #include <CorePatches/Patches.h>
 
 // Currently used converter
@@ -27,7 +27,7 @@ int IMapConverter::SetConverterForFormat(void *pFormat)
   ELevelFormat eFormat = *(ELevelFormat *)pFormat;
 
   switch (eFormat) {
-  #if TSE_FUSION_MODE
+  #if CLASSIC_TSE_FUSION_MODE
     case E_LF_TFE: _pconvCurrent = &_convTFE; break;
     case E_LF_SSR: _pconvCurrent = &_convSSR; break;
   #endif

@@ -53,12 +53,12 @@ BOOL GetLevelInfo(CLevelInfo &li, const CTFileName &fnm) {
     CTFileStream strm;
     strm.Open_t(fnm);
 
+  #if CLASSIC_TSE_FUSION_MODE
     // [Cecil] Mark levels from the TFE directory
-    #if TSE_FUSION_MODE
-      if (IsFileFromDir(GAME_DIR_TFE, fnm)) {
-        li.li_eFormat = E_LF_TFE;
-      }
-    #endif
+    if (IsFileFromDir(GAME_DIR_TFE, fnm)) {
+      li.li_eFormat = E_LF_TFE;
+    }
+  #endif
 
     // skip initial chunk ids
     strm.ExpectID_t("BUIV"); // 'build version'

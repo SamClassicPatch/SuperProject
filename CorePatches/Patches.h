@@ -24,9 +24,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #define PATCHES_API __declspec(dllexport)
 #endif
 
-// Check if the fusion mode is available (only for TSE)
-#define TSE_FUSION_MODE (SE1_GAME == SS_TSE)
-
 // Available engine patches
 class PATCHES_API CPatches : public ICorePatches {
   public:
