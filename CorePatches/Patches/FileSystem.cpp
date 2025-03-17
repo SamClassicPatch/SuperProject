@@ -56,17 +56,11 @@ void CEntityClassPatch::P_ObtainComponents(void)
 
 // Load entity class from a library
 void CEntityClassPatch::P_Read(CTStream *istr) {
-  // [Cecil] Packed structure of a DLL file and a class name
-  struct EclData {
-    CTFileName fnmDLL;
-    CTString strClassName;
-  } eclData;
-
-  CTFileName &fnmDLL = eclData.fnmDLL;
-  CTString &strClassName = eclData.strClassName;
-
   // Read library filename and class name
+  CTFileName fnmDLL;
   fnmDLL.ReadFromText_t(*istr, "Package: ");
+
+  CTString strClassName;
   strClassName.ReadFromText_t(*istr, "Class: ");
 
   // [Cecil] Replace nonexistent vanilla classes
@@ -79,6 +73,9 @@ void CEntityClassPatch::P_Read(CTStream *istr) {
     if (hConverters == NULL) hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
 
     // [Cecil] NOTE: fnmDLL may be changed but 'bVanillaEntities' should NOT be recalculated!
+    ExtArgEclData_t eclData;
+    eclData.pfnmDLL = &fnmDLL;
+    eclData.pstrClassName = &strClassName;
     ClassicsExtensions_CallSignal(hConverters, "ReplaceMissingClasses", NULL, &eclData);
   }
 

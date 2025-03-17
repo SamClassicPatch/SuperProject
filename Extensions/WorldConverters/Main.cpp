@@ -24,8 +24,8 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "SetConverterForFormat",    &IMapConverter::SetConverterForFormat }, // Arg ptr : ELevelFormat
   { "ResetConverter",           &IMapConverter::ResetConverter },
   { "ConvertWorld",             &IMapConverter::ConvertWorld }, // Arg ptr : CWorld
-  { "HandleUnknownProperty",    &IMapConverter::HandleUnknownProperty }, // Arg ptr : struct { CEntity *pen; ULONG ulType; ULONG ulID; void *pValue; }
-  { "ReplaceMissingClasses",    &ReplaceMissingClasses }, // Arg ptr : struct { CTFileName fnmDLL; CTString strClassName; }
+  { "HandleUnknownProperty",    &IMapConverter::HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
+  { "ReplaceMissingClasses",    &ReplaceMissingClasses }, // Arg ptr : ExtArgEclData_t
   { "ReplaceRevolutionClasses", &ReplaceRevolutionClasses }, // Arg ptr : CTFileName
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 

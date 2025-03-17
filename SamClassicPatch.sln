@@ -114,6 +114,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{88EB707F-192
 	ProjectSection(SolutionItems) = preProject
 		API\include\classicspatch_api.h = API\include\classicspatch_api.h
 		API\include\classicspatch_common.h = API\include\classicspatch_common.h
+		API\include\extensiontypes.h = API\include\extensiontypes.h
 		API\include\extpackets.h = API\include\extpackets.h
 		API\include\functionpatches.h = API\include\functionpatches.h
 		API\include\ichat.h = API\include\ichat.h

@@ -166,13 +166,8 @@ static BOOL ReplaceClassFromTable(CTString &strClassName, ClassReplacementPair *
 
 // Replace nonexistent vanilla classes upon loading them from ECL classes
 int ReplaceMissingClasses(void *pEclData) {
-  struct EclData {
-    CTFileName fnmDLL;
-    CTString strClassName;
-  } *pData = (EclData *)pEclData;
-
-  CTFileName &fnmDLL = pData->fnmDLL;
-  CTString &strClassName = pData->strClassName;
+  CTFileName &fnmDLL = *((ExtArgEclData_t *)pEclData)->pfnmDLL;
+  CTString &strClassName = *((ExtArgEclData_t *)pEclData)->pstrClassName;
 
   // Classes available in ExtraEntities library
   static ClassReplacementPair aExtras[] = {
