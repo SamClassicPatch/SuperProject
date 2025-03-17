@@ -31,6 +31,7 @@
     <ClInclude Include="Converters\TFEMaps.h" />
     <ClInclude Include="MapConversion.h" />
     <ClInclude Include="StdH.h" />
+    <ClInclude Include="UnknownProperty.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Converters\RevMaps.cpp" />

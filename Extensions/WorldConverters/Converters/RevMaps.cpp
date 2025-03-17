@@ -42,10 +42,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Converter instance
 IConvertSSR _convSSR;
 
+// List of entities to destroy
+static CEntities SSR_cenDestroy;
+
 // Reset the converter before loading a new world
 void IConvertSSR::Reset(void) {
   // Clear entities to destroy
-  cenDestroy.Clear();
+  SSR_cenDestroy.Clear();
 };
 
 // Handle some unknown property
@@ -83,7 +86,7 @@ void IConvertSSR::HandleProperty(CEntity *pen, const UnknownProp &prop) {
       case (CDamager_ClassID << 8) + 20: {
         // Remember for later destruction
         if (prop.Bool()) {
-          cenDestroy.Add(pen);
+          SSR_cenDestroy.Add(pen);
         }
       } break;
 
@@ -102,7 +105,7 @@ void IConvertSSR::HandleProperty(CEntity *pen, const UnknownProp &prop) {
   } else if (IsOfClassID(pen, CTeleport_ClassID)) {
     // Remember for later destruction if "Stops speedrunners" is enabled
     if (prop.ulID == (CTeleport_ClassID << 8) + 9 && prop.Bool()) {
-      cenDestroy.Add(pen);
+      SSR_cenDestroy.Add(pen);
     }
 
   // Read value into another field
@@ -603,7 +606,7 @@ void IConvertSSR::ConvertWorld(CWorld *pwo) {
   }
 
   // Destroy certain entities
-  FOREACHINDYNAMICCONTAINER(cenDestroy, CEntity, itenDestroy) {
+  FOREACHINDYNAMICCONTAINER(SSR_cenDestroy, CEntity, itenDestroy) {
     cEntities.Remove(itenDestroy);
     itenDestroy->Destroy();
   }

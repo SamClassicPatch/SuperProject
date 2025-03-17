@@ -21,29 +21,32 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 // Interface for converting worlds from Revolution
-class IConvertSSR : public IMapConverter {
+class IConvertSSR : public IWorldFormatConverter {
   public:
-    // List of entities to destroy
-    CEntities cenDestroy;
+    // [Cecil] TODO: Rework this class into a simple namespace and register this converter on plugin startup
+    IConvertSSR() : IWorldFormatConverter() {
+      m_pReset          = &Reset;
+      m_pHandleProperty = &HandleProperty;
+      m_pConvertWorld   = &ConvertWorld;
+    };
 
-  public:
     // Reset the converter before loading a new world
-    virtual void Reset(void);
+    static void Reset(void);
 
     // Handle some unknown property
-    virtual void HandleProperty(CEntity *pen, const UnknownProp &prop);
+    static void HandleProperty(CEntity *pen, const UnknownProp &prop);
 
     // Convert invalid weapon flag in a mask
-    virtual void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);
+    static void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);
 
     // Convert invalid key types
-    virtual void ConvertKeyType(INDEX &eKey);
+    static void ConvertKeyType(INDEX &eKey);
 
     // Convert one specific entity without reinitializing it
-    virtual BOOL ConvertEntity(CEntity *pen);
+    static BOOL ConvertEntity(CEntity *pen);
 
     // Convert the entire world with possible entity reinitializations
-    virtual void ConvertWorld(CWorld *pwo);
+    static void ConvertWorld(CWorld *pwo);
 };
 
 // Converter instance

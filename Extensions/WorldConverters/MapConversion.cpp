@@ -19,10 +19,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <CorePatches/Patches.h>
 
 // Currently used converter
-static IMapConverter *_pconvCurrent = NULL;
+static IWorldFormatConverter *_pconvCurrent = NULL;
 
 // Get map converter for a specific format
-int IMapConverter::SetConverterForFormat(void *pFormat)
+int SetConverterForFormat(void *pFormat)
 {
   ELevelFormat eFormat = *(ELevelFormat *)pFormat;
 
@@ -39,27 +39,27 @@ int IMapConverter::SetConverterForFormat(void *pFormat)
 };
 
 // Reset a specific map converter before using it
-int IMapConverter::ResetConverter(void *) {
-  if (_pconvCurrent != NULL) {
-    _pconvCurrent->Reset();
+int ResetConverter(void *) {
+  if (_pconvCurrent != NULL && _pconvCurrent->m_pReset != NULL) {
+    _pconvCurrent->m_pReset();
   }
 
   return 0;
 };
 
 // Convert the world using the current converter
-int IMapConverter::ConvertWorld(void *pWorld) {
-  if (_pconvCurrent != NULL) {
-    _pconvCurrent->ConvertWorld((CWorld *)pWorld);
+int ConvertWorld(void *pWorld) {
+  if (_pconvCurrent != NULL && _pconvCurrent->m_pConvertWorld != NULL) {
+    _pconvCurrent->m_pConvertWorld((CWorld *)pWorld);
   }
 
   return 0;
 };
 
 // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
-int IMapConverter::HandleUnknownProperty(void *pPropData)
+int HandleUnknownProperty(void *pPropData)
 {
-  if (_pconvCurrent != NULL) {
+  if (_pconvCurrent != NULL && _pconvCurrent->m_pHandleProperty != NULL) {
     struct SignalUnknownProp {
       CEntity *pen;
       ULONG ulType;
@@ -68,14 +68,14 @@ int IMapConverter::HandleUnknownProperty(void *pPropData)
     } *pArgProp = (SignalUnknownProp *)pPropData;
 
     UnknownProp prop(pArgProp->ulType, pArgProp->ulID, pArgProp->pValue);
-    _pconvCurrent->HandleProperty(pArgProp->pen, prop);
+    _pconvCurrent->m_pHandleProperty(pArgProp->pen, prop);
   }
 
   return 0;
 };
 
 // Check if the entity state doesn't match
-BOOL IMapConverter::CheckEntityState(CRationalEntity *pen, SLONG slState, INDEX iClassID) {
+BOOL CheckEntityState(CRationalEntity *pen, SLONG slState, INDEX iClassID) {
   // Wrong entity class
   if (!IsOfClassID(pen, iClassID)) return FALSE;
 
@@ -86,7 +86,7 @@ BOOL IMapConverter::CheckEntityState(CRationalEntity *pen, SLONG slState, INDEX 
 };
 
 // Create a global light entity to fix shadow issues with brush polygon layers
-void IMapConverter::CreateGlobalLight(void) {
+void CreateGlobalLight(void) {
 #if SE1_VER >= SE1_107
   // Create an invisible light that covers the whole map
   try {
@@ -114,6 +114,12 @@ void IMapConverter::CreateGlobalLight(void) {
     FatalError(TRANS("Cannot load %s class:\n%s"), "Light", strError);
   }
 #endif
+};
+
+// Pair of class names for a replacement table
+struct ClassReplacementPair {
+  const char *strOld;
+  const char *strNew;
 };
 
 // Load some class from patch's ExtraEntities library instead of vanilla entities, if required

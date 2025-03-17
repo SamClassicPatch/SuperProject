@@ -21,10 +21,10 @@ CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_wldconverters", k_EPluginFlagGame | k_
   "Collection of world file converters between different game formats.");
 
 CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
-  { "SetConverterForFormat",    &IMapConverter::SetConverterForFormat }, // Arg ptr : ELevelFormat
-  { "ResetConverter",           &IMapConverter::ResetConverter },
-  { "ConvertWorld",             &IMapConverter::ConvertWorld }, // Arg ptr : CWorld
-  { "HandleUnknownProperty",    &IMapConverter::HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
+  { "SetConverterForFormat",    &SetConverterForFormat }, // Arg ptr : ELevelFormat
+  { "ResetConverter",           &ResetConverter },
+  { "ConvertWorld",             &ConvertWorld }, // Arg ptr : CWorld
+  { "HandleUnknownProperty",    &HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
   { "ReplaceMissingClasses",    &ReplaceMissingClasses }, // Arg ptr : ExtArgEclData_t
   { "ReplaceRevolutionClasses", &ReplaceRevolutionClasses }, // Arg ptr : CTFileName
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;

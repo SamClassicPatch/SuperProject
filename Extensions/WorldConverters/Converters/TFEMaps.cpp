@@ -213,7 +213,8 @@ BOOL IConvertTFE::ConvertEntity(CEntity *pen) {
     ENTITYPROPERTY(pen, pptrShadeStop.Offset(), COLOR) = C_dGRAY | CT_OPAQUE;
 
     // Add to the list of storm controllers
-    cenStorms.Add(pen);
+    extern CEntities TFE_cenStorms;
+    TFE_cenStorms.Add(pen);
 
     // Proceed with reinitialization
     return FALSE;
@@ -235,7 +236,9 @@ void IConvertTFE::ConvertWorld(CWorld *pwo) {
 
     // Remember triggers for future use
     if (IsOfClassID(pen, CTrigger_ClassID)) {
-      cenTriggers.Add(pen);
+      extern CEntities TFE_cenTriggers;
+      TFE_cenTriggers.Add(pen);
+
       cEntities.Add(pen);
       continue;
     }

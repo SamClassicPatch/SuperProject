@@ -15,25 +15,36 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+// List of rain properties for each controller in the world
+static CStaticStackArray<IConvertTFE::SRainProps> TFE_aRainProps;
+
+// List of triggers and storm controllers in the world
+CEntities TFE_cenTriggers;
+CEntities TFE_cenStorms;
+
+// First and last created environment particles holders
+static CEntity *TFE_penFirstEPH = NULL;
+static CEntity *TFE_penLastEPH = NULL;
+
 // Clear rain variables
 void IConvertTFE::ClearRainVariables(void) {
-  aRainProps.PopAll();
+  TFE_aRainProps.PopAll();
 
-  cenTriggers.Clear();
-  cenStorms.Clear();
+  TFE_cenTriggers.Clear();
+  TFE_cenStorms.Clear();
 
-  penFirstEPH = NULL;
-  penLastEPH = NULL;
+  TFE_penFirstEPH = NULL;
+  TFE_penLastEPH = NULL;
 };
 
 // Remember rain properties of CWorldSettingsController
 void IConvertTFE::RememberWSC(CEntity *penWSC, const UnknownProp &prop) {
   // Find existing entry for this controller
   SRainProps *pRain = NULL;
-  INDEX ct = aRainProps.Count();
+  INDEX ct = TFE_aRainProps.Count();
 
   for (INDEX iRain = 0; iRain < ct; iRain++) {
-    SRainProps &rainCheck = aRainProps[iRain];
+    SRainProps &rainCheck = TFE_aRainProps[iRain];
 
     if (rainCheck.penWSC == penWSC) {
       pRain = &rainCheck;
@@ -42,7 +53,7 @@ void IConvertTFE::RememberWSC(CEntity *penWSC, const UnknownProp &prop) {
   }
 
   // Create new rain properties entry
-  if (pRain == NULL) pRain = &aRainProps.Push();
+  if (pRain == NULL) pRain = &TFE_aRainProps.Push();
 
   pRain->penWSC = penWSC;
 
@@ -91,10 +102,10 @@ static CEntity *CreateStormTrigger(CPropertyPtr *apProps, INDEX iEvent, CEntity 
 // Apply remembered rain properties from controllers
 void IConvertTFE::ApplyRainProperties(void) {
   // Pair environment particles with each world settings controller
-  INDEX ct = aRainProps.Count();
+  INDEX ct = TFE_aRainProps.Count();
 
   for (INDEX iRain = 0; iRain < ct; iRain++) {
-    const SRainProps &rain = aRainProps[iRain];
+    const SRainProps &rain = TFE_aRainProps[iRain];
     CEntity *penWSC = rain.penWSC;
 
     try {
@@ -102,7 +113,7 @@ void IConvertTFE::ApplyRainProperties(void) {
       CEntity *penEnv = IWorld::GetWorld()->CreateEntity_t(_plWorldCenter, strEnvClass);
 
       // Set first EPH
-      if (penFirstEPH == NULL) penFirstEPH = penEnv;
+      if (TFE_penFirstEPH == NULL) TFE_penFirstEPH = penEnv;
 
       // Retrieve environment properties
       static CPropertyPtr pptrHght(penEnv); // CEnvironmentParticlesHolder::m_fnHeightMap
@@ -128,18 +139,18 @@ void IConvertTFE::ApplyRainProperties(void) {
 
       // Connect last EPH with this one
       if (pptrNext.ByVariable("CEnvironmentParticlesHolder", "m_penNextHolder")) {
-        if (penLastEPH != NULL) {
-          ENTITYPROPERTY(penLastEPH, pptrNext.Offset(), CEntityPointer) = penEnv;
+        if (TFE_penLastEPH != NULL) {
+          ENTITYPROPERTY(TFE_penLastEPH, pptrNext.Offset(), CEntityPointer) = penEnv;
         }
       }
 
-      penLastEPH = penEnv;
+      TFE_penLastEPH = penEnv;
 
       // Set pointer to the new environment particles holder
       static CPropertyPtr pptrEnvPtr(penWSC); // CWorldSettingsController::m_penEnvPartHolder
 
       if (pptrEnvPtr.ByVariable("CWorldSettingsController", "m_penEnvPartHolder")) {
-        ENTITYPROPERTY(penWSC, pptrEnvPtr.Offset(), CEntityPointer) = penFirstEPH;
+        ENTITYPROPERTY(penWSC, pptrEnvPtr.Offset(), CEntityPointer) = TFE_penFirstEPH;
       }
 
     } catch (char *strError) {
@@ -148,10 +159,10 @@ void IConvertTFE::ApplyRainProperties(void) {
   }
 
   // No rain particles
-  if (penFirstEPH == NULL) return;
+  if (TFE_penFirstEPH == NULL) return;
 
   // Find triggers that target storm controllers
-  FOREACHINDYNAMICCONTAINER(cenTriggers, CEntity, itenTrigger) {
+  FOREACHINDYNAMICCONTAINER(TFE_cenTriggers, CEntity, itenTrigger) {
     CEntity *pen = itenTrigger;
 
     static CPropertyPtr apProps[20] = {
@@ -186,11 +197,11 @@ void IConvertTFE::ApplyRainProperties(void) {
       INDEX &iEvent = ENTITYPROPERTY(pen, apProps[iProp].Offset(), INDEX);
 
       // Check if it points at some storm controller
-      FOREACHINDYNAMICCONTAINER(cenStorms, CEntity, itenStorm) {
+      FOREACHINDYNAMICCONTAINER(TFE_cenStorms, CEntity, itenStorm) {
         if (penTarget != &itenStorm.Current()) continue;
 
         // Replace with a new trigger that points at both storm & EPH
-        penTarget = CreateStormTrigger(apProps, iEvent, penTarget.ep_pen, penFirstEPH);
+        penTarget = CreateStormTrigger(apProps, iEvent, penTarget.ep_pen, TFE_penFirstEPH);
         iEvent = 2; // EventEType::EET_TRIGGER
         break;
       }

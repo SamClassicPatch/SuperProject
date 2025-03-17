@@ -20,119 +20,82 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
+#include "UnknownProperty.h"
+
 // Common data for converters
 #include <Extras/XGizmo/Vanilla/EnumTypes.h>
 
 // Dummy placement
 const CPlacement3D _plWorldCenter(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0));
 
-// Abstract base for different map converters
-class IMapConverter {
-  public:
-    // Property data for handling unknown entity properties
-    struct UnknownProp {
-      ULONG ulType; // Property type, i.e. CEntityProperty::PropertyType
-      ULONG ulID;   // Property ID, i.e. what should've been in CEntityProperty::ep_ulID
-      void *pValue; // Pointer to any value type
-
-      // Default constructor
-      __forceinline UnknownProp(ULONG ulSetType, ULONG ulSetID, void *pSetValue)
-        : ulType(ulSetType), ulID(ulSetID), pValue(pSetValue)
-      {
-      };
-
-      // Define methods for converting any pointer to a typed reference
-      #define DEFINE_VALUE_REF(_Type, _Method) \
-        __forceinline _Type &_Method(void) const { return *static_cast<_Type *>(pValue); };
-
-      DEFINE_VALUE_REF(BOOL, Bool);
-      DEFINE_VALUE_REF(COLOR, Color);
-      DEFINE_VALUE_REF(CEntityPointer, Entity);
-      DEFINE_VALUE_REF(ULONG, Flags); // flags
-      DEFINE_VALUE_REF(INDEX, Index); // enum, INDEX, ANIMATION, ILLUMINATIONTYPE
-      DEFINE_VALUE_REF(FLOAT, Float); // FLOAT, ANGLE, RANGE
-      DEFINE_VALUE_REF(CTString, String); // CTString, CTStringTrans, CTFileNameNoDep
-
-      // Resources
-      DEFINE_VALUE_REF(CTFileName, Filename);
-      DEFINE_VALUE_REF(CModelObject, ModelObject);
-    #if SE1_VER >= SE1_107
-      DEFINE_VALUE_REF(CModelInstance, ModelInstance);
-    #endif
-      DEFINE_VALUE_REF(CAnimObject, AnimObject);
-      DEFINE_VALUE_REF(CSoundObject, SoundObject);
-
-      // 3D environment
-      DEFINE_VALUE_REF(FLOAT3D, Float3D);
-      DEFINE_VALUE_REF(ANGLE3D, Angle3D);
-      DEFINE_VALUE_REF(CPlacement3D, Placement);
-      DEFINE_VALUE_REF(FLOATaabbox3D, Box);
-      DEFINE_VALUE_REF(FLOATplane3D, Plane);
-      DEFINE_VALUE_REF(FLOATquat3D, Quat);
-      DEFINE_VALUE_REF(FLOATmatrix3D, Matrix);
-
-      #undef DEFINE_VALUE_REF
-    };
-
-  // Common methods
+// Abstract base for different format converters
+class IWorldFormatConverter {
+  // Conversion method prototypes
   public:
 
-    // Set current map converter for a specific format
-    static int SetConverterForFormat(void *pFormat);
+    typedef void (*FDestructor)(void);
+    typedef void (*FReset)(void);
+    typedef void (*FHandleProperty)(CEntity *pen, const UnknownProp &prop);
+    typedef void (*FConvertWorld)(CWorld *pwo);
 
-    // Reset a specific map converter before using it
-    static int ResetConverter(void *);
-
-    // Convert the world using the current converter
-    static int ConvertWorld(void *pWorld);
-
-    // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
-    static int HandleUnknownProperty(void *pPropData);
-
-    // Check if the entity state doesn't match
-    static BOOL CheckEntityState(CRationalEntity *pen, SLONG slState, INDEX iClassID);
-
-    // Get weapon flag from type
-    static __forceinline INDEX WeaponFlag(INDEX iWeapon) {
-      return (1 << (iWeapon - 1));
-    };
-
-    // Create a global light entity to fix shadow issues with brush polygon layers
-    static void CreateGlobalLight(void);
-
-  // Converter methods
+  // Pointers to specific conversion methods
   public:
 
-    // Destructor
-    virtual ~IMapConverter() {};
+    // Class destructor
+    FDestructor m_pDestructor;
 
     // Reset the converter before loading a new world
-    virtual void Reset(void) = 0;
+    FReset m_pReset;
 
     // Handle some unknown property
-    virtual void HandleProperty(CEntity *pen, const UnknownProp &prop) = 0;
-
-    // Convert invalid weapon flag in a mask
-    virtual void ConvertWeapon(INDEX &iFlags, INDEX iWeapon) = 0;
-
-    // Convert invalid key types
-    virtual void ConvertKeyType(INDEX &eKey) = 0;
-
-    // Convert one specific entity without reinitializing it
-    virtual BOOL ConvertEntity(CEntity *pen) = 0;
+    FHandleProperty m_pHandleProperty;
 
     // Convert the entire world with possible entity reinitializations
-    virtual void ConvertWorld(CWorld *pwo) = 0;
+    FConvertWorld m_pConvertWorld;
+
+  public:
+
+    // Constructor with nullified methods
+    IWorldFormatConverter() {
+      m_pDestructor = NULL;
+      m_pReset = NULL;
+      m_pHandleProperty = NULL;
+      m_pConvertWorld = NULL;
+    };
+
+    // Optional destructor
+    __forceinline ~IWorldFormatConverter() {
+      if (m_pDestructor != NULL) m_pDestructor();
+    };
 };
 
 // Specific converters
 #include "Converters/TFEMaps.h"
 #include "Converters/RevMaps.h"
 
-// Pair of class names for a replacement table
-struct ClassReplacementPair {
-  const char *strOld;
-  const char *strNew;
+// Common methods related to world conversion
+
+// Set current map converter for a specific format
+int SetConverterForFormat(void *pFormat);
+
+// Reset a specific map converter before using it
+int ResetConverter(void *);
+
+// Convert the world using the current converter
+int ConvertWorld(void *pWorld);
+
+// Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
+int HandleUnknownProperty(void *pPropData);
+
+// Check if the entity state doesn't match
+BOOL CheckEntityState(CRationalEntity *pen, SLONG slState, INDEX iClassID);
+
+// Create a global light entity to fix shadow issues with brush polygon layers
+void CreateGlobalLight(void);
+
+// Get weapon flag from type
+__forceinline INDEX WeaponFlag(INDEX iWeapon) {
+  return (1 << (iWeapon - 1));
 };
 
 // Replace nonexistent vanilla classes upon loading them from ECL classes

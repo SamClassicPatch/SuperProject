@@ -21,7 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 // Interface for converting worlds from The First Encounter
-class IConvertTFE : public IMapConverter {
+class IConvertTFE : public IWorldFormatConverter {
   public:
     // Structure with rain properties for a specific CWorldSettingsController
     struct SRainProps {
@@ -37,53 +37,44 @@ class IConvertTFE : public IMapConverter {
     };
 
   public:
-    // List of rain properties for each controller in the world
-    CStaticStackArray<SRainProps> aRainProps;
 
-    // List of triggers and storm controllers in the world
-    CEntities cenTriggers;
-    CEntities cenStorms;
-
-    // First and last created environment particles holders
-    CEntity *penFirstEPH;
-    CEntity *penLastEPH;
-
-  public:
-
-    // Constructor
-    IConvertTFE() : penFirstEPH(NULL), penLastEPH(NULL)
+    // [Cecil] TODO: Rework this class into a simple namespace and register this converter on plugin startup
+    IConvertTFE() : IWorldFormatConverter()
     {
+      m_pReset          = &Reset;
+      m_pHandleProperty = &HandleProperty;
+      m_pConvertWorld   = &ConvertWorld;
     };
 
     // Clear rain variables
-    void ClearRainVariables(void);
+    static void ClearRainVariables(void);
 
     // Remember rain properties of CWorldSettingsController
-    void RememberWSC(CEntity *penWSC, const UnknownProp &prop);
+    static void RememberWSC(CEntity *penWSC, const UnknownProp &prop);
 
     // Apply remembered rain properties from controllers
-    void ApplyRainProperties(void);
+    static void ApplyRainProperties(void);
 
   // Converter methods
   public:
 
     // Reset the converter before loading a new world
-    virtual void Reset(void);
+    static void Reset(void);
 
     // Handle some unknown property
-    virtual void HandleProperty(CEntity *pen, const UnknownProp &prop);
+    static void HandleProperty(CEntity *pen, const UnknownProp &prop);
 
     // Convert invalid weapon flag in a mask
-    virtual void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);
+    static void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);
 
     // Convert invalid key types
-    virtual void ConvertKeyType(INDEX &eKey);
+    static void ConvertKeyType(INDEX &eKey);
 
     // Convert one specific entity without reinitializing it
-    virtual BOOL ConvertEntity(CEntity *pen);
+    static BOOL ConvertEntity(CEntity *pen);
 
     // Convert the entire world with possible entity reinitializations
-    virtual void ConvertWorld(CWorld *pwo);
+    static void ConvertWorld(CWorld *pwo);
 };
 
 // Converter instance
