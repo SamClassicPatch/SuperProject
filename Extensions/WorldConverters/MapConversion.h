@@ -90,8 +90,18 @@ class IWorldConverter {
     static IWorldConverter *Find(int iID);
 
   public:
+    // Signals for setting up a new converter
+    static int CreateConverter(void *strName);
+    static int SetMethodDestructor(void *pConverterData);
+    static int SetMethodReset(void *pConverterData);
+    static int SetMethodHandleProperty(void *pConverterData);
+    static int SetMethodConvertWorld(void *pConverterData);
+
     // Get world converter for a specific level format
     static int GetConverterForFormat(void *pFormat);
+
+    // Get world converter by its name
+    static int GetConverterByName(void *strName);
 
     // Reset a specific world converter before using it
     static int ResetConverter(void *pConverterData);

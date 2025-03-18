@@ -24,7 +24,14 @@ CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_wldconverters", k_EPluginFlagGame | k_
   "Collection of world file converters between different game formats.");
 
 CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
+  { "CreateConverter",          &IWorldConverter::CreateConverter },         // Arg ptr : const char (string)
+  { "SetMethodDestructor",      &IWorldConverter::SetMethodDestructor },     // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterDestructor)
+  { "SetMethodReset",           &IWorldConverter::SetMethodReset },          // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterReset)
+  { "SetMethodHandleProperty",  &IWorldConverter::SetMethodHandleProperty }, // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterHandleProperty)
+  { "SetMethodConvertWorld",    &IWorldConverter::SetMethodConvertWorld },   // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterConvert)
+
   { "GetConverterForFormat",    &IWorldConverter::GetConverterForFormat }, // Arg ptr : ELevelFormat
+  { "GetConverterByName",       &IWorldConverter::GetConverterByName },    // Arg ptr : const char (string)
   { "ResetConverter",           &IWorldConverter::ResetConverter },        // Arg ptr : ExtArgWorldConverter_t (pData = NULL)
   { "ConvertWorld",             &IWorldConverter::ConvertWorld },          // Arg ptr : ExtArgWorldConverter_t (pData = CWorld *)
   { "HandleUnknownProperty",    &IWorldConverter::HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t

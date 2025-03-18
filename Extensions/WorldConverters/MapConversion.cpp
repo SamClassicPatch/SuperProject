@@ -77,6 +77,63 @@ IWorldConverter *IWorldConverter::Find(int iID) {
   return NULL;
 };
 
+int IWorldConverter::CreateConverter(void *strName) {
+  if (strName == NULL) return -1;
+
+  IWorldConverter *pConv = Add((const char *)strName);
+  if (pConv == NULL) return -1;
+
+  return pConv->m_iID;
+};
+
+int IWorldConverter::SetMethodDestructor(void *pConverterData) {
+  if (pConverterData == NULL) return FALSE;
+
+  ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
+  IWorldConverter *pConv = Find(data.iID);
+
+  if (pConv == NULL) return FALSE;
+
+  pConv->m_pDestructor = (FWorldConverterDestructor)data.pData;
+  return TRUE;
+};
+
+int IWorldConverter::SetMethodReset(void *pConverterData) {
+  if (pConverterData == NULL) return FALSE;
+
+  ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
+  IWorldConverter *pConv = Find(data.iID);
+
+  if (pConv == NULL) return FALSE;
+
+  pConv->m_pReset = (FWorldConverterReset)data.pData;
+  return TRUE;
+};
+
+int IWorldConverter::SetMethodHandleProperty(void *pConverterData) {
+  if (pConverterData == NULL) return FALSE;
+
+  ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
+  IWorldConverter *pConv = Find(data.iID);
+
+  if (pConv == NULL) return FALSE;
+
+  pConv->m_pHandleProperty = (FWorldConverterHandleProperty)data.pData;
+  return TRUE;
+};
+
+int IWorldConverter::SetMethodConvertWorld(void *pConverterData) {
+  if (pConverterData == NULL) return FALSE;
+
+  ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
+  IWorldConverter *pConv = Find(data.iID);
+
+  if (pConv == NULL) return FALSE;
+
+  pConv->m_pConvertWorld = (FWorldConverterConvert)data.pData;
+  return TRUE;
+};
+
 // Currently used converter
 static IWorldConverter *_pconvCurrent = NULL;
 
@@ -90,9 +147,19 @@ int IWorldConverter::GetConverterForFormat(void *pFormat)
 
   switch (eFormat) {
     case E_LF_TFE: pConv = Find("tfe"); break;
+    case E_LF_TSE: pConv = Find("tse"); break;
     case E_LF_SSR: pConv = Find("ssr"); break;
+    case E_LF_150: pConv = Find("150"); break;
   }
 
+  return (pConv != NULL) ? pConv->m_iID : -1;
+};
+
+// Get world converter by its name
+int IWorldConverter::GetConverterByName(void *strName) {
+  if (strName == NULL) return -1;
+
+  IWorldConverter *pConv = Find((const char *)strName);
   return (pConv != NULL) ? pConv->m_iID : -1;
 };
 
