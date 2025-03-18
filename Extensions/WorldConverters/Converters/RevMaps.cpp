@@ -15,6 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "Converters/RevMaps.h"
+
 #if CLASSIC_TSE_FUSION_MODE
 
 // Classes that need to be converted
@@ -39,20 +41,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <EntitiesV/WorldLink.h>
 #include <EntitiesV/WorldSettingsController.h>
 
-// Converter instance
-IConvertSSR _convSSR;
+namespace IConvertSSR {
 
 // List of entities to destroy
 static CEntities SSR_cenDestroy;
 
 // Reset the converter before loading a new world
-void IConvertSSR::Reset(void) {
+void Reset(void) {
   // Clear entities to destroy
   SSR_cenDestroy.Clear();
 };
 
 // Handle some unknown property
-void IConvertSSR::HandleProperty(CEntity *pen, const UnknownProp &prop) {
+void HandleProperty(CEntity *pen, const UnknownProp &prop) {
   // Replace new ammo
   if (IsOfClassID(pen, CAmmoPack_ClassID)) {
     switch (prop.ulID) {
@@ -122,7 +123,7 @@ void IConvertSSR::HandleProperty(CEntity *pen, const UnknownProp &prop) {
 };
 
 // Convert invalid weapon flag in a mask
-void IConvertSSR::ConvertWeapon(INDEX &iFlags, INDEX iWeapon) {
+void ConvertWeapon(INDEX &iFlags, INDEX iWeapon) {
   switch (iWeapon) {
     case IMapsSSR::WEAPON_GHOSTBUSTER:
     case IMapsSSR::WEAPON_PLASMATHROWER:
@@ -139,7 +140,7 @@ void IConvertSSR::ConvertWeapon(INDEX &iFlags, INDEX iWeapon) {
 };
 
 // Convert invalid key types
-void IConvertSSR::ConvertKeyType(INDEX &eKey) {
+void ConvertKeyType(INDEX &eKey) {
   // Shift TSE keys from 19 to 0
   if (eKey >= IMapsSSR::KIT_BOOKOFWISDOM && eKey <= IMapsSSR::KIT_CRYSTALSKULL) {
     eKey -= IMapsSSR::KIT_BOOKOFWISDOM;
@@ -271,7 +272,7 @@ static void ConvertBrushEntity(CEntity *penBrush) {
 };
 
 // Convert one specific entity without reinitializing it
-BOOL IConvertSSR::ConvertEntity(CEntity *pen) {
+BOOL ConvertEntity(CEntity *pen) {
   // Replace plasma packs and mine packs
   if (IsOfClassID(pen, CAmmoItem_ClassID)) {
     // Retrieve CAmmoItem::m_EaitType
@@ -594,7 +595,7 @@ BOOL IConvertSSR::ConvertEntity(CEntity *pen) {
 };
 
 // Convert the entire world with possible entity reinitializations
-void IConvertSSR::ConvertWorld(CWorld *pwo) {
+void ConvertWorld(CWorld *pwo) {
   CEntities cEntities;
 
   FOREACHINDYNAMICCONTAINER(pwo->wo_cenEntities, CEntity, iten) {
@@ -618,5 +619,7 @@ void IConvertSSR::ConvertWorld(CWorld *pwo) {
   // Fix shadow issues
   CreateGlobalLight();
 };
+
+}; // namespace
 
 #endif // CLASSIC_TSE_FUSION_MODE

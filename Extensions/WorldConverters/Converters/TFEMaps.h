@@ -21,63 +21,35 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 // Interface for converting worlds from The First Encounter
-class IConvertTFE : public IWorldFormatConverter {
-  public:
-    // Structure with rain properties for a specific CWorldSettingsController
-    struct SRainProps {
-      CEntity *penWSC; // Pointer to CWorldSettingsController
+namespace IConvertTFE {
 
-      CTFileName fnm; // CWorldSettingsController::m_fnHeightMap
-      FLOATaabbox3D box; // CWorldSettingsController::m_boxHeightMap
+// Clear rain variables
+void ClearRainVariables(void);
 
-      // Constructor
-      SRainProps() : penWSC(NULL)
-      {
-      };
-    };
+// Remember rain properties of CWorldSettingsController
+void RememberWSC(CEntity *penWSC, const UnknownProp &prop);
 
-  public:
+// Apply remembered rain properties from controllers
+void ApplyRainProperties(void);
 
-    // [Cecil] TODO: Rework this class into a simple namespace and register this converter on plugin startup
-    IConvertTFE() : IWorldFormatConverter()
-    {
-      m_pReset          = &Reset;
-      m_pHandleProperty = &HandleProperty;
-      m_pConvertWorld   = &ConvertWorld;
-    };
+// Reset the converter before loading a new world
+void Reset(void);
 
-    // Clear rain variables
-    static void ClearRainVariables(void);
+// Handle some unknown property
+void HandleProperty(CEntity *pen, const UnknownProp &prop);
 
-    // Remember rain properties of CWorldSettingsController
-    static void RememberWSC(CEntity *penWSC, const UnknownProp &prop);
+// Convert invalid weapon flag in a mask
+void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);
 
-    // Apply remembered rain properties from controllers
-    static void ApplyRainProperties(void);
+// Convert invalid key types
+void ConvertKeyType(INDEX &eKey);
 
-  // Converter methods
-  public:
+// Convert one specific entity without reinitializing it
+BOOL ConvertEntity(CEntity *pen);
 
-    // Reset the converter before loading a new world
-    static void Reset(void);
+// Convert the entire world with possible entity reinitializations
+void ConvertWorld(CWorld *pwo);
 
-    // Handle some unknown property
-    static void HandleProperty(CEntity *pen, const UnknownProp &prop);
-
-    // Convert invalid weapon flag in a mask
-    static void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);
-
-    // Convert invalid key types
-    static void ConvertKeyType(INDEX &eKey);
-
-    // Convert one specific entity without reinitializing it
-    static BOOL ConvertEntity(CEntity *pen);
-
-    // Convert the entire world with possible entity reinitializations
-    static void ConvertWorld(CWorld *pwo);
-};
-
-// Converter instance
-extern IConvertTFE _convTFE;
+}; // namespace
 
 #endif

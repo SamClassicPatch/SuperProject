@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 #include "UnknownProperty.h"
+#include <Extras/XGizmo/Objects/MapStructure.h>
 
 // Common data for converters
 #include <Extras/XGizmo/Vanilla/EnumTypes.h>
@@ -30,21 +31,18 @@ const CPlacement3D _plWorldCenter(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0));
 
 // Abstract base for different format converters
 class IWorldFormatConverter {
-  // Conversion method prototypes
   public:
-
+    // Conversion method prototypes
     typedef void (*FDestructor)(void);
     typedef void (*FReset)(void);
     typedef void (*FHandleProperty)(CEntity *pen, const UnknownProp &prop);
     typedef void (*FConvertWorld)(CWorld *pwo);
 
-  // Pointers to specific conversion methods
   public:
-
     // Class destructor
     FDestructor m_pDestructor;
 
-    // Reset the converter before loading a new world
+    // Reset the converter to the default state before loading a new world
     FReset m_pReset;
 
     // Handle some unknown property
@@ -54,24 +52,53 @@ class IWorldFormatConverter {
     FConvertWorld m_pConvertWorld;
 
   public:
-
     // Constructor with nullified methods
     IWorldFormatConverter() {
-      m_pDestructor = NULL;
-      m_pReset = NULL;
-      m_pHandleProperty = NULL;
-      m_pConvertWorld = NULL;
+      Clear();
+    };
+
+    // Copy constructor
+    IWorldFormatConverter(const IWorldFormatConverter &convOther) {
+      operator=(convOther);
     };
 
     // Optional destructor
     __forceinline ~IWorldFormatConverter() {
       if (m_pDestructor != NULL) m_pDestructor();
     };
+
+    // Clear the converter
+    inline void Clear(void) {
+      m_pDestructor     = NULL;
+      m_pReset          = NULL;
+      m_pHandleProperty = NULL;
+      m_pConvertWorld   = NULL;
+    };
+
+    // Assignment operator
+    IWorldFormatConverter &operator=(const IWorldFormatConverter &convOther) {
+      m_pDestructor     = convOther.m_pDestructor;
+      m_pReset          = convOther.m_pReset;
+      m_pHandleProperty = convOther.m_pHandleProperty;
+      m_pConvertWorld   = convOther.m_pConvertWorld;
+      return *this;
+    };
+
+  public:
+    // Add new world converter with a specific name
+    // Returns NULL if new converter could not be created (name already exists or it's empty)
+    static IWorldFormatConverter *Add(const CTString &strName);
+
+    // Remove a world converter with a specific name
+    // Returns false if nothing was removed
+    static bool Remove(const CTString &strName);
+
+    // Try to find a converter with a specific identifier
+    static IWorldFormatConverter *Find(const CTString &strName);
 };
 
-// Specific converters
-#include "Converters/TFEMaps.h"
-#include "Converters/RevMaps.h"
+// Storage of all possible converters under specific identifiers
+extern se1::map<CTString, IWorldFormatConverter> _mapConverters;
 
 // Common methods related to world conversion
 

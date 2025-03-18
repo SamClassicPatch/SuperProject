@@ -21,35 +21,26 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 // Interface for converting worlds from Revolution
-class IConvertSSR : public IWorldFormatConverter {
-  public:
-    // [Cecil] TODO: Rework this class into a simple namespace and register this converter on plugin startup
-    IConvertSSR() : IWorldFormatConverter() {
-      m_pReset          = &Reset;
-      m_pHandleProperty = &HandleProperty;
-      m_pConvertWorld   = &ConvertWorld;
-    };
+namespace IConvertSSR {
 
-    // Reset the converter before loading a new world
-    static void Reset(void);
+// Reset the converter before loading a new world
+void Reset(void);
 
-    // Handle some unknown property
-    static void HandleProperty(CEntity *pen, const UnknownProp &prop);
+// Handle some unknown property
+void HandleProperty(CEntity *pen, const UnknownProp &prop);
 
-    // Convert invalid weapon flag in a mask
-    static void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);
+// Convert invalid weapon flag in a mask
+void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);
 
-    // Convert invalid key types
-    static void ConvertKeyType(INDEX &eKey);
+// Convert invalid key types
+void ConvertKeyType(INDEX &eKey);
 
-    // Convert one specific entity without reinitializing it
-    static BOOL ConvertEntity(CEntity *pen);
+// Convert one specific entity without reinitializing it
+BOOL ConvertEntity(CEntity *pen);
 
-    // Convert the entire world with possible entity reinitializations
-    static void ConvertWorld(CWorld *pwo);
-};
+// Convert the entire world with possible entity reinitializations
+void ConvertWorld(CWorld *pwo);
 
-// Converter instance
-extern IConvertSSR _convSSR;
+}; // namespace
 
 #endif

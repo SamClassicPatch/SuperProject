@@ -15,6 +15,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "Converters/TFEMaps.h"
+#include "Converters/RevMaps.h"
+
 // Define extension
 CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_wldconverters", k_EPluginFlagGame | k_EPluginFlagServer | k_EPluginFlagEditor, CORE_PATCH_VERSION,
   "Dreamy Cecil", "World Converters",
@@ -32,6 +35,28 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
+  // Register default converters only once
+  static bool _bDefaultAdded = false;
+  if (_bDefaultAdded) return;
+  _bDefaultAdded = true;
+
+#if CLASSIC_TSE_FUSION_MODE
+  IWorldFormatConverter *pTFE = IWorldFormatConverter::Add("tfe");
+
+  if (pTFE != NULL) {
+    pTFE->m_pReset          = &IConvertTFE::Reset;
+    pTFE->m_pHandleProperty = &IConvertTFE::HandleProperty;
+    pTFE->m_pConvertWorld   = &IConvertTFE::ConvertWorld;
+  }
+
+  IWorldFormatConverter *pSSR = IWorldFormatConverter::Add("ssr");
+
+  if (pSSR != NULL) {
+    pSSR->m_pReset          = &IConvertSSR::Reset;
+    pSSR->m_pHandleProperty = &IConvertSSR::HandleProperty;
+    pSSR->m_pConvertWorld   = &IConvertSSR::ConvertWorld;
+  }
+#endif
 };
 
 // Module cleanup

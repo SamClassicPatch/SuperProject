@@ -15,8 +15,22 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "Converters/TFEMaps.h"
+
+namespace IConvertTFE {
+
+// Structure with rain properties for a specific CWorldSettingsController
+struct SRainProps {
+  CEntity *penWSC; // Pointer to CWorldSettingsController
+
+  CTFileName fnm; // CWorldSettingsController::m_fnHeightMap
+  FLOATaabbox3D box; // CWorldSettingsController::m_boxHeightMap
+
+  SRainProps() : penWSC(NULL) {};
+};
+
 // List of rain properties for each controller in the world
-static CStaticStackArray<IConvertTFE::SRainProps> TFE_aRainProps;
+static CStaticStackArray<SRainProps> TFE_aRainProps;
 
 // List of triggers and storm controllers in the world
 CEntities TFE_cenTriggers;
@@ -27,7 +41,7 @@ static CEntity *TFE_penFirstEPH = NULL;
 static CEntity *TFE_penLastEPH = NULL;
 
 // Clear rain variables
-void IConvertTFE::ClearRainVariables(void) {
+void ClearRainVariables(void) {
   TFE_aRainProps.PopAll();
 
   TFE_cenTriggers.Clear();
@@ -38,7 +52,7 @@ void IConvertTFE::ClearRainVariables(void) {
 };
 
 // Remember rain properties of CWorldSettingsController
-void IConvertTFE::RememberWSC(CEntity *penWSC, const UnknownProp &prop) {
+void RememberWSC(CEntity *penWSC, const UnknownProp &prop) {
   // Find existing entry for this controller
   SRainProps *pRain = NULL;
   INDEX ct = TFE_aRainProps.Count();
@@ -100,7 +114,7 @@ static CEntity *CreateStormTrigger(CPropertyPtr *apProps, INDEX iEvent, CEntity 
 };
 
 // Apply remembered rain properties from controllers
-void IConvertTFE::ApplyRainProperties(void) {
+void ApplyRainProperties(void) {
   // Pair environment particles with each world settings controller
   INDEX ct = TFE_aRainProps.Count();
 
@@ -211,3 +225,5 @@ void IConvertTFE::ApplyRainProperties(void) {
   // Clear the rain
   ClearRainVariables();
 };
+
+}; // namespace

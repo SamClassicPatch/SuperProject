@@ -15,6 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "Converters/TFEMaps.h"
+
 #if CLASSIC_TSE_FUSION_MODE
 
 // Classes that need to be converted
@@ -35,17 +37,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <EntitiesV/Woman.h>
 #include <EntitiesV/WorldSettingsController.h>
 
-// Converter instance
-IConvertTFE _convTFE;
+namespace IConvertTFE {
 
 // Reset the converter before loading a new world
-void IConvertTFE::Reset(void) {
+void Reset(void) {
   // Clear the rain
   ClearRainVariables();
 };
 
 // Handle some unknown property
-void IConvertTFE::HandleProperty(CEntity *pen, const UnknownProp &prop)
+void HandleProperty(CEntity *pen, const UnknownProp &prop)
 {
   if (IsOfClassID(pen, CWorldSettingsController_ClassID)) {
     RememberWSC(pen, prop);
@@ -53,7 +54,7 @@ void IConvertTFE::HandleProperty(CEntity *pen, const UnknownProp &prop)
 };
 
 // Convert invalid weapon flag in a mask
-void IConvertTFE::ConvertWeapon(INDEX &iFlags, INDEX iWeapon) {
+void ConvertWeapon(INDEX &iFlags, INDEX iWeapon) {
   switch (iWeapon) {
     case IMapsTFE::WEAPON_LASER: iFlags |= WeaponFlag(IMapsTSE::WEAPON_LASER); break;
     case IMapsTFE::WEAPON_IRONCANNON: iFlags |= WeaponFlag(IMapsTSE::WEAPON_IRONCANNON); break;
@@ -67,7 +68,7 @@ void IConvertTFE::ConvertWeapon(INDEX &iFlags, INDEX iWeapon) {
 };
 
 // Convert invalid key types
-void IConvertTFE::ConvertKeyType(INDEX &eKey) {
+void ConvertKeyType(INDEX &eKey) {
 #if _PATCHCONFIG_CUSTOM_MOD && _PATCHCONFIG_CUSTOM_MOD_ENTITIES
   // Shift TFE keys from 0 to 16
   if (ClassicsCore_IsCustomModActive()) {
@@ -108,7 +109,7 @@ void IConvertTFE::ConvertKeyType(INDEX &eKey) {
 };
 
 // Convert one specific entity without reinitializing it
-BOOL IConvertTFE::ConvertEntity(CEntity *pen) {
+BOOL ConvertEntity(CEntity *pen) {
   // Remove napalm and sniper bullets
   if (IsOfClassID(pen, CAmmoPack_ClassID)) {
     // Retrieve CAmmoPack::m_iNapalm and CAmmoPack::m_iSniperBullets
@@ -225,7 +226,7 @@ BOOL IConvertTFE::ConvertEntity(CEntity *pen) {
 };
 
 // Convert the entire world with possible entity reinitializations
-void IConvertTFE::ConvertWorld(CWorld *pwo) {
+void ConvertWorld(CWorld *pwo) {
   CEntities cEntities;
 
   FOREACHINDYNAMICCONTAINER(pwo->wo_cenEntities, CEntity, iten) {
@@ -288,5 +289,7 @@ void IConvertTFE::ConvertWorld(CWorld *pwo) {
   // Fix shadow issues
   CreateGlobalLight();
 };
+
+}; // namespace
 
 #endif // CLASSIC_TSE_FUSION_MODE

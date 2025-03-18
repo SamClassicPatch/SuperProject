@@ -18,6 +18,44 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // [Cecil] TEMP: _EnginePatches._eWorldFormat
 #include <CorePatches/Patches.h>
 
+// Storage of all possible converters under specific identifiers
+se1::map<CTString, IWorldFormatConverter> _mapConverters;
+
+// Add new world converter with a specific name
+IWorldFormatConverter *IWorldFormatConverter::Add(const CTString &strName) {
+  se1::map<CTString, IWorldFormatConverter>::const_iterator it = _mapConverters.find(strName);
+
+  // Doesn't exist yet
+  if (it == _mapConverters.end()) {
+    return &_mapConverters[strName];
+  }
+
+  return NULL;
+};
+
+// Remove a world converter with a specific name
+bool IWorldFormatConverter::Remove(const CTString &strName) {
+  se1::map<CTString, IWorldFormatConverter>::iterator it = _mapConverters.find(strName);
+
+  if (it != _mapConverters.end()) {
+    _mapConverters.erase(it);
+    return true;
+  }
+
+  return false;
+};
+
+// Try to find a converter with a specific identifier
+IWorldFormatConverter *IWorldFormatConverter::Find(const CTString &strName) {
+  se1::map<CTString, IWorldFormatConverter>::iterator it = _mapConverters.find(strName);
+
+  if (it != _mapConverters.end()) {
+    return &it->second;
+  }
+
+  return NULL;
+};
+
 // Currently used converter
 static IWorldFormatConverter *_pconvCurrent = NULL;
 
@@ -27,14 +65,11 @@ int SetConverterForFormat(void *pFormat)
   ELevelFormat eFormat = *(ELevelFormat *)pFormat;
 
   switch (eFormat) {
-  #if CLASSIC_TSE_FUSION_MODE
-    case E_LF_TFE: _pconvCurrent = &_convTFE; break;
-    case E_LF_SSR: _pconvCurrent = &_convSSR; break;
-  #endif
+    case E_LF_TFE: _pconvCurrent = IWorldFormatConverter::Find("tfe"); break;
+    case E_LF_SSR: _pconvCurrent = IWorldFormatConverter::Find("ssr"); break;
     default: _pconvCurrent = NULL;
   }
 
-  //ASSERTMSG(_pconvCurrent != NULL, "No converter available for the desired level format!");
   return (_pconvCurrent != NULL);
 };
 
