@@ -73,10 +73,16 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
 
   // [Cecil] Set converter for the world format and reset it
   static HPatchPlugin hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
-  bool bConverter = ClassicsExtensions_CallSignal(hConverters, "SetConverterForFormat", NULL, &eWorld);
+
+  ExtArgWorldConverter_t convData;
+  bool bConverter = ClassicsExtensions_CallSignal(hConverters, "GetConverterForFormat", &convData.iID, &eWorld);
+
+  // Also verify the existence of a converter for this format
+  bConverter = (bConverter && convData.iID != -1);
 
   if (bConverter) {
-    ClassicsExtensions_CallSignal(hConverters, "ResetConverter", NULL, NULL);
+    convData.pData = NULL;
+    ClassicsExtensions_CallSignal(hConverters, "ResetConverter", NULL, &convData);
   }
 
   // Check engine build
@@ -90,8 +96,7 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
 
   // [Cecil] Determine forced reinitialization and forcefully convert other world types
   const BOOL bReinitEverything = (_EnginePatches._iWorldConverter == 0);
-  BOOL bForceReinit = bReinitEverything;
-  bForceReinit |= (eWorld != E_LF_CURRENT);
+  const BOOL bForceReinit = (bReinitEverything || bConverter);
 
   // [Cecil] Convert the world some specific way while in game
   if (!ClassicsCore_IsEditorApp() && bForceReinit) {
@@ -104,7 +109,8 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
 
     // Use map converter
     if (bConverter) {
-      ClassicsExtensions_CallSignal(hConverters, "ConvertWorld", NULL, this);
+      convData.pData = this;
+      ClassicsExtensions_CallSignal(hConverters, "ConvertWorld", NULL, &convData);
     }
 
     // Reset every entity

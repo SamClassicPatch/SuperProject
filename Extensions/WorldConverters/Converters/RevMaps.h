@@ -27,7 +27,7 @@ namespace IConvertSSR {
 void Reset(void);
 
 // Handle some unknown property
-void HandleProperty(CEntity *pen, const UnknownProp &prop);
+void HandleProperty(const ExtArgUnknownProp_t &propData);
 
 // Convert invalid weapon flag in a mask
 void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);

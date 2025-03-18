@@ -30,45 +30,35 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 const CPlacement3D _plWorldCenter(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0));
 
 // Abstract base for different format converters
-class IWorldFormatConverter {
+class IWorldConverter {
   public:
-    // Conversion method prototypes
-    typedef void (*FDestructor)(void);
-    typedef void (*FReset)(void);
-    typedef void (*FHandleProperty)(CEntity *pen, const UnknownProp &prop);
-    typedef void (*FConvertWorld)(CWorld *pwo);
+    int m_iID; // Unique identifier instead of a name (-1 for invalid)
 
-  public:
-    // Class destructor
-    FDestructor m_pDestructor;
-
-    // Reset the converter to the default state before loading a new world
-    FReset m_pReset;
-
-    // Handle some unknown property
-    FHandleProperty m_pHandleProperty;
-
-    // Convert the entire world with possible entity reinitializations
-    FConvertWorld m_pConvertWorld;
+    FWorldConverterDestructor m_pDestructor;
+    FWorldConverterReset m_pReset;
+    FWorldConverterHandleProperty m_pHandleProperty;
+    FWorldConverterConvert m_pConvertWorld;
 
   public:
     // Constructor with nullified methods
-    IWorldFormatConverter() {
+    IWorldConverter() {
       Clear();
     };
 
     // Copy constructor
-    IWorldFormatConverter(const IWorldFormatConverter &convOther) {
+    IWorldConverter(const IWorldConverter &convOther) {
       operator=(convOther);
     };
 
     // Optional destructor
-    __forceinline ~IWorldFormatConverter() {
+    __forceinline ~IWorldConverter() {
       if (m_pDestructor != NULL) m_pDestructor();
     };
 
     // Clear the converter
     inline void Clear(void) {
+      m_iID = -1;
+
       m_pDestructor     = NULL;
       m_pReset          = NULL;
       m_pHandleProperty = NULL;
@@ -76,7 +66,7 @@ class IWorldFormatConverter {
     };
 
     // Assignment operator
-    IWorldFormatConverter &operator=(const IWorldFormatConverter &convOther) {
+    IWorldConverter &operator=(const IWorldConverter &convOther) {
       m_pDestructor     = convOther.m_pDestructor;
       m_pReset          = convOther.m_pReset;
       m_pHandleProperty = convOther.m_pHandleProperty;
@@ -87,32 +77,34 @@ class IWorldFormatConverter {
   public:
     // Add new world converter with a specific name
     // Returns NULL if new converter could not be created (name already exists or it's empty)
-    static IWorldFormatConverter *Add(const CTString &strName);
+    static IWorldConverter *Add(const CTString &strName);
 
     // Remove a world converter with a specific name
     // Returns false if nothing was removed
     static bool Remove(const CTString &strName);
 
-    // Try to find a converter with a specific identifier
-    static IWorldFormatConverter *Find(const CTString &strName);
+    // Try to find a converter by its name
+    static IWorldConverter *Find(const CTString &strName);
+
+    // Try to find a converter by its identifier
+    static IWorldConverter *Find(int iID);
+
+  public:
+    // Get world converter for a specific level format
+    static int GetConverterForFormat(void *pFormat);
+
+    // Reset a specific world converter before using it
+    static int ResetConverter(void *pConverterData);
+
+    // Convert the world using a specific converter
+    static int ConvertWorld(void *pConverterData);
+
+    // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
+    // It uses a method from the current converter that's set by calling ConvertWorld()
+    static int HandleUnknownProperty(void *pPropData);
 };
 
-// Storage of all possible converters under specific identifiers
-extern se1::map<CTString, IWorldFormatConverter> _mapConverters;
-
 // Common methods related to world conversion
-
-// Set current map converter for a specific format
-int SetConverterForFormat(void *pFormat);
-
-// Reset a specific map converter before using it
-int ResetConverter(void *);
-
-// Convert the world using the current converter
-int ConvertWorld(void *pWorld);
-
-// Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
-int HandleUnknownProperty(void *pPropData);
 
 // Check if the entity state doesn't match
 BOOL CheckEntityState(CRationalEntity *pen, SLONG slState, INDEX iClassID);

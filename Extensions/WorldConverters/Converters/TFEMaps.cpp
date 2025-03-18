@@ -46,10 +46,12 @@ void Reset(void) {
 };
 
 // Handle some unknown property
-void HandleProperty(CEntity *pen, const UnknownProp &prop)
+void HandleProperty(const ExtArgUnknownProp_t &propData)
 {
-  if (IsOfClassID(pen, CWorldSettingsController_ClassID)) {
-    RememberWSC(pen, prop);
+  const SWorldConverterUnknownProp &prop = (const SWorldConverterUnknownProp &)propData;
+
+  if (IsOfClassID(prop.pen, CWorldSettingsController_ClassID)) {
+    RememberWSC(prop);
   }
 };
 

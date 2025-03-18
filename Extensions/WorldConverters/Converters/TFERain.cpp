@@ -52,7 +52,7 @@ void ClearRainVariables(void) {
 };
 
 // Remember rain properties of CWorldSettingsController
-void RememberWSC(CEntity *penWSC, const UnknownProp &prop) {
+void RememberWSC(const SWorldConverterUnknownProp &prop) {
   // Find existing entry for this controller
   SRainProps *pRain = NULL;
   INDEX ct = TFE_aRainProps.Count();
@@ -60,7 +60,7 @@ void RememberWSC(CEntity *penWSC, const UnknownProp &prop) {
   for (INDEX iRain = 0; iRain < ct; iRain++) {
     SRainProps &rainCheck = TFE_aRainProps[iRain];
 
-    if (rainCheck.penWSC == penWSC) {
+    if (rainCheck.penWSC == prop.pen) {
       pRain = &rainCheck;
       break;
     }
@@ -69,7 +69,7 @@ void RememberWSC(CEntity *penWSC, const UnknownProp &prop) {
   // Create new rain properties entry
   if (pRain == NULL) pRain = &TFE_aRainProps.Push();
 
-  pRain->penWSC = penWSC;
+  pRain->penWSC = prop.pen;
 
   // Remember height map texture and limits
   ULONG ulIndex = prop.ulID & 0xFF;

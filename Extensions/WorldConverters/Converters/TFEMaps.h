@@ -27,7 +27,7 @@ namespace IConvertTFE {
 void ClearRainVariables(void);
 
 // Remember rain properties of CWorldSettingsController
-void RememberWSC(CEntity *penWSC, const UnknownProp &prop);
+void RememberWSC(const SWorldConverterUnknownProp &prop);
 
 // Apply remembered rain properties from controllers
 void ApplyRainProperties(void);
@@ -36,7 +36,7 @@ void ApplyRainProperties(void);
 void Reset(void);
 
 // Handle some unknown property
-void HandleProperty(CEntity *pen, const UnknownProp &prop);
+void HandleProperty(const ExtArgUnknownProp_t &propData);
 
 // Convert invalid weapon flag in a mask
 void ConvertWeapon(INDEX &iFlags, INDEX iWeapon);

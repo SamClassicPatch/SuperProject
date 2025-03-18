@@ -24,10 +24,11 @@ CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_wldconverters", k_EPluginFlagGame | k_
   "Collection of world file converters between different game formats.");
 
 CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
-  { "SetConverterForFormat",    &SetConverterForFormat }, // Arg ptr : ELevelFormat
-  { "ResetConverter",           &ResetConverter },
-  { "ConvertWorld",             &ConvertWorld }, // Arg ptr : CWorld
-  { "HandleUnknownProperty",    &HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
+  { "GetConverterForFormat",    &IWorldConverter::GetConverterForFormat }, // Arg ptr : ELevelFormat
+  { "ResetConverter",           &IWorldConverter::ResetConverter },        // Arg ptr : ExtArgWorldConverter_t (pData = NULL)
+  { "ConvertWorld",             &IWorldConverter::ConvertWorld },          // Arg ptr : ExtArgWorldConverter_t (pData = CWorld *)
+  { "HandleUnknownProperty",    &IWorldConverter::HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
+
   { "ReplaceMissingClasses",    &ReplaceMissingClasses }, // Arg ptr : ExtArgEclData_t
   { "ReplaceRevolutionClasses", &ReplaceRevolutionClasses }, // Arg ptr : CTFileName
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
@@ -41,7 +42,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   _bDefaultAdded = true;
 
 #if CLASSIC_TSE_FUSION_MODE
-  IWorldFormatConverter *pTFE = IWorldFormatConverter::Add("tfe");
+  IWorldConverter *pTFE = IWorldConverter::Add("tfe");
 
   if (pTFE != NULL) {
     pTFE->m_pReset          = &IConvertTFE::Reset;
@@ -49,7 +50,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
     pTFE->m_pConvertWorld   = &IConvertTFE::ConvertWorld;
   }
 
-  IWorldFormatConverter *pSSR = IWorldFormatConverter::Add("ssr");
+  IWorldConverter *pSSR = IWorldConverter::Add("ssr");
 
   if (pSSR != NULL) {
     pSSR->m_pReset          = &IConvertSSR::Reset;

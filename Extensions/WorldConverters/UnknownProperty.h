@@ -20,18 +20,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-// Property data for handling unknown entity properties
-struct UnknownProp {
-  ULONG ulType; // Property type, i.e. CEntityProperty::PropertyType
-  ULONG ulID;   // Property ID, i.e. what should've been in CEntityProperty::ep_ulID
-  void *pValue; // Pointer to any value type
-
-  // Default constructor
-  __forceinline UnknownProp(ULONG ulSetType, ULONG ulSetID, void *pSetValue)
-    : ulType(ulSetType), ulID(ulSetID), pValue(pSetValue)
-  {
-  };
-
+// Extended data type for easy access of specific property values
+struct SWorldConverterUnknownProp : public ExtArgUnknownProp_t {
   // Define methods for converting any pointer to a typed reference
   #define DEFINE_VALUE_REF(_Type, _Method) \
     __forceinline _Type &_Method(void) const { return *static_cast<_Type *>(pValue); };

@@ -53,7 +53,10 @@ void Reset(void) {
 };
 
 // Handle some unknown property
-void HandleProperty(CEntity *pen, const UnknownProp &prop) {
+void HandleProperty(const ExtArgUnknownProp_t &propData) {
+  const SWorldConverterUnknownProp &prop = (const SWorldConverterUnknownProp &)propData;
+  CEntity *pen = prop.pen;
+
   // Replace new ammo
   if (IsOfClassID(pen, CAmmoPack_ClassID)) {
     switch (prop.ulID) {

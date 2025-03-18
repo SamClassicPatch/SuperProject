@@ -19,23 +19,30 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <CorePatches/Patches.h>
 
 // Storage of all possible converters under specific identifiers
-se1::map<CTString, IWorldFormatConverter> _mapConverters;
+typedef se1::map<CTString, IWorldConverter> CMapConverters;
+static CMapConverters _mapConverters;
 
 // Add new world converter with a specific name
-IWorldFormatConverter *IWorldFormatConverter::Add(const CTString &strName) {
-  se1::map<CTString, IWorldFormatConverter>::const_iterator it = _mapConverters.find(strName);
+IWorldConverter *IWorldConverter::Add(const CTString &strName) {
+  CMapConverters::const_iterator it = _mapConverters.find(strName);
 
   // Doesn't exist yet
   if (it == _mapConverters.end()) {
-    return &_mapConverters[strName];
+    IWorldConverter &conv = _mapConverters[strName];
+
+    // Set a unique identifier
+    static int _iConverterID = 0;
+    conv.m_iID = _iConverterID++;
+
+    return &conv;
   }
 
   return NULL;
 };
 
 // Remove a world converter with a specific name
-bool IWorldFormatConverter::Remove(const CTString &strName) {
-  se1::map<CTString, IWorldFormatConverter>::iterator it = _mapConverters.find(strName);
+bool IWorldConverter::Remove(const CTString &strName) {
+  CMapConverters::iterator it = _mapConverters.find(strName);
 
   if (it != _mapConverters.end()) {
     _mapConverters.erase(it);
@@ -45,9 +52,9 @@ bool IWorldFormatConverter::Remove(const CTString &strName) {
   return false;
 };
 
-// Try to find a converter with a specific identifier
-IWorldFormatConverter *IWorldFormatConverter::Find(const CTString &strName) {
-  se1::map<CTString, IWorldFormatConverter>::iterator it = _mapConverters.find(strName);
+// Try to find a converter by its name
+IWorldConverter *IWorldConverter::Find(const CTString &strName) {
+  CMapConverters::iterator it = _mapConverters.find(strName);
 
   if (it != _mapConverters.end()) {
     return &it->second;
@@ -56,54 +63,78 @@ IWorldFormatConverter *IWorldFormatConverter::Find(const CTString &strName) {
   return NULL;
 };
 
-// Currently used converter
-static IWorldFormatConverter *_pconvCurrent = NULL;
+// Try to find a converter by its identifier
+IWorldConverter *IWorldConverter::Find(int iID) {
+  // Invalid converter
+  if (iID == -1) return NULL;
 
-// Get map converter for a specific format
-int SetConverterForFormat(void *pFormat)
+  CMapConverters::iterator it;
+
+  for (it = _mapConverters.begin(); it != _mapConverters.end(); it++) {
+    if (it->second.m_iID == iID) return &it->second;
+  }
+
+  return NULL;
+};
+
+// Currently used converter
+static IWorldConverter *_pconvCurrent = NULL;
+
+// Get world converter for a specific level format
+int IWorldConverter::GetConverterForFormat(void *pFormat)
 {
   ELevelFormat eFormat = *(ELevelFormat *)pFormat;
 
+  // Find world converter for any supported level format
+  IWorldConverter *pConv = NULL;
+
   switch (eFormat) {
-    case E_LF_TFE: _pconvCurrent = IWorldFormatConverter::Find("tfe"); break;
-    case E_LF_SSR: _pconvCurrent = IWorldFormatConverter::Find("ssr"); break;
-    default: _pconvCurrent = NULL;
+    case E_LF_TFE: pConv = Find("tfe"); break;
+    case E_LF_SSR: pConv = Find("ssr"); break;
   }
 
-  return (_pconvCurrent != NULL);
+  return (pConv != NULL) ? pConv->m_iID : -1;
 };
 
-// Reset a specific map converter before using it
-int ResetConverter(void *) {
-  if (_pconvCurrent != NULL && _pconvCurrent->m_pReset != NULL) {
-    _pconvCurrent->m_pReset();
+// Reset a specific world converter before using it
+int IWorldConverter::ResetConverter(void *pConverterData) {
+  if (pConverterData == NULL) return FALSE;
+
+  ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
+  IWorldConverter *pConv = Find(data.iID);
+  if (pConv == NULL) return FALSE;
+
+  if (pConv->m_pReset != NULL) {
+    pConv->m_pReset();
   }
 
-  return 0;
+  return TRUE;
 };
 
-// Convert the world using the current converter
-int ConvertWorld(void *pWorld) {
-  if (_pconvCurrent != NULL && _pconvCurrent->m_pConvertWorld != NULL) {
-    _pconvCurrent->m_pConvertWorld((CWorld *)pWorld);
+// Convert the world using a specific converter
+int IWorldConverter::ConvertWorld(void *pConverterData) {
+  if (pConverterData == NULL) return FALSE;
+
+  ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
+  if (data.pData == NULL) return FALSE;
+
+  // Set current converter before world conversion
+  _pconvCurrent = Find(data.iID);
+  if (_pconvCurrent == NULL) return FALSE;
+
+  if (_pconvCurrent->m_pConvertWorld != NULL) {
+    _pconvCurrent->m_pConvertWorld((CWorld *)data.pData);
   }
 
-  return 0;
+  return TRUE;
 };
 
 // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
-int HandleUnknownProperty(void *pPropData)
+int IWorldConverter::HandleUnknownProperty(void *pPropData)
 {
   if (_pconvCurrent != NULL && _pconvCurrent->m_pHandleProperty != NULL) {
-    struct SignalUnknownProp {
-      CEntity *pen;
-      ULONG ulType;
-      ULONG ulID;
-      void *pValue;
-    } *pArgProp = (SignalUnknownProp *)pPropData;
-
-    UnknownProp prop(pArgProp->ulType, pArgProp->ulID, pArgProp->pValue);
-    _pconvCurrent->m_pHandleProperty(pArgProp->pen, prop);
+    ExtArgUnknownProp_t &prop = *(ExtArgUnknownProp_t *)pPropData;
+    _pconvCurrent->m_pHandleProperty(prop);
   }
 
   return 0;
