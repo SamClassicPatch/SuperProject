@@ -34,7 +34,6 @@ cd %REPO%
 copy /B %STEAMLIB%                                     %BUILDS%TFE105\Bin\
 copy /B %SDLLIB%                                       %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\ClassicsCore.dll            %BUILDS%TFE105\Bin\
-copy /B Bin\Release_TFE105\ClassicsPatches.dll         %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\ClassicsExtras_Custom.dll   %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\DedicatedServer_Custom.exe  %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\SeriousSam_Custom.exe       %BUILDS%TFE105\Bin\
@@ -60,7 +59,6 @@ cd %REPO%
 copy /B %STEAMLIB%                                     %BUILDS%TSE105\Bin\
 copy /B %SDLLIB%                                       %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\ClassicsCore.dll            %BUILDS%TSE105\Bin\
-copy /B Bin\Release_TSE105\ClassicsPatches.dll         %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\ClassicsExtras_Custom.dll   %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\DedicatedServer_Custom.exe  %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\SeriousSam_Custom.exe       %BUILDS%TSE105\Bin\
@@ -86,7 +84,6 @@ cd %REPO%
 copy /B %STEAMLIB%                                     %BUILDS%TSE107\Bin\
 copy /B %SDLLIB%                                       %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\ClassicsCore.dll            %BUILDS%TSE107\Bin\
-copy /B Bin\Release_TSE107\ClassicsPatches.dll         %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\ClassicsExtras_Custom.dll   %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\DedicatedServer_Custom.exe  %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\SeriousSam_Custom.exe       %BUILDS%TSE107\Bin\

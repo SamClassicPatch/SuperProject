@@ -83,12 +83,24 @@
     <ClInclude Include="Networking\Modules.h" />
     <ClInclude Include="Networking\StreamBlock.h" />
     <ClInclude Include="Objects\PropertyPtr.h" />
+    <ClInclude Include="Patches\Entities.h" />
+    <ClInclude Include="Patches\FileSystem.h" />
+    <ClInclude Include="Patches\LogicTimers.h" />
+    <ClInclude Include="Patches\Network.h" />
+    <ClInclude Include="Patches\Rendering.h" />
+    <ClInclude Include="Patches\Ska.h" />
+    <ClInclude Include="Patches\SoundLibrary.h" />
+    <ClInclude Include="Patches\Strings.h" />
+    <ClInclude Include="Patches\Textures.h" />
+    <ClInclude Include="Patches\UnpageStreams.h" />
+    <ClInclude Include="Patches\Worlds.h" />
     <ClInclude Include="Query\QueryManager.h" />
     <ClInclude Include="Query\MasterServer.h" />
     <ClInclude Include="Query\ServerRequest.h" />
     <ClInclude Include="StdH.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="API\EnginePatches.cpp" />
     <ClCompile Include="API\IChat.cpp" />
     <ClCompile Include="API\IHooks.cpp" />
     <ClCompile Include="API\IGame.cpp" />
@@ -140,6 +152,17 @@
     <ClCompile Include="Networking\SessionStateServerInfo.cpp" />
     <ClCompile Include="Networking\StreamBlock.cpp" />
     <ClCompile Include="Objects\PropertyPtr.cpp" />
+    <ClCompile Include="Patches\Entities.cpp" />
+    <ClCompile Include="Patches\FileSystem.cpp" />
+    <ClCompile Include="Patches\LogicTimers.cpp" />
+    <ClCompile Include="Patches\Network.cpp" />
+    <ClCompile Include="Patches\Rendering.cpp" />
+    <ClCompile Include="Patches\Ska.cpp" />
+    <ClCompile Include="Patches\SoundLibrary.cpp" />
+    <ClCompile Include="Patches\Strings.cpp" />
+    <ClCompile Include="Patches\Textures.cpp" />
+    <ClCompile Include="Patches\UnpageStreams.cpp" />
+    <ClCompile Include="Patches\Worlds.cpp" />
     <ClCompile Include="Query\DarkPlacesQuery.cpp" />
     <ClCompile Include="Query\GameAgentQuery.cpp" />
     <ClCompile Include="Query\LegacyClientQuery.cpp" />

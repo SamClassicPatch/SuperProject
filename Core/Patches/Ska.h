@@ -64,7 +64,7 @@ class CSkaPatch {
     };
 };
 
-PATCHES_API extern CSkaPatch _SkaPatch;
+CORE_API extern CSkaPatch _SkaPatch;
 
 class CModelInstancePatch : public CModelInstance {
   public:
@@ -108,13 +108,13 @@ __forceinline BOOL PrepareHaze(void) {
 };
 
 // Update model for fog and haze
-PATCHES_API void P_DoFogAndHaze(BOOL bOpaqueSurface);
+CORE_API void P_DoFogAndHaze(BOOL bOpaqueSurface);
 
 // Render additional pass for fog and haze
-PATCHES_API void P_shaDoFogPass(void);
+CORE_API void P_shaDoFogPass(void);
 
 // Set texture wrapping
-PATCHES_API void P_shaSetTextureWrapping(GfxWrap eWrapU, GfxWrap eWrapV);
+CORE_API void P_shaSetTextureWrapping(GfxWrap eWrapU, GfxWrap eWrapV);
 
 #endif
 

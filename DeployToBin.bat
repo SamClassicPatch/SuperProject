@@ -11,9 +11,6 @@ set BINDIR=%GAMEDIR%Bin\
 echo ClassicsCore
 copy /B %BUILTDIR%ClassicsCore.dll %BINDIR%
 
-echo ClassicsPatches
-copy /B %BUILTDIR%ClassicsPatches.dll %BINDIR%
-
 echo ClassicsExtras
 copy /B %BUILTDIR%ClassicsExtras_Custom.dll %BINDIR%
 

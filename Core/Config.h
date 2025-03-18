@@ -68,42 +68,38 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define _APCT_NREV (SE1_GAME != SS_REV) // Feature should be disabled for Revolution
 #define _APCT_N110 (SE1_VER != SE1_110 || !_APCT_NREV) // Feature should be disabled for 1.10 forks (but not Revolution)
 
-// Core
+// API
+#define _PATCHCONFIG_STEAM_API (1 && _APCT_NREV) // Enable interactions with Steam
 
-  // API
-  #define _PATCHCONFIG_STEAM_API (1 && _APCT_NREV) // Enable interactions with Steam
+// Custom mod
+#define _PATCHCONFIG_CUSTOM_MOD          (1) // Allow usage of custom mod libraries (Entities, Game & GameGUI)
+#define _PATCHCONFIG_CUSTOM_MOD_ENTITIES (1) // Allow usage of the custom Entities library (only valid when _PATCHCONFIG_CUSTOM_MOD is enabled!)
 
-  // Custom mod
-  #define _PATCHCONFIG_CUSTOM_MOD          (1) // Allow usage of custom mod libraries (Entities, Game & GameGUI)
-  #define _PATCHCONFIG_CUSTOM_MOD_ENTITIES (1) // Allow usage of the custom Entities library (only valid when _PATCHCONFIG_CUSTOM_MOD is enabled!)
+// Definitions
+#define _PATCHCONFIG_CLASS_DEFINITIONS (1 && _APCT_N110) // Define classes that aren't exported from the engine
+#define _PATCHCONFIG_FUNC_DEFINITIONS  (1 && _APCT_N110) // Define methods that aren't exported from the engine
 
-  // Definitions
-  #define _PATCHCONFIG_CLASS_DEFINITIONS (1 && _APCT_N110) // Define classes that aren't exported from the engine
-  #define _PATCHCONFIG_FUNC_DEFINITIONS  (1 && _APCT_N110) // Define methods that aren't exported from the engine
+// Networking
+#define _PATCHCONFIG_EXT_PACKETS  (1 && _APCT_NREV) // Support for custom extension packets
+#define _PATCHCONFIG_GAMEPLAY_EXT (1 && _APCT_NREV) // Implement gameplay extensions
+#define _PATCHCONFIG_GUID_MASKING (1 && _APCT_NREV) // System for masking GUIDs of player characters separately for each server client
 
-  // Networking
-  #define _PATCHCONFIG_EXT_PACKETS  (1 && _APCT_NREV) // Support for custom extension packets
-  #define _PATCHCONFIG_GAMEPLAY_EXT (1 && _APCT_NREV) // Implement gameplay extensions
-  #define _PATCHCONFIG_GUID_MASKING (1 && _APCT_NREV) // System for masking GUIDs of player characters separately for each server client
+// Query
+#define _PATCHCONFIG_NEW_QUERY (1 && _APCT_NREV && _APCT_N110) // Utilize new query manager and switch master servers
 
-  // Query
-  #define _PATCHCONFIG_NEW_QUERY (1 && _APCT_NREV && _APCT_N110) // Utilize new query manager and switch master servers
+// Engine patches
+#define _PATCHCONFIG_ENGINEPATCHES (1) // Patch any engine functions at all or not
 
-// CorePatches
-
-  // Global
-  #define _PATCHCONFIG_ENGINEPATCHES (1) // Patch any engine functions at all or not
-
-  // Patch modules
-  #define _PATCHCONFIG_EXTEND_ENTITIES   (1) // Extend entities functionality by patching their methods
-  #define _PATCHCONFIG_ENTITY_FORCE      (1) // Hook force methods of some vanilla entities for modifying the gravity
-  #define _PATCHCONFIG_EXTEND_FILESYSTEM (1) // Extend file system functionality by patching its methods
-  #define _PATCHCONFIG_EXTEND_NETWORK    (1) // Extend networking functionality by patching its methods
-  #define _PATCHCONFIG_FIX_RENDERING     (1) // Fix FOV and other rendering issues by patching methods
-  #define _PATCHCONFIG_FIX_SKA           (1 && _APCT_NREV && _APCT_N110) // Fix SKA issues by patching methods
-  #define _PATCHCONFIG_FIX_STRINGS       (1) // Fix CTString methods by patching them
-  #define _PATCHCONFIG_EXTEND_TEXTURES   (1 && _APCT_N110) // Extend texture functionality by patching its methods
-  #define _PATCHCONFIG_FIX_LOGICTIMERS   (1 && _APCT_NREV) // Fix imprecise timers for entity logic
-  #define _PATCHCONFIG_FIX_STREAMPAGING  (1 && _APCT_NREV && _APCT_N110) // Fix streams by patching their paging methods (no need for 1.10)
+// Patch modules
+#define _PATCHCONFIG_EXTEND_ENTITIES   (1) // Extend entities functionality by patching their methods
+#define _PATCHCONFIG_ENTITY_FORCE      (1) // Hook force methods of some vanilla entities for modifying the gravity
+#define _PATCHCONFIG_EXTEND_FILESYSTEM (1) // Extend file system functionality by patching its methods
+#define _PATCHCONFIG_EXTEND_NETWORK    (1) // Extend networking functionality by patching its methods
+#define _PATCHCONFIG_FIX_RENDERING     (1) // Fix FOV and other rendering issues by patching methods
+#define _PATCHCONFIG_FIX_SKA           (1 && _APCT_NREV && _APCT_N110) // Fix SKA issues by patching methods
+#define _PATCHCONFIG_FIX_STRINGS       (1) // Fix CTString methods by patching them
+#define _PATCHCONFIG_EXTEND_TEXTURES   (1 && _APCT_N110) // Extend texture functionality by patching its methods
+#define _PATCHCONFIG_FIX_LOGICTIMERS   (1 && _APCT_NREV) // Fix imprecise timers for entity logic
+#define _PATCHCONFIG_FIX_STREAMPAGING  (1 && _APCT_NREV && _APCT_N110) // Fix streams by patching their paging methods (no need for 1.10)
 
 #endif

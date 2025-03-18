@@ -19,8 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Extras/XGizmo/Patcher/patcher.h>
 #include <Extras/XGizmo/Patcher/patcher.cpp>
 
-ICorePatches *_pCorePatches = NULL;
-
 // Actual data of the function patch that's being physically constructed
 struct CoreFunctionPatch_t : public FuncPatch_t
 {

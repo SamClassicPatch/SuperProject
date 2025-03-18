@@ -70,6 +70,12 @@
     <Filter Include="Source Files\Objects">
       <UniqueIdentifier>{ce304848-dbd0-4512-89b8-693806287d40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Patches headers">
+      <UniqueIdentifier>{76413fe1-8218-4d0f-ae98-15d6b52bf44f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Patches">
+      <UniqueIdentifier>{d86f7673-36b5-4e35-8e77-8d0fe16e9f08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdH.h">
@@ -227,6 +233,39 @@
     </ClInclude>
     <ClInclude Include="Base\InputApiCompatibility.h">
       <Filter>Header Files\Base headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Rendering.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Ska.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\SoundLibrary.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Strings.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Textures.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\UnpageStreams.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Worlds.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Entities.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\FileSystem.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\LogicTimers.h">
+      <Filter>Header Files\Patches headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Network.h">
+      <Filter>Header Files\Patches headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -409,6 +448,42 @@
     </ClCompile>
     <ClCompile Include="Networking\ExtPackets\ExtPlaySound.cpp">
       <Filter>Source Files\Networking\ExtPackets</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Ska.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\SoundLibrary.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Strings.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Textures.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\UnpageStreams.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Worlds.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Entities.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\FileSystem.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\LogicTimers.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Network.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Rendering.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="API\EnginePatches.cpp">
+      <Filter>Source Files\API</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

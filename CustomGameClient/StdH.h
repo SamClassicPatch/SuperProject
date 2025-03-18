@@ -15,7 +15,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // [Cecil] Include the core library and patches
 #include <Core/Core.h>
-#include <CorePatches/Patches.h>
 
 // [Cecil] New input
 #include <SDL.h>

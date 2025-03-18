@@ -19,11 +19,26 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #if _PATCHCONFIG_ENGINEPATCHES
 
+// Interface of various dummy methods
+namespace IDummy {
+
+// Empty method
+inline void Void(void) {
+  NOTHING;
+};
+
+// Empty stream page method
+inline void PageFunc(INDEX iPage) {
+  (void)iPage;
+};
+
+}; // namespace
+
 // Singleton for patching
-CPatches _EnginePatches;
+ICorePatches _EnginePatches;
 
 // Constructor
-CPatches::CPatches() {
+ICorePatches::ICorePatches() {
   _bAdjustForAspectRatio = TRUE;
   _bUseVerticalFOV = 2; // Only player FOV
   _fCustomFOV = -1.0f;
@@ -39,10 +54,7 @@ CPatches::CPatches() {
 };
 
 // Apply core patches (called after Core initialization!)
-void CPatches::CorePatches(void) {
-  // Hook this interface
-  _pCorePatches = this;
-
+void ICorePatches::CorePatches(void) {
   const bool bGame = ClassicsCore_IsGameApp();
   const bool bServer = ClassicsCore_IsServerApp();
   const bool bEditor = ClassicsCore_IsEditorApp();
@@ -85,7 +97,7 @@ void CPatches::CorePatches(void) {
 
 #include "Patches/Entities.h"
 
-void CPatches::Entities(void) {
+void ICorePatches::Entities(void) {
 #if _PATCHCONFIG_EXTEND_ENTITIES
 
   // CEntity
@@ -172,7 +184,7 @@ void CPatches::Entities(void) {
 
 #include "Patches/LogicTimers.h"
 
-void CPatches::LogicTimers(void) {
+void ICorePatches::LogicTimers(void) {
 #if _PATCHCONFIG_FIX_LOGICTIMERS
 
   void (CRationalEntity::*pSetTimerAfter)(TIME) = &CRationalEntity::SetTimerAfter;
@@ -183,7 +195,7 @@ void CPatches::LogicTimers(void) {
 
 #include "Patches/Network.h"
 
-void CPatches::Network(void) {
+void ICorePatches::Network(void) {
 #if _PATCHCONFIG_EXTEND_NETWORK
 
   // CCommunicationInterface
@@ -291,7 +303,7 @@ void CPatches::Network(void) {
 
 #include "Patches/Rendering.h"
 
-void CPatches::Rendering(void) {
+void ICorePatches::Rendering(void) {
 #if _PATCHCONFIG_FIX_RENDERING
 
   extern void (*pRenderView)(CWorld &, CEntity &, CAnyProjection3D &, CDrawPort &);
@@ -317,7 +329,7 @@ void CPatches::Rendering(void) {
 
 #include "Patches/Ska.h"
 
-void CPatches::Ska(void) {
+void ICorePatches::Ska(void) {
 #if _PATCHCONFIG_FIX_SKA
 
   // SKA models have been patched
@@ -347,7 +359,7 @@ void CPatches::Ska(void) {
 
 #include "Patches/SoundLibrary.h"
 
-void CPatches::SoundLibrary(void) {
+void ICorePatches::SoundLibrary(void) {
   void (CSoundLibrary::*pListen)(CSoundListener &) = &CSoundLibrary::Listen;
   CreatePatch(pListen, &CSoundLibPatch::P_Listen, "CSoundLibrary::Listen(...)");
 
@@ -357,7 +369,7 @@ void CPatches::SoundLibrary(void) {
 
 #include "Patches/Strings.h"
 
-void CPatches::Strings(void) {
+void ICorePatches::Strings(void) {
 #if _PATCHCONFIG_FIX_STRINGS
 
   INDEX (CTString::*pVPrintF)(const char *, va_list) = &CTString::VPrintF;
@@ -371,7 +383,7 @@ void CPatches::Strings(void) {
 
 #include "Patches/Textures.h"
 
-void CPatches::Textures(void) {
+void ICorePatches::Textures(void) {
 #if _PATCHCONFIG_EXTEND_TEXTURES
 
   void (CTextureData::*pCreateTex)(const CImageInfo *, MEX, INDEX, int) = &CTextureData::Create_t;
@@ -395,7 +407,7 @@ void CPatches::Textures(void) {
 
 #include "Patches/Worlds.h"
 
-void CPatches::Worlds(void) {
+void ICorePatches::Worlds(void) {
   void (CWorld::*pWorldLoad)(const CTFileName &) = &CWorld::Load_t;
   CreatePatch(pWorldLoad, &CWorldPatch::P_Load, "CWorld::Load_t(...)");
 
@@ -444,7 +456,7 @@ static void PatchStreams(void) {
 #endif // _PATCHCONFIG_FIX_STREAMPAGING
 };
 
-void CPatches::UnpageStreams(void) {
+void ICorePatches::UnpageStreams(void) {
 #if _PATCHCONFIG_FIX_STREAMPAGING
 
   // Streams have been unpaged
@@ -495,7 +507,7 @@ void CPatches::UnpageStreams(void) {
 
 #include "Patches/FileSystem.h"
 
-void CPatches::FileSystem(void) {
+void ICorePatches::FileSystem(void) {
 #if _PATCHCONFIG_EXTEND_FILESYSTEM
 
   // File system has been extended
@@ -550,7 +562,7 @@ void CPatches::FileSystem(void) {
 };
 
 // Clean up on Core shutdown (only for patches set by CorePatches() method)
-void CPatches::Cleanup(void)
+void ICorePatches::Cleanup(void)
 {
 };
 

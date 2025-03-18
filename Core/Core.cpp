@@ -208,10 +208,7 @@ void ClassicsPatch_Shutdown(void)
   _bClassicsPatchRunning = false;
 
   // Clean up the patches
-  if (_pCorePatches != NULL) {
-    _pCorePatches->Cleanup();
-    _pCorePatches = NULL;
-  }
+  _EnginePatches.Cleanup();
 
   // Destroy timer handler
   _pTimer->RemHandler(_pTimerHandler);

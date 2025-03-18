@@ -15,9 +15,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-// [Cecil] TEMP: _EnginePatches._eWorldFormat
-#include <CorePatches/Patches.h>
-
 // Storage of all possible converters under specific identifiers
 typedef se1::map<CTString, IWorldConverter> CMapConverters;
 static CMapConverters _mapConverters;
