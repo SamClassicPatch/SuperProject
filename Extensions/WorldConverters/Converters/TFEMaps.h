@@ -32,8 +32,8 @@ void RememberWSC(const SWorldConverterUnknownProp &prop);
 // Apply remembered rain properties from controllers
 void ApplyRainProperties(void);
 
-// Reset the converter before loading a new world
-void Reset(void);
+// Prepare the converter before loading a new world
+void Prepare(void);
 
 // Handle some unknown property
 void HandleProperty(const ExtArgUnknownProp_t &propData);

@@ -26,17 +26,18 @@ CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_wldconverters", k_EPluginFlagGame | k_
 CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "CreateConverter",          &IWorldConverter::CreateConverter },         // Arg ptr : const char (string)
   { "SetMethodDestructor",      &IWorldConverter::SetMethodDestructor },     // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterDestructor)
-  { "SetMethodReset",           &IWorldConverter::SetMethodReset },          // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterReset)
+  { "SetMethodPrepare",         &IWorldConverter::SetMethodPrepare },        // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterReset)
   { "SetMethodReplaceClass",    &IWorldConverter::SetMethodReplaceClass },   // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterReplaceClass)
   { "SetMethodHandleProperty",  &IWorldConverter::SetMethodHandleProperty }, // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterHandleProperty)
   { "SetMethodConvertWorld",    &IWorldConverter::SetMethodConvertWorld },   // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterConvert)
 
   { "GetConverterForFormat",    &IWorldConverter::GetConverterForFormat }, // Arg ptr : ELevelFormat
   { "GetConverterByName",       &IWorldConverter::GetConverterByName },    // Arg ptr : const char (string)
-  { "ResetConverter",           &IWorldConverter::ResetConverter },        // Arg ptr : ExtArgWorldConverter_t (pData = NULL)
-  { "ConvertWorld",             &IWorldConverter::ConvertWorld },          // Arg ptr : ExtArgWorldConverter_t (pData = CWorld *)
-  { "HandleUnknownProperty",    &IWorldConverter::HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
+
+  { "PrepareConverter",         &IWorldConverter::PrepareConverter },      // Arg ptr : ExtArgWorldConverter_t (pData = NULL)
   { "ReplaceClass",             &IWorldConverter::ReplaceClass },          // Arg ptr : ExtArgEclData_t
+  { "HandleUnknownProperty",    &IWorldConverter::HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
+  { "ConvertWorld",             &IWorldConverter::ConvertWorld },          // Arg ptr : CWorld
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
 // Module entry point
@@ -51,7 +52,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   IWorldConverter *pTFE = IWorldConverter::Add("tfe");
 
   if (pTFE != NULL) {
-    pTFE->m_pReset          = &IConvertTFE::Reset;
+    pTFE->m_pPrepare        = &IConvertTFE::Prepare;
     pTFE->m_pHandleProperty = &IConvertTFE::HandleProperty;
     pTFE->m_pConvertWorld   = &IConvertTFE::ConvertWorld;
   }
@@ -59,7 +60,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   IWorldConverter *pSSR = IWorldConverter::Add("ssr");
 
   if (pSSR != NULL) {
-    pSSR->m_pReset          = &IConvertSSR::Reset;
+    pSSR->m_pPrepare        = &IConvertSSR::Prepare;
     pSSR->m_pHandleProperty = &IConvertSSR::HandleProperty;
     pSSR->m_pConvertWorld   = &IConvertSSR::ConvertWorld;
   }

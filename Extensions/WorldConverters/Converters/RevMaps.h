@@ -23,8 +23,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Interface for converting worlds from Revolution
 namespace IConvertSSR {
 
-// Reset the converter before loading a new world
-void Reset(void);
+// Prepare the converter before loading a new world
+void Prepare(void);
 
 // Handle some unknown property
 void HandleProperty(const ExtArgUnknownProp_t &propData);

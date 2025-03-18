@@ -39,8 +39,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace IConvertTFE {
 
-// Reset the converter before loading a new world
-void Reset(void) {
+// Prepare the converter before loading a new world
+void Prepare(void) {
   // Clear the rain
   ClearRainVariables();
 };

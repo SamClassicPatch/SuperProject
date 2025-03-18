@@ -80,9 +80,10 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
   // Also verify the existence of a converter for this format
   bConverter = (bConverter && convData.iID != -1);
 
+  // Prepare world converter before using it
   if (bConverter) {
     convData.pData = NULL;
-    ClassicsExtensions_CallSignal(hConverters, "ResetConverter", NULL, &convData);
+    ClassicsExtensions_CallSignal(hConverters, "PrepareConverter", NULL, &convData);
   }
 
   // Check engine build
@@ -107,10 +108,9 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
     CSetFPUPrecision FPUPrecision(FPT_24BIT);
     CTmpPrecachingNow tpn;
 
-    // Use map converter
+    // Use prepared world converter
     if (bConverter) {
-      convData.pData = this;
-      ClassicsExtensions_CallSignal(hConverters, "ConvertWorld", NULL, &convData);
+      ClassicsExtensions_CallSignal(hConverters, "ConvertWorld", NULL, this);
     }
 
     // Reset every entity

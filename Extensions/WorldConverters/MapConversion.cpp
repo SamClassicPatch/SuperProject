@@ -98,7 +98,7 @@ int IWorldConverter::SetMethodDestructor(void *pConverterData) {
   return TRUE;
 };
 
-int IWorldConverter::SetMethodReset(void *pConverterData) {
+int IWorldConverter::SetMethodPrepare(void *pConverterData) {
   if (pConverterData == NULL) return FALSE;
 
   ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
@@ -106,7 +106,7 @@ int IWorldConverter::SetMethodReset(void *pConverterData) {
 
   if (pConv == NULL) return FALSE;
 
-  pConv->m_pReset = (FWorldConverterReset)data.pData;
+  pConv->m_pPrepare = (FWorldConverterPrepare)data.pData;
   return TRUE;
 };
 
@@ -175,48 +175,46 @@ int IWorldConverter::GetConverterByName(void *strName) {
   return (pConv != NULL) ? pConv->m_iID : -1;
 };
 
-// Reset a specific world converter before using it
-int IWorldConverter::ResetConverter(void *pConverterData) {
+// Prepare a specific world converter before using it
+int IWorldConverter::PrepareConverter(void *pConverterData) {
   if (pConverterData == NULL) return FALSE;
 
   ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
-  IWorldConverter *pConv = Find(data.iID);
-  if (pConv == NULL) return FALSE;
 
-  if (pConv->m_pReset != NULL) {
-    pConv->m_pReset();
+  // Set current converter before using it
+  _pconvCurrent = Find(data.iID);
+  if (_pconvCurrent == NULL) return FALSE;
+
+  if (_pconvCurrent->m_pPrepare != NULL) {
+    _pconvCurrent->m_pPrepare();
   }
 
   return TRUE;
 };
 
 // Convert the world using a specific converter
-int IWorldConverter::ConvertWorld(void *pConverterData) {
-  if (pConverterData == NULL) return FALSE;
-
-  ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
-  if (data.pData == NULL) return FALSE;
-
-  // Set current converter before world conversion
-  _pconvCurrent = Find(data.iID);
-  if (_pconvCurrent == NULL) return FALSE;
+int IWorldConverter::ConvertWorld(void *pWorld) {
+  // No converter or no world
+  if (_pconvCurrent == NULL || pWorld == NULL) return FALSE;
 
   if (_pconvCurrent->m_pConvertWorld != NULL) {
-    _pconvCurrent->m_pConvertWorld((CWorld *)data.pData);
+    _pconvCurrent->m_pConvertWorld((CWorld *)pWorld);
   }
 
   return TRUE;
 };
 
 // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
-int IWorldConverter::HandleUnknownProperty(void *pPropData)
-{
-  if (_pconvCurrent != NULL && _pconvCurrent->m_pHandleProperty != NULL) {
+int IWorldConverter::HandleUnknownProperty(void *pPropData) {
+  // No converter or no property data
+  if (_pconvCurrent == NULL || pPropData == NULL) return FALSE;
+
+  if (_pconvCurrent->m_pHandleProperty != NULL) {
     ExtArgUnknownProp_t &prop = *(ExtArgUnknownProp_t *)pPropData;
     _pconvCurrent->m_pHandleProperty(prop);
   }
 
-  return 0;
+  return TRUE;
 };
 
 // Check if the entity state doesn't match

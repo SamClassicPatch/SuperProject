@@ -46,8 +46,8 @@ namespace IConvertSSR {
 // List of entities to destroy
 static CEntities SSR_cenDestroy;
 
-// Reset the converter before loading a new world
-void Reset(void) {
+// Prepare the converter before loading a new world
+void Prepare(void) {
   // Clear entities to destroy
   SSR_cenDestroy.Clear();
 };

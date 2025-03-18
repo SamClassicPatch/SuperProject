@@ -35,7 +35,7 @@ class IWorldConverter {
     int m_iID; // Unique identifier instead of a name (-1 for invalid)
 
     FWorldConverterDestructor m_pDestructor;
-    FWorldConverterReset m_pReset;
+    FWorldConverterPrepare m_pPrepare;
     FWorldConverterReplaceClass m_pReplaceClass;
     FWorldConverterHandleProperty m_pHandleProperty;
     FWorldConverterConvert m_pConvertWorld;
@@ -61,7 +61,7 @@ class IWorldConverter {
       m_iID = -1;
 
       m_pDestructor     = NULL;
-      m_pReset          = NULL;
+      m_pPrepare        = NULL;
       m_pReplaceClass   = NULL;
       m_pHandleProperty = NULL;
       m_pConvertWorld   = NULL;
@@ -70,7 +70,7 @@ class IWorldConverter {
     // Assignment operator
     IWorldConverter &operator=(const IWorldConverter &convOther) {
       m_pDestructor     = convOther.m_pDestructor;
-      m_pReset          = convOther.m_pReset;
+      m_pPrepare        = convOther.m_pPrepare;
       m_pReplaceClass   = convOther.m_pReplaceClass;
       m_pHandleProperty = convOther.m_pHandleProperty;
       m_pConvertWorld   = convOther.m_pConvertWorld;
@@ -96,7 +96,7 @@ class IWorldConverter {
     // Signals for setting up a new converter
     static int CreateConverter(void *strName);
     static int SetMethodDestructor(void *pConverterData);
-    static int SetMethodReset(void *pConverterData);
+    static int SetMethodPrepare(void *pConverterData);
     static int SetMethodReplaceClass(void *pConverterData);
     static int SetMethodHandleProperty(void *pConverterData);
     static int SetMethodConvertWorld(void *pConverterData);
@@ -107,19 +107,19 @@ class IWorldConverter {
     // Get world converter by its name
     static int GetConverterByName(void *strName);
 
-    // Reset a specific world converter before using it
-    static int ResetConverter(void *pConverterData);
+    // Prepare a specific world converter before using it
+    static int PrepareConverter(void *pConverterData);
 
-    // Convert the world using a specific converter
-    static int ConvertWorld(void *pConverterData);
+    // Replace some class from some library upon loading it from an ECL file (e.g. Revolution class that doesn't exist in vanilla TSE)
+    // Returns true if the class (or the library it's in) in the input has been replaced
+    static int ReplaceClass(void *pEclData);
 
     // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
     // It uses a method from the current converter that's set by calling ConvertWorld()
     static int HandleUnknownProperty(void *pPropData);
 
-    // Replace some class from some library upon loading it from an ECL file (e.g. Revolution class that doesn't exist in vanilla TSE)
-    // Returns true if the class (or the library it's in) in the input has been replaced
-    static int ReplaceClass(void *pEclData);
+    // Convert the world using a specific converter
+    static int ConvertWorld(void *pWorld);
 };
 
 // Common methods related to world conversion
