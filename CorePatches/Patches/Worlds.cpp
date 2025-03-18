@@ -242,15 +242,6 @@ CEntity *CWorldPatch::P_CreateEntity(const CPlacement3D &plPlacement, const CTFi
   CEntityClass *pecClass = NULL;
   CTFileName fnmCopy = fnmClass;
 
-#if SE1_GAME != SS_REV
-  // [Cecil] Replace nonexistent classes from Revolution before loading them
-  if (_EnginePatches._eWorldFormat == E_LF_SSR && !FileExists(fnmCopy))
-  {
-    static HPatchPlugin hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
-    ClassicsExtensions_CallSignal(hConverters, "ReplaceRevolutionClasses", NULL, &fnmCopy);
-  }
-#endif
-
   // [Cecil] Try obtaining a new entity class
   try {
     pecClass = _pEntityClassStock->Obtain_t(fnmCopy);

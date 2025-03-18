@@ -36,6 +36,7 @@ class IWorldConverter {
 
     FWorldConverterDestructor m_pDestructor;
     FWorldConverterReset m_pReset;
+    FWorldConverterReplaceClass m_pReplaceClass;
     FWorldConverterHandleProperty m_pHandleProperty;
     FWorldConverterConvert m_pConvertWorld;
 
@@ -61,6 +62,7 @@ class IWorldConverter {
 
       m_pDestructor     = NULL;
       m_pReset          = NULL;
+      m_pReplaceClass   = NULL;
       m_pHandleProperty = NULL;
       m_pConvertWorld   = NULL;
     };
@@ -69,6 +71,7 @@ class IWorldConverter {
     IWorldConverter &operator=(const IWorldConverter &convOther) {
       m_pDestructor     = convOther.m_pDestructor;
       m_pReset          = convOther.m_pReset;
+      m_pReplaceClass   = convOther.m_pReplaceClass;
       m_pHandleProperty = convOther.m_pHandleProperty;
       m_pConvertWorld   = convOther.m_pConvertWorld;
       return *this;
@@ -94,6 +97,7 @@ class IWorldConverter {
     static int CreateConverter(void *strName);
     static int SetMethodDestructor(void *pConverterData);
     static int SetMethodReset(void *pConverterData);
+    static int SetMethodReplaceClass(void *pConverterData);
     static int SetMethodHandleProperty(void *pConverterData);
     static int SetMethodConvertWorld(void *pConverterData);
 
@@ -112,6 +116,10 @@ class IWorldConverter {
     // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
     // It uses a method from the current converter that's set by calling ConvertWorld()
     static int HandleUnknownProperty(void *pPropData);
+
+    // Replace some class from some library upon loading it from an ECL file (e.g. Revolution class that doesn't exist in vanilla TSE)
+    // Returns true if the class (or the library it's in) in the input has been replaced
+    static int ReplaceClass(void *pEclData);
 };
 
 // Common methods related to world conversion
@@ -126,11 +134,5 @@ void CreateGlobalLight(void);
 __forceinline INDEX WeaponFlag(INDEX iWeapon) {
   return (1 << (iWeapon - 1));
 };
-
-// Replace nonexistent vanilla classes upon loading them from ECL classes
-int ReplaceMissingClasses(void *pEclData);
-
-// Replace nonexistent Revolution classes before loading them from ECL files
-int ReplaceRevolutionClasses(void *pfnmCopy);
 
 #endif

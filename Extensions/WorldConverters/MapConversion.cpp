@@ -110,6 +110,18 @@ int IWorldConverter::SetMethodReset(void *pConverterData) {
   return TRUE;
 };
 
+int IWorldConverter::SetMethodReplaceClass(void *pConverterData) {
+  if (pConverterData == NULL) return FALSE;
+
+  ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
+  IWorldConverter *pConv = Find(data.iID);
+
+  if (pConv == NULL) return FALSE;
+
+  pConv->m_pReplaceClass = (FWorldConverterReplaceClass)data.pData;
+  return TRUE;
+};
+
 int IWorldConverter::SetMethodHandleProperty(void *pConverterData) {
   if (pConverterData == NULL) return FALSE;
 
@@ -303,10 +315,21 @@ static BOOL ReplaceClassFromTable(CTString &strClassName, ClassReplacementPair *
   return FALSE;
 };
 
-// Replace nonexistent vanilla classes upon loading them from ECL classes
-int ReplaceMissingClasses(void *pEclData) {
-  CTFileName &fnmDLL = *((ExtArgEclData_t *)pEclData)->pfnmDLL;
-  CTString &strClassName = *((ExtArgEclData_t *)pEclData)->pstrClassName;
+// Replace some class from some library upon loading it from an ECL file
+int IWorldConverter::ReplaceClass(void *pEclData) {
+  ExtArgEclData_t &eclData = *(ExtArgEclData_t *)pEclData;
+
+  // See if the converter can replace certain classes
+  if (_pconvCurrent != NULL && _pconvCurrent->m_pReplaceClass != NULL) {
+    // Quit if it can
+    if (_pconvCurrent->m_pReplaceClass(eclData)) return TRUE;
+  }
+
+  CTFileName &fnmDLL = *eclData.pfnmDLL;
+  CTString &strClassName = *eclData.pstrClassName;
+
+  // Not vanilla entities
+  if (fnmDLL != "Bin\\Entities.dll") return FALSE;
 
   // Classes available in ExtraEntities library
   static ClassReplacementPair aExtras[] = {
@@ -394,16 +417,4 @@ int ReplaceMissingClasses(void *pEclData) {
 
   // No replacement
   return FALSE;
-};
-
-// Replace nonexistent Revolution classes before loading them from ECL files
-int ReplaceRevolutionClasses(void *pfnmCopy) {
-  CTFileName &fnmCopy = *(CTFileName *)pfnmCopy;
-
-  static ClassReplacementPair aRevReplace[] = {
-    { "Classes\\PostProcessingEffect.ecl", "Classes\\Marker.ecl" },
-    { NULL, NULL },
-  };
-
-  return ReplaceClassFromTable(fnmCopy, aRevReplace);
 };

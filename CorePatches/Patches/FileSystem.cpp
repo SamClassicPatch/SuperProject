@@ -63,21 +63,20 @@ void CEntityClassPatch::P_Read(CTStream *istr) {
   CTString strClassName;
   strClassName.ReadFromText_t(*istr, "Class: ");
 
-  // [Cecil] Replace nonexistent vanilla classes
+  // [Cecil] Remember whether it wants to load from the vanilla library
   const BOOL bVanillaEntities = (fnmDLL == "Bin\\Entities.dll");
 
-  if (bVanillaEntities) {
-    // [Cecil] NOTE: Attempt to retrieve the extension until it succeeds because
-    // the extension isn't loaded yet when SE_InitEngine() requests "Player.ecl"
-    static HPatchPlugin hConverters = NULL;
-    if (hConverters == NULL) hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
+  // [Cecil] NOTE: Attempt to retrieve the extension until it succeeds because
+  // the extension isn't loaded yet when SE_InitEngine() requests "Player.ecl"
+  static HPatchPlugin hConverters = NULL;
+  if (hConverters == NULL) hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
 
-    // [Cecil] NOTE: fnmDLL may be changed but 'bVanillaEntities' should NOT be recalculated!
-    ExtArgEclData_t eclData;
-    eclData.pfnmDLL = &fnmDLL;
-    eclData.pstrClassName = &strClassName;
-    ClassicsExtensions_CallSignal(hConverters, "ReplaceMissingClasses", NULL, &eclData);
-  }
+  // [Cecil] Replace specific classes depending on the world converter (primarily nonexistent vanilla classes)
+  // [Cecil] NOTE: fnmDLL may be changed but 'bVanillaEntities' should NOT be recalculated!
+  ExtArgEclData_t eclData;
+  eclData.pfnmDLL = &fnmDLL;
+  eclData.pstrClassName = &strClassName;
+  ClassicsExtensions_CallSignal(hConverters, "ReplaceClass", NULL, &eclData);
 
   // [Cecil] Construct full path to the entities library
   const CTString strLibName = fnmDLL.FileName();

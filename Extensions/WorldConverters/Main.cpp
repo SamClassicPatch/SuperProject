@@ -27,6 +27,7 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "CreateConverter",          &IWorldConverter::CreateConverter },         // Arg ptr : const char (string)
   { "SetMethodDestructor",      &IWorldConverter::SetMethodDestructor },     // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterDestructor)
   { "SetMethodReset",           &IWorldConverter::SetMethodReset },          // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterReset)
+  { "SetMethodReplaceClass",    &IWorldConverter::SetMethodReplaceClass },   // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterReplaceClass)
   { "SetMethodHandleProperty",  &IWorldConverter::SetMethodHandleProperty }, // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterHandleProperty)
   { "SetMethodConvertWorld",    &IWorldConverter::SetMethodConvertWorld },   // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterConvert)
 
@@ -35,9 +36,7 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "ResetConverter",           &IWorldConverter::ResetConverter },        // Arg ptr : ExtArgWorldConverter_t (pData = NULL)
   { "ConvertWorld",             &IWorldConverter::ConvertWorld },          // Arg ptr : ExtArgWorldConverter_t (pData = CWorld *)
   { "HandleUnknownProperty",    &IWorldConverter::HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
-
-  { "ReplaceMissingClasses",    &ReplaceMissingClasses }, // Arg ptr : ExtArgEclData_t
-  { "ReplaceRevolutionClasses", &ReplaceRevolutionClasses }, // Arg ptr : CTFileName
+  { "ReplaceClass",             &IWorldConverter::ReplaceClass },          // Arg ptr : ExtArgEclData_t
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
 // Module entry point
