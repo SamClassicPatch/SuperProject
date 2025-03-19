@@ -40,6 +40,18 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "ConvertWorld",             &IWorldConverter::ConvertWorld },          // Arg ptr : CWorld
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
+// Reset every entity
+static void ConvertReinit(CWorld *pwo) {
+  FOREACHINDYNAMICCONTAINER(pwo->wo_cenEntities, CEntity, iten) {
+    CallProgressHook_t((FLOAT)iten.GetIndex() / (FLOAT)pwo->wo_cenEntities.Count());
+
+    // Only reinitialize entities with active gameplay logic
+    if (IsRationalEntity(&*iten)) {
+      iten->Reinitialize();
+    }
+  }
+};
+
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
@@ -48,7 +60,15 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   if (_bDefaultAdded) return;
   _bDefaultAdded = true;
 
+  // Reinitialization
+  IWorldConverter *pReinit = IWorldConverter::Add("reinit");
+
+  if (pReinit != NULL) {
+    pReinit->m_pConvertWorld = &ConvertReinit;
+  }
+
 #if CLASSIC_TSE_FUSION_MODE
+  // The First Encounter
   IWorldConverter *pTFE = IWorldConverter::Add("tfe");
 
   if (pTFE != NULL) {
@@ -57,6 +77,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
     pTFE->m_pConvertWorld   = &IConvertTFE::ConvertWorld;
   }
 
+  // Serious Sam Revolution
   IWorldConverter *pSSR = IWorldConverter::Add("ssr");
 
   if (pSSR != NULL) {

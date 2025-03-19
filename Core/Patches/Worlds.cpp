@@ -95,12 +95,8 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
 
   strmFile.Close();
 
-  // [Cecil] Determine forced reinitialization and forcefully convert other world types
-  const BOOL bReinitEverything = (_EnginePatches._iWorldConverter == 0);
-  const BOOL bForceReinit = (bReinitEverything || bConverter);
-
   // [Cecil] Convert the world some specific way while in game
-  if (!ClassicsCore_IsEditorApp() && bForceReinit) {
+  if (!ClassicsCore_IsEditorApp() && bConverter) {
     SetProgressDescription(LOCALIZE("converting from old version"));
     CallProgressHook_t(0.0f);
 
@@ -109,21 +105,7 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
     CTmpPrecachingNow tpn;
 
     // Use prepared world converter
-    if (bConverter) {
-      ClassicsExtensions_CallSignal(hConverters, "ConvertWorld", NULL, this);
-    }
-
-    // Reset every entity
-    if (bReinitEverything) {
-      FOREACHINDYNAMICCONTAINER(wo_cenEntities, CEntity, iten) {
-        CallProgressHook_t((FLOAT)iten.GetIndex() / (FLOAT)wo_cenEntities.Count());
-
-        // Reinitialize only rational entities
-        if (IsRationalEntity(&*iten)) {
-          iten->Reinitialize();
-        }
-      }
-    }
+    ClassicsExtensions_CallSignal(hConverters, "ConvertWorld", NULL, this);
 
     CallProgressHook_t(1.0f);
 
