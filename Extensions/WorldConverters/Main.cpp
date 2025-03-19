@@ -34,7 +34,7 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "GetConverterForFormat",    &IWorldConverter::GetConverterForFormat }, // Arg ptr : ELevelFormat
   { "GetConverterByName",       &IWorldConverter::GetConverterByName },    // Arg ptr : const char (string)
 
-  { "PrepareConverter",         &IWorldConverter::PrepareConverter },      // Arg ptr : ExtArgWorldConverter_t (pData = NULL)
+  { "PrepareConverter",         &IWorldConverter::PrepareConverter },      // Arg ptr : ExtArgWorldConverter_t (pData = const char *)
   { "ReplaceClass",             &IWorldConverter::ReplaceClass },          // Arg ptr : ExtArgEclData_t
   { "HandleUnknownProperty",    &IWorldConverter::HandleUnknownProperty }, // Arg ptr : ExtArgUnknownProp_t
   { "ConvertWorld",             &IWorldConverter::ConvertWorld },          // Arg ptr : CWorld

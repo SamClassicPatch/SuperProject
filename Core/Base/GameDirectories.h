@@ -22,10 +22,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // Different level formats
 enum ELevelFormat {
-  E_LF_TFE, // Serious Sam: The First Encounter
-  E_LF_TSE, // Serious Sam: The Second Encounter
-  E_LF_SSR, // Serious Sam Revolution
-  E_LF_150, // Games on 1.50
+  E_LF_TFE = 0, // Serious Sam: The First Encounter
+  E_LF_TSE = 1, // Serious Sam: The Second Encounter
+  E_LF_SSR = 2, // Serious Sam Revolution
+  E_LF_150 = 3, // Games on 1.50
+
+  E_LF_FORMATCOUNT,
 
   // Current format
 #if SE1_GAME == SS_REV

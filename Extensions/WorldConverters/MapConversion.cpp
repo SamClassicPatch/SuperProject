@@ -143,8 +143,8 @@ int IWorldConverter::SetMethodConvertWorld(void *pConverterData) {
   return TRUE;
 };
 
-// Currently used converter
-static IWorldConverter *_pconvCurrent = NULL;
+// Currently used converters
+static CDynamicContainer<IWorldConverter> _cCurrentConverters;
 
 // Get world converter for a specific level format
 int IWorldConverter::GetConverterForFormat(void *pFormat)
@@ -176,14 +176,68 @@ int IWorldConverter::GetConverterByName(void *strName) {
 int IWorldConverter::PrepareConverter(void *pConverterData) {
   if (pConverterData == NULL) return FALSE;
 
+  // Clear previous converters
+  _cCurrentConverters.Clear();
+
   ExtArgWorldConverter_t &data = *(ExtArgWorldConverter_t *)pConverterData;
 
-  // Set current converter before using it
-  _pconvCurrent = Find(data.iID);
-  if (_pconvCurrent == NULL) return FALSE;
+  // Determine order of converters instead of using a single one
+  bool bMultiple = false;
 
-  if (_pconvCurrent->m_pPrepare != NULL) {
-    _pconvCurrent->m_pPrepare();
+  if (data.pData != NULL) {
+    const char *pchBeg = (const char *)data.pData;
+    const char *pchCur = pchBeg;
+
+    FOREVER {
+      const bool bEnd = (*pchCur == '\0');
+
+      // If encountered a separator or the end
+      if (*pchCur == ';' || bEnd) {
+        // And it's not the beginning of the string (i.e. empty string)
+        if (pchCur != pchBeg) {
+          // Try to find a converter with this name
+          const size_t ctLen = pchCur - pchBeg;
+
+          char *strTemp = (char *)AllocMemory(ctLen + 1);
+          strTemp[ctLen] = '\0';
+
+          memcpy(strTemp, pchBeg, ctLen);
+
+          IWorldConverter *pConv = Find(strTemp);
+
+          if (pConv != NULL) {
+            _cCurrentConverters.Add(pConv);
+            bMultiple = true;
+          }
+
+          FreeMemory(strTemp);
+        }
+
+        // Remember beginning of the next string
+        pchBeg = pchCur + 1;
+      }
+
+      // Quit on string end
+      if (bEnd) break;
+
+      // Check the next character
+      pchCur++;
+    }
+  }
+
+  // Try using a single converter from the specified ID if none have been added in order
+  if (!bMultiple) {
+    IWorldConverter *pConv = Find(data.iID);
+    if (pConv == NULL) return FALSE;
+
+    _cCurrentConverters.Add(pConv);
+  }
+
+  // Prepare all converters in the specified order
+  FOREACHINDYNAMICCONTAINER(_cCurrentConverters, IWorldConverter, itConv) {
+    if (itConv->m_pPrepare != NULL) {
+      itConv->m_pPrepare();
+    }
   }
 
   return TRUE;
@@ -191,11 +245,14 @@ int IWorldConverter::PrepareConverter(void *pConverterData) {
 
 // Convert the world using a specific converter
 int IWorldConverter::ConvertWorld(void *pWorld) {
-  // No converter or no world
-  if (_pconvCurrent == NULL || pWorld == NULL) return FALSE;
+  // No world
+  if (pWorld == NULL) return FALSE;
 
-  if (_pconvCurrent->m_pConvertWorld != NULL) {
-    _pconvCurrent->m_pConvertWorld((CWorld *)pWorld);
+  // Convert the world in the specified order
+  FOREACHINDYNAMICCONTAINER(_cCurrentConverters, IWorldConverter, itConv) {
+    if (itConv->m_pConvertWorld != NULL) {
+      itConv->m_pConvertWorld((CWorld *)pWorld);
+    }
   }
 
   return TRUE;
@@ -203,12 +260,15 @@ int IWorldConverter::ConvertWorld(void *pWorld) {
 
 // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
 int IWorldConverter::HandleUnknownProperty(void *pPropData) {
-  // No converter or no property data
-  if (_pconvCurrent == NULL || pPropData == NULL) return FALSE;
+  // No property data
+  if (pPropData == NULL) return FALSE;
 
-  if (_pconvCurrent->m_pHandleProperty != NULL) {
-    ExtArgUnknownProp_t &prop = *(ExtArgUnknownProp_t *)pPropData;
-    _pconvCurrent->m_pHandleProperty(prop);
+  // Handle unknown property in the specified order
+  FOREACHINDYNAMICCONTAINER(_cCurrentConverters, IWorldConverter, itConv) {
+    if (itConv->m_pHandleProperty != NULL) {
+      ExtArgUnknownProp_t &prop = *(ExtArgUnknownProp_t *)pPropData;
+      itConv->m_pHandleProperty(prop);
+    }
   }
 
   return TRUE;
@@ -314,10 +374,12 @@ static BOOL ReplaceClassFromTable(CTString &strClassName, ClassReplacementPair *
 int IWorldConverter::ReplaceClass(void *pEclData) {
   ExtArgEclData_t &eclData = *(ExtArgEclData_t *)pEclData;
 
-  // See if the converter can replace certain classes
-  if (_pconvCurrent != NULL && _pconvCurrent->m_pReplaceClass != NULL) {
-    // Quit if it can
-    if (_pconvCurrent->m_pReplaceClass(eclData)) return TRUE;
+  // See if any converter can replace certain classes in the specified order
+  FOREACHINDYNAMICCONTAINER(_cCurrentConverters, IWorldConverter, itConv) {
+    if (itConv->m_pReplaceClass != NULL) {
+      // Quit if it can
+      if (itConv->m_pReplaceClass(eclData)) return TRUE;
+    }
   }
 
   CTFileName &fnmDLL = *eclData.pfnmDLL;

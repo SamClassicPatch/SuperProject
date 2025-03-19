@@ -39,7 +39,8 @@ ICorePatches::ICorePatches() {
   _bNoListening = FALSE;
 
   _eWorldFormat = E_LF_CURRENT;
-  _iWorldConverter = -1;
+  _iWantedWorldFormat = -1;
+  _strWorldConverters = "";
 };
 
 // Apply core patches (called after Core initialization!)
@@ -407,7 +408,8 @@ void ICorePatches::Worlds(void) {
   CreatePatch(pCreateEntity, &CWorldPatch::P_CreateEntity, "CWorld::CreateEntity_t(...)");
 
   // Custom symbols
-  _pShell->DeclareSymbol("user INDEX sam_iWorldConverter;", &_EnginePatches._iWorldConverter);
+  _pShell->DeclareSymbol("user INDEX sam_iWantedWorldFormat;", &_EnginePatches._iWantedWorldFormat);
+  _pShell->DeclareSymbol("user CTString sam_strWorldConverters;", &_EnginePatches._strWorldConverters);
 };
 
 #include "Patches/UnpageStreams.h"

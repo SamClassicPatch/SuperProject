@@ -42,12 +42,10 @@ class CORE_API ICorePatches {
 
     // Worlds
     ELevelFormat _eWorldFormat; // Format of the last loaded world
+    INDEX _iWantedWorldFormat;  // Desired format of loaded worlds
 
-    // Which world converter to use:
-    // -1 - disabled
-    //  0 - reinit every entity
-    //  1 - force TFE converter
-    INDEX _iWorldConverter;
+    // Which world converters to use (converter names separated by ';' or an empty string for automatic)
+    CTString _strWorldConverters;
 
   public:
     // Constructor

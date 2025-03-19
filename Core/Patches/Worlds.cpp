@@ -56,8 +56,12 @@ void CWorldPatch::DetermineWorldFormat(const CTFileName &fnmWorld, CTFileStream 
     strmFile.SetPos_t(0);
   }
 
-  // Force TFE converter
-  if (_EnginePatches._iWorldConverter == 1) eWorld = E_LF_TFE;
+  // Force a specific format
+  const ELevelFormat eWanted = (ELevelFormat)_EnginePatches._iWantedWorldFormat;
+
+  if (eWanted >= 0 && eWanted < E_LF_FORMATCOUNT) {
+    eWorld = eWanted;
+  }
 };
 
 void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
@@ -77,12 +81,10 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
   ExtArgWorldConverter_t convData;
   bool bConverter = ClassicsExtensions_CallSignal(hConverters, "GetConverterForFormat", &convData.iID, &eWorld);
 
-  // Also verify the existence of a converter for this format
-  bConverter = (bConverter && convData.iID != -1);
-
   // Prepare world converter before using it
   if (bConverter) {
-    convData.pData = NULL;
+    // Pass converters from the command
+    convData.pData = _EnginePatches._strWorldConverters.str_String;
     ClassicsExtensions_CallSignal(hConverters, "PrepareConverter", NULL, &convData);
   }
 
