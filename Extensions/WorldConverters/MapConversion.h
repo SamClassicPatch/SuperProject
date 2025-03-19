@@ -92,6 +92,9 @@ class IWorldConverter {
     // Try to find a converter by its identifier
     static IWorldConverter *Find(int iID);
 
+    // List available converters
+    static void ListConverters(void);
+
   public:
     // Signals for setting up a new converter
     static int CreateConverter(void *strName);
@@ -106,6 +109,9 @@ class IWorldConverter {
 
     // Get world converter by its name
     static int GetConverterByName(void *strName);
+
+    // Get level format from the converter name
+    static int GetFormatFromConverter(void *strName);
 
     // Prepare a specific world converter before using it
     static int PrepareConverter(void *pConverterData);

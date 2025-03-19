@@ -74,6 +74,38 @@ IWorldConverter *IWorldConverter::Find(int iID) {
   return NULL;
 };
 
+// Get level format from the converter name (internal)
+inline INDEX ConverterNameToLevelFormat(const CTString &strName) {
+  if (strName == "tfe") return E_LF_TFE;
+  else
+  if (strName == "tse") return E_LF_TSE;
+  else
+  if (strName == "ssr") return E_LF_SSR;
+  else
+  if (strName == "150") return E_LF_150;
+
+  return -1;
+};
+
+// List available converters
+void IWorldConverter::ListConverters(void) {
+  CMapConverters::const_iterator it;
+
+  for (it = _mapConverters.begin(); it != _mapConverters.end(); it++) {
+    const CTString &str = it->first;
+    CPrintF("%d - \"%s\" ", it->second.m_iID, str.str_String);
+
+    // Specify which level format this converter is for
+    const INDEX iFormat = ConverterNameToLevelFormat(str);
+
+    if (iFormat != -1) {
+      CPrintF(TRANS("(for level format %d)\n"), iFormat);
+    } else {
+      CPutString("\n");
+    }
+  }
+};
+
 int IWorldConverter::CreateConverter(void *strName) {
   if (strName == NULL) return -1;
 
@@ -170,6 +202,12 @@ int IWorldConverter::GetConverterByName(void *strName) {
 
   IWorldConverter *pConv = Find((const char *)strName);
   return (pConv != NULL) ? pConv->m_iID : -1;
+};
+
+// Get level format from the converter name
+int IWorldConverter::GetFormatFromConverter(void *strName) {
+  if (strName == NULL) return -1;
+  return ConverterNameToLevelFormat((const char *)strName);
 };
 
 // Prepare a specific world converter before using it

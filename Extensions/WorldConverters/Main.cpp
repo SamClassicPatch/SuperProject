@@ -31,8 +31,9 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "SetMethodHandleProperty",  &IWorldConverter::SetMethodHandleProperty }, // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterHandleProperty)
   { "SetMethodConvertWorld",    &IWorldConverter::SetMethodConvertWorld },   // Arg ptr : ExtArgWorldConverter_t (pData = FWorldConverterConvert)
 
-  { "GetConverterForFormat",    &IWorldConverter::GetConverterForFormat }, // Arg ptr : ELevelFormat
-  { "GetConverterByName",       &IWorldConverter::GetConverterByName },    // Arg ptr : const char (string)
+  { "GetConverterForFormat",    &IWorldConverter::GetConverterForFormat },  // Arg ptr : ELevelFormat
+  { "GetConverterByName",       &IWorldConverter::GetConverterByName },     // Arg ptr : const char (string)
+  { "GetFormatFromConverter",   &IWorldConverter::GetFormatFromConverter }, // Arg ptr : const char (string)
 
   { "PrepareConverter",         &IWorldConverter::PrepareConverter },      // Arg ptr : ExtArgWorldConverter_t (pData = const char *)
   { "ReplaceClass",             &IWorldConverter::ReplaceClass },          // Arg ptr : ExtArgEclData_t
@@ -55,6 +56,9 @@ static void ConvertReinit(CWorld *pwo) {
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
+  // Custom symbols
+  GetPluginAPI()->RegisterMethod(TRUE, "void", "wld_ListConverters", "void", &IWorldConverter::ListConverters);
+
   // Register default converters only once
   static bool _bDefaultAdded = false;
   if (_bDefaultAdded) return;
