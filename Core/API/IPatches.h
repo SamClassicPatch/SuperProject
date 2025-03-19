@@ -38,7 +38,6 @@ class CORE_API ICorePatches {
     BOOL _bNoListening; // Don't listen to in-game sounds
 
     // Unpage streams
-    ULONG _ulMaxWriteMemory; // Enough memory for writing
     INDEX _bUsePlaceholderResources; // Automatically replace missing resources with placeholders
 
     // Worlds

@@ -130,25 +130,20 @@ void CTexDataPatch::P_Write(CTStream *strm)
   // Isolate required flags
   const BOOL bAlphaChannel = td_ulFlags & TEX_ALPHACHANNEL;
 
-  #if SE1_VER >= SE1_150
-    const BOOL bCompress      = td_ulFlags & TEX_COMPRESS;
-    const BOOL bCompressAlpha = td_ulFlags & TEX_COMPRESSALPHA;
+#if SE1_VER >= SE1_150
+  const BOOL bCompress      = td_ulFlags & TEX_COMPRESS;
+  const BOOL bCompressAlpha = td_ulFlags & TEX_COMPRESSALPHA;
 
-    ULONG ulFlags = td_ulFlags & (TEX_ALPHACHANNEL | TEX_32BIT | TEX_EQUALIZED | TEX_TRANSPARENT
-                                | TEX_STATIC | TEX_CONSTANT | TEX_COMPRESSED | TEX_COMPRESSEDALPHA);
+  ULONG ulFlags = td_ulFlags & (TEX_ALPHACHANNEL | TEX_32BIT | TEX_EQUALIZED | TEX_TRANSPARENT
+                              | TEX_STATIC | TEX_CONSTANT | TEX_COMPRESSED | TEX_COMPRESSEDALPHA);
 
-    if (bCompress) {
-      ulFlags |= TEX_COMPRESSED;
-    }
+  if (bCompress)      ulFlags |= TEX_COMPRESSED;
+  if (bCompressAlpha) ulFlags |= TEX_COMPRESSEDALPHA;
 
-    if (bCompressAlpha) {
-      ulFlags |= TEX_COMPRESSEDALPHA;
-    }
-
-  #else
-    ULONG ulFlags = td_ulFlags & (TEX_ALPHACHANNEL | TEX_32BIT | TEX_EQUALIZED
-                                | TEX_TRANSPARENT | TEX_STATIC | TEX_CONSTANT);
-  #endif
+#else
+  ULONG ulFlags = td_ulFlags & (TEX_ALPHACHANNEL | TEX_32BIT | TEX_EQUALIZED
+                              | TEX_TRANSPARENT | TEX_STATIC | TEX_CONSTANT);
+#endif
 
   // Write chunk containing texture data
   strm->WriteID_t(CChunkID("TDAT"));
@@ -165,7 +160,7 @@ void CTexDataPatch::P_Write(CTStream *strm)
   if (td_ptegEffect == NULL) {
     ASSERT(td_ctFrames > 0);
 
-  #if SE1_VER >= SE1_150
+#if SE1_VER >= SE1_150
     if (bCompress) {
       // Write chunk containing compressed frames
       strm->WriteID_t(CChunkID("FRMC"));
@@ -187,7 +182,7 @@ void CTexDataPatch::P_Write(CTStream *strm)
       FreeMemory(pubCompressed);
 
     } else
-  #endif
+#endif
     {
       ASSERT(td_pulFrames != NULL);
 
@@ -297,10 +292,10 @@ void CTexDataPatch::P_Write(CTStream *strm)
     *strm << td_ptdBaseTexture->GetName();
   }
 
-  #if SE1_VER >= SE1_150
-    // Don't need to compress again
-    td_ulFlags &= ~TEX_COMPRESS;
-  #endif
+#if SE1_VER >= SE1_150
+  // Don't need to compress again
+  td_ulFlags &= ~TEX_COMPRESS;
+#endif
 };
 
 // Create new animated texture from a script

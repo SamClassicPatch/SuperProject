@@ -19,20 +19,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #if _PATCHCONFIG_ENGINEPATCHES
 
-// Interface of various dummy methods
-namespace IDummy {
-
 // Empty method
-inline void Void(void) {
-  NOTHING;
-};
+static void DummyVoidFunc(void) { NOTHING; };
 
 // Empty stream page method
-inline void PageFunc(INDEX iPage) {
-  (void)iPage;
-};
-
-}; // namespace
+static void DummyPageFunc(INDEX) { NOTHING; };
 
 // Singleton for patching
 ICorePatches _EnginePatches;
@@ -47,8 +38,6 @@ ICorePatches::ICorePatches() {
 
   _bNoListening = FALSE;
 
-  _ulMaxWriteMemory = (1 << 20) * 128; // 128 MB
-
   _eWorldFormat = E_LF_CURRENT;
   _iWorldConverter = -1;
 };
@@ -59,34 +48,31 @@ void ICorePatches::CorePatches(void) {
   const bool bServer = ClassicsCore_IsServerApp();
   const bool bEditor = ClassicsCore_IsEditorApp();
 
-  // Patch for everything
+  // Technical patches
   Strings();
   Textures();
 
-  // Patch for the game and the editor
-  if (bGame || bEditor) {
+  // Gameplay patches
+  if (bGame || bServer || bEditor) {
     Entities();
     LogicTimers();
     Network();
-    Rendering();
     Worlds();
-
-    // [Cecil] TODO: Make SKA patches work in Debug
-    #if SE1_VER >= SE1_107 && defined(NDEBUG)
-      Ska();
-    #endif
-
-    if (bGame) {
-      SoundLibrary();
-    }
   }
 
-  // Patch for the server
-  if (bServer) {
-    Entities();
-    LogicTimers();
-    Network();
-    Worlds();
+  // Visual patches
+  if (bGame || bEditor) {
+    Rendering();
+
+  // [Cecil] TODO: Make SKA patches work in Debug
+  #if SE1_VER >= SE1_107 && defined(NDEBUG)
+    Ska();
+  #endif
+  }
+
+  // Game client patches
+  if (bGame) {
+    SoundLibrary();
   }
 
   // Custom symbols for pre-engine initialization patches
@@ -469,25 +455,25 @@ void ICorePatches::UnpageStreams(void) {
 
   // Dummy methods
   void (CTFileStream::*pPageFunc)(INDEX) = &CTStream::CommitPage;
-  CreatePatch(pPageFunc, &IDummy::PageFunc, "CTStream::CommitPage(...)");
+  CreatePatch(pPageFunc, &DummyPageFunc, "CTStream::CommitPage(...)");
 
   pPageFunc = &CTStream::DecommitPage;
-  CreatePatch(pPageFunc, &IDummy::PageFunc, "CTStream::DecommitPage(...)");
+  CreatePatch(pPageFunc, &DummyPageFunc, "CTStream::DecommitPage(...)");
 
   pPageFunc = &CTStream::ProtectPageFromWritting;
-  CreatePatch(pPageFunc, &IDummy::PageFunc, "CTStream::ProtectPageFromWritting(...)");
+  CreatePatch(pPageFunc, &DummyPageFunc, "CTStream::ProtectPageFromWritting(...)");
 
   pPageFunc = &CTFileStream::WritePageToFile;
-  CreatePatch(pPageFunc, &IDummy::PageFunc, "CTFileStream::WritePageToFile(...)");
+  CreatePatch(pPageFunc, &DummyPageFunc, "CTFileStream::WritePageToFile(...)");
 
   pPageFunc = &CTFileStream::FileCommitPage;
-  CreatePatch(pPageFunc, &IDummy::PageFunc, "CTFileStream::FileCommitPage(...)");
+  CreatePatch(pPageFunc, &DummyPageFunc, "CTFileStream::FileCommitPage(...)");
 
   pPageFunc = &CTFileStream::FileDecommitPage;
-  CreatePatch(pPageFunc, &IDummy::PageFunc, "CTFileStream::FileDecommitPage(...)");
+  CreatePatch(pPageFunc, &DummyPageFunc, "CTFileStream::FileDecommitPage(...)");
 
   void (CNetworkLibrary::*pFinishCRCFunc)(void) = &CNetworkLibrary::FinishCRCGather;
-  CreatePatch(pFinishCRCFunc, &IDummy::Void, "CNetworkLibrary::FinishCRCGather()");
+  CreatePatch(pFinishCRCFunc, &DummyVoidFunc, "CNetworkLibrary::FinishCRCGather()");
 
   // Level remembering methods
   void (CSessionState::*pRemCurLevel)(const CTString &) = &CSessionState::RememberCurrentLevel;

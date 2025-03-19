@@ -22,9 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 void CSoundLibPatch::P_Listen(CSoundListener &sl)
 {
   // Ignore sound listener
-  if (_EnginePatches._bNoListening) {
-    return;
-  }
+  if (_EnginePatches._bNoListening) return;
 
   // Original function code
   if (sl.sli_lnInActiveListeners.IsLinked()) {

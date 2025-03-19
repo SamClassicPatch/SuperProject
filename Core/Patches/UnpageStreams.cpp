@@ -40,6 +40,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #undef CNameTable_TYPE
 #undef TYPE
 
+// Enough memory for writing (128 MB)
+static const ULONG _ulMaxWriteMemory = (1 << 20) * 128;
+
 // Allocate memory normally
 void CUnpageStreamPatch::P_AllocVirtualMemory(ULONG ulBytesToAllocate)
 {
@@ -85,7 +88,7 @@ void CFileStreamPatch::P_Create(const CTFileName &fnFileName, CTStream::CreateMo
   }
 
   // Allocate enough memory for writing
-  P_AllocVirtualMemory(_EnginePatches._ulMaxWriteMemory);
+  P_AllocVirtualMemory(_ulMaxWriteMemory);
 
   strm_strStreamDescription = fnFileName;
   fstrm_bReadOnly = FALSE;
@@ -161,7 +164,7 @@ void CFileStreamPatch::P_Open(const CTFileName &fnFileName, CTStream::OpenMode o
     fstrm_bReadOnly = FALSE;
 
     // Allocate enough memory for writing
-    P_AllocVirtualMemory(_EnginePatches._ulMaxWriteMemory);
+    P_AllocVirtualMemory(_ulMaxWriteMemory);
 
   } else {
     FatalError(LOCALIZE("File stream opening requested with unknown open mode: %d\n"), om);
@@ -216,7 +219,7 @@ CRemLevel::CRemLevel(void) {
   strm_strStreamDescription = "dynamic memory stream";
 
   // Allocate enough memory for writing
-  P_AllocVirtualMemory(_EnginePatches._ulMaxWriteMemory);
+  P_AllocVirtualMemory(_ulMaxWriteMemory);
 };
 
 // Destructor
