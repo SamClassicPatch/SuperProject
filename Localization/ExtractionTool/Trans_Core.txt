@@ -1,6 +1,7 @@
 ..\Bin\Release_TSE107\ClassicsCore.dll
-..\Bin\Release_TSE107\ClassicsPatches.dll
 ..\Bin\Release_TSE107\Plugins\Accessibility.dll
 ..\Bin\Release_TSE107\Plugins\AdvancedHUD.dll
+..\Bin\Release_TSE107\Plugins\ExtendedInput.dll
 ..\Bin\Release_TSE107\Plugins\LocalCheats.dll
 ..\Bin\Release_TSE107\Plugins\ServerUtilities.dll
+..\Bin\Release_TSE107\Plugins\WorldConverters.dll

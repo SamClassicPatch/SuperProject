@@ -20,8 +20,11 @@ echo ----------------------------
 cd %REPO%
 
 :: Copy extra GRO files that are released alongside the final builds
+call Localization\AssembleITA.bat
 copy /B Localization\SE1_ClassicsPatch_ITA.gro %BUILDS%
+call Localization\AssembleRUS.bat
 copy /B Localization\SE1_ClassicsPatch_RUS.gro %BUILDS%
+
 copy /B Resources\SE1_RevResources.gro         %BUILDS%
 
 echo ----------------------------
@@ -44,8 +47,10 @@ copy /B Bin\Release_TFE105\Game_Custom.dll             %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\GameGUI_Custom.dll          %BUILDS%TFE105\Bin\
 copy /B Bin\Release_TFE105\Plugins\Accessibility.dll   %BUILDS%TFE105\Bin\Plugins\
 copy /B Bin\Release_TFE105\Plugins\AdvancedHUD.dll     %BUILDS%TFE105\Bin\Plugins\
+copy /B Bin\Release_TFE105\Plugins\ExtendedInput.dll   %BUILDS%TFE105\Bin\Plugins\
 copy /B Bin\Release_TFE105\Plugins\LocalCheats.dll     %BUILDS%TFE105\Bin\Plugins\
 copy /B Bin\Release_TFE105\Plugins\ServerUtilities.dll %BUILDS%TFE105\Bin\Plugins\
+copy /B Bin\Release_TFE105\Plugins\WorldConverters.dll %BUILDS%TFE105\Bin\Plugins\
 call Resources\DeployResources.bat                     %BUILDS%TFE105\
 robocopy %BUILDS%TSE107\Mods\                          %BUILDS%TFE105\Mods\ /E
 
@@ -69,8 +74,10 @@ copy /B Bin\Release_TSE105\Game_Custom.dll             %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\GameGUI_Custom.dll          %BUILDS%TSE105\Bin\
 copy /B Bin\Release_TSE105\Plugins\Accessibility.dll   %BUILDS%TSE105\Bin\Plugins\
 copy /B Bin\Release_TSE105\Plugins\AdvancedHUD.dll     %BUILDS%TSE105\Bin\Plugins\
+copy /B Bin\Release_TSE105\Plugins\ExtendedInput.dll   %BUILDS%TSE105\Bin\Plugins\
 copy /B Bin\Release_TSE105\Plugins\LocalCheats.dll     %BUILDS%TSE105\Bin\Plugins\
 copy /B Bin\Release_TSE105\Plugins\ServerUtilities.dll %BUILDS%TSE105\Bin\Plugins\
+copy /B Bin\Release_TSE105\Plugins\WorldConverters.dll %BUILDS%TSE105\Bin\Plugins\
 call Resources\DeployResources.bat                     %BUILDS%TSE105\
 robocopy %BUILDS%TSE107\Mods\                          %BUILDS%TSE105\Mods\ /E
 
@@ -95,8 +102,10 @@ copy /B Bin\Release_TSE107\GameGUI_Custom.dll          %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\Shaders.dll                 %BUILDS%TSE107\Bin\
 copy /B Bin\Release_TSE107\Plugins\Accessibility.dll   %BUILDS%TSE107\Bin\Plugins\
 copy /B Bin\Release_TSE107\Plugins\AdvancedHUD.dll     %BUILDS%TSE107\Bin\Plugins\
+copy /B Bin\Release_TSE107\Plugins\ExtendedInput.dll   %BUILDS%TSE107\Bin\Plugins\
 copy /B Bin\Release_TSE107\Plugins\LocalCheats.dll     %BUILDS%TSE107\Bin\Plugins\
 copy /B Bin\Release_TSE107\Plugins\ServerUtilities.dll %BUILDS%TSE107\Bin\Plugins\
+copy /B Bin\Release_TSE107\Plugins\WorldConverters.dll %BUILDS%TSE107\Bin\Plugins\
 call Resources\DeployResources.bat                     %BUILDS%TSE107\
 
 echo ----------------------------

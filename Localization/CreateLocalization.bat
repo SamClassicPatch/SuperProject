@@ -129,12 +129,16 @@ echo Generating GRO assembly script...
 echo @echo off> %PACKSCRIPT%
 
 echo.>> %PACKSCRIPT%
-echo cd %%~dp0>> %PACKSCRIPT%
+echo pushd %%~dp0>> %PACKSCRIPT%
 echo del SE1_ClassicsPatch_%LANGCODE%.gro /q>> %PACKSCRIPT%
 
 echo.>> %PACKSCRIPT%
-echo cd %LANGCODE%\>> %PACKSCRIPT%
+echo pushd %LANGCODE%\>> %PACKSCRIPT%
 echo 7z.exe a -tzip ..\SE1_ClassicsPatch_%LANGCODE%.gro *>> %PACKSCRIPT%
+
+echo.>> %PACKSCRIPT%
+echo popd>> %PACKSCRIPT%
+echo popd>> %PACKSCRIPT%
 :: ---------- Script end ---------- ::
 
 echo.
