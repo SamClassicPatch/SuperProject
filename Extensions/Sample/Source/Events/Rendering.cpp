@@ -27,6 +27,14 @@ void IRenderingEvents_OnPostDraw(CDrawPort *pdp)
   // This function is executed after drawing all of the game elements, like the world, HUD and NETRICSA.
 
   // EXAMPLE: Display counter of received extension packets
+
+  // Get flag from an extension property
+  bool bRender = true;
+  static ExtensionPropRef_t<bool> propref(EXTENSIONMODULE_LOCALHANDLE, "packets");
+  propref.GetValue(&bRender);
+
+  if (!bRender) return;
+
   const FLOAT fScaling = HEIGHT_SCALING(pdp);
 
   pdp->SetFont(_pfdDisplayFont);

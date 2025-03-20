@@ -32,6 +32,10 @@ void IListenerEvents_OnSendEvent(CEntity *pen, const CEntityEvent &ee)
     eeHealth.fHealth = 10.0f;
     eeHealth.bOverTopHealth = TRUE;
 
+    // Get custom value from an extension property
+    static ExtensionPropRef_t<float> propref(EXTENSIONMODULE_LOCALHANDLE, "kill_health");
+    propref.GetValue(&eeHealth.fHealth);
+
     #if _PATCHCONFIG_EXT_PACKETS
       // Send packet to give item to an entity
       CExtEntityItem pck;

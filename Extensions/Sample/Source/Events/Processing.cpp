@@ -23,7 +23,17 @@ void IProcessingEvents_OnStep(void)
   // with the simulation itself, just like regular entity logic.
 
   // EXAMPLE: Decrease health of each player if it's higher than 50 every second
-  if (ULONG(_pTimer->CurrentTick() * 20) % 20 != 0) return;
+
+  // Get value from an extension property
+  int iTPS = 20;
+
+  static ExtensionPropRef_t<int> propref(EXTENSIONMODULE_LOCALHANDLE, "tps");
+  if (propref.GetValue(&iTPS)) {
+    // Avoid division by zero
+    iTPS = ClampDn(iTPS, (int)1);
+  }
+
+  if (ULONG(_pTimer->CurrentTick() * 20) % iTPS != 0) return;
 
   // Find all player entities
   CEntities cen;

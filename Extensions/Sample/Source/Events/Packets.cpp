@@ -22,9 +22,19 @@ void IPacketEvents_OnCharacterConnect(INDEX iClient, CPlayerCharacter &pc)
   // This function is executed every time a new player connects to the server with a specific character
   // that can be modified here in order to force specific customization onto them (e.g. name or skin).
 
-  // EXAMPLE: Force all players to have Boxer Barry skin
+  // EXAMPLE: Force all players to have a specific player model
+
+  // Get player model from an extension property
+  const char *strPlayerModel = NULL;
+
+  static ExtensionPropRef_t<const char *> propref(EXTENSIONMODULE_LOCALHANDLE, "player_model");
+  propref.GetValue(&strPlayerModel);
+
+  // Boxer Barry by default
+  if (strPlayerModel == NULL) strPlayerModel = "BoxerBarry";
+
   CPlayerSettings *pps = (CPlayerSettings *)pc.pc_aubAppearance;
-  strncpy(pps->ps_achModelFile, "BoxerBarry", sizeof(pps->ps_achModelFile));
+  strncpy(pps->ps_achModelFile, strPlayerModel, sizeof(pps->ps_achModelFile));
 };
 
 BOOL IPacketEvents_OnCharacterChange(INDEX iClient, INDEX iPlayer, CPlayerCharacter &pc)
@@ -35,9 +45,19 @@ BOOL IPacketEvents_OnCharacterChange(INDEX iClient, INDEX iPlayer, CPlayerCharac
   // If it returns FALSE, all changes are discarded and the new player character is ignored
   // instead of being changed, which can be used to forbid character customization mid-game.
 
-  // EXAMPLE: Force all players to have Boxer Barry skin
+  // EXAMPLE: Force all players to have a specific player model
+
+  // Get player model from an extension property
+  const char *strPlayerModel = NULL;
+
+  static ExtensionPropRef_t<const char *> propref(EXTENSIONMODULE_LOCALHANDLE, "player_model");
+  propref.GetValue(&strPlayerModel);
+
+  // Boxer Barry by default
+  if (strPlayerModel == NULL) strPlayerModel = "BoxerBarry";
+
   CPlayerSettings *pps = (CPlayerSettings *)pc.pc_aubAppearance;
-  strncpy(pps->ps_achModelFile, "BoxerBarry", sizeof(pps->ps_achModelFile));
+  strncpy(pps->ps_achModelFile, strPlayerModel, sizeof(pps->ps_achModelFile));
 
   return TRUE;
 };

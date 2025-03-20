@@ -15,9 +15,146 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-// Define plugin
-CLASSICSPATCH_DEFINE_PLUGIN(k_EPluginFlagEngine | k_EPluginFlagGame, MakeVersion(1, 0, 0),
-  "Dreamy Cecil", "Example Plugin", "This is an example plugin that comes with the source code for Serious Sam Classics Patch.");
+// Define extension
+CLASSICSPATCH_DEFINE_EXTENSION("PATCH_TEST_sample", k_EPluginFlagEngine | k_EPluginFlagGame, MakeVersion(1, 0, 0),
+  "Dreamy Cecil", "Extension Sample", "This is an example extension that comes with the Serious Sam Classics Patch source code.");
+
+// Define handle to this extension, which is then accessible via EXTENSIONMODULE_LOCALHANDLE
+CLASSICSPATCH_DEFINE_EXTENSION_HANDLE;
+
+// Define some extension properties
+CLASSICSPATCH_EXTENSION_PROPS_BEGIN {
+  ExtensionProp_t("packets",      true), // For toggling received packet counter
+  ExtensionProp_t("tps",          20), // Ticks per second for decreasing health each second
+  ExtensionProp_t("kill_health",  10.0f), // Health to receive for each enemy kill
+  ExtensionProp_t("player_model", (const char *)NULL), // Player model name to enforce on all clients
+} CLASSICSPATCH_EXTENSION_PROPS_END;
+
+static int ListSignal(void *);
+static int MultiplySignal(void *piNumber);
+static int RandomHealthSignal(void *);
+
+// Define some extension signals
+CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
+  { "List",         &ListSignal },         // Arg ptr : NULL
+  { "Multiply",     &MultiplySignal },     // Arg ptr : int
+  { "RandomHealth", &RandomHealthSignal }, // Arg ptr : NULL
+} CLASSICSPATCH_EXTENSION_SIGNALS_END;
+
+// List available extension signals
+int ListSignal(void *) {
+  CPutString("Available extension signals:\n");
+
+  for (size_t i = 0; i < EXTENSIONMODULE_SIGNALCOUNT; i++) {
+    CPrintF("- %s\n", EXTENSIONMODULE_SIGNALARRAY[i].m_strSignal);
+  }
+
+  return 0;
+};
+
+// Multiply specified number by 4 and print the result
+int MultiplySignal(void *piNumber) {
+  if (piNumber == NULL) {
+    CPutString("No number specified\n");
+    return FALSE;
+  }
+
+  int iNumber = *(int *)piNumber;
+  CPrintF("%d x 4 = %d\n", iNumber, iNumber * 4);
+  return TRUE;
+};
+
+// Randomize health of local players
+int RandomHealthSignal(void *) {
+  if (!_pNetwork->IsServer()) {
+    CPutString("Only the server may execute this signal!\n");
+    return -1;
+  }
+
+  int iRnd = (rand() % 10000) + 1;
+
+  CPlayerEntities cenPlayers;
+  IWorld::GetLocalPlayers(cenPlayers);
+
+  FOREACHINDYNAMICCONTAINER(cenPlayers, CPlayerEntity, iten) {
+    #if _PATCHCONFIG_EXT_PACKETS
+      // Send packet to change entity's health
+      CExtEntityHealth pck;
+      pck("ulEntity", (int)iten->en_ulID);
+      pck("fHealth", (FLOAT)iRnd);
+      pck.SendToClients();
+
+    #else
+      // Change health directly
+      iten->SetHealth(iRnd);
+    #endif
+  }
+
+  // Return set health
+  return iRnd;
+};
+
+static void SampleSetNumber(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  const CTString &strProp = *NEXT_ARG(CTString *);
+  const FLOAT fValue = NEXT_ARG(FLOAT);
+
+  // Find any property under this name and try to set a number value to it
+  ExtensionProp_t *pProp = ClassicsExtensions_FindProperty(EXTENSIONMODULE_LOCALHANDLE, strProp);
+
+  if (pProp != NULL) {
+    switch (pProp->m_eType) {
+      case ExtensionProp_t::k_EType_Bool:   pProp->m_value._bool = !!fValue; return;
+      case ExtensionProp_t::k_EType_Int:    pProp->m_value._int = fValue; return;
+      case ExtensionProp_t::k_EType_Float:  pProp->m_value._float = fValue; return;
+      case ExtensionProp_t::k_EType_Double: pProp->m_value._double = fValue; return;
+    }
+  }
+
+  CPrintF("No number property found under the name '%s'!\n", strProp.str_String);
+};
+
+static void SampleSetString(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  const CTString &strProp = *NEXT_ARG(CTString *);
+  const CTString &strValue = *NEXT_ARG(CTString *);
+
+  // Find a string property under this name and replace the pointer to an array of characters in it
+  ExtensionProp_t *pProp = ClassicsExtensions_FindPropertyOfType(EXTENSIONMODULE_LOCALHANDLE, strProp, ExtensionProp_t::k_EType_String);
+
+  if (pProp != NULL) {
+    // Destroy the last string
+    if (pProp->m_value._string != NULL) {
+      FreeMemory((char *)pProp->m_value._string);
+      pProp->m_value._string = NULL;
+    }
+
+    // Create a copy of the string
+    char *strCopy = (char *)AllocMemory(strValue.Length() + 1);
+    strcpy(strCopy, strValue.str_String);
+
+    pProp->m_value._string = strCopy;
+    return;
+  }
+
+  CPrintF("No string property found under the name '%s'!\n", strProp.str_String);
+};
+
+static void SampleCallSignal(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  const CTString &strSignal = *NEXT_ARG(CTString *);
+  int iOpt = NEXT_ARG(INDEX);
+
+  FExtensionSignal pSignal = ClassicsExtensions_FindSignal(EXTENSIONMODULE_LOCALHANDLE, strSignal.str_String);
+
+  if (pSignal != NULL) {
+    int iResult = pSignal(&iOpt);
+    CPrintF("\nSignal result: %d\n", iResult);
+
+  } else {
+    CPrintF("'%s' signal doesn't exist!\n", strSignal.str_String);
+  }
+};
 
 // Dummy chat command
 static BOOL DummyChatCommand(CTString &strResult, INDEX iClient, const CTString &strArguments) {
@@ -26,7 +163,7 @@ static BOOL DummyChatCommand(CTString &strResult, INDEX iClient, const CTString 
 };
 
 // Module entry point
-CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
+CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Register plugin events
   events.m_processing->OnStep  = &IProcessingEvents_OnStep;
@@ -65,12 +202,17 @@ CLASSICSPATCH_PLUGIN_STARTUP(CIniConfig &props, PluginEvents_t &events)
   events.m_timer->OnTick   = &ITimerEvents_OnTick;
   events.m_timer->OnSecond = &ITimerEvents_OnSecond;
 
+  // Add custom shell functions for modifying extension properties and calling extension signals for testing
+  ClassicsPlugins()->RegisterMethod(TRUE, "void", "SampleSetNumber", "CTString, FLOAT",    &SampleSetNumber);
+  ClassicsPlugins()->RegisterMethod(TRUE, "void", "SampleSetString", "CTString, CTString", &SampleSetString);
+  ClassicsPlugins()->RegisterMethod(TRUE, "void", "SampleCallSignal", "CTString, INDEX",   &SampleCallSignal);
+
   // Add custom chat command
   ClassicsChat_RegisterCommand("dummy", &DummyChatCommand);
 };
 
 // Module cleanup
-CLASSICSPATCH_PLUGIN_SHUTDOWN(CIniConfig &props)
+CLASSICSPATCH_PLUGIN_SHUTDOWN(HIniConfig props)
 {
   // Remove custom chat command
   ClassicsChat_UnregisterCommand("dummy");
