@@ -3625,7 +3625,8 @@ void CWorldEditorDoc::OnSelectByClassImportant()
 
 void CWorldEditorDoc::OnCrossroadForN() 
 {
-  if( m_iMode == VERTEX_MODE)
+  // [Cecil] Open vertex snappping dialog only if any vertices are selected
+  if (m_iMode == VERTEX_MODE && m_selVertexSelection.GetFirstInSelection() != NULL)
   {
     CDlgSnapVertex dlg;
     dlg.DoModal();
@@ -4961,7 +4962,7 @@ BOOL IsPolygonVisible(const CBrushPolygon &bpo)
 
 // Exports one layer of given type
 void ExportLayer_t(CWorldEditorDoc *pDoc, CEntity &en, ExportType etExportType, CBrushMip *pbmMip, CTFileStream &strmAmf,
-                   const CString &strLayerName, INDEX iLayerNo, BOOL bFieldBrush, BOOL bCollisionOnlyBrush)
+                   const CTString &strLayerName, INDEX iLayerNo, BOOL bFieldBrush, BOOL bCollisionOnlyBrush)
 {
   // sort brush polygons for their textures
   CDynamicContainer<CAmfSurface> cbpoSurfaces;
@@ -5187,7 +5188,7 @@ void ExportLayer_t(CWorldEditorDoc *pDoc, CEntity &en, ExportType etExportType, 
       }
       strmAmf.PutLine_t("      {");
       // export material info
-      CString strMaterial = pDoc->m_woWorld.wo_astSurfaceTypes[asSurf.sf_ubMaterial].st_strName;
+      const CTString &strMaterial = pDoc->m_woWorld.wo_astSurfaceTypes[asSurf.sf_ubMaterial].st_strName;
       strmAmf.FPrintF_t("        Material \"%s\";\n", strMaterial);
       // export first layer data
       CTFileName strPath;

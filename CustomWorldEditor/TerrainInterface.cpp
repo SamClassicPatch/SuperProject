@@ -1276,7 +1276,7 @@ CTString GetStretchInfo(CTIButton *ptib, CPoint pt, CDrawPort *pdp, BOOL bLmb)
 CTString GetEditedData(CTIButton *ptib, CPoint pt, CDrawPort *pdp, BOOL bLmb)
 {
   CTString strInfo;
-  if(ptib->tib_pfData1!=NULL)  strInfo.PrintF("%f", ptib->tib_pfData1);
+  if(ptib->tib_pfData1!=NULL)  strInfo.PrintF("%f", *ptib->tib_pfData1);
   return strInfo;
 }
 

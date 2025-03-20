@@ -2246,7 +2246,7 @@ void CWorldEditorApp::OnConvertWorlds()
     while( !fsFileList.AtEOF()) {
       fsFileList.GetLine_t( achrLine, 256);
       // increase counter only for lines that are not blank
-      if( achrLine != "") ctLines++;
+      if (strcmp(achrLine, "") != 0) ctLines++;
     }
     fsFileList.Close();
   }
@@ -2285,7 +2285,7 @@ void CWorldEditorApp::OnConvertWorlds()
       // read one line from list file
       fsFileList.GetLine_t( achrLine, 256);
       // ignore blank lines
-      if( achrLine == "") continue;
+      if (strcmp(achrLine, "") == 0) continue;
 
       // set message and progress position
       char achrProgressMessage[256];
@@ -2589,7 +2589,7 @@ INDEX CWorldEditorApp::Insert3DObjects(CWorldEditorDoc *pDoc)
   {
     CTString &str=*itfn;
     CTString strName=itfn->FileName();
-    if( ((char *)(const char *)strName)[strlen(strName)-1] == 'E')
+    if (strName[strName.Length() - 1] == 'E')
     {
       // join layers
       Add3DObject(pDoc, pwb, *itfn, FALSE);

@@ -73,8 +73,8 @@ public:
   void SetChildConfiguration( INDEX iViewConfiguration);
   void ApplySettingsFromPerspectiveView( CWorldEditorView *pwedView, INDEX iViewConfiguration);
   void DeleteViewsExcept( CWnd *pwndViewToLeave);
-  inline INDEX CChildFrame::GetHSplitters(void) {  return m_wndSplitter.GetColumnCount();}
-  inline INDEX CChildFrame::GetVSplitters(void) {  return m_wndSplitter.GetRowCount();}
+  inline INDEX GetHSplitters(void) { return m_wndSplitter.GetColumnCount(); }
+  inline INDEX GetVSplitters(void) { return m_wndSplitter.GetRowCount(); }
   CWorldEditorView *GetPerspectiveView(void);
   void TestGame( BOOL bFullScreen);
 
