@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "Input/Input.h"
 
 // Define extension
-CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_input", k_EPluginFlagGame | k_EPluginFlagEditor, CORE_PATCH_VERSION,
+CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_input", k_EPluginFlagEngine, CORE_PATCH_VERSION,
   "Dreamy Cecil", "Extended Input",
   "Extended input functionality that includes proper support of game controllers.");
 
