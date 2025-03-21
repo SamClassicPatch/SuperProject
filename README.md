@@ -42,7 +42,8 @@ Building instructions are available here: https://github.com/DreamyCecil/SE1-Mod
 > A lot of batch scripts in the repository (`.bat`) utilize [7-Zip](https://www.7-zip.org/) in order to pack files into ZIP archives. Make sure to install it and specify a path to it in the environment variables for the scripts to work.
 
 > [!TIP]
-> After the project is built for the `Release_TSE107` configuration, you can apply the patch to your build of TSE 1.07 one level above by using the `DeployToBin.bat` script (e.g. to `C:/SeriousSam/` if this repository resides in `C:/SeriousSam/SuperProject/`).
+> You can apply the compiled build of the patch to your build of TSE 1.07 one level above by using the `DeployToBin - Debug.bat` and `DeployToBin - Release.bat` scripts (for `Debug_TSE107` and `Release_TSE107` configurations, respectively).  
+> For example, if this repository resides in `C:/SeriousSam/SuperProject/`, the builds will be deployed into `C:/SeriousSam/` with the executables in `C:/SeriousSam/Bin/Debug/` (for Debug builds) or in `C:/SeriousSam/Bin/` (for Release builds).
 
 # License
 
