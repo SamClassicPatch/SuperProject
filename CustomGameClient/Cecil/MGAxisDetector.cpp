@@ -48,10 +48,10 @@ void CMGAxisDetector::Think(void) {
 
   // Cancel detection on controller buttons
   for (INDEX iCtrl = 0; iCtrl < MAX_JOYSTICKS; iCtrl++) {
-    const INDEX iFirstButton = FIRST_JOYBUTTON + iCtrl * SDL_CONTROLLER_BUTTON_MAX;
+    const INDEX iFirstButton = FIRST_JOYBUTTON + iCtrl * SDL_GAMEPAD_BUTTON_COUNT;
 
-    if (_pInput->GetButtonState(iFirstButton + SDL_CONTROLLER_BUTTON_B)
-     || _pInput->GetButtonState(iFirstButton + SDL_CONTROLLER_BUTTON_BACK)) {
+    if (_pInput->GetButtonState(iFirstButton + SDL_GAMEPAD_BUTTON_EAST)
+     || _pInput->GetButtonState(iFirstButton + SDL_GAMEPAD_BUTTON_BACK)) {
       FinishDetection(-1);
       return;
     }

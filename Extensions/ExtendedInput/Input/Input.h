@@ -21,13 +21,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <Core/Base/InputApiCompatibility.h>
 
 // For mimicking Win32 wheel scrolling
 #define MOUSEWHEEL_SCROLL_INTERVAL 120
 
-#define CECIL_MAX_OVERALL_BUTTONS (KID_TOTALCOUNT + MAX_JOYSTICKS * SDL_CONTROLLER_BUTTON_MAX)
+#define CECIL_MAX_OVERALL_BUTTONS (KID_TOTALCOUNT + MAX_JOYSTICKS * SDL_GAMEPAD_BUTTON_COUNT)
 #define CECIL_FIRST_AXIS_ACTION (CECIL_MAX_OVERALL_BUTTONS)
 
 enum EInputAxis {
@@ -43,7 +43,7 @@ enum EInputAxis {
   EIA_CONTROLLER_OFFSET = EIA_MAX_MOUSE,
 
   // Amount of axes (mouse axes + all controller axes * all controllers)
-  EIA_MAX_ALL = (EIA_MAX_MOUSE + SDL_CONTROLLER_AXIS_MAX * MAX_JOYSTICKS),
+  EIA_MAX_ALL = (EIA_MAX_MOUSE + SDL_GAMEPAD_AXIS_COUNT * MAX_JOYSTICKS),
 };
 
 // Information about a single input action
@@ -60,13 +60,13 @@ struct InputDeviceAction {
 
 // [Cecil] Individual game controller
 struct GameController_t {
-  SDL_GameController *handle; // Opened controller
+  SDL_Gamepad *handle; // Opened controller
   INDEX iInfoSlot; // Used controller slot for info output
 
   GameController_t();
   ~GameController_t();
 
-  void Connect(INDEX iConnectSlot, INDEX iArraySlot);
+  void Connect(SDL_JoystickID iDevice, INDEX iArraySlot);
   void Disconnect(void);
   BOOL IsConnected(void);
 };
@@ -113,13 +113,10 @@ class CInputPatch : public CInput {
     // [Cecil] Display info about current joysticks
     static void PrintJoysticksInfo(void);
 
-    // [Cecil] Open a game controller under some slot
-    // Slot index always ranges from 0 to SDL_NumJoysticks()-1
-    static void OpenGameController(INDEX iConnectSlot);
+    // [Cecil] Open a game controller under some device index
+    static void OpenGameController(SDL_JoystickID iDevice);
 
     // [Cecil] Close a game controller under some device index
-    // This device index is NOT the same as a slot and it's always unique for each added controller
-    // Use GetControllerSlotForDevice() to retrieve a slot from a device index, if there's any
     static void CloseGameController(SDL_JoystickID iDevice);
 
     // [Cecil] Find controller slot from its device index

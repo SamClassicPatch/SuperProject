@@ -974,9 +974,9 @@ static BOOL AnyControllerButton(MSG &msg) {
 
   if (bInputInit && msg.message == WM_CTRLBUTTONDOWN) {
     switch (msg.wParam) {
-      case SDL_CONTROLLER_BUTTON_A: case SDL_CONTROLLER_BUTTON_B:
-      case SDL_CONTROLLER_BUTTON_X: case SDL_CONTROLLER_BUTTON_Y:
-      case SDL_CONTROLLER_BUTTON_BACK: case SDL_CONTROLLER_BUTTON_GUIDE: case SDL_CONTROLLER_BUTTON_START:
+      case SDL_GAMEPAD_BUTTON_EAST: case SDL_GAMEPAD_BUTTON_SOUTH:
+      case SDL_GAMEPAD_BUTTON_WEST: case SDL_GAMEPAD_BUTTON_NORTH:
+      case SDL_GAMEPAD_BUTTON_BACK: case SDL_GAMEPAD_BUTTON_GUIDE: case SDL_GAMEPAD_BUTTON_START:
         return TRUE;
     }
   }
@@ -987,7 +987,7 @@ static BOOL AnyControllerButton(MSG &msg) {
 // [Cecil] Check if the "Back" button is pressed
 static BOOL IsBackPressed(MSG &msg) {
   return (msg.message == WM_KEYDOWN && msg.wParam == VK_ESCAPE)
-      || (msg.message == WM_CTRLBUTTONDOWN && msg.wParam == SDL_CONTROLLER_BUTTON_START);
+      || (msg.message == WM_CTRLBUTTONDOWN && msg.wParam == SDL_GAMEPAD_BUTTON_START);
 };
 
 CTextureObject _toStarField;
@@ -1077,11 +1077,11 @@ void QuitScreenLoop(void) {
       // Using a controller too
       } else if (msg.message == WM_CTRLBUTTONDOWN) {
         switch (msg.wParam) {
-          case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:  Credits_Speed(4, -1); continue;
-          case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: Credits_Speed(4, +1); continue;
+          case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:  Credits_Speed(4, -1); continue;
+          case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER: Credits_Speed(4, +1); continue;
 
-          case SDL_CONTROLLER_BUTTON_DPAD_UP:       Credits_Speed(2, -1); continue;
-          case SDL_CONTROLLER_BUTTON_DPAD_DOWN:     Credits_Speed(2, +1); continue;
+          case SDL_GAMEPAD_BUTTON_DPAD_UP:        Credits_Speed(2, -1); continue;
+          case SDL_GAMEPAD_BUTTON_DPAD_DOWN:      Credits_Speed(2, +1); continue;
         }
       }
 
@@ -1143,15 +1143,15 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
       // [Cecil] Remap controller axes to buttons
       if (msg.message == WM_CTRLAXISMOTION) {
         switch (msg.wParam) {
-          case SDL_CONTROLLER_AXIS_LEFTX: {
+          case SDL_GAMEPAD_AXIS_LEFTX: {
             msg.message = WM_CTRLBUTTONDOWN;
-            msg.wParam = (msg.lParam < 0 ? SDL_CONTROLLER_BUTTON_DPAD_LEFT : SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
+            msg.wParam = (msg.lParam < 0 ? SDL_GAMEPAD_BUTTON_DPAD_LEFT : SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
             msg.lParam = TRUE;
           } break;
 
-          case SDL_CONTROLLER_AXIS_LEFTY: {
+          case SDL_GAMEPAD_AXIS_LEFTY: {
             msg.message = WM_CTRLBUTTONDOWN;
-            msg.wParam = (msg.lParam < 0 ? SDL_CONTROLLER_BUTTON_DPAD_UP : SDL_CONTROLLER_BUTTON_DPAD_DOWN);
+            msg.wParam = (msg.lParam < 0 ? SDL_GAMEPAD_BUTTON_DPAD_UP : SDL_GAMEPAD_BUTTON_DPAD_DOWN);
             msg.lParam = TRUE;
           } break;
         }
@@ -1347,26 +1347,26 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
           switch (msg.wParam) {
             // Exit on Start
-            case SDL_CONTROLLER_BUTTON_START: msgCompKey.wParam = VK_ESCAPE; break;
+            case SDL_GAMEPAD_BUTTON_START: msgCompKey.wParam = VK_ESCAPE; break;
 
             // Change message types on ABXY
-            case SDL_CONTROLLER_BUTTON_A: msgCompKey.wParam = '1'; break;
-            case SDL_CONTROLLER_BUTTON_B: msgCompKey.wParam = '2'; break;
-            case SDL_CONTROLLER_BUTTON_X: msgCompKey.wParam = '3'; break;
-            case SDL_CONTROLLER_BUTTON_Y: msgCompKey.wParam = '4'; break;
+            case SDL_GAMEPAD_BUTTON_SOUTH: msgCompKey.wParam = '1'; break;
+            case SDL_GAMEPAD_BUTTON_EAST:  msgCompKey.wParam = '2'; break;
+            case SDL_GAMEPAD_BUTTON_WEST:  msgCompKey.wParam = '3'; break;
+            case SDL_GAMEPAD_BUTTON_NORTH: msgCompKey.wParam = '4'; break;
 
             // Statistics on Back
-            case SDL_CONTROLLER_BUTTON_BACK: msgCompKey.wParam = '5'; break;
+            case SDL_GAMEPAD_BUTTON_BACK: msgCompKey.wParam = '5'; break;
 
             // Left/Right to switch between messages
-            case SDL_CONTROLLER_BUTTON_DPAD_LEFT:  msgCompKey.wParam = 219; break;
-            case SDL_CONTROLLER_BUTTON_DPAD_RIGHT: msgCompKey.wParam = 221; break;
+            case SDL_GAMEPAD_BUTTON_DPAD_LEFT:  msgCompKey.wParam = 219; break;
+            case SDL_GAMEPAD_BUTTON_DPAD_RIGHT: msgCompKey.wParam = 221; break;
 
             // Scroll message text
-            case SDL_CONTROLLER_BUTTON_DPAD_UP:       msgCompKey.wParam = VK_UP; break;
-            case SDL_CONTROLLER_BUTTON_DPAD_DOWN:     msgCompKey.wParam = VK_DOWN; break;
-            case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:  msgCompKey.wParam = VK_PRIOR; break;
-            case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: msgCompKey.wParam = VK_NEXT; break;
+            case SDL_GAMEPAD_BUTTON_DPAD_UP:        msgCompKey.wParam = VK_UP; break;
+            case SDL_GAMEPAD_BUTTON_DPAD_DOWN:      msgCompKey.wParam = VK_DOWN; break;
+            case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:  msgCompKey.wParam = VK_PRIOR; break;
+            case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER: msgCompKey.wParam = VK_NEXT; break;
           }
 
           // Only if console isn't in the way

@@ -58,7 +58,7 @@ static void AxisRenderCallback(CMGTrigger *pmg, CDrawPort *pdp) {
     iAxis -= FIRST_JOYAXIS;
 
     // Fourth row
-    fU = fUSize * FLOAT(iAxis / SDL_CONTROLLER_AXIS_MAX);
+    fU = fUSize * FLOAT(iAxis / SDL_GAMEPAD_AXIS_COUNT);
     fV = fVSize * 3.0f;
 
     // Add controller icon
@@ -68,7 +68,7 @@ static void AxisRenderCallback(CMGTrigger *pmg, CDrawPort *pdp) {
     fX += fSize;
 
     // Second row
-    fU = fUSize * FLOAT(iAxis % SDL_CONTROLLER_AXIS_MAX);
+    fU = fUSize * FLOAT(iAxis % SDL_GAMEPAD_AXIS_COUNT);
     fV = fVSize;
   }
 

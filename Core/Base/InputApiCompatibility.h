@@ -115,7 +115,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define SE1K_F10          VK_F10
 #define SE1K_F11          VK_F11
 #define SE1K_F12          VK_F12
-#define SE1K_BACKQUOTE    0xC0
+#define SE1K_GRAVE        0xC0
 #define SE1K_LEFTBRACKET  0xDB
 #define SE1K_RIGHTBRACKET 0xDD
 #define SE1K_BACKSLASH    0xE2

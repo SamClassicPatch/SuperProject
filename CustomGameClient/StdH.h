@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Core/Core.h>
 
 // [Cecil] New input
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <Core/Base/InputApiCompatibility.h>
 
 // [Cecil] Moved from many individual files
