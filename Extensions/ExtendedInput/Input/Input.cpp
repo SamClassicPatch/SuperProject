@@ -333,13 +333,18 @@ void InputDeviceAction::SetReading(INDEX iActionIndex, DOUBLE fSetReading) {
 
   // Axis actions
   if (iActionIndex >= iAxisOffset) {
-    // Set axis reading
-    _pInput->inp_caiAllAxisInfo[iActionIndex - iAxisOffset].cai_fReading = ida.ida_fReading;
+    const INDEX iAxis = iActionIndex - iAxisOffset;
 
-    // Set button state only for controller axes
-    if (iActionIndex >= iAxisOffset + EIA_CONTROLLER_OFFSET && iActionIndex < iAxisOffset + EIA_MAX_ALL) {
-      extern CPluginSymbol _psAxisPressThreshold;
-      bSetButtonState = ida.IsActive(_psAxisPressThreshold.GetFloat());
+    // Make sure not to go out of array bounds
+    if (iAxis >= 0 && iAxis < EIA_MAX_ALL) {
+      // Set axis reading
+      _pInput->inp_caiAllAxisInfo[iAxis].cai_fReading = ida.ida_fReading;
+
+      // Set button state only for controller axes
+      if (iAxis >= EIA_CONTROLLER_OFFSET) {
+        extern CPluginSymbol _psAxisPressThreshold;
+        bSetButtonState = ida.IsActive(_psAxisPressThreshold.GetFloat());
+      }
     }
 
   // Buttons
@@ -426,16 +431,8 @@ void CInputPatch::P_SetKeyNames( void)
 {
   // [Cecil] Reset names of all actions
   for (INDEX iResetAction = 0; iResetAction < MAX_OVERALL_BUTTONS; iResetAction++) {
-    CTString &strInt = inp_strButtonNames[iResetAction];
-    CTString &strTra = inp_strButtonNamesTra[iResetAction];
-
-    // [Cecil] FIXME: For some weird freaking reason every 5th string starting from 1 (index 1, 6, 11, 16 etc.)
-    // is set to NULL instead of "" (or "None" at the very least), which was supposed to be set by default.
-    // It spams the assertions on each such string in Debug, and it can be verified with this check in Release.
-    if (strInt.str_String == NULL) strInt.str_String = StringDuplicate("");
-
-    strInt = "None";
-    strTra = LOCALIZE("None");
+    inp_strButtonNames[iResetAction] = "None";
+    inp_strButtonNamesTra[iResetAction] = LOCALIZE("None");
   }
 
   // [Cecil] Reset old axis names for compatibility

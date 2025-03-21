@@ -301,11 +301,14 @@ static void SetAxisNames(INDEX iFirstAxis, INDEX iAxis, const char *strAxisName,
 {
   CTString strIntButtonName(0, "Button %d", SDL_GAMEPAD_BUTTON_COUNT + iAxis);
 
-  _pInput->inp_strButtonNames   [CECIL_FIRST_AXIS_ACTION + iFirstAxis + iAxis] = _strJoyInt + strIntButtonName;
-  _pInput->inp_strButtonNamesTra[CECIL_FIRST_AXIS_ACTION + iFirstAxis + iAxis] = _strJoyTra + strDisplayName;
+  iAxis += iFirstAxis;
+  _pInput->inp_strButtonNames   [CECIL_FIRST_AXIS_ACTION + iAxis] = _strJoyInt + strIntButtonName;
+  _pInput->inp_strButtonNamesTra[CECIL_FIRST_AXIS_ACTION + iAxis] = _strJoyTra + strDisplayName;
 
   // Old name for compatibility
-  _pInput->inp_caiAllAxisInfo[iFirstAxis + iAxis].cai_strAxisName = _strJoyInt + strAxisName;
+  if (iAxis >= 0 && iAxis < EIA_MAX_ALL) {
+    _pInput->inp_caiAllAxisInfo[iAxis].cai_strAxisName = _strJoyInt + strAxisName;
+  }
 };
 
 static void SetButtonNames(INDEX iFirstButton, INDEX iButton, const char *strButtonName, const char *strDisplayName)
