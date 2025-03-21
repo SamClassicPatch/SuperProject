@@ -47,7 +47,7 @@ mkdir %BINDIR%Plugins
 copy /B %BUILTDIR%Plugins\*.dll %BINDIR%Plugins\
 
 :: Copy SDL library
-copy /B Extras\SDL2\lib\x86\SDL2.dll %BINDIR%
+copy /B Extras\SDL\lib\x86\SDL3.dll %BINDIR%
 
 :: Pack resources
 call Resources\DeployResources.bat %GAMEDIR%

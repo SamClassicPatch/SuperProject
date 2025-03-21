@@ -12,7 +12,7 @@ set CURDATE=%CURDATEFULL:~0,4%_%CURDATEFULL:~4,2%_%CURDATEFULL:~6,2%
 set BUILDS=%~dp0
 set REPO=%BUILDS%..\
 set STEAMLIB=%REPO%Extras\Steamworks\redistributable_bin\steam_api.dll
-set SDLLIB=%REPO%Extras\SDL2\lib\x86\SDL2.dll
+set SDLLIB=%REPO%Extras\SDL\lib\x86\SDL3.dll
 
 echo Copying GRO archives...
 echo ----------------------------

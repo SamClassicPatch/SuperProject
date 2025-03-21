@@ -13,7 +13,7 @@
 *.dylib
 *.dll
 !Extras/Steamworks/redistributable_bin/steam_api.dll
-!Extras/SDL2/lib/**/*.dll
+!Extras/SDL/lib/**/*.dll
 
 # Compiled Static libraries
 *.lai
@@ -21,7 +21,7 @@
 *.a
 *.lib
 !Extras/Steamworks/redistributable_bin/steam_api.lib
-!Extras/SDL2/lib/**/*.lib
+!Extras/SDL/lib/**/*.lib
 
 # Executables
 *.exe
