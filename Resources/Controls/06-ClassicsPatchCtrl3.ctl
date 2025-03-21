@@ -24,7 +24,7 @@ Button
  Released: ctl_bMoveRight = 0;
 Button
  Name: TTRS Up/Jump
- Key1: Joy 3 Button 25
+ Key1: Joy 3 Button 30
  Key2: None
  Pressed:  ctl_bMoveUp = 1;
  Released: ctl_bMoveUp = 0;
@@ -84,7 +84,7 @@ Button
  Released: ctl_bStrafe = 0;
 Button
  Name: TTRS Fire
- Key1: Joy 3 Button 26
+ Key1: Joy 3 Button 31
  Key2: None
  Pressed:  ctl_bFire = 1;
  Released: ctl_bFire = 0;
