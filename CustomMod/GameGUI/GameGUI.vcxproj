@@ -131,7 +131,7 @@
     <IntDir>$(ObjDir)</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
-    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl110)</IncludePath>
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <TargetName>GameGUI_Custom</TargetName>
   </PropertyGroup>
@@ -140,7 +140,7 @@
     <IntDir>$(ObjDir)</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
-    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl110)</IncludePath>
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <TargetName>GameGUI_Custom</TargetName>
   </PropertyGroup>

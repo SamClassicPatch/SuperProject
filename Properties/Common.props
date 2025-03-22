@@ -8,7 +8,8 @@
     <SDLLibPath>$(SolutionDir)Extras\SDL\lib\x86\</SDLLibPath>
 
     <SdkExe>$(SolutionDir)Includes;$(ExecutablePath);</SdkExe>
-    <SdkIncl>$(SolutionDir);$(SolutionDir)CustomMod\;$(ProjectDir);$(SolutionDir)Extras\Compatibility;$(SDLInclPath);$(IncludePath);</SdkIncl>
+    <SdkIncl110>$(SolutionDir);$(SolutionDir)CustomMod\;$(ProjectDir);$(SDLInclPath);$(IncludePath);</SdkIncl110>
+    <SdkIncl>$(SdkIncl110);$(SolutionDir)Extras\Compatibility;</SdkIncl>
     <SdkLibs>$(SolutionDir)Bin\$(Configuration);$(SDLLibPath);$(LibraryPath);</SdkLibs>
   </PropertyGroup>
 </Project>

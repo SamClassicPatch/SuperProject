@@ -119,7 +119,7 @@
     <IntDir>$(ObjDir)</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
-    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl110)</IncludePath>
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <TargetName>Entities_Custom</TargetName>
     <OutDir>$(BinDir)</OutDir>
@@ -128,7 +128,7 @@
     <IntDir>$(ObjDir)</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <ExecutablePath>$(SdkExe)</ExecutablePath>
-    <IncludePath>$(SamEngineIncludes);$(SdkIncl)</IncludePath>
+    <IncludePath>$(SamEngineIncludes);$(SdkIncl110)</IncludePath>
     <LibraryPath>$(SamEngineLibraries);$(SdkLibs)</LibraryPath>
     <TargetName>Entities_Custom</TargetName>
     <OutDir>$(BinDir)</OutDir>
