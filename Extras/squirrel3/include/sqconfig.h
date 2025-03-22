@@ -122,7 +122,7 @@ typedef char SQChar;
 #define scstrtol    strtol
 #endif
 #define scstrtoul   strtoul
-#define scvsprintf  vsnprintf
+#define scvsprintf  _vsnprintf // [Cecil] vsnprintf -> _vsnprintf
 #define scstrstr    strstr
 #define scisspace   isspace
 #define scisdigit   isdigit
