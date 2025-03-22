@@ -38,12 +38,12 @@ Original source code of `CustomDedicatedServer`, `CustomEngineGUI`, `CustomGameC
 
 Building instructions are available here: https://github.com/DreamyCecil/SE1-ModSDK/wiki/Building
 
+You can apply the patch to your build of TSE 1.07 one level above (e.g. in `C:/SeriousSam/` if this repository resides in `C:/SeriousSam/SuperProject/`) by using the following scripts:
+- `DeployToBin - Debug.bat` - Deploys `Debug_TSE107` binaries to `../Bin/Debug/` and copies `SE1_ClassicsPatch.gro` with all necessary resources to `../`.
+- `DeployToBin - Release.bat` - Deploys `Release_TSE107` binaries to `../Bin/` and copies `SE1_ClassicsPatch.gro` with all necessary resources to `../`.
+
 > [!NOTE]
 > A lot of batch scripts in the repository (`.bat`) utilize [7-Zip](https://www.7-zip.org/) in order to pack files into ZIP archives. Make sure to install it and specify a path to it in the environment variables for the scripts to work.
-
-> [!TIP]
-> You can apply the compiled build of the patch to your build of TSE 1.07 one level above by using the `DeployToBin - Debug.bat` and `DeployToBin - Release.bat` scripts (for `Debug_TSE107` and `Release_TSE107` configurations, respectively).  
-> For example, if this repository resides in `C:/SeriousSam/SuperProject/`, the builds will be deployed into `C:/SeriousSam/` with the executables in `C:/SeriousSam/Bin/Debug/` (for Debug builds) or in `C:/SeriousSam/Bin/` (for Release builds).
 
 # License
 
@@ -52,5 +52,6 @@ This project is licensed under GNU GPL v2 (see LICENSE file).
 Some of the code included with the SDK may not be licensed under the GNU GPL v2:
 
 - Simple DirectMedia Layer (located in `Extras/SDL/`) from https://libsdl.org/
+- Squirrel (located in `Extras/squirrel3/`) by Alberto Demichelis
 - Steamworks SDK (located in `Extras/Steamworks/`) by Valve Corporation
 - zlib (located in `Extras/zlib/`) by Jean-loup Gailly and Mark Adler
