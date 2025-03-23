@@ -84,7 +84,7 @@ class CInputPatch : public CInput {
     static void Destruct(void);
 
     // [Cecil] Check if input patch has been initialized
-    static int IsInitialized(void *);
+    static int PATCH_CALLTYPE IsInitialized(void *);
 
     // Sets name for every key
     void P_SetKeyNames(void);
@@ -126,7 +126,7 @@ class CInputPatch : public CInput {
     static BOOL SetupControllerEvent(INDEX iCtrl, MSG &msg);
 
     // [Cecil] Update SDL joysticks manually (if SDL_PollEvent() isn't being used)
-    static int UpdateJoysticks(void *pMsg);
+    static int PATCH_CALLTYPE UpdateJoysticks(void *pMsg);
 
     // [Cecil] Joystick setup on initialization
     static void StartupJoysticks(void);

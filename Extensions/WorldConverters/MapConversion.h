@@ -97,35 +97,35 @@ class IWorldConverter {
 
   public:
     // Signals for setting up a new converter
-    static int CreateConverter(void *strName);
-    static int SetMethodDestructor(void *pConverterData);
-    static int SetMethodPrepare(void *pConverterData);
-    static int SetMethodReplaceClass(void *pConverterData);
-    static int SetMethodHandleProperty(void *pConverterData);
-    static int SetMethodConvertWorld(void *pConverterData);
+    static int PATCH_CALLTYPE CreateConverter(void *strName);
+    static int PATCH_CALLTYPE SetMethodDestructor(void *pConverterData);
+    static int PATCH_CALLTYPE SetMethodPrepare(void *pConverterData);
+    static int PATCH_CALLTYPE SetMethodReplaceClass(void *pConverterData);
+    static int PATCH_CALLTYPE SetMethodHandleProperty(void *pConverterData);
+    static int PATCH_CALLTYPE SetMethodConvertWorld(void *pConverterData);
 
     // Get world converter for a specific level format
-    static int GetConverterForFormat(void *pFormat);
+    static int PATCH_CALLTYPE GetConverterForFormat(void *pFormat);
 
     // Get world converter by its name
-    static int GetConverterByName(void *strName);
+    static int PATCH_CALLTYPE GetConverterByName(void *strName);
 
     // Get level format from the converter name
-    static int GetFormatFromConverter(void *strName);
+    static int PATCH_CALLTYPE GetFormatFromConverter(void *strName);
 
     // Prepare a specific world converter before using it
-    static int PrepareConverter(void *pConverterData);
+    static int PATCH_CALLTYPE PrepareConverter(void *pConverterData);
 
     // Replace some class from some library upon loading it from an ECL file (e.g. Revolution class that doesn't exist in vanilla TSE)
     // Returns true if the class (or the library it's in) in the input has been replaced
-    static int ReplaceClass(void *pEclData);
+    static int PATCH_CALLTYPE ReplaceClass(void *pEclData);
 
     // Handle unknown entity property upon reading it via CEntity::ReadProperties_t()
     // It uses a method from the current converter that's set by calling ConvertWorld()
-    static int HandleUnknownProperty(void *pPropData);
+    static int PATCH_CALLTYPE HandleUnknownProperty(void *pPropData);
 
     // Convert the world using a specific converter
-    static int ConvertWorld(void *pWorld);
+    static int PATCH_CALLTYPE ConvertWorld(void *pWorld);
 };
 
 // Common methods related to world conversion

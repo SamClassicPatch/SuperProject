@@ -30,9 +30,9 @@ CLASSICSPATCH_EXTENSION_PROPS_BEGIN {
   ExtensionProp_t("player_model", (const char *)NULL), // Player model name to enforce on all clients
 } CLASSICSPATCH_EXTENSION_PROPS_END;
 
-static int ListSignal(void *);
-static int MultiplySignal(void *piNumber);
-static int RandomHealthSignal(void *);
+static int PATCH_CALLTYPE ListSignal(void *);
+static int PATCH_CALLTYPE MultiplySignal(void *piNumber);
+static int PATCH_CALLTYPE RandomHealthSignal(void *);
 
 // Define some extension signals
 CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
