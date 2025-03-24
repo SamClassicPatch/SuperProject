@@ -962,7 +962,7 @@ void CPropertyComboBar::ArrangeControls()
           // for all enumerated members
           for( INDEX iEnum = 0; iEnum<epEnum->epet_ctValues; iEnum++)
           {
-            if( epEnum->epet_aepevValues[ iEnum].epev_strName!="")
+            if (CTString(epEnum->epet_aepevValues[iEnum].epev_strName) != "")
             {
               ulEditable|=(1UL)<<epEnum->epet_aepevValues[ iEnum].epev_iValue;
               CTString strBitName=epEnum->epet_aepevValues[ iEnum].epev_strName;
