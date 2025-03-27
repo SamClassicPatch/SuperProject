@@ -447,6 +447,17 @@ SQRESULT sq_setparamscheck(HSQUIRRELVM v,SQInteger nparamscheck,const SQChar *ty
     return SQ_OK;
 }
 
+// [Cecil] Get amount of function parameters from the typemask
+SQInteger sq_counttypemaskparams(const SQChar *typemask)
+{
+  if (typemask == NULL) return SQ_ERROR;
+
+  SQIntVec res;
+  if (!CompileTypemask(res, typemask)) return SQ_ERROR;
+
+  return static_cast<SQInteger>(res.size());
+};
+
 SQRESULT sq_bindenv(HSQUIRRELVM v,SQInteger idx)
 {
     SQObjectPtr &o = stack_get(v,idx);
@@ -621,6 +632,12 @@ SQObjectType sq_gettype(HSQUIRRELVM v,SQInteger idx)
 {
     return sq_type(stack_get(v, idx));
 }
+
+// [Cecil] Get name of the object type
+const SQChar *sq_gettypename(SQObjectType type)
+{
+    return IdType2Name(type);
+};
 
 SQRESULT sq_typeof(HSQUIRRELVM v,SQInteger idx)
 {

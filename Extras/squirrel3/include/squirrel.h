@@ -349,6 +349,10 @@ SQUIRREL_API SQUserPointer sq_objtouserpointer(const HSQOBJECT *o);
 SQUIRREL_API SQRESULT sq_getobjtypetag(const HSQOBJECT *o,SQUserPointer * typetag);
 SQUIRREL_API SQUnsignedInteger sq_getvmrefcount(HSQUIRRELVM v, const HSQOBJECT *po);
 
+/* [Cecil] New functions */
+SQUIRREL_API const SQChar *sq_gettypename(SQObjectType type);
+SQUIRREL_API SQInteger sq_counttypemaskparams(const SQChar *typemask);
+
 
 /*GC*/
 SQUIRREL_API SQInteger sq_collectgarbage(HSQUIRRELVM v);
