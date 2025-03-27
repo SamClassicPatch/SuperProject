@@ -33,6 +33,32 @@ static SQInteger SqLexerFeed(SQUserPointer pData)
   return ch;
 };
 
+// Compile script from a source file within the game folder
+static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
+  // Open the source file using an engine stream
+  CTFileStream strm;
+
+  try {
+    strm.Open_t(strSourceFile);
+
+  } catch (char *strError) {
+    sq_throwerror(v, strError);
+    return false;
+  }
+
+  // Compile the script by reading characters from the stream
+  SQRESULT r = sq_compile(v, SqLexerFeed, &strm, strSourceFile.str_String, TRUE);
+  strm.Close();
+
+  return SQ_SUCCEEDED(r);
+};
+
+// Compile script from a character buffer with a given function name
+static bool SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const char *strSourceName) {
+  SQRESULT r = sq_compilebuffer(v, strScript, strScript.Length(), strSourceName, TRUE);
+  return SQ_SUCCEEDED(r);
+};
+
 namespace sq {
 
 // Get a script VM class from a Squirrel VM
@@ -102,7 +128,9 @@ static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
   return SQ_OK;
 };
 
-VM::VM(void) {
+VM::VM(void) : m_bDebug(false), m_bCompiled(false), m_iStackTop(0), m_bReturnValue(false),
+  m_pReturnValueCallback(NULL)
+{
   // Create a new VM and bind this wrapper class to it
   m_vm = sq_open(1024);
   sq_setsharedforeignptr(m_vm, this);
@@ -124,28 +152,197 @@ VM::~VM() {
   sq_close(m_vm);
 };
 
-// Compile script from a source file
-SQRESULT VM::CompileSource(const CTString &strSourceFile) {
-  // Open the source file using an engine stream
-  CTFileStream strm;
+// Print debug information in console
+void VM::DebugOut(const char *strFormat, ...) {
+  if (!m_bDebug) return;
 
-  try {
-    strm.Open_t(strSourceFile);
+  va_list arg;
+  va_start(arg, strFormat);
 
-  } catch (char *strError) {
-    return sq_throwerror(m_vm, strError);
-  }
+  CTString strPrint;
+  strPrint.VPrintF(strFormat, arg);
+  CPutString("[SQ] " + strPrint + "\n");
 
-  // Compile the script by reading characters from the stream
-  SQRESULT r = sq_compile(m_vm, SqLexerFeed, &strm, strSourceFile.str_String, TRUE);
-  strm.Close();
-
-  return r;
+  va_end(arg);
 };
 
-// Compile script from a string with a given function name
-SQRESULT VM::CompileScript(const CTString &strScript, const char *strSourceName) {
-  return sq_compilebuffer(m_vm, strScript, strScript.Length(), strSourceName, TRUE);
+bool VM::Compile_internal(const CTString &strSource, const char *strSourceName, bool bReturnValue) {
+  // If the VM wasn't suspended last time
+  if (!IsSuspended()) {
+    m_iStackTop = sq_gettop(m_vm);
+
+    // Compile new script (pushes the entire script as a closure on top of the stack)
+    if (strSourceName != NULL) {
+      m_bCompiled = SqCompileBuffer(m_vm, strSource, strSourceName);
+    } else {
+      m_bCompiled = SqCompileSource(m_vm, strSource);
+    }
+
+    m_bReturnValue = bReturnValue;
+    PrintCurrentStack(false, "After compile"); // Print the stack
+  }
+
+  return m_bCompiled;
+};
+
+// Compile script from a source file before executing it
+bool VM::CompileFromFile(const CTString &strSourceFile, bool bReturnValue) {
+  return Compile_internal(strSourceFile, NULL, bReturnValue);
+};
+
+// Compile script from a string before executing it
+bool VM::CompileFromString(const CTString &strScript, const char *strSourceName, bool bReturnValue) {
+  if (strSourceName == NULL) {
+    ASSERTALWAYS("Compiling Squirrel script from a string but the source name is NULL");
+    strSourceName = "";
+  }
+
+  return Compile_internal(strScript, strSourceName, bReturnValue);
+};
+
+struct UnreachablePrint {
+  VM &vm;
+  bool bDebug;
+
+  UnreachablePrint(VM *pVM, bool bSetDebug) : vm(*pVM), bDebug(bSetDebug) {};
+
+  ~UnreachablePrint() {
+    if (!bDebug) return;
+
+    // Check amount of unreachable objects
+    HSQUIRRELVM sqvm = vm.GetVM();
+    SQInteger ctRefs = -1;
+
+    // Push array of unreachable objects or null if there are none
+    sq_resurrectunreachable(sqvm);
+
+    // If it pushed an array
+    if (sq_gettype(sqvm, -1) != OT_NULL) {
+      // Get closure
+      sq_pushstring(sqvm, "len", -1);
+      sq_get(sqvm, -2);
+
+      // Push array as the argument and call it
+      sq_push(sqvm, -2);
+      sq_call(sqvm, 1, TRUE, TRUE);
+      sq_getinteger(sqvm, -1, &ctRefs);
+
+      // Pop return value and closure
+      sq_pop(sqvm, 2);
+    }
+
+    sq_poptop(sqvm); // Pop array or null
+    CPrintF("[SQ] ^cffdf00sq_resurrectunreachable() -> %d (stack ct: %d)\n", ctRefs, sq_gettop(sqvm));
+  };
+};
+
+// Execute a compiled script or resume a suspended execution
+bool VM::Execute(void) {
+  UnreachablePrint unreachable(this, m_bDebug);
+
+  // Compilation failed (reuses previous error)
+  if (!m_bCompiled) return false;
+
+  // If the VM is still suspended
+  if (IsSuspended()) {
+    // Resume it
+    SQRESULT r = sq_wakeupvm(m_vm, SQTrue, (m_bReturnValue ? SQTrue : SQFalse), SQTrue, SQFalse);
+    if (SQ_FAILED(r)) return false;
+
+  // Run a compiled script
+  } else {
+    // Push root table as 'this' for the script
+    sq_pushroottable(m_vm);
+
+    // Call the script closure without removing it from the stack
+    // Push the return value on top (or 'null' if doesn't return anything)
+    SQRESULT r = sq_call(m_vm, 1, (m_bReturnValue ? SQTrue : SQFalse), SQTrue);
+    if (SQ_FAILED(r)) return false;
+  }
+
+  PrintCurrentStack(false, "After call"); // Print the stack
+
+  // Quit if the VM is suspended
+  if (IsSuspended()) {
+    DebugOut("^cffdf00VM IS SUSPENDED | stack ct init: %d", m_iStackTop);
+    return true;
+  }
+
+  // Execute the callback for the return value
+  if (m_bReturnValue) {
+    if (m_bDebug) {
+      CTString strReturn;
+
+      if (GetString(-1, strReturn)) {
+        CPrintF("[SQ] Return value: '%s'\n", strReturn.str_String);
+      } else {
+        CPrintF("[SQ] Cannot retrieve the return value\n");
+      }
+    }
+
+    if (m_pReturnValueCallback != NULL) {
+      m_pReturnValueCallback(*this);
+    }
+  }
+
+  // Restore the stack top by popping values in this order:
+  // 1. Return value (if it's been pushed)
+  // 2. Initial root table after resuming a suspended script at least once
+  // 3. Original script closure after the initial compilation
+  sq_settop(m_vm, m_iStackTop);
+  DebugOut("^cffdf00stack ct init/end: %d/%d", m_iStackTop, sq_gettop(m_vm));
+
+  return true;
+};
+
+// Convert any object in the stack into a string
+bool VM::GetString(SQInteger idx, CTString &strValue) {
+  SQRESULT r;
+  const SQChar *str;
+
+  // Cast into a string and retrieve it
+  r = sq_tostring(m_vm, idx);
+  if (SQ_FAILED(r)) return false;
+
+  r = sq_getstring(m_vm, -1, &str);
+  if (SQ_FAILED(r)) return false;
+
+  strValue = str;
+
+  // Pop the string
+  sq_poptop(m_vm);
+  return true;
+};
+
+// Display current contents of the stack in console
+void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
+  if (!m_bDebug) return;
+
+  CPrintF("[SQ] ^cffdf00[%s]:", strLabel);
+  SQInteger ct = sq_gettop(m_vm);
+
+  if (bOnlyCount) {
+    CPrintF(" %d\n", ct);
+    return;
+  }
+
+  if (ct <= 0) {
+    CPutString(" Nothing\n");
+    return;
+  }
+
+  CPutString("\n");
+
+  for (INDEX i = ct; i > 0; i--) {
+    SQObjectType eType = sq_gettype(m_vm, i);
+    CTString strObj = "ERROR - COULD NOT GET STRING";
+
+    if (GetString(i, strObj)) {
+      strObj = "'" + strObj + "'";
+    }
+
+    CPrintF("[SQ] [%d] ^cbf9f00%s^r = %s\n", i, sq_gettypename(eType), strObj);
+  }
 };
 
 }; // namespace

@@ -30,6 +30,15 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "ExecuteScript", &ExecuteScript }, // Arg ptr : CTString
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
+static void ReturnCallback(sq::VM &vm) {
+  // Output return value
+  CTString str;
+
+  if (vm.GetString(-1, str)) {
+    CPrintF("%s\n", str.str_String);
+  }
+};
+
 int ExecuteScript(void *pScript) {
   if (pScript == NULL) return FALSE;
 
@@ -37,54 +46,23 @@ int ExecuteScript(void *pScript) {
 
   // Create a permanent VM
   static sq::VM vm;
-  HSQUIRRELVM sqvm = vm.GetVM();
+  vm.m_pReturnValueCallback = &ReturnCallback;
 
-  SQRESULT r = SQ_OK;
-  bool bWasSuspended = false;
+  const bool bExpectReturnValue = true; // Switch for testing
 
-  // If the VM wasn't suspended last time
-  if (vm.GetState() != SQ_VMSTATE_SUSPENDED) {
-    // Compile new script (pushes the entire script as a closure on top of the stack)
-    r = vm.CompileScript(strScript, "Shell");
-
-  // Otherwise it was
-  } else {
-    bWasSuspended = true;
-  }
-
-  // If no compilation error occurred
-  if (SQ_SUCCEEDED(r)) {
-    // And the VM is still suspended
-    if (vm.GetState() == SQ_VMSTATE_SUSPENDED) {
-      // Resume it
-      r = sq_wakeupvm(sqvm, FALSE, FALSE, TRUE, FALSE);
-
-    // Otherwise run it anew
-    } else {
-      // Push root table as 'this' for the script
-      sq_pushroottable(sqvm);
-
-      // Call the script closure without removing it from the stack
-      r = sq_call(sqvm, 1, FALSE, TRUE);
-    }
-
-    // If the VM executed everything correctly
-    if (SQ_SUCCEEDED(r)) {
-      // And it wasn't suspended as a result
-      if (vm.GetState() != SQ_VMSTATE_SUSPENDED) {
-        // Pop the script closure
-        sq_poptop(sqvm);
-      }
-
-    // Error during the execution
-    } else {
-      CPrintF("Runtime error:\n%s", vm.GetError());
-      return FALSE;
-    }
+  bool bCompiled = vm.CompileFromString(strScript, "Shell", bExpectReturnValue);
 
   // Error during the compilation
-  } else {
-    CPrintF("Compilation error:\n%s", vm.GetError());
+  if (!bCompiled) {
+    CPrintF("^cff0000Compilation error:\n%s", vm.GetError());
+    return FALSE;
+  }
+
+  bool bExecuted = vm.Execute();
+
+  // Error during the execution
+  if (!bExecuted) {
+    CPrintF("^cff0000Runtime error:\n%s", vm.GetError());
     return FALSE;
   }
 
