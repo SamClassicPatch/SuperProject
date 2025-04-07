@@ -486,7 +486,7 @@ static void ParseCFG_t(CTStream &strm, CListHead &lhAll) {
 
       #if _PATCHCONFIG_CUSTOM_MOD
         // Special condition for the custom mod
-        } else if (strMod == "ClassicsPatchMod") {
+        } else if (strMod == CLASSICSPATCH_MODDIRNAME) {
           // All is fine
           if (ClassicsCore_IsCustomModActive()) {
             bSkip = FALSE;

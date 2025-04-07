@@ -962,7 +962,7 @@ void CGame::InitInternal( void)
     PROCESS_INFORMATION pi;
 
     CTString strCmd = IDir::AppPath() + "Bin\\SeriousSam" + CLASSICSPATCH_SUFFIX + ".exe";
-    CTString strParam = " +game ClassicsPatchMod";
+    CTString strParam = " +game " CLASSICSPATCH_MODDIRNAME;
 
     if (!CreateProcessA(strCmd.str_String, strParam.str_String, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &cif, &pi)) {
       // Couldn't start the patch

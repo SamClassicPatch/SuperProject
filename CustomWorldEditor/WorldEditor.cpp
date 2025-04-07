@@ -488,10 +488,13 @@ void CWorldEditorApp::MyParseCommandLine(void)
       return;
     } else if (strWord=="+game") {
       CTString strMod = GetNextParam();
-      if (strMod!="SeriousSam") { // (we ignore default mod - always use base dir in that case)
+
+      // [Cecil] Ignore the custom mod as well, since it's essentially a vanilla game
+      if (strMod != "SeriousSam" && strMod != CLASSICSPATCH_MODDIRNAME) { // (we ignore default mod - always use base dir in that case)
         cmd_strMod = strMod;
         _fnmMod = "Mods\\"+strMod+"\\";
       }
+
     } else {
       _strCmdW = CString(_strCmd);
       m_lpCmdLine = (LPTSTR)(LPCTSTR)_strCmdW;

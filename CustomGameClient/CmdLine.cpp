@@ -150,7 +150,9 @@ void ParseCommandLine(CTString strCmd, BOOL bOnLaunch) {
     } else if (bOnLaunch) {
       if (strWord == "+game") {
         CTString strMod = GetNextParam();
-        if (strMod != "SeriousSam") { // (we ignore default mod - always use base dir in that case)
+
+        // [Cecil] Ignore the custom mod as well, since it's essentially a vanilla game
+        if (strMod != "SeriousSam" && strMod != CLASSICSPATCH_MODDIRNAME) { // (we ignore default mod - always use base dir in that case)
           _fnmMod = "Mods\\" + strMod + "\\";
         }
 

@@ -373,7 +373,7 @@ void P_InitStreams(void) {
       bChangeExtension = (!IFiles::IsReadable(strEntities.str_String) && !IFiles::IsReadable(strGameLib.str_String));
     }
 
-  // Custom mod is disabled but the mod might still use its libraries (e.g. ClassicsPatchMod)
+  // Custom mod is disabled but the mod might still use its libraries (e.g. CLASSICSPATCH_MODDIRNAME)
   } else if (_fnmMod != "" && _strModExt == CLASSICSPATCH_SUFFIX) {
     // Make sure the libraries are not located in the mod folder
     const CTString strEntities = IDir::FullLibPath("Entities" CLASSICSPATCH_SUFFIX);

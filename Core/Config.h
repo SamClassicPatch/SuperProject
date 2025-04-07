@@ -38,6 +38,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Suffix for custom binaries (a.k.a. mod extension)
 #define CLASSICSPATCH_SUFFIX "_Custom"
 
+// Dedicated directory name for the Classics Patch "mod"
+#define CLASSICSPATCH_MODDIRNAME "ClassicsPatchMod"
+
 // Relevant links to different webpages of the project
 #define CLASSICSPATCH_URL_SHORT   "github.com/SamClassicPatch"
 #define CLASSICSPATCH_URL_FULL    "https://" CLASSICSPATCH_URL_SHORT
