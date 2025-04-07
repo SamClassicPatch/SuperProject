@@ -427,9 +427,20 @@ static void Key_Return(void)
   strInputHistory += strEditingLine +"\r\n";
   iHistoryLine = 0;
 
+  // [Cecil] TEMP: Run Squirrel script from the console
+  if (strEditingLine.RemovePrefix("sq>")) {
+    strEditingLine.TrimSpacesLeft();
+    CPrintF("sq> %s\n", strEditingLine);
+
+    static HPatchPlugin hScripting = ClassicsExtensions_GetExtensionByName("PATCH_EXT_scripting");
+
+    if (!ClassicsExtensions_CallSignal(hScripting, "ExecuteScript", NULL, &strEditingLine)) {
+      CPutString(TRANS("Squirrel scripts are unavailable!\n"));
+    }
+
   // check for cheats
   #define CHEAT_PREFIX "please"
-  if (strEditingLine.HasPrefix(CHEAT_PREFIX) || strEditingLine.HasPrefix("/" CHEAT_PREFIX)) {
+  } else if (strEditingLine.HasPrefix(CHEAT_PREFIX) || strEditingLine.HasPrefix("/" CHEAT_PREFIX)) {
     strEditingLine.RemovePrefix(CHEAT_PREFIX);
     strEditingLine.RemovePrefix("/ " CHEAT_PREFIX);
     strEditingLine.TrimSpacesLeft();
