@@ -42,6 +42,7 @@ static void NameClick(void) {
 
     case PCN_KENNEY: RunBrowser("https://www.kenney.nl/"); break;
     case PCN_SDL: RunBrowser("https://libsdl.org/"); break;
+    case PCN_SQUIRREL: RunBrowser("http://squirrel-lang.org/"); break;
     case PCN_STEAMAPI: RunBrowser("https://partner.steamgames.com/"); break;
     case PCN_ZLIB: RunBrowser("https://zlib.net/"); break;
   }
@@ -158,17 +159,23 @@ void CPatchCreditsMenu::Initialize_t(void) {
   gm_amgNames[PCN_SDL].mg_strTip = "Copyright (C) 1997-2020 Sam Lantinga";
   gm_amgNames[PCN_SDL].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 2.0f);
   gm_amgNames[PCN_SDL].mg_pmgUp = &gm_amgNames[PCN_KENNEY];
-  gm_amgNames[PCN_SDL].mg_pmgDown = &gm_amgNames[PCN_STEAMAPI];
+  gm_amgNames[PCN_SDL].mg_pmgDown = &gm_amgNames[PCN_SQUIRREL];
+
+  gm_amgNames[PCN_SQUIRREL].SetText("Squirrel");
+  gm_amgNames[PCN_SQUIRREL].mg_strTip = "Copyright (C) 2003-2022 Alberto Demichelis";
+  gm_amgNames[PCN_SQUIRREL].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 3.0f);
+  gm_amgNames[PCN_SQUIRREL].mg_pmgUp = &gm_amgNames[PCN_SDL];
+  gm_amgNames[PCN_SQUIRREL].mg_pmgDown = &gm_amgNames[PCN_STEAMAPI];
 
   gm_amgNames[PCN_STEAMAPI].SetText("Steamworks API");
   gm_amgNames[PCN_STEAMAPI].mg_strTip = "Copyright (C) 1996-2022, Valve Corporation, All rights reserved.";
-  gm_amgNames[PCN_STEAMAPI].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 3.0f);
-  gm_amgNames[PCN_STEAMAPI].mg_pmgUp = &gm_amgNames[PCN_SDL];
+  gm_amgNames[PCN_STEAMAPI].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 4.0f);
+  gm_amgNames[PCN_STEAMAPI].mg_pmgUp = &gm_amgNames[PCN_SQUIRREL];
   gm_amgNames[PCN_STEAMAPI].mg_pmgDown = &gm_amgNames[PCN_ZLIB];
 
   gm_amgNames[PCN_ZLIB].SetText("zlib");
   gm_amgNames[PCN_ZLIB].mg_strTip = "Copyright (C) 1995-2024 Jean-loup Gailly and Mark Adler";
-  gm_amgNames[PCN_ZLIB].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 4.0f);
+  gm_amgNames[PCN_ZLIB].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 5.0f);
   gm_amgNames[PCN_ZLIB].mg_pmgUp = &gm_amgNames[PCN_STEAMAPI];
   gm_amgNames[PCN_ZLIB].mg_pmgDown = &gm_mgPatchLink;
 

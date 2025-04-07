@@ -39,6 +39,7 @@ enum EPatchCreditsName {
 
   PCN_KENNEY = PCN_FIRST_THIRDPARTY,
   PCN_SDL,
+  PCN_SQUIRREL,
   PCN_STEAMAPI,
   PCN_ZLIB,
 
