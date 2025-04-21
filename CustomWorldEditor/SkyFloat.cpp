@@ -48,7 +48,7 @@ BOOL FloatFromString(HWND hWnd, float &fNumber, BOOL &bValid)
 {
   TCHAR szWindowText[20];
   ::GetWindowText(hWnd, szWindowText, 19);
-  if (_tcscmp(szWindowText, "") == 0)
+  if (_tcscmp(szWindowText, _T("")) == 0)
   {
     bValid = FALSE;
     return TRUE;
