@@ -32,6 +32,9 @@ SHADER_MAIN(Base_Transparent)
   shaEnableDepthWrite();
   shaDepthFunc(GFX_LESS_EQUAL);
 
+  // [Cecil] Wasn't reset before
+  shaBlendFunc(GFX_SRC_ALPHA, GFX_INV_SRC_ALPHA);
+
   COLOR colModelColor = MulColors(shaGetModelColor(), shaGetCurrentColor());
   BOOL bDoubleSided = shaGetFlags() & BASE_DOUBLE_SIDED;
   BOOL bFullBright  = shaGetFlags() & BASE_FULL_BRIGHT;
