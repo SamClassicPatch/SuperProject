@@ -466,7 +466,7 @@ void MenuUpdateMouseFocus(void) {
 
   CMenuGadget *pmgActive = NULL;
   // for all gadgets in menu
-  FOREACHNODE(CMenuGadget, pgmCurrentMenu->GetChildren(), itmg) {
+  FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
     CMenuGadget &mg = *itmg;
     // if focused
     if (itmg->mg_bFocused) {
@@ -577,7 +577,7 @@ BOOL DoMenu(CDrawPort *pdp) {
   while (_tmMenuLastTickDone < tmTickNow) {
     _pTimer->SetCurrentTick(_tmMenuLastTickDone);
     // call think for all gadgets in menu
-    FOREACHNODE(CMenuGadget, pgmCurrentMenu->GetChildren(), itmg) {
+    FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
       itmg->Think();
     }
     _tmMenuLastTickDone += _pTimer->TickQuantum;
@@ -737,7 +737,7 @@ BOOL DoMenu(CDrawPort *pdp) {
     if (pgmLast != NULL) {
       _pGame->MenuPreRenderMenu(pgmLast->gm_strName);
 
-      FOREACHNODE(CMenuGadget, pgmLast->GetChildren(), itmg) {
+      FOREACHNODE(pgmLast, CMenuGadget, itmg) {
         if (itmg->mg_bVisible) {
           itmg->Render(&dpMenu);
         }
@@ -765,7 +765,7 @@ BOOL DoMenu(CDrawPort *pdp) {
   // if mouse was not active last
   if (!_bMouseUsedLast) {
     // find focused gadget
-    FOREACHNODE(CMenuGadget, pgmCurrentMenu->GetChildren(), itmg) {
+    FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
       CMenuGadget &mg = *itmg;
       // if focused
       if (itmg->mg_bFocused) {
@@ -779,7 +779,7 @@ BOOL DoMenu(CDrawPort *pdp) {
   BOOL bStilInMenus = FALSE;
   _pGame->MenuPreRenderMenu(pgmCurrentMenu->gm_strName);
   // for each menu gadget
-  FOREACHNODE(CMenuGadget, pgmCurrentMenu->GetChildren(), itmg) {
+  FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
     // if gadget is visible
     if (itmg->mg_bVisible) {
       bStilInMenus = TRUE;
@@ -938,7 +938,7 @@ void ChangeToMenu(CGameMenu *pgmNewMenu) {
     if (pgmNewMenu->gm_fPopupSize <= 0.0f) { // [Cecil]
       pgmCurrentMenu->EndMenu();
     } else {
-      FOREACHNODE(CMenuGadget, pgmCurrentMenu->GetChildren(), itmg) {
+      FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
         itmg->OnKillFocus();
       }
     }
