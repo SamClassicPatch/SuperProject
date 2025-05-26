@@ -1296,7 +1296,7 @@ void CGame::ComputerRender(CDrawPort *pdp)
     // fade over game view
     dpComp.Fill(LCDFadedColor(C_BLACK|255));
   }
-  dpComp.FillZBuffer(1.0f);
+  dpComp.FillZBuffer(ZBUF_BACK);
 
   // update screen geometry
   UpdateSize(&dpComp);

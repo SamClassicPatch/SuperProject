@@ -890,8 +890,9 @@ void DoGame(void) {
 
     // do menu
     if (bMenuRendering) {
+      // [Cecil] NOTE: Commented out to prevent it from messing with lens flares when the game is in the background
       // clear z-buffer
-      _pdpMenu->FillZBuffer(ZBUF_BACK);
+      //_pdpMenu->FillZBuffer(ZBUF_BACK);
 
       // remember if we should render menus next tick
       bMenuRendering = DoMenu(_pdpMenu);

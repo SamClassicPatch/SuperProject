@@ -33,7 +33,7 @@ void CMGModel::Render(CDrawPort *pdp) {
   PIXaabbox2D box = FloatBoxToPixBox(pdp, mg_boxOnScreen);
   CDrawPort dpModel(pdp, box);
   dpModel.Lock();
-  dpModel.FillZBuffer(1.0f);
+  dpModel.FillZBuffer(ZBUF_BACK);
 
   SetDrawportForGame(&dpModel);
   // clear menu here
