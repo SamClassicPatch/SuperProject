@@ -17,6 +17,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include <Extras/squirrel3/include/sqstdaux.h>
 
+// Debug output color tags
+#define DEBUGOUT_R "^C"
+#define DEBUGOUT_INFO(_String) "^cffdf00" _String DEBUGOUT_R
+#define DEBUGOUT_TYPE(_String) "^cbf9f00" _String DEBUGOUT_R
+
 // Helper function for reading one script character at a time for sq_compile()
 static SQInteger SqLexerFeed(SQUserPointer pData)
 {
@@ -232,7 +237,7 @@ struct UnreachablePrint {
     }
 
     sq_poptop(sqvm); // Pop array or null
-    CPrintF("[SQ] ^cffdf00sq_resurrectunreachable() -> %d (stack ct: %d)\n", ctRefs, sq_gettop(sqvm));
+    CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " = %d (stack: %d)\n", ctRefs, sq_gettop(sqvm));
   };
 };
 
@@ -264,7 +269,7 @@ bool VM::Execute(void) {
 
   // Quit if the VM is suspended
   if (IsSuspended()) {
-    DebugOut("^cffdf00VM IS SUSPENDED | stack ct init: %d", m_iStackTop);
+    DebugOut(DEBUGOUT_INFO("VM is suspended") " (stack init: %d)", m_iStackTop);
     return true;
   }
 
@@ -274,7 +279,7 @@ bool VM::Execute(void) {
       CTString strReturn;
 
       if (GetString(-1, strReturn)) {
-        CPrintF("[SQ] Return value: '%s'\n", strReturn.str_String);
+        CPrintF("[SQ] " DEBUGOUT_TYPE("Return value") " = '%s'\n", strReturn.str_String);
       } else {
         CPrintF("[SQ] Cannot retrieve the return value\n");
       }
@@ -290,7 +295,7 @@ bool VM::Execute(void) {
   // 2. Initial root table after resuming a suspended script at least once
   // 3. Original script closure after the initial compilation
   sq_settop(m_vm, m_iStackTop);
-  DebugOut("^cffdf00stack ct init/end: %d/%d", m_iStackTop, sq_gettop(m_vm));
+  DebugOut(DEBUGOUT_INFO("VM has finished running") " (stack init/end: %d/%d)", m_iStackTop, sq_gettop(m_vm));
 
   return true;
 };
@@ -318,7 +323,7 @@ bool VM::GetString(SQInteger idx, CTString &strValue) {
 void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
   if (!m_bDebug) return;
 
-  CPrintF("[SQ] ^cffdf00[%s]:", strLabel);
+  CPrintF("[SQ] " DEBUGOUT_INFO("[%s]:"), strLabel);
   SQInteger ct = sq_gettop(m_vm);
 
   if (bOnlyCount) {
@@ -341,7 +346,7 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
       strObj = "'" + strObj + "'";
     }
 
-    CPrintF("[SQ] [%d] ^cbf9f00%s^r = %s\n", i, sq_gettypename(eType), strObj);
+    CPrintF("[SQ] [%d] " DEBUGOUT_TYPE("%s") " = %s\n", i, sq_gettypename(eType), strObj);
   }
 };
 
