@@ -27,6 +27,18 @@
     <ClInclude Include="Scripting\ScrVM.h">
       <Filter>Header Files\Scripting headers</Filter>
     </ClInclude>
+    <ClInclude Include="Scripting\ScrValue.h">
+      <Filter>Header Files\Scripting headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScrObject.h">
+      <Filter>Header Files\Scripting headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScrTable.h">
+      <Filter>Header Files\Scripting headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScrConstants.h">
+      <Filter>Header Files\Scripting headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdH.cpp">
@@ -36,6 +48,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scripting\ScrVM.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScrTable.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScrObject.cpp">
       <Filter>Source Files\Scripting</Filter>
     </ClCompile>
   </ItemGroup>

@@ -27,11 +27,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scripting\ScrConstants.h" />
+    <ClInclude Include="Scripting\ScrObject.h" />
+    <ClInclude Include="Scripting\ScrTable.h" />
+    <ClInclude Include="Scripting\ScrValue.h" />
     <ClInclude Include="Scripting\ScrVM.h" />
     <ClInclude Include="StdH.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Scripting\ScrObject.cpp" />
+    <ClCompile Include="Scripting\ScrTable.cpp" />
     <ClCompile Include="Scripting\ScrVM.cpp" />
     <ClCompile Include="StdH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">Create</PrecompiledHeader>

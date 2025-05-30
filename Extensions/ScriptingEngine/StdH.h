@@ -20,4 +20,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define SQUIRREL_API
 #include <Extras/squirrel3/include/squirrel.h>
 
+#include "Scripting/ScrConstants.h"
+#include "Scripting/ScrObject.h"
+#include "Scripting/ScrTable.h"
+#include "Scripting/ScrValue.h"
 #include "Scripting/ScrVM.h"
