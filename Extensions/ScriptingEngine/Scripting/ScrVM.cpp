@@ -15,6 +15,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+// Squirrel standard library
+#include <Extras/squirrel3/include/sqstdblob.h>
+#include <Extras/squirrel3/include/sqstdsystem.h>
+#include <Extras/squirrel3/include/sqstdio.h>
+#include <Extras/squirrel3/include/sqstdmath.h>
+#include <Extras/squirrel3/include/sqstdstring.h>
 #include <Extras/squirrel3/include/sqstdaux.h>
 
 // Debug output color tags
@@ -52,7 +58,7 @@ static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
   }
 
   // Compile the script by reading characters from the stream
-  SQRESULT r = sq_compile(v, SqLexerFeed, &strm, strSourceFile.str_String, TRUE);
+  SQRESULT r = sq_compile(v, SqLexerFeed, &strm, strSourceFile.str_String, SQTrue);
   strm.Close();
 
   return SQ_SUCCEEDED(r);
@@ -60,7 +66,7 @@ static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
 
 // Compile script from a character buffer with a given function name
 static bool SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const char *strSourceName) {
-  SQRESULT r = sq_compilebuffer(v, strScript, strScript.Length(), strSourceName, TRUE);
+  SQRESULT r = sq_compilebuffer(v, strScript, strScript.Length(), strSourceName, SQTrue);
   return SQ_SUCCEEDED(r);
 };
 
@@ -133,7 +139,7 @@ static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
   return SQ_OK;
 };
 
-VM::VM(void) : m_bDebug(false), m_bCompiled(false), m_iStackTop(0), m_bReturnValue(false),
+VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bCompiled(false), m_iStackTop(0), m_bReturnValue(false),
   m_pReturnValueCallback(NULL)
 {
   // Create a new VM and bind this wrapper class to it
@@ -143,6 +149,13 @@ VM::VM(void) : m_bDebug(false), m_bCompiled(false), m_iStackTop(0), m_bReturnVal
   // Register things in the root table
   sq_pushroottable(m_vm);
   {
+    // Register standard libraries
+    if (ulInitFlags & VMLIB_STDBLOB)   sqstd_register_bloblib(m_vm);
+    if (ulInitFlags & VMLIB_STDIO)     sqstd_register_iolib(m_vm);
+    if (ulInitFlags & VMLIB_STDSYSTEM) sqstd_register_systemlib(m_vm);
+    if (ulInitFlags & VMLIB_STDMATH)   sqstd_register_mathlib(m_vm);
+    if (ulInitFlags & VMLIB_STDSTRING) sqstd_register_stringlib(m_vm);
+
     // Set handler functions
     sq_setprintfunc(m_vm, &HandlerPrintF, &HandlerErrorF);
     sq_setcompilererrorhandler(m_vm, &HandlerCompilerError);
@@ -205,6 +218,7 @@ bool VM::CompileFromString(const CTString &strScript, const char *strSourceName,
   return Compile_internal(strScript, strSourceName, bReturnValue);
 };
 
+// Temporary struct for printing out unreachable objects upon returning from a function
 struct UnreachablePrint {
   VM &vm;
   bool bDebug;
@@ -229,7 +243,7 @@ struct UnreachablePrint {
 
       // Push array as the argument and call it
       sq_push(sqvm, -2);
-      sq_call(sqvm, 1, TRUE, TRUE);
+      sq_call(sqvm, 1, SQTrue, SQTrue);
       sq_getinteger(sqvm, -1, &ctRefs);
 
       // Pop return value and closure

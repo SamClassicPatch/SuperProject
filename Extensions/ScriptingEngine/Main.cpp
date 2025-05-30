@@ -45,7 +45,7 @@ int ExecuteScript(void *pScript) {
   const CTString &strScript = *(const CTString *)pScript;
 
   // Create a permanent VM
-  static sq::VM vm;
+  static sq::VM vm(0xFFFFFFFF);
   vm.m_pReturnValueCallback = &ReturnCallback;
 
   const bool bExpectReturnValue = true; // Switch for testing

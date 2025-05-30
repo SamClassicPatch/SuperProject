@@ -22,6 +22,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
+// Flag for initializing specific APIs for a VM
+enum InitFlagsVM {
+  VMLIB_NONE      = 0,
+
+  // Squirrel STL
+  VMLIB_STDBLOB   = (1 << 0), // Blob library
+  VMLIB_STDIO     = (1 << 1), // IO library
+  VMLIB_STDSYSTEM = (1 << 2), // System library
+  VMLIB_STDMATH   = (1 << 3), // Math library
+  VMLIB_STDSTRING = (1 << 4), // String library
+};
+
 class VM {
   private:
     HSQUIRRELVM m_vm; // Squirrel VM itself
@@ -38,7 +50,7 @@ class VM {
     FReturnValueCallback m_pReturnValueCallback;
 
   public:
-    VM();
+    VM(ULONG ulInitFlags = VMLIB_NONE);
     ~VM();
 
     // Toggle debug output
@@ -117,7 +129,7 @@ class VM {
     bool GetString(SQInteger idx, CTString &strValue);
 
     // Display current contents of the stack in console
-    void PrintCurrentStack(bool bOnlyCount = FALSE, const char *strLabel = "Current stack");
+    void PrintCurrentStack(bool bOnlyCount = false, const char *strLabel = "Current stack");
 };
 
 }; // namespace
