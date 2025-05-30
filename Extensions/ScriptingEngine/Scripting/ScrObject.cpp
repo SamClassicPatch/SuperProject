@@ -33,9 +33,11 @@ Object &Object::operator=(const Object &other) {
 // Clear the class from the object
 void Object::Release(void) {
   // Stop referencing the last object
-  sq_release(m_vm, &m_obj);
+  if (m_bOwner) {
+    sq_release(m_vm, &m_obj);
+    sq_resetobject(&m_obj);
+  }
 
-  if (m_bOwner) sq_resetobject(&m_obj);
   m_bOwner = false;
 };
 

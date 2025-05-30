@@ -30,7 +30,7 @@ class Object {
   protected:
     HSQUIRRELVM m_vm; // Squirrel VM this object belongs to
     HSQOBJECT m_obj;  // Reference to the Squirrel object
-    bool m_bOwner;    // Whether or not this class owns the referenced object
+    bool m_bOwner;    // Whether this class currently owns any object
 
     // Constructor for creating empty objects of derived classes
     Object(HSQUIRRELVM vmSet, bool bObjectOwner) : m_vm(vmSet), m_bOwner(bObjectOwner) {
