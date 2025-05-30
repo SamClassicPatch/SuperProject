@@ -20,6 +20,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
+#include "ScrConstants.h"
+#include "ScrTable.h"
+
 namespace sq {
 
 // Flag for initializing specific APIs for a VM
@@ -130,6 +133,18 @@ class VM {
 
     // Display current contents of the stack in console
     void PrintCurrentStack(bool bOnlyCount = false, const char *strLabel = "Current stack");
+
+  // VM interactions
+  public:
+
+    // Access const table
+    __forceinline ConstTable Const(void) { return ConstTable(GetVM()); };
+
+    // Access root table
+    __forceinline RootTable Root(void) { return RootTable(GetVM()); };
+
+    // Access registry table
+    __forceinline RegistryTable Registry(void) { return RegistryTable(GetVM()); };
 };
 
 }; // namespace

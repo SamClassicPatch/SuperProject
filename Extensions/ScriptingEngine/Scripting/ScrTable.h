@@ -94,6 +94,29 @@ class Table : public TableBase {
     };
 };
 
+// Class that references a VM's root table with all the globals for Squirrel scripts
+class RootTable : public TableBase {
+  public:
+    RootTable(HSQUIRRELVM vmSet) : TableBase(vmSet) {
+      sq_pushroottable(m_vm); // Push table
+      sq_getstackobj(m_vm, -1, &m_obj);
+      sq_addref(m_vm, &m_obj);
+      sq_poptop(m_vm); // Pop table
+    };
+};
+
+// Class that references a VM's registry table, which is similar to the root table
+// except that Squirrel scripts themselves cannot directly interact with it
+class RegistryTable : public TableBase {
+  public:
+    RegistryTable(HSQUIRRELVM vmSet) : TableBase(vmSet) {
+      sq_pushregistrytable(m_vm); // Push table
+      sq_getstackobj(m_vm, -1, &m_obj);
+      sq_addref(m_vm, &m_obj);
+      sq_poptop(m_vm); // Pop table
+    };
+};
+
 }; // namespace
 
 #endif
