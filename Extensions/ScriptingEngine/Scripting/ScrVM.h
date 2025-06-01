@@ -35,6 +35,16 @@ enum InitFlagsVM {
   VMLIB_STDSYSTEM = (1 << 2), // System library
   VMLIB_STDMATH   = (1 << 3), // Math library
   VMLIB_STDSTRING = (1 << 4), // String library
+
+  // Serious Engine API
+  VMLIB_ENTITIES   = (1 << 10),
+  VMLIB_FILESYSTEM = (1 << 11),
+  VMLIB_INPUT      = (1 << 12),
+  VMLIB_MESSAGE    = (1 << 13),
+  VMLIB_NETWORK    = (1 << 14),
+  VMLIB_SHELL      = (1 << 15),
+  VMLIB_TIMER      = (1 << 16),
+  VMLIB_WORLD      = (1 << 17),
 };
 
 class VM {
@@ -133,6 +143,18 @@ class VM {
 
     // Display current contents of the stack in console
     void PrintCurrentStack(bool bOnlyCount = false, const char *strLabel = "Current stack");
+
+  // Serious Engine libraries
+  private:
+
+    void RegisterEntities(void);
+    void RegisterFileSystem(void);
+    void RegisterInput(void);
+    void RegisterMessage(void);
+    void RegisterNetwork(void);
+    void RegisterShell(void);
+    void RegisterTimer(void);
+    void RegisterWorld(void);
 
   // VM interactions
   public:

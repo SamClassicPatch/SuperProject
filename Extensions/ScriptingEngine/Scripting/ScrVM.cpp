@@ -160,6 +160,16 @@ VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bCompiled(false), m_iStackTop(0),
     if (ulInitFlags & VMLIB_STDMATH)   sqstd_register_mathlib(m_vm);
     if (ulInitFlags & VMLIB_STDSTRING) sqstd_register_stringlib(m_vm);
 
+    // Register engine libraries
+    if (ulInitFlags & VMLIB_ENTITIES)   RegisterEntities();
+    if (ulInitFlags & VMLIB_FILESYSTEM) RegisterFileSystem();
+    if (ulInitFlags & VMLIB_INPUT)      RegisterInput();
+    if (ulInitFlags & VMLIB_MESSAGE)    RegisterMessage();
+    if (ulInitFlags & VMLIB_NETWORK)    RegisterNetwork();
+    if (ulInitFlags & VMLIB_SHELL)      RegisterShell();
+    if (ulInitFlags & VMLIB_TIMER)      RegisterTimer();
+    if (ulInitFlags & VMLIB_WORLD)      RegisterWorld();
+
     // Set handler functions
     sq_setprintfunc(m_vm, &HandlerPrintF, &HandlerErrorF);
     sq_setcompilererrorhandler(m_vm, &HandlerCompilerError);
