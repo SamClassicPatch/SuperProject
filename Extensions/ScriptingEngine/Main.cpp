@@ -30,27 +30,20 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "ExecuteScript", &ExecuteScript }, // Arg ptr : CTString
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
-static void ReturnCallback(sq::VM &vm) {
-  // Output return value
-  CTString str;
-
-  if (vm.GetString(-1, str)) {
-    CPrintF("%s\n", str.str_String);
-  }
-};
-
-int ExecuteScript(void *pScript) {
-  if (pScript == NULL) return FALSE;
-
-  const CTString &strScript = *(const CTString *)pScript;
-
+// Generic method for executing scripts
+static BOOL ExecuteSquirrelScript(const CTString &strScript, BOOL bFile, sq::VM::FReturnValueCallback pCallback) {
   // Create a permanent VM
   static sq::VM vm(0xFFFFFFFF);
-  vm.m_pReturnValueCallback = &ReturnCallback;
+  vm.m_pReturnValueCallback = pCallback;
 
   const bool bExpectReturnValue = true; // Switch for testing
+  bool bCompiled;
 
-  bool bCompiled = vm.CompileFromString(strScript, "Shell", bExpectReturnValue);
+  if (bFile) {
+    bCompiled = vm.CompileFromFile(strScript, bExpectReturnValue);
+  } else {
+    bCompiled = vm.CompileFromString(strScript, "Shell", bExpectReturnValue);
+  }
 
   // Error during the compilation
   if (!bCompiled) {
@@ -69,9 +62,62 @@ int ExecuteScript(void *pScript) {
   return TRUE;
 };
 
+static void SignalReturnCallback(sq::VM &vm) {
+  // Output return value
+  CTString str;
+
+  if (vm.GetString(-1, str)) {
+    CPrintF("%s\n", str.str_String);
+  }
+};
+
+int ExecuteScript(void *pScript) {
+  if (pScript == NULL) return FALSE;
+
+  const CTString &strScript = *(const CTString *)pScript;
+  //return ExecuteSquirrelScript(strScript, FALSE);
+  return ExecuteSquirrelScript("SeriousSam_ClassicsPatch\\_Script.nut", TRUE, &SignalReturnCallback);
+};
+
+static CTString _strLastCommandResult;
+
+static void CommandReturnCallback(sq::VM &vm) {
+  // Save return value
+  CTString str = "";
+  vm.GetString(-1, str);
+
+  // Must be a non-null value
+  _strLastCommandResult = (str != "null") ? str : "";
+};
+
+// Execute a script from the provided string and return the result
+static CTString ExecuteString(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  const CTString &strScript = *NEXT_ARG(CTString *);
+
+  _strLastCommandResult = "";
+  ExecuteSquirrelScript(strScript, FALSE, &CommandReturnCallback);
+
+  return _strLastCommandResult;
+};
+
+// Execute a script from the provided file and return the result
+static CTString ExecuteFile(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  const CTString &strScript = *NEXT_ARG(CTString *);
+
+  _strLastCommandResult = "";
+  ExecuteSquirrelScript(strScript, TRUE, &CommandReturnCallback);
+
+  return _strLastCommandResult;
+};
+
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
+  // Custom symbols
+  GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteString", "CTString", &ExecuteString);
+  GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteFile",   "CTString", &ExecuteFile);
 };
 
 // Module cleanup

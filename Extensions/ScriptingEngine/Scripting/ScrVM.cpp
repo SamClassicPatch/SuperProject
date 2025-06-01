@@ -28,6 +28,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define DEBUGOUT_INFO(_String) "^cffdf00" _String DEBUGOUT_R
 #define DEBUGOUT_TYPE(_String) "^cbf9f00" _String DEBUGOUT_R
 
+namespace sq {
+
+// Get a script VM class from a Squirrel VM
+__forceinline VM &GetVM(HSQUIRRELVM v) {
+  return *(VM *)sq_getsharedforeignptr(v);
+};
+
 // Helper function for reading one script character at a time for sq_compile()
 static SQInteger SqLexerFeed(SQUserPointer pData)
 {
@@ -54,6 +61,10 @@ static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
 
   } catch (char *strError) {
     sq_throwerror(v, strError);
+
+    GetVM(v).ClearError();
+    GetVM(v).PushError(strError);
+    GetVM(v).PushError("\n");
     return false;
   }
 
@@ -68,13 +79,6 @@ static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
 static bool SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const char *strSourceName) {
   SQRESULT r = sq_compilebuffer(v, strScript, strScript.Length(), strSourceName, SQTrue);
   return SQ_SUCCEEDED(r);
-};
-
-namespace sq {
-
-// Get a script VM class from a Squirrel VM
-__forceinline VM &GetVM(HSQUIRRELVM v) {
-  return *(VM *)sq_getsharedforeignptr(v);
 };
 
 // Message output
