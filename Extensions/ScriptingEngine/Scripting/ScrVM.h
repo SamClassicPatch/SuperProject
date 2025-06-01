@@ -76,6 +76,11 @@ class VM {
       return m_vm;
     };
 
+    // Cast to a raw Squirrel VM
+    __forceinline operator HSQUIRRELVM() const {
+      return m_vm;
+    };
+
     // Get last VM error
     __forceinline const char *GetError(void) const {
       // No error

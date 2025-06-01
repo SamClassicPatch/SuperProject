@@ -31,7 +31,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 namespace sq {
 
 // Get a script VM class from a Squirrel VM
-__forceinline VM &GetVM(HSQUIRRELVM v) {
+__forceinline VM &GetVMClass(HSQUIRRELVM v) {
   return *(VM *)sq_getsharedforeignptr(v);
 };
 
@@ -62,9 +62,10 @@ static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
   } catch (char *strError) {
     sq_throwerror(v, strError);
 
-    GetVM(v).ClearError();
-    GetVM(v).PushError(strError);
-    GetVM(v).PushError("\n");
+    VM &vm = GetVMClass(v);
+    vm.ClearError();
+    vm.PushError(strError);
+    vm.PushError("\n");
     return false;
   }
 
@@ -100,7 +101,7 @@ static void HandlerErrorF(HSQUIRRELVM v, const char *str, ...) {
 
   CTString strPrint;
   strPrint.VPrintF(str, arg);
-  GetVM(v).PushError(strPrint);
+  GetVMClass(v).PushError(strPrint);
 
   va_end(arg);
 };
@@ -110,7 +111,7 @@ static void HandlerCompilerError(HSQUIRRELVM v,
   const SQChar *strError, const SQChar *strSource, SQInteger iLn, SQInteger iCh)
 {
   // Clear the last error
-  GetVM(v).ClearError();
+  GetVMClass(v).ClearError();
 
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
@@ -122,7 +123,7 @@ static void HandlerCompilerError(HSQUIRRELVM v,
 // Runtime error output
 static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
   // Clear the last error
-  GetVM(v).ClearError();
+  GetVMClass(v).ClearError();
 
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
@@ -243,29 +244,28 @@ struct UnreachablePrint {
     if (!bDebug) return;
 
     // Check amount of unreachable objects
-    HSQUIRRELVM sqvm = vm.GetVM();
     SQInteger ctRefs = -1;
 
     // Push array of unreachable objects or null if there are none
-    sq_resurrectunreachable(sqvm);
+    sq_resurrectunreachable(vm);
 
     // If it pushed an array
-    if (sq_gettype(sqvm, -1) != OT_NULL) {
+    if (sq_gettype(vm, -1) != OT_NULL) {
       // Get closure
-      sq_pushstring(sqvm, "len", -1);
-      sq_get(sqvm, -2);
+      sq_pushstring(vm, "len", -1);
+      sq_get(vm, -2);
 
       // Push array as the argument and call it
-      sq_push(sqvm, -2);
-      sq_call(sqvm, 1, SQTrue, SQTrue);
-      sq_getinteger(sqvm, -1, &ctRefs);
+      sq_push(vm, -2);
+      sq_call(vm, 1, SQTrue, SQTrue);
+      sq_getinteger(vm, -1, &ctRefs);
 
       // Pop return value and closure
-      sq_pop(sqvm, 2);
+      sq_pop(vm, 2);
     }
 
-    sq_poptop(sqvm); // Pop array or null
-    CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " = %d (stack: %d)\n", ctRefs, sq_gettop(sqvm));
+    sq_poptop(vm); // Pop array or null
+    CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " = %d (stack: %d)\n", ctRefs, sq_gettop(vm));
   };
 };
 
