@@ -117,16 +117,19 @@ static void LoadingHook_t(CProgressHookInfo *pphi)
 
   if (ulLevelMask!=0 && !_pNetwork->IsPlayingDemo()) {
     // map hook
-    extern void RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi);
-    RenderMap(&dpHook, ulLevelMask, pphi);
+    extern BOOL RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi);
 
-    // finish rendering
-    dpHook.Unlock();
-    dpHook.dp_Raster->ra_pvpViewPort->SwapBuffers();
+    // [Cecil] If the map has been rendered, quit before rendering the loading bar
+    if (RenderMap(&dpHook, ulLevelMask, pphi))
+    {
+      // finish rendering
+      dpHook.Unlock();
+      dpHook.dp_Raster->ra_pvpViewPort->SwapBuffers();
 
-    // keep current time
-    tvLast = _pTimer->GetHighPrecisionTimer();
-    return;
+      // keep current time
+      tvLast = _pTimer->GetHighPrecisionTimer();
+      return;
+    }
   }
 
   // get sizes

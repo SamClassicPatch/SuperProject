@@ -826,7 +826,7 @@ void RenderMessageStats(CDrawPort *pdp)
   _eMapType = ScanLevelName(_pNetwork->ga_fnmWorld.FileName());
 
   if (psp->sp_bCooperative) {
-    extern void RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi);
+    extern BOOL RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi);
     if (pdp->Lock()) {
       // get sizes
       PIX pixSizeI = pdp->GetWidth();

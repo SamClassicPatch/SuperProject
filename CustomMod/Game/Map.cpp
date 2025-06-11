@@ -86,10 +86,11 @@ static void ReleaseMapData(void)
 };
 
 static BOOL ObtainMapData(void) {
-  // [Cecil] Only load new textures for a new map type
+  // [Cecil] Load new textures for a new map type only once
   static INDEX iLastMapType = -1;
+  static BOOL bLastResult = FALSE;
 
-  if (iLastMapType == _eMapType) return TRUE;
+  if (iLastMapType == _eMapType) return bLastResult;
   iLastMapType = _eMapType;
 
   // [Cecil] Reset textures
@@ -161,18 +162,22 @@ static BOOL ObtainMapData(void) {
 
   } catch (char *strError) {
     CPrintF("%s\n", strError);
+
+    // [Cecil] Release whatever data has been loaded on error
+    ReleaseMapData();
+
+    bLastResult = FALSE;
     return FALSE;
   }
 
+  bLastResult = TRUE;
   return TRUE;
 };
 
-void RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi)
+BOOL RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi)
 {
-  if (!ObtainMapData()) {
-    ReleaseMapData();
-    return;
-  }
+  // [Cecil] Map hasn't been rendered
+  if (!ObtainMapData()) return FALSE;
 
   PIX pixdpw = pdp->GetWidth();
   PIX pixdph = pdp->GetHeight();
@@ -331,4 +336,7 @@ void RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi)
       }
     }
   }
-}
+
+  // [Cecil] Map has been rendered
+  return TRUE;
+};
