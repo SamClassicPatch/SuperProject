@@ -218,6 +218,8 @@
     <Bscmake />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
     </Link>
     <CustomBuildStep />
     <PostBuildEvent />
@@ -252,6 +254,8 @@
     <Bscmake />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
     </Link>
     <CustomBuildStep />
     <PostBuildEvent />
@@ -286,6 +290,8 @@
     <Bscmake />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
     </Link>
     <CustomBuildStep />
     <PostBuildEvent />
@@ -320,6 +326,8 @@
     <Bscmake />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
     </Link>
     <CustomBuildStep />
     <PostBuildEvent />
@@ -354,6 +362,8 @@
     <Bscmake />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
     </Link>
     <CustomBuildStep />
     <PostBuildEvent />
@@ -388,6 +398,8 @@
     <Bscmake />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
     </Link>
     <CustomBuildStep />
     <PostBuildEvent />
