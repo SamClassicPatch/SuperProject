@@ -257,13 +257,15 @@ static void PatchInfo(void) {
     "\nSerious Sam Classics Patch"
     "\n" CLASSICSPATCH_URL_SHORT
     "\n"
-    "\n- Compiler version: %d"
-    "\n- Engine version: %s"
+    "\n- Built for: %s v%s"
     "\n- Patch version: %s"
     "\n- API version: %s"
+    "\n- Compiler version: %d"
     "\n\n(c) Dreamy Cecil, 2022-2025\n",
-  _MSC_FULL_VER, _SE_VER_STRING, ClassicsCore_GetVersionName(),
-  CLASSICSPATCH_STRINGIFY(CLASSICSPATCH_INTERFACE_VERSION));
+  CHOOSE_FOR_GAME("TFE", "TSE", "TSE"), _SE_VER_STRING,
+  ClassicsCore_GetVersionName(),
+  CLASSICSPATCH_STRINGIFY(CLASSICSPATCH_INTERFACE_VERSION),
+  _MSC_FULL_VER);
 
   CPutString(strInfo);
 };
