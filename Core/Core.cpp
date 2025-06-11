@@ -132,6 +132,10 @@ void ClassicsPatch_Init(void)
   if (_bClassicsPatchRunning) return;
   _bClassicsPatchRunning = true;
 
+  // Report patch version
+  CPrintF("Initializing Serious Sam Classics Patch v%s for %s v%s...\n",
+    ClassicsCore_GetVersionName(), CHOOSE_FOR_GAME("TFE", "TSE", "TSE"), _SE_VER_STRING);
+
   // Initial preparation
   {
     // Allow more characters in console by default
