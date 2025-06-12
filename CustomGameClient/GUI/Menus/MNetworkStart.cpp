@@ -43,7 +43,7 @@ static void StartGameOptionsFromNetwork(void) {
 
 // [Cecil] Open server settings from the patch
 static void StartPatchServerOptionsFromNetwork(void) {
-  static DECLARE_CTFILENAME(fnmConfig, "Scripts\\ClassicsPatch\\02_ServerSettings.cfg");
+  static DECLARE_CTFILENAME(fnmConfig, "Scripts\\Menu\\ClassicsPatch\\02_ServerSettings.cfg");
   CVarMenu::ChangeTo(TRANS("SERVER OPTIONS"), fnmConfig);
 };
 

@@ -103,7 +103,7 @@ static void StartPatchOptionsMenu(void) {
   gmCurrent.gm_iSortType = LSSORT_FILEUP;
   gmCurrent.gm_bSave = FALSE;
   gmCurrent.gm_bManage = FALSE;
-  gmCurrent.gm_fnmDirectory = CTString("Scripts\\ClassicsPatch\\");
+  gmCurrent.gm_fnmDirectory = CTString("Scripts\\Menu\\ClassicsPatch\\");
   gmCurrent.gm_strSelected = CTString("");
   gmCurrent.gm_fnmExt = CTString(".cfg");
   // Ignore lists to prevents mods from hiding patch options when excluding the entire "Scripts" directory
