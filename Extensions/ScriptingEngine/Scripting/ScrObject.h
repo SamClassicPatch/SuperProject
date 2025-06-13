@@ -89,7 +89,22 @@ class Object {
   protected:
 
     // Add a value to the object
-    void BindValue(const SQChar *strName, const Value &val, bool bStaticVar);
+    template<class Type> inline
+    void BindValue(const SQChar *strName, const Type &val, bool bStaticVar) {
+      sq_pushobject(m_vm, m_obj); // Push object
+
+      // Create a new slot with the value under a name
+      sq_pushstring(m_vm, strName, -1);
+      Value<Type>(val).Push(m_vm);
+      sq_newslot(m_vm, -3, bStaticVar);
+
+      sq_poptop(m_vm); // Pop object
+    };
+
+    // Special case to make the compiler shut it
+    inline void BindValue(const SQChar *strName, const char *val, bool bStaticVar) {
+      BindValue(strName, CTString(val), bStaticVar);
+    };
 
     // Add a closure to the object
     void BindFunc(const SQChar *strName, SQFUNCTION pFunc, bool bStaticVar);

@@ -99,18 +99,6 @@ void Object::RegisterFunc(const SQRegFunction &regfunc) {
   sq_poptop(m_vm); // Pop object
 };
 
-// Add a value to the object
-void Object::BindValue(const SQChar *strName, const Value &val, bool bStaticVar) {
-  sq_pushobject(m_vm, m_obj); // Push object
-
-  // Create a new slot with the value under a name
-  sq_pushstring(m_vm, strName, -1);
-  val.Push(m_vm);
-  sq_newslot(m_vm, -3, bStaticVar);
-
-  sq_poptop(m_vm); // Pop object
-};
-
 // Add a closure to the object
 void Object::BindFunc(const SQChar *strName, SQFUNCTION pFunc, bool bStaticVar) {
   sq_pushobject(m_vm, m_obj); // Push object

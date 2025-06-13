@@ -22,134 +22,71 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
-// Temporary holder of any Squirrel value outside any VM
-class Value {
-  private:
-    // SQObject is repurposed as an 'any' class that only holds constants
-    HSQOBJECT m_obj;
+// Abstract base for a holder of any Squirrel value
+template<class Type>
+struct Value {
+  // Must be explicitly defined for specific template classes
+  void Push(HSQUIRRELVM v) const;
+  bool Get(HSQUIRRELVM v, SQInteger idx);
+};
 
-    // For holding strings
-    CTString m_str;
+// Define a simple value class
+#define SQ_SIMPLEVALUE(_Type, _SqType, _PushFunc, _GetFunc)                             \
+  template<>                                                                            \
+  struct Value< _Type > {                                                               \
+    _Type val;                                                                          \
+    Value(_Type valSet) : val(valSet) {};                                               \
+    inline void Push(HSQUIRRELVM v) const { _PushFunc(v, static_cast<_SqType>(val)); }; \
+    inline bool Get(HSQUIRRELVM v, SQInteger idx) {                                     \
+      _SqType sqvalue;                                                                  \
+      bool res = SQ_SUCCEEDED(_GetFunc(v, idx, &sqvalue));                              \
+      val = static_cast<_Type>(sqvalue);                                                \
+      return res;                                                                       \
+    };                                                                                  \
+  };
 
-  public:
-    // Constructor for a null value
-    Value() {
-      sq_resetobject(&m_obj);
-    };
+#pragma warning(push)
+#pragma warning(disable : 4800) // For SQBool -> bool truncation
 
-    // Constructor from a bool
-    Value(SQBool bSet) {
-      m_obj._type = OT_BOOL;
-      m_obj._unVal.nInteger = bSet;
-    };
+// Define integral types
+SQ_SIMPLEVALUE(int,    SQInteger, sq_pushinteger, sq_getinteger);
+SQ_SIMPLEVALUE(UBYTE,  SQInteger, sq_pushinteger, sq_getinteger);
+SQ_SIMPLEVALUE(SBYTE,  SQInteger, sq_pushinteger, sq_getinteger);
+SQ_SIMPLEVALUE(UWORD,  SQInteger, sq_pushinteger, sq_getinteger);
+SQ_SIMPLEVALUE(SWORD,  SQInteger, sq_pushinteger, sq_getinteger);
+SQ_SIMPLEVALUE(ULONG,  SQInteger, sq_pushinteger, sq_getinteger);
+SQ_SIMPLEVALUE(SLONG,  SQInteger, sq_pushinteger, sq_getinteger);
+SQ_SIMPLEVALUE(FLOAT,  SQFloat,   sq_pushfloat,   sq_getfloat);
+SQ_SIMPLEVALUE(DOUBLE, SQFloat,   sq_pushfloat,   sq_getfloat);
+SQ_SIMPLEVALUE(bool,   SQBool,    sq_pushbool,    sq_getbool);
 
-    // Constructor from a float
-    Value(SQFloat fSet) {
-      m_obj._type = OT_FLOAT;
-      m_obj._unVal.fFloat = fSet;
-    };
+#pragma warning(pop)
 
-    // Constructor from an integer
-    Value(SQInteger iSet) {
-      m_obj._type = OT_INTEGER;
-      m_obj._unVal.nInteger = iSet;
-    };
+// Define null type
+template<>
+struct Value<void> {
+  inline void Push(HSQUIRRELVM v) const { sq_pushnull(v); };
+  inline bool Get(HSQUIRRELVM v, SQInteger idx) { return true; };
+};
 
-    // Constructor from a string
-    Value(const SQChar *strSet) {
-      m_obj._type = OT_STRING;
-      m_str = strSet;
-    };
+// Define string type
+template<>
+struct Value<CTString> {
+  CTString val;
 
-    // Constructor from an engine string
-    Value(const CTString &strSet) {
-      m_obj._type = OT_STRING;
-      m_str = strSet;
-    };
+  Value(const SQChar *strSet) : val(strSet) {};
+  Value(const CTString &strSet) : val(strSet) {};
 
-    // Get current value type
-    __forceinline SQObjectType GetType(void) const {
-      return m_obj._type;
-    };
+  inline void Push(HSQUIRRELVM v) const {
+    sq_pushstring(v, val.str_String, -1);
+  };
 
-    // Assignment operator
-    inline Value &operator=(const Value &other) {
-      if (&other == this) return *this;
-
-      m_obj = other.m_obj;
-      m_str = other.m_str;
-
-      return *this;
-    };
-
-  // VM interactions
-  public:
-
-    // Push value onto the stack
-    inline void Push(HSQUIRRELVM v) const {
-      switch (m_obj._type) {
-        case OT_BOOL:    sq_pushbool(v, GetBool()); return;
-        case OT_FLOAT:   sq_pushfloat(v, GetFloat()); return;
-        case OT_INTEGER: sq_pushinteger(v, GetInt()); return;
-        case OT_STRING:  sq_pushstring(v, GetString(), -1); return;
-
-        default:
-          ASSERTALWAYS("Invalid value type");
-          sq_pushnull(v);
-          return;
-      }
-    };
-
-    // Get value from the stack
-    inline void Get(HSQUIRRELVM v, SQInteger idx) {
-      m_obj._type = sq_gettype(v, idx);
-
-      switch (m_obj._type) {
-        case OT_BOOL:
-        case OT_INTEGER: {
-          sq_getinteger(v, idx, &m_obj._unVal.nInteger);
-        } return;
-
-        case OT_FLOAT: {
-          sq_getfloat(v, idx, &m_obj._unVal.fFloat);
-        } return;
-
-        case OT_STRING: {
-          const SQChar *strGet;
-          sq_getstring(v, idx, &strGet);
-
-          m_str = strGet;
-        } return;
-
-        default: {
-          ASSERTALWAYS("Invalid value type");
-          sq_resetobject(&m_obj);
-        } return;
-      }
-    };
-
-  // Value access
-  public:
-
-    __forceinline SQBool GetBool(void) const {
-      ASSERT(GetType() == OT_BOOL);
-      return m_obj._unVal.nInteger ? SQTrue : SQFalse;
-    };
-
-    __forceinline SQFloat GetFloat(void) const {
-      ASSERT(GetType() == OT_FLOAT);
-      return m_obj._unVal.fFloat;
-    };
-
-    __forceinline SQInteger GetInt(void) const {
-      ASSERT(GetType() == OT_INTEGER);
-      return m_obj._unVal.nInteger;
-    };
-
-    __forceinline const SQChar *GetString(void) const {
-      ASSERT(GetType() == OT_STRING);
-      return (const SQChar *)m_str.str_String;
-    };
+  inline bool Get(HSQUIRRELVM v, SQInteger idx) {
+    const SQChar *str = "";
+    bool res = SQ_SUCCEEDED(sq_getstring(v, idx, &str));
+    val = str;
+    return res;
+  };
 };
 
 }; // namespace

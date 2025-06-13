@@ -50,8 +50,9 @@ class TableBase : public Object {
     };
 
   public:
-    // Add a value or a data pointer
-    inline void SetValue(const SQChar *strName, const Value &val) {
+    // Add a value
+    template<class Type> inline
+    void SetValue(const SQChar *strName, const Type &val) {
       BindValue(strName, val, false);
     };
 
