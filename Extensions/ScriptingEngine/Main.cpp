@@ -30,32 +30,36 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "ExecuteScript", &ExecuteScript }, // Arg ptr : CTString
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
+// Permanent script VM
+static sq::VM *_pVM = NULL;
+
 // Generic method for executing scripts
 static BOOL ExecuteSquirrelScript(const CTString &strScript, BOOL bFile, sq::VM::FReturnValueCallback pCallback) {
-  // Create a permanent VM
-  static sq::VM vm(0xFFFFFFFF);
-  vm.m_pReturnValueCallback = pCallback;
+  // Create a new VM
+  if (_pVM == NULL) _pVM = new sq::VM(0xFFFFFFFF);
+
+  _pVM->m_pReturnValueCallback = pCallback;
 
   const bool bExpectReturnValue = true; // Switch for testing
   bool bCompiled;
 
   if (bFile) {
-    bCompiled = vm.CompileFromFile(strScript, bExpectReturnValue);
+    bCompiled = _pVM->CompileFromFile(strScript, bExpectReturnValue);
   } else {
-    bCompiled = vm.CompileFromString(strScript, "Shell", bExpectReturnValue);
+    bCompiled = _pVM->CompileFromString(strScript, "Shell", bExpectReturnValue);
   }
 
   // Error during the compilation
   if (!bCompiled) {
-    CPrintF("^cff0000Compilation error:\n%s", vm.GetError());
+    CPrintF("^cff0000Compilation error:\n%s", _pVM->GetError());
     return FALSE;
   }
 
-  bool bExecuted = vm.Execute();
+  bool bExecuted = _pVM->Execute();
 
   // Error during the execution
   if (!bExecuted) {
-    CPrintF("^cff0000Runtime error:\n%s", vm.GetError());
+    CPrintF("^cff0000Runtime error:\n%s", _pVM->GetError());
     return FALSE;
   }
 
@@ -75,8 +79,7 @@ int ExecuteScript(void *pScript) {
   if (pScript == NULL) return FALSE;
 
   const CTString &strScript = *(const CTString *)pScript;
-  //return ExecuteSquirrelScript(strScript, FALSE);
-  return ExecuteSquirrelScript("SeriousSam_ClassicsPatch\\_Script.nut", TRUE, &SignalReturnCallback);
+  return ExecuteSquirrelScript(strScript, FALSE, &SignalReturnCallback);
 };
 
 static CTString _strLastCommandResult;
@@ -112,12 +115,19 @@ static CTString ExecuteFile(SHELL_FUNC_ARGS) {
   return _strLastCommandResult;
 };
 
+// Forcefully reset the global VM, in case it's stuck in a loop etc.
+static void ResetVM(void) {
+  delete _pVM;
+  _pVM = NULL;
+};
+
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Custom symbols
   GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteString", "CTString", &ExecuteString);
   GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteFile",   "CTString", &ExecuteFile);
+  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResetVM",       "void",     &ResetVM);
 };
 
 // Module cleanup
