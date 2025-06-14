@@ -33,24 +33,37 @@ class Object {
     bool m_bOwner;    // Whether this class currently owns any object
 
     // Constructor for creating empty objects of derived classes
-    Object(HSQUIRRELVM vmSet, bool bObjectOwner) : m_vm(vmSet), m_bOwner(bObjectOwner) {
+    inline Object(HSQUIRRELVM vmSet, bool bObjectOwner) : m_vm(vmSet), m_bOwner(bObjectOwner) {
       sq_resetobject(&m_obj);
     };
 
   public:
     // Constructor with no object
-    Object() : m_vm(NULL), m_bOwner(false) {
+    inline Object() : m_vm(NULL), m_bOwner(false) {
       sq_resetobject(&m_obj);
     };
 
     // Take ownership of some Squirrel object
-    Object(HSQUIRRELVM vmSet, HSQOBJECT objSet) : m_vm(vmSet), m_obj(objSet), m_bOwner(true) {
+    inline Object(HSQUIRRELVM vmSet, HSQOBJECT objSet) : m_vm(vmSet), m_obj(objSet), m_bOwner(true) {
       // This class references the object now
       sq_addref(m_vm, &m_obj);
     };
 
+    // Take ownership of some Squirrel object from the stack
+    inline Object(HSQUIRRELVM vmSet, SQInteger idx) : m_vm(vmSet)
+    {
+      if (SQ_SUCCEEDED(sq_getstackobj(m_vm, idx, &m_obj))) {
+        // This class references the object now
+        m_bOwner = true;
+        sq_addref(m_vm, &m_obj);
+
+      } else {
+        m_bOwner = false;
+      }
+    };
+
     // Copy constructor
-    Object(const Object &other) : m_vm(other.m_vm), m_obj(other.m_obj), m_bOwner(other.m_bOwner) {
+    inline Object(const Object &other) : m_vm(other.m_vm), m_obj(other.m_obj), m_bOwner(other.m_bOwner) {
       // This class references the object now
       sq_addref(m_vm, &m_obj);
     };

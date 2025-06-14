@@ -30,7 +30,7 @@ class Enumeration : public Object {
     // Constructor for an optional enumerator table
     // If no table is created, the constants are added to the current table at the top of the stack
     // After adding all constants, the enum table needs to be added to the Squirrel VM using ConstTable::AddEnum()
-    Enumeration(HSQUIRRELVM v, bool bCreateTable = true) : Object(v, false) {
+    inline Enumeration(HSQUIRRELVM v, bool bCreateTable = true) : Object(v, false) {
       if (bCreateTable) {
         sq_newtable(m_vm);
         sq_getstackobj(m_vm, -1, &m_obj);
@@ -59,7 +59,7 @@ class Enumeration : public Object {
 // Class that references a VM's const table with all the constant values for Squirrel scripts
 class ConstTable : public Enumeration {
   public:
-    ConstTable(HSQUIRRELVM v) : Enumeration(v, false) {
+    inline ConstTable(HSQUIRRELVM v) : Enumeration(v, false) {
       // Store object reference to the const table immediately
       sq_pushconsttable(m_vm);
       sq_getstackobj(m_vm, -1, &m_obj);

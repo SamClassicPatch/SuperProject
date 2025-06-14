@@ -30,22 +30,27 @@ class Table;
 class TableBase : public Object {
   protected:
     // Default constructor
-    TableBase() : Object()
+    inline TableBase() : Object()
     {
     };
 
     // Constructor with a Squirrel VM
-    TableBase(HSQUIRRELVM vmSet) : Object(vmSet, true)
+    inline TableBase(HSQUIRRELVM vmSet) : Object(vmSet, true)
     {
     };
 
     // Take ownership of some Squirrel table
-    TableBase(HSQUIRRELVM vmSet, HSQOBJECT objSet) : Object(vmSet, objSet)
+    inline TableBase(HSQUIRRELVM vmSet, HSQOBJECT objSet) : Object(vmSet, objSet)
+    {
+    };
+
+    // Take ownership of some Squirrel table from the stack
+    inline TableBase(HSQUIRRELVM vmSet, SQInteger idx) : Object(vmSet, idx)
     {
     };
 
     // Constructor from an existing object
-    TableBase(const Object &other) : Object(other)
+    inline TableBase(const Object &other) : Object(other)
     {
     };
 
@@ -72,12 +77,12 @@ class TableBase : public Object {
 class Table : public TableBase {
   public:
     // Default constructor
-    Table() : TableBase()
+    inline Table() : TableBase()
     {
     };
 
     // Construct a new Squirrel table and take ownership of it
-    Table(HSQUIRRELVM vmSet) : TableBase(vmSet) {
+    inline Table(HSQUIRRELVM vmSet) : TableBase(vmSet) {
       sq_newtable(m_vm);
       sq_getstackobj(m_vm, -1, &m_obj);
       sq_addref(m_vm, &m_obj);
@@ -85,12 +90,17 @@ class Table : public TableBase {
     };
 
     // Take ownership of some Squirrel table
-    Table(HSQUIRRELVM vmSet, HSQOBJECT objSet) : TableBase(vmSet, objSet)
+    inline Table(HSQUIRRELVM vmSet, HSQOBJECT objSet) : TableBase(vmSet, objSet)
+    {
+    };
+
+    // Take ownership of some Squirrel table from the stack
+    inline Table(HSQUIRRELVM vmSet, SQInteger idx) : TableBase(vmSet, idx)
     {
     };
 
     // Constructor from an existing object
-    Table(const Object &other) : TableBase(other)
+    inline Table(const Object &other) : TableBase(other)
     {
     };
 };
@@ -98,7 +108,7 @@ class Table : public TableBase {
 // Class that references a VM's root table with all the globals for Squirrel scripts
 class RootTable : public TableBase {
   public:
-    RootTable(HSQUIRRELVM vmSet) : TableBase(vmSet) {
+    inline RootTable(HSQUIRRELVM vmSet) : TableBase(vmSet) {
       sq_pushroottable(m_vm); // Push table
       sq_getstackobj(m_vm, -1, &m_obj);
       sq_addref(m_vm, &m_obj);
@@ -110,7 +120,7 @@ class RootTable : public TableBase {
 // except that Squirrel scripts themselves cannot directly interact with it
 class RegistryTable : public TableBase {
   public:
-    RegistryTable(HSQUIRRELVM vmSet) : TableBase(vmSet) {
+    inline RegistryTable(HSQUIRRELVM vmSet) : TableBase(vmSet) {
       sq_pushregistrytable(m_vm); // Push table
       sq_getstackobj(m_vm, -1, &m_obj);
       sq_addref(m_vm, &m_obj);
