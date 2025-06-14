@@ -42,4 +42,38 @@ Table TableBase::AddTable(const SQChar *strName, bool bStatic) {
   return table;
 };
 
+bool TableBase::PushObject(const SQChar *strName) {
+  sq_pushobject(m_vm, m_obj); // Push table
+  sq_pushstring(m_vm, strName, -1);
+
+  if (SQ_FAILED(sq_get(m_vm, -2))) {
+    sq_poptop(m_vm); // Pop table
+
+    SQChar strError[256];
+    scsprintf(strError, 256, "object '%s' doesn't exist in the table", strName);
+
+    sq_throwerror(m_vm, strError);
+    return false;
+  }
+
+  sq_remove(m_vm, -2); // Pop table
+  return true;
+};
+
+bool TableBase::CreateInstance(const SQChar *strClassName) {
+  // Push class declaration
+  if (!PushObject(strClassName)) return false;
+
+  // Use it as a constructor function to create an instance
+  sq_pushroottable(m_vm);
+
+  if (SQ_FAILED(sq_call(m_vm, 1, SQTrue, SQTrue))) {
+    sq_poptop(m_vm); // Pop class declaration
+    return false;
+  }
+
+  sq_remove(m_vm, -2); // Pop class declaration
+  return true;
+};
+
 }; // namespace

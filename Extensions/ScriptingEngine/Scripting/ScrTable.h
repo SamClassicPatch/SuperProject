@@ -71,6 +71,12 @@ class TableBase : public Object {
 
     // Bind an empty table
     Table AddTable(const SQChar *strName, bool bStatic = false);
+
+    // Find some object inside the table by name and push it on top of the stack
+    bool PushObject(const SQChar *strName);
+
+    // Create an instance of some class defined in the table and push it on top of the stack
+    bool CreateInstance(const SQChar *strClassName);
 };
 
 // Class that represents or references a Squirrel table
