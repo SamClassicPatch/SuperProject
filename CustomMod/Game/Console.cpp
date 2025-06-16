@@ -258,12 +258,18 @@ void CGame::ConsoleRender(CDrawPort *pdp)
   // add blinking cursor
   if( ((ULONG)(_pTimer->GetRealTimeTick()*2)) & 1) {
     // [Cecil] Different cursor for big font
-    CTString strCursor = (UseBigFont(FALSE) ? "|" : "_");
-    const PIX pixCursorShift = (UseBigFont(FALSE) ? dpConsole.dp_fTextScaling * -2 : 2);
+    const BOOL bBigFont = UseBigFont(FALSE);
+
+    CTString strCursor = (bBigFont ? "|" : "_");
+    const PIX pixCursorShift = (bBigFont ? dpConsole.dp_fTextScaling * -2 : 2);
 
     FLOAT fTextScalingX = dpConsole.dp_fTextScaling * dpConsole.dp_fTextAspect;
     PIX pixCellSize = _pfdCurrentFont->fd_pixCharWidth * fTextScalingX + dpConsole.dp_pixTextCharSpacing;
     PIX pixCursorX  = pixTextX + (iCursorPos+strlen(strPrompt))*pixCellSize;
+
+    // [Cecil] Fix '|' cursor being in the middle of a letter instead of to the left of it
+    if (bBigFont) pixCursorX -= pixCellSize / 2;
+
     dpConsole.PutText(strCursor, pixCursorX, pixYLine + pixCursorShift, colDark);
   }
 
