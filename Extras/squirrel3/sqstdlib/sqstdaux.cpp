@@ -138,7 +138,7 @@ SQRESULT sqstd_throwerrorf(HSQUIRRELVM v,const SQChar *err,...)
 begin:
     va_start(args,err);
     SQChar *b=sq_getscratchpad(v,n);
-    SQInteger r=scvsprintf(b,n,err,args);
+    SQInteger r=scvsprintf(b,(size_t)n,err,args);
     va_end(args);
     if (r>=n) {
         n=r+1;//required+null

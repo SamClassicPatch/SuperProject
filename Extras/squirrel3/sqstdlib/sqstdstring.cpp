@@ -12,6 +12,11 @@
 #define MAX_WFORMAT_LEN 3
 #define ADDITIONAL_FORMAT_SPACE (100*sizeof(SQChar))
 
+#if _MSC_VER <= 1200
+  // [Cecil] Own string-to-i64 implementation
+  SQUIRREL_API __int64 _strtoi64(const char *str, char **ppchEnd, int iBase);
+#endif
+
 static SQUserPointer rex_typetag = NULL;
 
 static SQBool isfmtchr(SQChar ch)
@@ -62,7 +67,7 @@ static SQInteger validate_format(HSQUIRRELVM v, SQChar *fmt, const SQChar *src, 
     }
     if (n-start > MAX_FORMAT_LEN )
         return sq_throwerror(v,_SC("format too long"));
-    memcpy(&fmt[1],&src[start],((n-start)+1)*sizeof(SQChar));
+    memcpy(&fmt[1],&src[start],size_t((n-start)+1)*sizeof(SQChar));
     fmt[(n-start)+2] = '\0';
     return n;
 }
@@ -143,9 +148,9 @@ SQRESULT sqstd_format(HSQUIRRELVM v,SQInteger nformatstringidx,SQInteger *outlen
             allocated += addlen + sizeof(SQChar);
             dest = sq_getscratchpad(v,allocated);
             switch(valtype) {
-            case 's': i += scsprintf(&dest[i],allocated,fmt,ts); break;
-            case 'i': i += scsprintf(&dest[i],allocated,fmt,ti); break;
-            case 'f': i += scsprintf(&dest[i],allocated,fmt,tf); break;
+            case 's': i += scsprintf(&dest[i],(size_t)allocated,fmt,ts); break;
+            case 'i': i += scsprintf(&dest[i],(size_t)allocated,fmt,ti); break;
+            case 'f': i += scsprintf(&dest[i],(size_t)allocated,fmt,tf); break;
             };
             nparam ++;
         }
@@ -163,7 +168,7 @@ void sqstd_pushstringf(HSQUIRRELVM v,const SQChar *s,...)
 begin:
     va_start(args,s);
     SQChar *b=sq_getscratchpad(v,n);
-    SQInteger r=scvsprintf(b,n,s,args);
+    SQInteger r=scvsprintf(b,(size_t)n,s,args);
     va_end(args);
     if (r>=n) {
         n=r+1;//required+null
@@ -341,7 +346,7 @@ static SQInteger _string_escape(HSQUIRRELVM v)
         }
         else {
 
-            dest += scsprintf(dest, destcharsize, escpat, c);
+            dest += scsprintf(dest, (size_t)destcharsize, escpat, c);
             escaped++;
         }
     }
@@ -364,7 +369,7 @@ static SQInteger _string_startswith(HSQUIRRELVM v)
     SQInteger cmplen = sq_getsize(v,3);
     SQBool ret = SQFalse;
     if(cmplen <= len) {
-        ret = memcmp(str,cmp,sq_rsl(cmplen)) == 0 ? SQTrue : SQFalse;
+        ret = memcmp(str,cmp,sq_rsl((size_t)cmplen)) == 0 ? SQTrue : SQFalse;
     }
     sq_pushbool(v,ret);
     return 1;
@@ -379,7 +384,7 @@ static SQInteger _string_endswith(HSQUIRRELVM v)
     SQInteger cmplen = sq_getsize(v,3);
     SQBool ret = SQFalse;
     if(cmplen <= len) {
-        ret = memcmp(&str[len - cmplen],cmp,sq_rsl(cmplen)) == 0 ? SQTrue : SQFalse;
+        ret = memcmp(&str[len - cmplen],cmp,sq_rsl((size_t)cmplen)) == 0 ? SQTrue : SQFalse;
     }
     sq_pushbool(v,ret);
     return 1;

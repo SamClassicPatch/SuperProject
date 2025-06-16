@@ -31,25 +31,24 @@ struct Value {
 };
 
 // Define a simple value class
-#define SQ_SIMPLEVALUE(_Type, _SqType, _PushFunc, _GetFunc)                             \
-  template<>                                                                            \
-  struct Value< _Type > {                                                               \
-    _Type val;                                                                          \
-    Value(_Type valSet) : val(valSet) {};                                               \
-    inline void Push(HSQUIRRELVM v) const { _PushFunc(v, static_cast<_SqType>(val)); }; \
-    inline bool Get(HSQUIRRELVM v, SQInteger idx) {                                     \
-      _SqType sqvalue;                                                                  \
-      bool res = SQ_SUCCEEDED(_GetFunc(v, idx, &sqvalue));                              \
-      val = static_cast<_Type>(sqvalue);                                                \
-      return res;                                                                       \
-    };                                                                                  \
+#define SQ_SIMPLEVALUE(_Type, _SqType, _PushFunc, _GetFunc)                               \
+  template<>                                                                              \
+  struct Value< _Type > {                                                                 \
+    _Type val;                                                                            \
+    Value(_Type valSet) : val(valSet) {};                                                 \
+    inline void Push(HSQUIRRELVM v) const { _PushFunc(v, static_cast< _SqType >(val)); }; \
+    inline bool Get(HSQUIRRELVM v, SQInteger idx) {                                       \
+      _SqType sqvalue;                                                                    \
+      bool res = SQ_SUCCEEDED(_GetFunc(v, idx, &sqvalue));                                \
+      val = static_cast< _Type >(sqvalue);                                                \
+      return res;                                                                         \
+    };                                                                                    \
   };
 
 #pragma warning(push)
 #pragma warning(disable : 4800) // For SQBool -> bool truncation
 
 // Define integral types
-SQ_SIMPLEVALUE(int,    SQInteger, sq_pushinteger, sq_getinteger);
 SQ_SIMPLEVALUE(UBYTE,  SQInteger, sq_pushinteger, sq_getinteger);
 SQ_SIMPLEVALUE(SBYTE,  SQInteger, sq_pushinteger, sq_getinteger);
 SQ_SIMPLEVALUE(UWORD,  SQInteger, sq_pushinteger, sq_getinteger);
@@ -59,6 +58,10 @@ SQ_SIMPLEVALUE(SLONG,  SQInteger, sq_pushinteger, sq_getinteger);
 SQ_SIMPLEVALUE(FLOAT,  SQFloat,   sq_pushfloat,   sq_getfloat);
 SQ_SIMPLEVALUE(DOUBLE, SQFloat,   sq_pushfloat,   sq_getfloat);
 SQ_SIMPLEVALUE(bool,   SQBool,    sq_pushbool,    sq_getbool);
+
+// Define possible SQInteger types
+SQ_SIMPLEVALUE(int,     SQInteger, sq_pushinteger, sq_getinteger);
+SQ_SIMPLEVALUE(__int64, SQInteger, sq_pushinteger, sq_getinteger);
 
 #pragma warning(pop)
 

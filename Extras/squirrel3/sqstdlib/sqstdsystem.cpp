@@ -96,7 +96,7 @@ static SQInteger _system_date(HSQUIRRELVM v)
     SQInteger format = 'l';
     if(sq_gettop(v) > 1) {
         sq_getinteger(v,2,&it);
-        t = it;
+        t = (time_t)it;
         if(sq_gettop(v) > 2) {
             sq_getinteger(v,3,(SQInteger*)&format);
         }

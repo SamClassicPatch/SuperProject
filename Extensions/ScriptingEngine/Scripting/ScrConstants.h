@@ -41,12 +41,26 @@ class Enumeration : public Object {
 
   public:
     // Add an integer constant
-    inline void SetValue(const SQChar *strName, const SQInteger iValue) {
-      BindValue(strName, iValue, false);
-    };
+    #define SET_INT_VALUE(_Type) \
+      inline void SetValue(const SQChar *strName, const _Type iValue) { BindValue(strName, iValue, false); };
+
+    SET_INT_VALUE(SBYTE);
+    SET_INT_VALUE(UBYTE);
+    SET_INT_VALUE(SWORD);
+    SET_INT_VALUE(UWORD);
+    SET_INT_VALUE(SLONG);
+    SET_INT_VALUE(ULONG);
+    SET_INT_VALUE(int);
+    SET_INT_VALUE(__int64);
+
+    #undef SET_INT_VALUE
 
     // Add a float constant
-    inline void SetValue(const SQChar *strName, const SQFloat fValue) {
+    inline void SetValue(const SQChar *strName, const FLOAT fValue) {
+      BindValue(strName, fValue, false);
+    };
+
+    inline void SetValue(const SQChar *strName, const DOUBLE fValue) {
       BindValue(strName, fValue, false);
     };
 

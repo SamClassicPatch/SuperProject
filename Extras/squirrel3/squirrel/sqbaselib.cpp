@@ -13,6 +13,126 @@
 #include <stdarg.h>
 #include <ctype.h>
 
+#if _MSC_VER <= 1200
+
+#include <cerrno>
+
+// [Cecil] Own string-to-i64 implementation
+SQUIRREL_API __int64 _strtoi64(const char *str, char **ppchEnd, int iBase) {
+  const __int64 LLONG_MIN(0x8000000000000000);
+  const __int64 LLONG_MAX(0x7FFFFFFFFFFFFFFF);
+
+  const char *pch = str;
+
+  // Skip whitespaces
+  while (isspace(*pch)) ++pch;
+
+  // Get the sign
+  bool bNegative = false;
+
+  if (*pch == '+' || *pch == '-') {
+    bNegative = (*pch == '-');
+    ++pch;
+  }
+
+  // Determine numerical base
+  if (iBase == 0) {
+    if (*pch == '0') {
+      // Hexadecimal
+      if (pch[1] == 'x' || pch[1] == 'X') {
+        iBase = 16;
+        pch += 2;
+
+      // Octal
+      } else {
+        iBase = 8;
+        ++pch;
+      }
+
+    // Decimal
+    } else {
+      iBase = 10;
+    }
+
+  // Interpret as hexadecimal
+  } else if (iBase == 16) {
+    // Skip optional prefix
+    if (pch[0] == '0' && (pch[1] == 'x' || pch[1] == 'X')) {
+      pch += 2;
+    }
+  }
+
+  // Parse digits
+  unsigned __int64 iAcc = 0;
+  const unsigned __int64 iLimit = (unsigned __int64)(bNegative ? LLONG_MIN : LLONG_MAX);
+  const unsigned __int64 iCutOff = iLimit / iBase;
+  const int iCutLimit = int(iLimit % iBase);
+
+  bool bAny = false;
+
+  for (; *pch; ++pch) {
+    int iDigit;
+
+    if (*pch >= '0' && *pch <= '9') {
+      iDigit = *pch - '0';
+    } else if (*pch >= 'a' && *pch <= 'z') {
+      iDigit = *pch - 'a' + 10;
+    } else if (*pch >= 'A' && *pch <= 'Z') {
+      iDigit = *pch - 'A' + 10;
+    } else {
+      break;
+    }
+
+    if (iDigit >= iBase) break;
+
+    // Overflow
+    if (iAcc > iCutOff || (iAcc == iCutOff && iDigit > iCutLimit)) {
+      bAny = true;
+      errno = ERANGE;
+      iAcc = iLimit; // Clamp to max
+      break;
+    }
+
+    bAny = true;
+    iAcc = iAcc * iBase + iDigit;
+  }
+
+  // No conversion
+  if (!bAny) {
+    pch = str;
+    iAcc = 0;
+  }
+
+  // Apply the sign
+  __int64 iResult;
+
+  if (bNegative) {
+    // Clamp to minimum value
+    if (iAcc > (unsigned __int64)LLONG_MAX + 1) {
+      errno = ERANGE;
+      iResult = LLONG_MIN;
+    } else {
+      iResult = -(__int64)iAcc;
+    }
+
+  } else {
+    // Clamp to maximum value
+    if (iAcc > (unsigned __int64)LLONG_MAX) {
+      errno = ERANGE;
+      iResult = LLONG_MAX;
+    } else {
+      iResult = (__int64)iAcc;
+    }
+  }
+
+  // Set end pointer
+  if (ppchEnd) *ppchEnd = const_cast<char *>(bAny ? pch : str);
+
+  return iResult;
+};
+
+#endif
+
 static bool str2num(const SQChar *s,SQObjectPtr &res,SQInteger base)
 {
     SQChar *end;
@@ -420,7 +540,17 @@ static SQInteger obj_clear(HSQUIRRELVM v)
 static SQInteger number_delegate_tochar(HSQUIRRELVM v)
 {
     SQObject &o=stack_get(v,1);
-    SQChar c = (SQChar)tointeger(o);
+
+    // [Cecil] And I quote: "INTERNAL COMPILER ERROR"
+    //SQChar c = (SQChar)tointeger(o);
+    SQChar c;
+
+    if (sq_type(o) == OT_FLOAT) {
+      c = (SQInteger)_float(o);
+    } else {
+      c = _integer(o);
+    }
+
     v->Push(SQString::Create(_ss(v),(const SQChar *)&c,1));
     return 1;
 }

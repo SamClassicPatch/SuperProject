@@ -34,6 +34,9 @@ extern "C" {
 #define SQUIRREL_API extern
 #endif
 
+// [Cecil] Build with 64-bit integers
+#define _SQ64
+
 #if (defined(_WIN64) || defined(_LP64))
 #ifndef _SQ64
 #define _SQ64

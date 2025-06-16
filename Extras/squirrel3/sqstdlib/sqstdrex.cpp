@@ -587,7 +587,7 @@ SQRex *sqstd_rex_compile(const SQChar *pattern,const SQChar **error)
         }
 #endif
         exp->_matches = (SQRexMatch *) sq_malloc(exp->_nsubexpr * sizeof(SQRexMatch));
-        memset(exp->_matches,0,exp->_nsubexpr * sizeof(SQRexMatch));
+        memset(exp->_matches,0,(size_t)exp->_nsubexpr * sizeof(SQRexMatch));
     }
     else{
         sqstd_rex_free(exp);
