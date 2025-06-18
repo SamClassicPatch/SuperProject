@@ -30,61 +30,61 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "ExecuteScript", &ExecuteScript }, // Arg ptr : CTString
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
-// Permanent script VM
-static sq::VM *_pVM = NULL;
+// Permanent script VMs
+static sq::VM *_pSignalVM = NULL;
+static sq::VM *_pCommandVM = NULL;
 
 // Check if the current script execution is suspended
 static INDEX IsSuspended(void) {
-  if (_pVM == NULL) return FALSE;
-  return _pVM->IsSuspended();
+  if (_pCommandVM == NULL) return FALSE;
+  return _pCommandVM->IsSuspended();
 };
 
 // Resume a previously suspended script execution
 static void ResumeVM(void) {
   // No VM or it's not suspended
-  if (_pVM == NULL || !_pVM->IsSuspended()) return;
+  if (_pCommandVM == NULL || !_pCommandVM->IsSuspended()) return;
 
-  bool bExecuted = _pVM->Execute();
+  bool bExecuted = _pCommandVM->Execute();
 
   // Error during the execution
   if (!bExecuted) {
-    CPrintF("^cff0000Runtime error:\n%s", _pVM->GetError());
+    CPrintF("^cff0000Runtime error:\n%s", _pCommandVM->GetError());
   }
 };
 
 // Forcefully reset the global VM, in case it's stuck in a loop etc.
 static void ResetVM(void) {
-  delete _pVM;
-  _pVM = NULL;
+  if (_pCommandVM != NULL) {
+    delete _pCommandVM;
+    _pCommandVM = NULL;
+  }
 };
 
 // Generic method for executing scripts
-static BOOL ExecuteSquirrelScript(const CTString &strScript, BOOL bFile, sq::VM::FReturnValueCallback pCallback) {
-  // Create a new VM
-  if (_pVM == NULL) _pVM = new sq::VM(0xFFFFFFFF);
-
-  _pVM->m_pReturnValueCallback = pCallback;
+static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL bFile, sq::VM::FReturnValueCallback pCallback) {
+  pVM->m_pReturnValueCallback = pCallback;
 
   const bool bExpectReturnValue = true; // Switch for testing
   bool bCompiled;
 
   if (bFile) {
-    bCompiled = _pVM->CompileFromFile(strScript, bExpectReturnValue);
+    bCompiled = pVM->CompileFromFile(strScript, bExpectReturnValue);
   } else {
-    bCompiled = _pVM->CompileFromString(strScript, "Shell", bExpectReturnValue);
+    bCompiled = pVM->CompileFromString(strScript, "Shell", bExpectReturnValue);
   }
 
   // Error during the compilation
   if (!bCompiled) {
-    CPrintF("^cff0000Compilation error:\n%s", _pVM->GetError());
+    CPrintF("^cff0000Compilation error:\n%s", pVM->GetError());
     return FALSE;
   }
 
-  bool bExecuted = _pVM->Execute();
+  bool bExecuted = pVM->Execute();
 
   // Error during the execution
   if (!bExecuted) {
-    CPrintF("^cff0000Runtime error:\n%s", _pVM->GetError());
+    CPrintF("^cff0000Runtime error:\n%s", pVM->GetError());
     return FALSE;
   }
 
@@ -103,8 +103,11 @@ static void SignalReturnCallback(sq::VM &vm) {
 int ExecuteScript(void *pScript) {
   if (pScript == NULL) return FALSE;
 
+  // Create a new VM
+  if (_pSignalVM == NULL) _pSignalVM = new sq::VM(0xFFFFFFFF);
+
   const CTString &strScript = *(const CTString *)pScript;
-  return ExecuteSquirrelScript(strScript, FALSE, &SignalReturnCallback);
+  return ExecuteSquirrelScript(_pSignalVM, strScript, FALSE, &SignalReturnCallback);
 };
 
 static CTString _strLastCommandResult;
@@ -123,8 +126,12 @@ static CTString ExecuteString(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;
   const CTString &strScript = *NEXT_ARG(CTString *);
 
+  // Create a new VM
+  ResetVM();
+  _pCommandVM = new sq::VM(0xFFFFFFFF);
+
   _strLastCommandResult = "";
-  ExecuteSquirrelScript(strScript, FALSE, &CommandReturnCallback);
+  ExecuteSquirrelScript(_pCommandVM, strScript, FALSE, &CommandReturnCallback);
 
   return _strLastCommandResult;
 };
@@ -134,8 +141,12 @@ static CTString ExecuteFile(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;
   const CTString &strScript = *NEXT_ARG(CTString *);
 
+  // Create a new VM
+  ResetVM();
+  _pCommandVM = new sq::VM(0xFFFFFFFF);
+
   _strLastCommandResult = "";
-  ExecuteSquirrelScript(strScript, TRUE, &CommandReturnCallback);
+  ExecuteSquirrelScript(_pCommandVM, strScript, TRUE, &CommandReturnCallback);
 
   return _strLastCommandResult;
 };
