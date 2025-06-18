@@ -439,10 +439,18 @@ static void Key_Return(void)
     CPrintF("sq> %s\n", strEditingLine);
 
     static HPatchPlugin hScripting = ClassicsExtensions_GetExtensionByName("PATCH_EXT_scripting");
+    bool bExecuted;
 
-    if (!ClassicsExtensions_CallSignal(hScripting, "ExecuteScript", NULL, &strEditingLine)) {
-      CPutString(TRANS("Squirrel scripts are unavailable!\n"));
+    // Resume the previous script on an empty line
+    if (strEditingLine == "") {
+      bExecuted = ClassicsExtensions_CallSignal(hScripting, "Resume", NULL, NULL);
+
+    // Run a new script
+    } else {
+      bExecuted = ClassicsExtensions_CallSignal(hScripting, "ExecuteScript", NULL, &strEditingLine);
     }
+
+    if (!bExecuted) CPutString(TRANS("Squirrel scripts are unavailable!\n"));
 
   // check for cheats
   #define CHEAT_PREFIX "please"
