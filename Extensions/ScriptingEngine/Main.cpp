@@ -33,6 +33,31 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
 // Permanent script VM
 static sq::VM *_pVM = NULL;
 
+// Check if the current script execution is suspended
+static INDEX IsSuspended(void) {
+  if (_pVM == NULL) return FALSE;
+  return _pVM->IsSuspended();
+};
+
+// Resume a previously suspended script execution
+static void ResumeVM(void) {
+  // No VM or it's not suspended
+  if (_pVM == NULL || !_pVM->IsSuspended()) return;
+
+  bool bExecuted = _pVM->Execute();
+
+  // Error during the execution
+  if (!bExecuted) {
+    CPrintF("^cff0000Runtime error:\n%s", _pVM->GetError());
+  }
+};
+
+// Forcefully reset the global VM, in case it's stuck in a loop etc.
+static void ResetVM(void) {
+  delete _pVM;
+  _pVM = NULL;
+};
+
 // Generic method for executing scripts
 static BOOL ExecuteSquirrelScript(const CTString &strScript, BOOL bFile, sq::VM::FReturnValueCallback pCallback) {
   // Create a new VM
@@ -115,19 +140,15 @@ static CTString ExecuteFile(SHELL_FUNC_ARGS) {
   return _strLastCommandResult;
 };
 
-// Forcefully reset the global VM, in case it's stuck in a loop etc.
-static void ResetVM(void) {
-  delete _pVM;
-  _pVM = NULL;
-};
-
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Custom symbols
+  GetPluginAPI()->RegisterMethod(TRUE, "INDEX",    "scr_IsSuspended",   "void",     &IsSuspended);
+  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResumeVM",      "void",     &ResumeVM);
+  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResetVM",       "void",     &ResetVM);
   GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteString", "CTString", &ExecuteString);
   GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteFile",   "CTString", &ExecuteFile);
-  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResetVM",       "void",     &ResetVM);
 };
 
 // Module cleanup
