@@ -27,7 +27,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scripting\ScrClass.h" />
     <ClInclude Include="Scripting\ScrConstants.h" />
+    <ClInclude Include="Scripting\ScrInstances.h" />
     <ClInclude Include="Scripting\ScrObject.h" />
     <ClInclude Include="Scripting\ScrTable.h" />
     <ClInclude Include="Scripting\ScrValue.h" />
@@ -44,6 +46,8 @@
     <ClCompile Include="Libraries\ScrLibTimer.cpp" />
     <ClCompile Include="Libraries\ScrLibWorld.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Scripting\ScrClass.cpp" />
+    <ClCompile Include="Scripting\ScrInstances.cpp" />
     <ClCompile Include="Scripting\ScrObject.cpp" />
     <ClCompile Include="Scripting\ScrTable.cpp" />
     <ClCompile Include="Scripting\ScrVM.cpp" />

@@ -30,11 +30,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
-// Get a script VM class from a Squirrel VM
-__forceinline VM &GetVMClass(HSQUIRRELVM v) {
-  return *(VM *)sq_getsharedforeignptr(v);
-};
-
 // Helper function for reading one script character at a time for sq_compile()
 static SQInteger SqLexerFeed(SQUserPointer pData)
 {

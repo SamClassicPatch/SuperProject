@@ -42,6 +42,12 @@
     <ClInclude Include="Scripting\ScrConstants.h">
       <Filter>Header Files\Scripting headers</Filter>
     </ClInclude>
+    <ClInclude Include="Scripting\ScrInstances.h">
+      <Filter>Header Files\Scripting headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScrClass.h">
+      <Filter>Header Files\Scripting headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdH.cpp">
@@ -82,6 +88,12 @@
     </ClCompile>
     <ClCompile Include="Libraries\ScrLibMessage.cpp">
       <Filter>Source Files\Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScrClass.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScrInstances.cpp">
+      <Filter>Source Files\Scripting</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

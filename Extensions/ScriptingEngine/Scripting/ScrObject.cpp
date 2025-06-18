@@ -106,6 +106,7 @@ void Object::BindFunc(const SQChar *strName, SQFUNCTION pFunc, bool bStaticVar) 
   // Create a new slot with the closure under a name
   sq_pushstring(m_vm, strName, -1);
   sq_newclosure(m_vm, pFunc, 0);
+  sq_setnativeclosurename(m_vm, -1, strName);
   sq_newslot(m_vm, -3, bStaticVar);
 
   sq_poptop(m_vm); // Pop object

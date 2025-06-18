@@ -174,6 +174,13 @@ class VM {
     __forceinline RegistryTable Registry(void) { return RegistryTable(GetVM()); };
 };
 
+// Get a script VM class from a Squirrel VM
+__forceinline VM &GetVMClass(HSQUIRRELVM v) {
+  SQUserPointer pVM = sq_getsharedforeignptr(v);
+  ASSERT(pVM != NULL);
+  return *(VM *)pVM;
+};
+
 }; // namespace
 
 #endif

@@ -69,6 +69,9 @@ class TableBase : public Object {
     // Add a table (can be used to facilitate namespaces)
     void SetTable(const SQChar *strName, const TableBase &objTable);
 
+    // Add a class
+    void SetClass(const class AbstractClass &objClass);
+
     // Bind an empty table
     Table AddTable(const SQChar *strName, bool bStatic = false);
 
@@ -76,7 +79,17 @@ class TableBase : public Object {
     bool PushObject(const SQChar *strName);
 
     // Create an instance of some class defined in the table and push it on top of the stack
-    bool CreateInstance(const SQChar *strClassName);
+    bool CreateInstance(const SQChar *strClassName, InstanceAny **ppInstance = NULL);
+
+    // Create an instance of a specific class and retrieve its value
+    template<class Type> inline
+    bool CreateInstanceOf(const SQChar *strClassName, Type **ppVal) {
+      Instance<Type> *pInstance = NULL;
+      if (!CreateInstance(strClassName, (InstanceAny **)&pInstance)) return false;
+
+      *ppVal = &pInstance->val;
+      return true;
+    };
 };
 
 // Class that represents or references a Squirrel table

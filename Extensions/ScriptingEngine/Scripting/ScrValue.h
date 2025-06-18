@@ -92,6 +92,22 @@ struct Value<CTString> {
   };
 };
 
+// Define user pointer type
+template<>
+struct Value<void *> {
+  void *val;
+
+  Value(void *pSet) : val(pSet) {};
+
+  inline void Push(HSQUIRRELVM v) const {
+    sq_pushuserpointer(v, val);
+  };
+
+  inline bool Get(HSQUIRRELVM v, SQInteger idx) {
+    return SQ_SUCCEEDED(sq_getuserpointer(v, idx, &val));
+  };
+};
+
 }; // namespace
 
 #endif

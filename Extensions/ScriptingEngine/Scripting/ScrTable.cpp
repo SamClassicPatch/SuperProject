@@ -27,6 +27,17 @@ void TableBase::SetTable(const SQChar *strName, const TableBase &objTable) {
   sq_poptop(m_vm); // Pop table
 };
 
+void TableBase::SetClass(const AbstractClass &objClass) {
+  const CTString &strName = objClass.GetName();
+  sq_pushobject(m_vm, m_obj); // Push table
+
+  sq_pushstring(m_vm, strName.str_String, strName.Length());
+  sq_pushobject(m_vm, objClass.GetObj());
+  sq_newslot(m_vm, -3, SQFalse);
+
+  sq_poptop(m_vm); // Pop table
+};
+
 Table TableBase::AddTable(const SQChar *strName, bool bStatic) {
   sq_pushobject(m_vm, m_obj); // Push table
   sq_pushstring(m_vm, strName, -1);
@@ -60,7 +71,7 @@ bool TableBase::PushObject(const SQChar *strName) {
   return true;
 };
 
-bool TableBase::CreateInstance(const SQChar *strClassName) {
+bool TableBase::CreateInstance(const SQChar *strClassName, InstanceAny **ppInstance) {
   // Push class declaration
   if (!PushObject(strClassName)) return false;
 
@@ -70,6 +81,11 @@ bool TableBase::CreateInstance(const SQChar *strClassName) {
   if (SQ_FAILED(sq_call(m_vm, 1, SQTrue, SQTrue))) {
     sq_poptop(m_vm); // Pop class declaration
     return false;
+  }
+
+  // Retrieve the instance
+  if (ppInstance != NULL) {
+    *ppInstance = InstanceAny::Retrieve(m_vm, -1);
   }
 
   sq_remove(m_vm, -2); // Pop class declaration
