@@ -24,10 +24,16 @@ CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_scripting", k_EPluginFlagEngine, CORE_
   "Dreamy Cecil", "Scripting Engine",
   "Engine for executing scripts written in the Squirrel scripting language.");
 
-static int PATCH_CALLTYPE ExecuteScript(void *pScriptArg);
+static int PATCH_CALLTYPE SignalExecuteScript(void *pScriptArg);
+static int PATCH_CALLTYPE SignalIsSuspended(void *);
+static int PATCH_CALLTYPE SignalResume(void *);
+static int PATCH_CALLTYPE SignalReset(void *);
 
 CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
-  { "ExecuteScript", &ExecuteScript }, // Arg ptr : CTString
+  { "ExecuteScript", &SignalExecuteScript }, // Arg ptr : CTString
+  { "IsSuspended",   &SignalIsSuspended },
+  { "Resume",        &SignalResume },
+  { "Reset",         &SignalReset },
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
 // Permanent script VMs
@@ -35,13 +41,13 @@ static sq::VM *_pSignalVM = NULL;
 static sq::VM *_pCommandVM = NULL;
 
 // Check if the current script execution is suspended
-static INDEX IsSuspended(void) {
+static INDEX ShellIsSuspended(void) {
   if (_pCommandVM == NULL) return FALSE;
   return _pCommandVM->IsSuspended();
 };
 
 // Resume a previously suspended script execution
-static void ResumeVM(void) {
+static void ShellResumeVM(void) {
   // No VM or it's not suspended
   if (_pCommandVM == NULL || !_pCommandVM->IsSuspended()) return;
 
@@ -54,7 +60,7 @@ static void ResumeVM(void) {
 };
 
 // Forcefully reset the global VM, in case it's stuck in a loop etc.
-static void ResetVM(void) {
+static void ShellResetVM(void) {
   if (_pCommandVM != NULL) {
     delete _pCommandVM;
     _pCommandVM = NULL;
@@ -100,14 +106,44 @@ static void SignalReturnCallback(sq::VM &vm) {
   }
 };
 
-int ExecuteScript(void *pScript) {
+int SignalExecuteScript(void *pScript) {
   if (pScript == NULL) return FALSE;
 
   // Create a new VM
-  if (_pSignalVM == NULL) _pSignalVM = new sq::VM(0xFFFFFFFF);
+  SignalReset(NULL);
+  _pSignalVM = new sq::VM(0xFFFFFFFF);
 
   const CTString &strScript = *(const CTString *)pScript;
   return ExecuteSquirrelScript(_pSignalVM, strScript, FALSE, &SignalReturnCallback);
+};
+
+int SignalIsSuspended(void *) {
+  if (_pSignalVM == NULL) return FALSE;
+  return _pSignalVM->IsSuspended();
+};
+
+int SignalResume(void *) {
+  // No VM or it's not suspended
+  if (_pSignalVM == NULL || !_pSignalVM->IsSuspended()) return TRUE;
+
+  bool bExecuted = _pSignalVM->Execute();
+
+  // Error during the execution
+  if (!bExecuted) {
+    CPrintF("^cff0000Runtime error:\n%s", _pSignalVM->GetError());
+    return FALSE;
+  }
+
+  return TRUE;
+};
+
+int SignalReset(void *) {
+  if (_pSignalVM != NULL) {
+    delete _pSignalVM;
+    _pSignalVM = NULL;
+  }
+
+  return TRUE;
 };
 
 static CTString _strLastCommandResult;
@@ -122,12 +158,12 @@ static void CommandReturnCallback(sq::VM &vm) {
 };
 
 // Execute a script from the provided string and return the result
-static CTString ExecuteString(SHELL_FUNC_ARGS) {
+static CTString ShellExecuteString(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;
   const CTString &strScript = *NEXT_ARG(CTString *);
 
   // Create a new VM
-  ResetVM();
+  ShellResetVM();
   _pCommandVM = new sq::VM(0xFFFFFFFF);
 
   _strLastCommandResult = "";
@@ -137,12 +173,12 @@ static CTString ExecuteString(SHELL_FUNC_ARGS) {
 };
 
 // Execute a script from the provided file and return the result
-static CTString ExecuteFile(SHELL_FUNC_ARGS) {
+static CTString ShellExecuteFile(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;
   const CTString &strScript = *NEXT_ARG(CTString *);
 
   // Create a new VM
-  ResetVM();
+  ShellResetVM();
   _pCommandVM = new sq::VM(0xFFFFFFFF);
 
   _strLastCommandResult = "";
@@ -155,11 +191,11 @@ static CTString ExecuteFile(SHELL_FUNC_ARGS) {
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Custom symbols
-  GetPluginAPI()->RegisterMethod(TRUE, "INDEX",    "scr_IsSuspended",   "void",     &IsSuspended);
-  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResumeVM",      "void",     &ResumeVM);
-  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResetVM",       "void",     &ResetVM);
-  GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteString", "CTString", &ExecuteString);
-  GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteFile",   "CTString", &ExecuteFile);
+  GetPluginAPI()->RegisterMethod(TRUE, "INDEX",    "scr_IsSuspended",   "void",     &ShellIsSuspended);
+  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResumeVM",      "void",     &ShellResumeVM);
+  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResetVM",       "void",     &ShellResetVM);
+  GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteString", "CTString", &ShellExecuteString);
+  GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteFile",   "CTString", &ShellExecuteFile);
 };
 
 // Module cleanup
