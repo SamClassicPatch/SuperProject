@@ -71,17 +71,14 @@ static void ShellResetVM(void) {
 static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL bFile, sq::VM::FReturnValueCallback pCallback) {
   pVM->m_pReturnValueCallback = pCallback;
 
-  const bool bExpectReturnValue = true; // Switch for testing
-  bool bCompiled;
-
   if (bFile) {
-    bCompiled = pVM->CompileFromFile(strScript, bExpectReturnValue);
+    pVM->CompileFromFile(strScript);
   } else {
-    bCompiled = pVM->CompileFromString(strScript, "Shell", bExpectReturnValue);
+    pVM->CompileFromString(strScript, "ShellScript");
   }
 
   // Error during the compilation
-  if (!bCompiled) {
+  if (!pVM->CanBeExecuted()) {
     CPrintF("^cff0000Compilation error:\n%s", pVM->GetError());
     return FALSE;
   }

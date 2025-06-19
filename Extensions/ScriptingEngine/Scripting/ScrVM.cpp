@@ -47,7 +47,7 @@ static SQInteger SqLexerFeed(SQUserPointer pData)
 };
 
 // Compile script from a source file within the game folder
-static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
+static void SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
   // Open the source file using an engine stream
   CTFileStream strm;
 
@@ -61,20 +61,26 @@ static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
     vm.ClearError();
     vm.PushError(strError);
     vm.PushError("\n");
-    return false;
+
+    // Push a null instead of a closure on error
+    sq_pushnull(v);
+    return;
   }
 
   // Compile the script by reading characters from the stream
   SQRESULT r = sq_compile(v, SqLexerFeed, &strm, strSourceFile.str_String, SQTrue);
   strm.Close();
 
-  return SQ_SUCCEEDED(r);
+  // Push a null instead of a closure on error
+  if (SQ_FAILED(r)) sq_pushnull(v);
 };
 
 // Compile script from a character buffer with a given function name
-static bool SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const char *strSourceName) {
+static void SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName) {
   SQRESULT r = sq_compilebuffer(v, strScript, strScript.Length(), strSourceName, SQTrue);
-  return SQ_SUCCEEDED(r);
+
+  // Push a null instead of a closure on error
+  if (SQ_FAILED(r)) sq_pushnull(v);
 };
 
 // Message output
@@ -139,8 +145,7 @@ static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
   return SQ_OK;
 };
 
-VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bCompiled(false), m_iStackTop(0), m_bReturnValue(false),
-  m_pReturnValueCallback(NULL)
+VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_pReturnValueCallback(NULL)
 {
   // Create a new VM and bind this wrapper class to it
   m_vm = sq_open(1024);
@@ -194,46 +199,38 @@ void VM::DebugOut(const char *strFormat, ...) {
   va_end(arg);
 };
 
-bool VM::Compile_internal(const CTString &strSource, const char *strSourceName, bool bReturnValue) {
-  // If the VM wasn't suspended last time
-  if (!IsSuspended()) {
-    m_iStackTop = sq_gettop(m_vm);
-
-    // Compile new script (pushes the entire script as a closure on top of the stack)
-    if (strSourceName != NULL) {
-      m_bCompiled = SqCompileBuffer(m_vm, strSource, strSourceName);
-    } else {
-      m_bCompiled = SqCompileSource(m_vm, strSource);
-    }
-
-    m_bReturnValue = bReturnValue;
-    PrintCurrentStack(false, "After compile"); // Print the stack
+void VM::Compile_internal(const CTString &strSource, const SQChar *strSourceName) {
+  // Compile new script (pushes the entire script as a closure on top of the stack)
+  if (strSourceName != NULL) {
+    SqCompileBuffer(m_vm, strSource, strSourceName);
+  } else {
+    SqCompileSource(m_vm, strSource);
   }
 
-  return m_bCompiled;
+  PrintCurrentStack(false, "After compile"); // Print the stack
 };
 
-// Compile script from a source file before executing it
-bool VM::CompileFromFile(const CTString &strSourceFile, bool bReturnValue) {
-  return Compile_internal(strSourceFile, NULL, bReturnValue);
+// Compile script from a source file and push it as a function on top of the stack
+void VM::CompileFromFile(const CTString &strSourceFile) {
+  Compile_internal(strSourceFile, NULL);
 };
 
-// Compile script from a string before executing it
-bool VM::CompileFromString(const CTString &strScript, const char *strSourceName, bool bReturnValue) {
+// Compile script from a string and push it as a function on top of the stack
+void VM::CompileFromString(const CTString &strScript, const SQChar *strSourceName) {
   if (strSourceName == NULL) {
     ASSERTALWAYS("Compiling Squirrel script from a string but the source name is NULL");
     strSourceName = "";
   }
 
-  return Compile_internal(strScript, strSourceName, bReturnValue);
+  Compile_internal(strScript, strSourceName);
 };
 
 // Temporary struct for printing out unreachable objects upon returning from a function
 struct UnreachablePrint {
-  VM &vm;
+  HSQUIRRELVM vm;
   bool bDebug;
 
-  UnreachablePrint(VM *pVM, bool bSetDebug) : vm(*pVM), bDebug(bSetDebug) {};
+  UnreachablePrint(HSQUIRRELVM vmSet, bool bSetDebug) : vm(vmSet), bDebug(bSetDebug) {};
 
   ~UnreachablePrint() {
     if (!bDebug) return;
@@ -242,10 +239,13 @@ struct UnreachablePrint {
     SQInteger ctRefs = -1;
 
     // Push array of unreachable objects or null if there are none
-    sq_resurrectunreachable(vm);
+    if (SQ_FAILED(sq_resurrectunreachable(vm))) {
+      CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " error\n");
+      return;
+    }
 
     // If it pushed an array
-    if (sq_gettype(vm, -1) != OT_NULL) {
+    if (sq_gettype(vm, -1) == OT_ARRAY) {
       // Get closure
       sq_pushstring(vm, "len", -1);
       sq_get(vm, -2);
@@ -264,62 +264,80 @@ struct UnreachablePrint {
   };
 };
 
-// Execute a compiled script or resume a suspended execution
+// Check whether a closure on top of the stack can be executed
+bool VM::CanBeExecuted(void) {
+  // Nothing in the stack
+  if (sq_gettop(m_vm) <= 0) return false;
+
+  // Needs a closure on top
+  SQObjectType eType = sq_gettype(m_vm, -1);
+  return (eType == OT_CLOSURE || eType == OT_NATIVECLOSURE);
+};
+
+// Execute a function on top of the stack or resume a suspended execution
 bool VM::Execute(void) {
-  UnreachablePrint unreachable(this, m_bDebug);
+  UnreachablePrint unreachable(m_vm, m_bDebug);
 
-  // Compilation failed (reuses previous error)
-  if (!m_bCompiled) return false;
+  bool bWasSuspended = IsSuspended();
+  bool bError = true; // Not executed by default
 
-  // If the VM is still suspended
-  if (IsSuspended()) {
+  // Resume a suspended VM
+  if (bWasSuspended) {
     // Resume it
-    SQRESULT r = sq_wakeupvm(m_vm, SQTrue, (m_bReturnValue ? SQTrue : SQFalse), SQTrue, SQFalse);
-    if (SQ_FAILED(r)) return false;
+    SQRESULT r = sq_wakeupvm(m_vm, SQTrue, SQTrue, SQTrue, SQFalse);
+    bError = SQ_FAILED(r);
 
-  // Run a compiled script
-  } else {
+  // Execute a compiled closure
+  } else if (CanBeExecuted()) {
     // Push root table as 'this' for the script
     sq_pushroottable(m_vm);
 
     // Call the script closure without removing it from the stack
     // Push the return value on top (or 'null' if doesn't return anything)
-    SQRESULT r = sq_call(m_vm, 1, (m_bReturnValue ? SQTrue : SQFalse), SQTrue);
-    if (SQ_FAILED(r)) return false;
+    SQRESULT r = sq_call(m_vm, 1, SQTrue, SQTrue);
+    bError = SQ_FAILED(r);
   }
 
   PrintCurrentStack(false, "After call"); // Print the stack
 
-  // Quit if the VM is suspended
+  // Pop executed script closure and leave on error
+  if (bError) {
+    sq_poptop(m_vm);
+    return false;
+  }
+
+  // Quit if the VM hasn't finished its execution
   if (IsSuspended()) {
-    DebugOut(DEBUGOUT_INFO("VM is suspended") " (stack init: %d)", m_iStackTop);
+    DebugOut(DEBUGOUT_INFO("VM is suspended"));
     return true;
   }
 
-  // Execute the callback for the return value
-  if (m_bReturnValue) {
-    if (m_bDebug) {
-      CTString strReturn;
+  // Handle the return value
+  SQInteger iStack = sq_gettop(m_vm);
+  ASSERT(iStack > 0);
 
-      if (GetString(-1, strReturn)) {
-        CPrintF("[SQ] " DEBUGOUT_TYPE("Return value") " = '%s'\n", strReturn.str_String);
-      } else {
-        CPrintF("[SQ] Cannot retrieve the return value\n");
-      }
-    }
+  if (m_bDebug) {
+    CTString strReturn;
 
-    if (m_pReturnValueCallback != NULL) {
-      m_pReturnValueCallback(*this);
+    if (GetString(-1, strReturn)) {
+      CPrintF("[SQ] " DEBUGOUT_TYPE("Return value") " = '%s'\n", strReturn.str_String);
+    } else {
+      CPrintF("[SQ] Cannot retrieve the return value\n");
     }
   }
 
-  // Restore the stack top by popping values in this order:
-  // 1. Return value (if it's been pushed)
-  // 2. Initial root table after resuming a suspended script at least once
-  // 3. Original script closure after the initial compilation
-  sq_settop(m_vm, m_iStackTop);
-  DebugOut(DEBUGOUT_INFO("VM has finished running") " (stack init/end: %d/%lld)", m_iStackTop, sq_gettop(m_vm));
+  if (m_pReturnValueCallback != NULL) {
+    m_pReturnValueCallback(*this);
+  }
 
+  // Restore stack top minus the return value
+  sq_settop(m_vm, iStack - 1);
+
+  // Pop executed script closure with its initial table argument after finishing the full execution
+  // because sq_call() above doesn't pop its arguments afterwards if the execution has been suspended
+  sq_pop(m_vm, bWasSuspended ? 2 : 1);
+
+  DebugOut(DEBUGOUT_INFO("VM has finished running") " (stack: %lld)", sq_gettop(m_vm));
   return true;
 };
 

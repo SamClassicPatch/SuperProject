@@ -53,11 +53,6 @@ class VM {
     bool m_bDebug; // Outputs debug information in console
     CTString m_strErrors; // Error message buffer
 
-    // Compilation stage
-    bool m_bCompiled; // Whether the VM has anything to execute
-    INDEX m_iStackTop; // Amount of elements in the VM's stack before another compilation
-    bool m_bReturnValue; // Whether the compiled script should push a return value after execution
-
   public:
     typedef void (*FReturnValueCallback)(VM &vm);
     FReturnValueCallback m_pReturnValueCallback;
@@ -126,20 +121,23 @@ class VM {
     // Print debug information in console
     void DebugOut(const char *strFormat, ...);
 
-    __forceinline bool Compile_internal(const CTString &strSource, const char *strSourceName, bool bReturnValue);
+    __forceinline void Compile_internal(const CTString &strSource, const char *strSourceName);
 
   // Running
   public:
 
-    // Compile script from a source file before executing it
+    // Compile script from a source file and push it as a closure on top of the stack
     // Returns false if the compilation fails (use GetError() for more info)
-    bool CompileFromFile(const CTString &strSourceFile, bool bReturnValue);
+    void CompileFromFile(const CTString &strSourceFile);
 
-    // Compile script from a string before executing it
+    // Compile script from a string and push it as a closure on top of the stack
     // Returns false if the compilation fails (use GetError() for more info)
-    bool CompileFromString(const CTString &strScript, const char *strSourceName, bool bReturnValue);
+    void CompileFromString(const CTString &strScript, const SQChar *strSourceName);
 
-    // Execute a compiled script or resume a suspended execution
+    // Check whether a closure on top of the stack can be executed
+    bool CanBeExecuted(void);
+
+    // Execute a closure on top of the stack or resume a suspended execution
     // Returns false if a runtime error occurs (use GetError() for more info)
     bool Execute(void);
 
