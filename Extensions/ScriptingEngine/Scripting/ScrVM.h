@@ -56,7 +56,9 @@ class VM {
   private:
     HSQUIRRELVM m_vm; // Squirrel VM itself
     bool m_bDebug; // Outputs debug information in console
+
     CTString m_strErrors; // Error message buffer
+    bool m_bRuntimeError; // Signifies that there has been at least one runtime error
 
   public:
     VM(ULONG ulInitFlags = VMLIB_NONE);
@@ -93,6 +95,16 @@ class VM {
     // Clear the VM error
     __forceinline void ClearError(void) {
       m_strErrors = "";
+    };
+
+    // Signify that there has been a runtime error
+    __forceinline void MarkRuntimeError(void) {
+      m_bRuntimeError = true;
+    };
+
+    // Check if any runtime error has occurred
+    __forceinline bool RuntimeErrorOccurred(void) {
+      return m_bRuntimeError;
     };
 
   // Squirrel wrappers

@@ -124,28 +124,41 @@ static void HandlerCompilerError(HSQUIRRELVM v,
 // Runtime error output
 static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
   // Clear the last error
-  GetVMClass(v).ClearError();
+  VM &vm = GetVMClass(v);
+  vm.ClearError();
 
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
   if (pCallback != NULL) {
     const SQChar *strError = NULL;
+    bool bErrorMessage = (sq_gettop(v) >= 2 && SQ_SUCCEEDED(sq_getstring(v, 2, &strError)));
 
-    if (sq_gettop(v) >= 1) {
-      if (SQ_SUCCEEDED(sq_getstring(v, 2, &strError))) {
-        pCallback(v, _SC("AN ERROR HAS OCCURRED [%s]\n"), strError);
+    // Print the last error as a simple string to avoid cascading output
+    if (vm.RuntimeErrorOccurred()) {
+      if (bErrorMessage) {
+        pCallback(v, "%s", strError);
       } else {
-        pCallback(v, _SC("AN ERROR HAS OCCURRED [unknown]\n"));
+        pCallback(v, "unknown\n");
+      }
+
+    // Print detailed infomation about the error
+    } else {
+      if (bErrorMessage) {
+        pCallback(v, "AN ERROR HAS OCCURRED [%s]\n", strError);
+      } else {
+        pCallback(v, "AN ERROR HAS OCCURRED [unknown]\n");
       }
 
       sqstd_printcallstack(v);
     }
   }
 
+  // Runtime error has occurred
+  vm.MarkRuntimeError();
   return SQ_OK;
 };
 
-VM::VM(ULONG ulInitFlags) : m_bDebug(false)
+VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bRuntimeError(false)
 {
   // Create a new VM and bind this wrapper class to it
   m_vm = sq_open(1024);
@@ -277,6 +290,9 @@ bool VM::CanBeExecuted(void) {
 // Execute a function on top of the stack or resume a suspended execution
 bool VM::Execute(FReturnValueCallback pReturnCallback) {
   UnreachablePrint unreachable(m_vm, m_bDebug);
+
+  // Clear runtime error
+  m_bRuntimeError = false;
 
   bool bWasSuspended = IsSuspended();
   bool bError = true; // Not executed by default
