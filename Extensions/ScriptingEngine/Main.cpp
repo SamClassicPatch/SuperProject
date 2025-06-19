@@ -91,11 +91,11 @@ static void ShellResetVM(void) {
 };
 
 // Generic method for executing scripts
-static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL bFile, sq::VM::FReturnValueCallback pCallback) {
+static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL bFile, const SQChar *strSourceName, sq::VM::FReturnValueCallback pCallback) {
   if (bFile) {
     pVM->CompileFromFile(strScript);
   } else {
-    pVM->CompileFromString(strScript, "ShellScript");
+    pVM->CompileFromString(strScript, strSourceName);
   }
 
   // Error during the compilation
@@ -123,7 +123,7 @@ int SignalExecuteScript(void *pScript) {
   _pSignalVM = new sq::VM(0xFFFFFFFF);
 
   const CTString &strScript = *(const CTString *)pScript;
-  return ExecuteSquirrelScript(_pSignalVM, strScript, FALSE, &SignalReturnCallback);
+  return ExecuteSquirrelScript(_pSignalVM, strScript, FALSE, "ScriptingEngine::ExecuteScript", &SignalReturnCallback);
 };
 
 int SignalIsSuspended(void *) {
@@ -165,7 +165,7 @@ static CTString ShellExecuteString(SHELL_FUNC_ARGS) {
   _pCommandVM = new sq::VM(0xFFFFFFFF);
 
   _strLastCommandResult = "";
-  ExecuteSquirrelScript(_pCommandVM, strScript, FALSE, &CommandReturnCallback);
+  ExecuteSquirrelScript(_pCommandVM, strScript, FALSE, "scr_ExecuteString", &CommandReturnCallback);
 
   return _strLastCommandResult;
 };
@@ -180,7 +180,7 @@ static CTString ShellExecuteFile(SHELL_FUNC_ARGS) {
   _pCommandVM = new sq::VM(0xFFFFFFFF);
 
   _strLastCommandResult = "";
-  ExecuteSquirrelScript(_pCommandVM, strScript, TRUE, &CommandReturnCallback);
+  ExecuteSquirrelScript(_pCommandVM, strScript, TRUE, "scr_ExecuteFile", &CommandReturnCallback);
 
   return _strLastCommandResult;
 };
