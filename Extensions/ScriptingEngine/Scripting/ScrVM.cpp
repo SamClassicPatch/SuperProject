@@ -111,7 +111,7 @@ static void HandlerCompilerError(HSQUIRRELVM v,
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
   if (pCallback != NULL) {
-    pCallback(v, _SC("%s (ln %d, ch %d) error: %s\n"), strSource, iLn, iCh, strError);
+    pCallback(v, _SC("%s (ln %lld, ch %lld) error: %s\n"), strSource, iLn, iCh, strError);
   }
 };
 
@@ -260,7 +260,7 @@ struct UnreachablePrint {
     }
 
     sq_poptop(vm); // Pop array or null
-    CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " = %d (stack: %d)\n", ctRefs, sq_gettop(vm));
+    CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " = %lld (stack: %lld)\n", ctRefs, sq_gettop(vm));
   };
 };
 
@@ -318,7 +318,7 @@ bool VM::Execute(void) {
   // 2. Initial root table after resuming a suspended script at least once
   // 3. Original script closure after the initial compilation
   sq_settop(m_vm, m_iStackTop);
-  DebugOut(DEBUGOUT_INFO("VM has finished running") " (stack init/end: %d/%d)", m_iStackTop, sq_gettop(m_vm));
+  DebugOut(DEBUGOUT_INFO("VM has finished running") " (stack init/end: %d/%lld)", m_iStackTop, sq_gettop(m_vm));
 
   return true;
 };
@@ -350,7 +350,7 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
   SQInteger ct = sq_gettop(m_vm);
 
   if (bOnlyCount) {
-    CPrintF(" %d\n", ct);
+    CPrintF(" %lld\n", ct);
     return;
   }
 
@@ -361,7 +361,7 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
 
   CPutString("\n");
 
-  for (INDEX i = ct; i > 0; i--) {
+  for (SQInteger i = ct; i > 0; i--) {
     SQObjectType eType = sq_gettype(m_vm, i);
     CTString strObj = "ERROR - COULD NOT GET STRING";
 
@@ -369,7 +369,7 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
       strObj = "'" + strObj + "'";
     }
 
-    CPrintF("[SQ] [%d] " DEBUGOUT_TYPE("%s") " = %s\n", i, sq_gettypename(eType), strObj);
+    CPrintF("[SQ] [%lld] " DEBUGOUT_TYPE("%s") " = %s\n", i, sq_gettypename(eType), strObj);
   }
 };
 
