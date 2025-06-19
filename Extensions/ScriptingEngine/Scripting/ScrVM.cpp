@@ -117,7 +117,7 @@ static void HandlerCompilerError(HSQUIRRELVM v,
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
   if (pCallback != NULL) {
-    pCallback(v, _SC("%s (ln %lld, ch %lld) error: %s\n"), strSource, iLn, iCh, strError);
+    pCallback(v, "%s (ln %d, ch %d) error: %s\n", strSource, (int)iLn, (int)iCh, strError);
   }
 };
 
@@ -145,7 +145,7 @@ static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
   return SQ_OK;
 };
 
-VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_pReturnValueCallback(NULL)
+VM::VM(ULONG ulInitFlags) : m_bDebug(false)
 {
   // Create a new VM and bind this wrapper class to it
   m_vm = sq_open(1024);
@@ -260,7 +260,7 @@ struct UnreachablePrint {
     }
 
     sq_poptop(vm); // Pop array or null
-    CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " = %lld (stack: %lld)\n", ctRefs, sq_gettop(vm));
+    CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " = %d (stack: %d)\n", (int)ctRefs, (int)sq_gettop(vm));
   };
 };
 
@@ -275,7 +275,7 @@ bool VM::CanBeExecuted(void) {
 };
 
 // Execute a function on top of the stack or resume a suspended execution
-bool VM::Execute(void) {
+bool VM::Execute(FReturnValueCallback pReturnCallback) {
   UnreachablePrint unreachable(m_vm, m_bDebug);
 
   bool bWasSuspended = IsSuspended();
@@ -312,6 +312,10 @@ bool VM::Execute(void) {
     return true;
   }
 
+  // The initial table must be popped here because sq_call() doesn't pop its arguments after being suspended
+  if (bWasSuspended) sq_remove(m_vm, -2); // Pop initial root table argument
+  sq_remove(m_vm, -2); // Pop executed script closure
+
   // Handle the return value
   SQInteger iStack = sq_gettop(m_vm);
   ASSERT(iStack > 0);
@@ -326,18 +330,17 @@ bool VM::Execute(void) {
     }
   }
 
-  if (m_pReturnValueCallback != NULL) {
-    m_pReturnValueCallback(*this);
+  // Execute callback with the return value on top of the stack
+  bool bPopReturn = true;
+
+  if (pReturnCallback != NULL) {
+    bPopReturn = pReturnCallback(*this);
   }
 
   // Restore stack top minus the return value
-  sq_settop(m_vm, iStack - 1);
+  if (bPopReturn) sq_settop(m_vm, iStack - 1);
 
-  // Pop executed script closure with its initial table argument after finishing the full execution
-  // because sq_call() above doesn't pop its arguments afterwards if the execution has been suspended
-  sq_pop(m_vm, bWasSuspended ? 2 : 1);
-
-  DebugOut(DEBUGOUT_INFO("VM has finished running") " (stack: %lld)", sq_gettop(m_vm));
+  DebugOut(DEBUGOUT_INFO("VM has finished running") " (stack: %d)", (int)sq_gettop(m_vm));
   return true;
 };
 
@@ -368,7 +371,7 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
   SQInteger ct = sq_gettop(m_vm);
 
   if (bOnlyCount) {
-    CPrintF(" %lld\n", ct);
+    CPrintF(" %d\n", (int)ct);
     return;
   }
 
@@ -387,7 +390,7 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
       strObj = "'" + strObj + "'";
     }
 
-    CPrintF("[SQ] [%lld] " DEBUGOUT_TYPE("%s") " = %s\n", i, sq_gettypename(eType), strObj);
+    CPrintF("[SQ] [%d] " DEBUGOUT_TYPE("%s") " = %s\n", (int)i, sq_gettypename(eType), strObj);
   }
 };
 

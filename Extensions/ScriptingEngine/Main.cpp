@@ -40,6 +40,29 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
 static sq::VM *_pSignalVM = NULL;
 static sq::VM *_pCommandVM = NULL;
 
+static bool SignalReturnCallback(sq::VM &vm) {
+  // Output return value
+  CTString str;
+
+  if (vm.GetString(-1, str)) {
+    CPrintF("%s\n", str.str_String);
+  }
+
+  return true;
+};
+
+static CTString _strLastCommandResult;
+
+static bool CommandReturnCallback(sq::VM &vm) {
+  // Save return value
+  CTString str = "";
+  vm.GetString(-1, str);
+
+  // Must be a non-null value
+  _strLastCommandResult = (str != "null") ? str : "";
+  return true;
+};
+
 // Check if the current script execution is suspended
 static INDEX ShellIsSuspended(void) {
   if (_pCommandVM == NULL) return FALSE;
@@ -51,7 +74,7 @@ static void ShellResumeVM(void) {
   // No VM or it's not suspended
   if (_pCommandVM == NULL || !_pCommandVM->IsSuspended()) return;
 
-  bool bExecuted = _pCommandVM->Execute();
+  bool bExecuted = _pCommandVM->Execute(&CommandReturnCallback);
 
   // Error during the execution
   if (!bExecuted) {
@@ -69,8 +92,6 @@ static void ShellResetVM(void) {
 
 // Generic method for executing scripts
 static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL bFile, sq::VM::FReturnValueCallback pCallback) {
-  pVM->m_pReturnValueCallback = pCallback;
-
   if (bFile) {
     pVM->CompileFromFile(strScript);
   } else {
@@ -83,7 +104,7 @@ static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL b
     return FALSE;
   }
 
-  bool bExecuted = pVM->Execute();
+  bool bExecuted = pVM->Execute(pCallback);
 
   // Error during the execution
   if (!bExecuted) {
@@ -92,15 +113,6 @@ static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL b
   }
 
   return TRUE;
-};
-
-static void SignalReturnCallback(sq::VM &vm) {
-  // Output return value
-  CTString str;
-
-  if (vm.GetString(-1, str)) {
-    CPrintF("%s\n", str.str_String);
-  }
 };
 
 int SignalExecuteScript(void *pScript) {
@@ -123,7 +135,7 @@ int SignalResume(void *) {
   // No VM or it's not suspended
   if (_pSignalVM == NULL || !_pSignalVM->IsSuspended()) return TRUE;
 
-  bool bExecuted = _pSignalVM->Execute();
+  bool bExecuted = _pSignalVM->Execute(&SignalReturnCallback);
 
   // Error during the execution
   if (!bExecuted) {
@@ -141,17 +153,6 @@ int SignalReset(void *) {
   }
 
   return TRUE;
-};
-
-static CTString _strLastCommandResult;
-
-static void CommandReturnCallback(sq::VM &vm) {
-  // Save return value
-  CTString str = "";
-  vm.GetString(-1, str);
-
-  // Must be a non-null value
-  _strLastCommandResult = (str != "null") ? str : "";
 };
 
 // Execute a script from the provided string and return the result

@@ -48,14 +48,15 @@ enum InitFlagsVM {
 };
 
 class VM {
+  public:
+    // Callback for handling return values at the end of the execution
+    // Should return true if the return value isn't needed anymore and can be popped from the stack
+    typedef bool (*FReturnValueCallback)(VM &vm);
+
   private:
     HSQUIRRELVM m_vm; // Squirrel VM itself
     bool m_bDebug; // Outputs debug information in console
     CTString m_strErrors; // Error message buffer
-
-  public:
-    typedef void (*FReturnValueCallback)(VM &vm);
-    FReturnValueCallback m_pReturnValueCallback;
 
   public:
     VM(ULONG ulInitFlags = VMLIB_NONE);
@@ -139,7 +140,7 @@ class VM {
 
     // Execute a closure on top of the stack or resume a suspended execution
     // Returns false if a runtime error occurs (use GetError() for more info)
-    bool Execute(void);
+    bool Execute(FReturnValueCallback pReturnCallback);
 
     // Convert any object in the stack into a string
     bool GetString(SQInteger idx, CTString &strValue);
