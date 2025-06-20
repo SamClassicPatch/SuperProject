@@ -74,7 +74,7 @@ static void ShellResumeVM(void) {
   // No VM or it's not suspended
   if (_pCommandVM == NULL || !_pCommandVM->IsSuspended()) return;
 
-  bool bExecuted = _pCommandVM->Execute(&CommandReturnCallback);
+  bool bExecuted = _pCommandVM->Resume(&CommandReturnCallback);
 
   // Error during the execution
   if (!bExecuted) {
@@ -92,13 +92,13 @@ static void ShellResetVM(void) {
 
 // Generic method for executing scripts
 static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL bFile, const SQChar *strSourceName, sq::VM::FReturnValueCallback pCallback) {
-  if (bFile) {
-    pVM->CompileFromFile(strScript);
-  } else {
-    pVM->CompileFromString(strScript, strSourceName);
-  }
+  bool bExecuted;
 
-  bool bExecuted = pVM->Execute(pCallback);
+  if (bFile) {
+    bExecuted = pVM->ExecuteFile(strScript, pCallback);
+  } else {
+    bExecuted = pVM->ExecuteString(strScript, strSourceName, pCallback);
+  }
 
   // Error during the execution
   if (!bExecuted) {
@@ -129,7 +129,7 @@ int SignalResume(void *) {
   // No VM or it's not suspended
   if (_pSignalVM == NULL || !_pSignalVM->IsSuspended()) return TRUE;
 
-  bool bExecuted = _pSignalVM->Execute(&SignalReturnCallback);
+  bool bExecuted = _pSignalVM->Resume(&SignalReturnCallback);
 
   // Error during the execution
   if (!bExecuted) {

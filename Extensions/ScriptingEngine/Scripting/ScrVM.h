@@ -59,6 +59,7 @@ class VM {
 
     CTString m_strErrors; // Error message buffer
     bool m_bRuntimeError; // Signifies that there has been at least one runtime error
+    INDEX m_iScriptDepth; // Included scripts depth
 
   public:
     VM(ULONG ulInitFlags = VMLIB_NONE);
@@ -147,6 +148,7 @@ class VM {
     static void SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName);
 
     __forceinline void Compile_internal(const CTString &strSource, const char *strSourceName);
+    __forceinline bool AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback);
 
   // Running
   public:
@@ -162,9 +164,21 @@ class VM {
     // Check whether a closure on top of the stack can be executed
     bool CanBeExecuted(void);
 
-    // Execute a closure on top of the stack or resume a suspended execution
+    // Execute a closure on top of the stack
     // Returns false if a runtime error occurs (use GetError() for more info)
     bool Execute(FReturnValueCallback pReturnCallback);
+
+    // Resume a suspended execution
+    // Returns false if a runtime error occurs (use GetError() for more info)
+    bool Resume(FReturnValueCallback pReturnCallback);
+
+    // Execute a nested script from a file
+    // Returns false if a runtime error occurs (use GetError() for more info)
+    bool ExecuteFile(const CTString &strSourceFile, FReturnValueCallback pReturnCallback);
+
+    // Execute a nested script from a string
+    // Returns false if a runtime error occurs (use GetError() for more info)
+    bool ExecuteString(const CTString &strScript, const SQChar *strSourceName, FReturnValueCallback pReturnCallback);
 
     // Convert any object in the stack into a string
     bool GetString(SQInteger idx, CTString &strValue);

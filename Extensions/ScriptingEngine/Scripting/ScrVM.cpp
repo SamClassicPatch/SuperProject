@@ -167,7 +167,7 @@ SQInteger VM::HandlerRuntimeError(HSQUIRRELVM v) {
   return SQ_OK;
 };
 
-VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bRuntimeError(false)
+VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDepth(0)
 {
   // Create a new VM and bind this wrapper class to it
   m_vm = sq_open(1024);
@@ -296,41 +296,7 @@ bool VM::CanBeExecuted(void) {
   return (eType == OT_CLOSURE || eType == OT_NATIVECLOSURE);
 };
 
-// Execute a function on top of the stack or resume a suspended execution
-bool VM::Execute(FReturnValueCallback pReturnCallback) {
-  UnreachablePrint unreachable(m_vm, m_bDebug);
-
-  // Clear runtime error
-  m_bRuntimeError = false;
-
-  bool bWasSuspended = IsSuspended();
-  bool bError = true; // Not executed by default
-
-  // Resume a suspended VM
-  if (bWasSuspended) {
-    // Resume it
-    SQRESULT r = sq_wakeupvm(m_vm, SQTrue, SQTrue, SQTrue, SQFalse);
-    bError = SQ_FAILED(r);
-
-  // Execute a compiled closure
-  } else if (CanBeExecuted()) {
-    // Push root table as 'this' for the script
-    sq_pushroottable(m_vm);
-
-    // Call the script closure without removing it from the stack
-    // Push the return value on top (or 'null' if doesn't return anything)
-    SQRESULT r = sq_call(m_vm, 1, SQTrue, SQTrue);
-    bError = SQ_FAILED(r);
-  }
-
-  PrintCurrentStack(false, "After call"); // Print the stack
-
-  // Pop executed script closure and leave on error
-  if (bError) {
-    sq_poptop(m_vm);
-    return false;
-  }
-
+bool VM::AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback) {
   // Quit if the VM hasn't finished its execution
   if (IsSuspended()) {
     DebugOut(DEBUGOUT_INFO("VM is suspended"));
@@ -367,6 +333,121 @@ bool VM::Execute(FReturnValueCallback pReturnCallback) {
 
   DebugOut(DEBUGOUT_INFO("VM has finished running") " (stack: %d)", (int)sq_gettop(m_vm));
   return true;
+};
+
+// Execute a function on top of the stack
+bool VM::Execute(FReturnValueCallback pReturnCallback) {
+  UnreachablePrint unreachable(m_vm, m_bDebug);
+
+  // Clear runtime error
+  m_bRuntimeError = false;
+
+  // Not executed by default
+  bool bError = true;
+
+  if (IsSuspended()) {
+    SetError("trying to call a new closure during suspended execution");
+    sq_throwerror(m_vm, GetError());
+
+  // Execute a compiled closure
+  } else if (CanBeExecuted()) {
+    // Push root table as 'this' for the script
+    sq_pushroottable(m_vm);
+
+    // Call the script closure without removing it from the stack
+    // Push the return value on top (or 'null' if doesn't return anything)
+    SQRESULT r = sq_call(m_vm, 1, SQTrue, SQTrue);
+    bError = SQ_FAILED(r);
+  }
+
+  PrintCurrentStack(false, "After execute"); // Print the stack
+
+  // Pop executed script closure and leave on error
+  if (bError) {
+    sq_poptop(m_vm);
+    return false;
+  }
+
+  return AfterExecution(false, pReturnCallback);
+};
+
+// Resume a suspended execution
+bool VM::Resume(FReturnValueCallback pReturnCallback) {
+  UnreachablePrint unreachable(m_vm, m_bDebug);
+
+  // Not executed by default
+  bool bError = true;
+
+  if (!IsSuspended()) {
+    SetError("trying to resume execution that isn't suspended");
+    sq_throwerror(m_vm, GetError());
+
+  // Resume a suspended VM
+  } else {
+    // Resume it
+    SQRESULT r = sq_wakeupvm(m_vm, SQTrue, SQTrue, SQTrue, SQFalse);
+    bError = SQ_FAILED(r);
+  }
+
+  PrintCurrentStack(false, "After resume"); // Print the stack
+
+  // Pop executed script closure and leave on error
+  if (bError) {
+    sq_poptop(m_vm);
+    return false;
+  }
+
+  return AfterExecution(true, pReturnCallback);
+};
+
+// Execute a nested script from a file
+bool VM::ExecuteFile(const CTString &strSourceFile, FReturnValueCallback pReturnCallback) {
+  // Nested too deep
+  if (m_iScriptDepth > 16) {
+    SetError("too many nested scripts");
+    sq_throwerror(m_vm, GetError());
+    return false;
+  }
+
+  // Compile a script from a file and execute it in place
+  CompileFromFile(strSourceFile);
+
+  bool bExecuted = true;
+  m_iScriptDepth++;
+
+  if (!Execute(pReturnCallback)) {
+    // Pass the error from the included script
+    sq_throwerror(m_vm, GetError());
+    bExecuted = false;
+  }
+
+  m_iScriptDepth--;
+  return bExecuted;
+};
+
+// Execute a nested script from a string
+bool VM::ExecuteString(const CTString &strScript, const SQChar *strSourceName, FReturnValueCallback pReturnCallback) {
+  // Nested too deep
+  if (m_iScriptDepth > 16) {
+    SetError("too many nested scripts");
+    sq_throwerror(m_vm, GetError());
+    return false;
+  }
+
+  // Compile a script from a string and execute it in place
+  CompileFromString(strScript, strSourceName);
+
+  bool bExecuted = true;
+  m_iScriptDepth++;
+
+  if (!Execute(pReturnCallback)) {
+    // Pass the error from the included script
+    sq_throwerror(m_vm, GetError());
+    bExecuted = false;
+  }
+
+  m_iScriptDepth--;
+  return bExecuted;
 };
 
 // Convert any object in the stack into a string
