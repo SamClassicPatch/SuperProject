@@ -191,6 +191,7 @@ VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDe
     if (ulInitFlags & VMLIB_NETWORK)    RegisterNetwork();
     if (ulInitFlags & VMLIB_SHELL)      RegisterShell();
     if (ulInitFlags & VMLIB_TIMER)      RegisterTimer();
+    if (ulInitFlags & VMLIB_UTILS)      RegisterUtils();
     if (ulInitFlags & VMLIB_WORLD)      RegisterWorld();
 
     // Set handler functions

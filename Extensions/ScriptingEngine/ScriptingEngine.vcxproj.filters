@@ -95,5 +95,8 @@
     <ClCompile Include="Scripting\ScrInstances.cpp">
       <Filter>Source Files\Scripting</Filter>
     </ClCompile>
+    <ClCompile Include="Libraries\ScrLibUtils.cpp">
+      <Filter>Source Files\Libraries</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

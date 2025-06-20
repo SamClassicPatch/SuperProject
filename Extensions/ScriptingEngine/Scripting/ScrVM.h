@@ -44,7 +44,8 @@ enum InitFlagsVM {
   VMLIB_NETWORK    = (1 << 14),
   VMLIB_SHELL      = (1 << 15),
   VMLIB_TIMER      = (1 << 16),
-  VMLIB_WORLD      = (1 << 17),
+  VMLIB_UTILS      = (1 << 17),
+  VMLIB_WORLD      = (1 << 18),
 };
 
 class VM {
@@ -196,6 +197,7 @@ class VM {
     void RegisterNetwork(void);
     void RegisterShell(void);
     void RegisterTimer(void);
+    void RegisterUtils(void);
     void RegisterWorld(void);
 
   // VM interactions

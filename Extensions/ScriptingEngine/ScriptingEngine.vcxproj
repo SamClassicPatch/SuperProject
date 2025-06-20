@@ -44,6 +44,7 @@
     <ClCompile Include="Libraries\ScrLibNetwork.cpp" />
     <ClCompile Include="Libraries\ScrLibShell.cpp" />
     <ClCompile Include="Libraries\ScrLibTimer.cpp" />
+    <ClCompile Include="Libraries\ScrLibUtils.cpp" />
     <ClCompile Include="Libraries\ScrLibWorld.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scripting\ScrClass.cpp" />
