@@ -78,7 +78,7 @@ static void ShellResumeVM(void) {
 
   // Error during the execution
   if (!bExecuted) {
-    CPrintF("^cff0000Runtime error:\n%s", _pCommandVM->GetError());
+    CPrintF("^cff0000Execution error:\n%s\n", _pCommandVM->GetError());
   }
 };
 
@@ -98,17 +98,11 @@ static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL b
     pVM->CompileFromString(strScript, strSourceName);
   }
 
-  // Error during the compilation
-  if (!pVM->CanBeExecuted()) {
-    CPrintF("^cff0000Compilation error:\n%s", pVM->GetError());
-    return FALSE;
-  }
-
   bool bExecuted = pVM->Execute(pCallback);
 
   // Error during the execution
   if (!bExecuted) {
-    CPrintF("^cff0000Runtime error:\n%s", pVM->GetError());
+    CPrintF("^cff0000Execution error:\n%s\n", pVM->GetError());
     return FALSE;
   }
 
@@ -139,7 +133,7 @@ int SignalResume(void *) {
 
   // Error during the execution
   if (!bExecuted) {
-    CPrintF("^cff0000Runtime error:\n%s", _pSignalVM->GetError());
+    CPrintF("^cff0000Execution error:\n%s\n", _pSignalVM->GetError());
     return FALSE;
   }
 

@@ -47,44 +47,53 @@ static SQInteger SqLexerFeed(SQUserPointer pData)
 };
 
 // Compile script from a source file within the game folder
-static void SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
+void VM::SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
+  VM &vm = GetVMClass(v);
+
   // Open the source file using an engine stream
   CTFileStream strm;
+  bool bError = false;
 
   try {
     strm.Open_t(strSourceFile);
 
+    // Compile the script by reading characters from the stream
+    SQRESULT r = sq_compile(v, SqLexerFeed, &strm, strSourceFile.str_String, SQTrue);
+    bError = SQ_FAILED(r);
+
+    strm.Close();
+
   } catch (char *strError) {
-    sq_throwerror(v, strError);
-
-    VM &vm = GetVMClass(v);
-    vm.ClearError();
-    vm.PushError(strError);
-    vm.PushError("\n");
-
-    // Push a null instead of a closure on error
-    sq_pushnull(v);
-    return;
+    vm.SetError(strError);
+    bError = true;
   }
 
-  // Compile the script by reading characters from the stream
-  SQRESULT r = sq_compile(v, SqLexerFeed, &strm, strSourceFile.str_String, SQTrue);
-  strm.Close();
-
   // Push a null instead of a closure on error
-  if (SQ_FAILED(r)) sq_pushnull(v);
+  if (bError) {
+    sq_pushnull(v);
+
+    // Pass compilation error
+    sq_throwerror(v, vm.GetError());
+  }
 };
 
 // Compile script from a character buffer with a given function name
-static void SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName) {
+void VM::SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName) {
+  VM &vm = GetVMClass(v);
+
   SQRESULT r = sq_compilebuffer(v, strScript, strScript.Length(), strSourceName, SQTrue);
 
   // Push a null instead of a closure on error
-  if (SQ_FAILED(r)) sq_pushnull(v);
+  if (SQ_FAILED(r)) {
+    sq_pushnull(v);
+
+    // Pass compilation error
+    sq_throwerror(v, vm.GetError());
+  }
 };
 
 // Message output
-static void HandlerPrintF(HSQUIRRELVM v, const char *str, ...) {
+void VM::HandlerPrintF(HSQUIRRELVM v, const char *str, ...) {
   va_list arg;
   va_start(arg, str);
 
@@ -96,7 +105,7 @@ static void HandlerPrintF(HSQUIRRELVM v, const char *str, ...) {
 };
 
 // Error output
-static void HandlerErrorF(HSQUIRRELVM v, const char *str, ...) {
+void VM::HandlerErrorF(HSQUIRRELVM v, const char *str, ...) {
   va_list arg;
   va_start(arg, str);
 
@@ -108,24 +117,24 @@ static void HandlerErrorF(HSQUIRRELVM v, const char *str, ...) {
 };
 
 // Compiler error output
-static void HandlerCompilerError(HSQUIRRELVM v,
+void VM::HandlerCompilerError(HSQUIRRELVM v,
   const SQChar *strError, const SQChar *strSource, SQInteger iLn, SQInteger iCh)
 {
   // Clear the last error
-  GetVMClass(v).ClearError();
+  GetVMClass(v).SetError("");
 
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
   if (pCallback != NULL) {
-    pCallback(v, "%s (ln %d, ch %d) error: %s\n", strSource, (int)iLn, (int)iCh, strError);
+    pCallback(v, "%s (ln %d, ch %d) error: %s", strSource, (int)iLn, (int)iCh, strError);
   }
 };
 
 // Runtime error output
-static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
+SQInteger VM::HandlerRuntimeError(HSQUIRRELVM v) {
   // Clear the last error
   VM &vm = GetVMClass(v);
-  vm.ClearError();
+  vm.SetError("");
 
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
@@ -134,11 +143,11 @@ static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
     bool bErrorMessage = (sq_gettop(v) >= 2 && SQ_SUCCEEDED(sq_getstring(v, 2, &strError)));
 
     // Print the last error as a simple string to avoid cascading output
-    if (vm.RuntimeErrorOccurred()) {
+    if (vm.m_bRuntimeError) {
       if (bErrorMessage) {
         pCallback(v, "%s", strError);
       } else {
-        pCallback(v, "unknown\n");
+        pCallback(v, "unknown");
       }
 
     // Print detailed infomation about the error
@@ -154,7 +163,7 @@ static SQInteger HandlerRuntimeError(HSQUIRRELVM v) {
   }
 
   // Runtime error has occurred
-  vm.MarkRuntimeError();
+  vm.m_bRuntimeError = true;
   return SQ_OK;
 };
 
@@ -223,12 +232,12 @@ void VM::Compile_internal(const CTString &strSource, const SQChar *strSourceName
   PrintCurrentStack(false, "After compile"); // Print the stack
 };
 
-// Compile script from a source file and push it as a function on top of the stack
+// Compile script from a source file and push it as a closure on top of the stack
 void VM::CompileFromFile(const CTString &strSourceFile) {
   Compile_internal(strSourceFile, NULL);
 };
 
-// Compile script from a string and push it as a function on top of the stack
+// Compile script from a string and push it as a closure on top of the stack
 void VM::CompileFromString(const CTString &strScript, const SQChar *strSourceName) {
   if (strSourceName == NULL) {
     ASSERTALWAYS("Compiling Squirrel script from a string but the source name is NULL");

@@ -82,30 +82,36 @@ class VM {
     // Get last VM error
     __forceinline const char *GetError(void) const {
       // No error
-      if (m_strErrors == "") return "no error\n";
+      if (m_strErrors == "") return "no error";
 
       return m_strErrors.str_String;
     };
+
+  // Squirrel handlers
+  private:
 
     // Push one VM error
     __forceinline void PushError(const CTString &strError) {
       m_strErrors += strError;
     };
 
-    // Clear the VM error
-    __forceinline void ClearError(void) {
-      m_strErrors = "";
+    // Set the VM error
+    __forceinline void SetError(const CTString &strError) {
+      m_strErrors = strError;
     };
 
-    // Signify that there has been a runtime error
-    __forceinline void MarkRuntimeError(void) {
-      m_bRuntimeError = true;
-    };
+    // Message output
+    static void HandlerPrintF(HSQUIRRELVM v, const char *str, ...);
 
-    // Check if any runtime error has occurred
-    __forceinline bool RuntimeErrorOccurred(void) {
-      return m_bRuntimeError;
-    };
+    // Error output
+    static void HandlerErrorF(HSQUIRRELVM v, const char *str, ...);
+
+    // Compiler error output
+    static void HandlerCompilerError(HSQUIRRELVM v,
+      const SQChar *strError, const SQChar *strSource, SQInteger iLn, SQInteger iCh);
+
+    // Runtime error output
+    static SQInteger HandlerRuntimeError(HSQUIRRELVM v);
 
   // Squirrel wrappers
   public:
@@ -134,17 +140,23 @@ class VM {
     // Print debug information in console
     void DebugOut(const char *strFormat, ...);
 
+    // Compile script from a source file within the game folder
+    static void SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile);
+
+    // Compile script from a character buffer with a given function name
+    static void SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName);
+
     __forceinline void Compile_internal(const CTString &strSource, const char *strSourceName);
 
   // Running
   public:
 
     // Compile script from a source file and push it as a closure on top of the stack
-    // Returns false if the compilation fails (use GetError() for more info)
+    // Pushes null instead if the compilation fails (use GetError() for more info)
     void CompileFromFile(const CTString &strSourceFile);
 
     // Compile script from a string and push it as a closure on top of the stack
-    // Returns false if the compilation fails (use GetError() for more info)
+    // Pushes null instead the compilation fails (use GetError() for more info)
     void CompileFromString(const CTString &strScript, const SQChar *strSourceName);
 
     // Check whether a closure on top of the stack can be executed
