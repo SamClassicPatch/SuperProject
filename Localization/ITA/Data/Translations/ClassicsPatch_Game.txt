@@ -1,4 +1,4 @@
-72
+90
 
 \0\<
 Window
@@ -312,4 +312,127 @@ Muovi il mouse o il joystick del controller in qualsiasi direzione
 select axis automatically from any movement
 \0\>
 effettua la selezione automatica dell'asse da qualsiasi movimento
+\0\<
+SERIOUSLY AWESOME!
+\0\>
+SERIAMENTE FANTASTICO!
+\0\<
+SERIOUSLY LAME...
+\0\>
+SERIAMENTE NOIOSO...
+\0\<
+^cffffffEvent period: %s - %s
+\0\>
+^cffffffDurata evento: %s - %s
+\0\<
+January 15
+\0\>
+15 gennaio
+\0\<
+December 15
+\0\>
+15 dicembre
+\0\<
+Merry Christmas & Happy Holidays!\n
+\n
+Enjoy the snowy winter wonderland as you pulp Mental's horde\n
+into festive-looking chunks!\n
+That Kleer skull will look beautiful on the Christmas tree...
+\0\>
+Buon Natale e buone feste!\n
+\n
+Goditi il meraviglioso paesaggio invernale innevato mentre\n
+riduci in poltiglia l'orda di Mental. Puoi usare i loro resti\n
+come addobbi natalizi!\n
+Quel teschio di Kleer starà benissimo sull'albero di Natale...
+\0\<
+October 31
+\0\>
+31 ottobre
+\0\<
+October 1
+\0\>
+1 ottobre
+\0\<
+Happy Halloween!\n
+\n
+On this special occasion, Mental's horde ate so much candy and\n
+pumpkins that all of their internal organs turned into them!\n
+Although, as delicious as it looks, I wouldn't recommend eating it.
+\0\>
+Buon Halloween!\n
+\n
+In questa occasione speciale, l'orda di Mental ha mangiato così\n
+tante caramelle e zucche che tutti i loro organi interni si sono\n
+trasformati in caramelle! Sebbene possano sembrare deliziose, non\n
+consiglierei di mangiarle.
+\0\<
+June 24
+\0\>
+24 giugno
+\0\<
+June 20
+\0\>
+20 giugno
+\0\<
+Happy Anniversary to Classics Patch!\n
+\n
+The very first release of Classics Patch was on June 22, 2022.\n
+Mental was so excited about this anniversary that he simply could\n
+not resist the temptation to throw his own party for his horde,\n
+who had eaten their fill of cakes and other colorful pastries.\n
+It's time to crash this party!
+\0\>
+Buon anniversario alla Classics Patch!\n
+\n
+La primissima versione della Classics Patch è stata rilasciata\n
+il 22 giugno 2022. Mental era così emozionato per questo\n
+anniversario che non ha resistito alla tentazione di organizzare\n
+una festa per la sua orda, che si è rimpinzata di torte e altri\n
+dolci colorati. È il momento di rovinare la loro festa!
+\0\<
+March 23
+\0\>
+23 marzo
+\0\<
+March 19
+\0\>
+19 marzo
+\0\<
+Happy Birthday to Serious Sam!\n
+\n
+March 21st saw the birth of a man who vowed to save all of\n
+humanity by any means necessary!\n
+But unfortunately for Sam, Mental stole all the cakes and stuffed\n
+them into his horde. It's time for a real birthday bash!
+\0\>
+Buon compleanno a Serious Sam!\n
+\n
+Il 21 marzo segna la nascita dell'uomo che ha giurato di salvare\n
+l'intera umanità con qualsiasi mezzo necessario!\n
+Ma sfortunatamente per Sam, Mental ha rubato tutte le torte e\n
+le ha date in pasto alla sua orda.\n
+È l'ora di una vera festa di compleanno!
+\0\<
+February 18
+\0\>
+18 febbraio
+\0\<
+February 10
+\0\>
+10 febbraio
+\0\<
+Happy Valentine's Day!\n
+\n
+Love is in the air? WRONG! Smoke and the smell of napalm are in\n
+the air as you tear through Mental's horde, killing everyone in\n
+your path for what they did to your loved ones!\n
+It's the perfect time to break alien hearts... with your bare hands!
+\0\>
+Buon San Valentino!\n
+\n
+C'è amore nell'aria? SBAGLIATO! Fumo e odore di napalm aleggiano\n
+nell'aria mentre ti fai strada tra l'orda di Mental, uccidendo\n
+chiunque intralci il tuo cammino per quello che hanno fatto ai tuoi\n
+cari! È il momento perfetto per spezzare cuori alieni... a mani nude!
 \0\$
