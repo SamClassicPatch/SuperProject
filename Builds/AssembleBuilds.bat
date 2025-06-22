@@ -49,81 +49,87 @@ echo Copying TFE 1.05 binaries...
 echo ----------------------------
 
 cd %REPO%
+set GAMEBUILD=TFE105
 
 :: Collect files for the TFE 1.05 build
-call :CopyFile  Core\                        Bin\Release_TFE105\  ClassicsCore            .dll  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  CustomDedicatedServer\       Bin\Release_TFE105\  DedicatedServer_Custom  .exe  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  CustomEngineGUI\             Bin\Release_TFE105\  EngineGUI               .dll  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  CustomGameClient\            Bin\Release_TFE105\  SeriousSam_Custom       .exe  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  CustomWorldEditor\           Bin\Release_TFE105\  SeriousEditor_Custom    .exe  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  CustomMod\EntitiesTFE\       Bin\Release_TFE105\  Entities_Custom         .dll  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  CustomMod\ExtraEntities\     Bin\Release_TFE105\  ClassicsExtras_Custom   .dll  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  CustomMod\Game\              Bin\Release_TFE105\  Game_Custom             .dll  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  CustomMod\GameGUI\           Bin\Release_TFE105\  GameGUI_Custom          .dll  %BUILDS%TFE105\Bin\  ""
-call :CopyFile  Extensions\Accessibility\    Bin\Release_TFE105\  Accessibility           .dll  %BUILDS%TFE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\AdvancedHUD\      Bin\Release_TFE105\  AdvancedHUD             .dll  %BUILDS%TFE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\ExtendedInput\    Bin\Release_TFE105\  ExtendedInput           .dll  %BUILDS%TFE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\LocalCheats\      Bin\Release_TFE105\  LocalCheats             .dll  %BUILDS%TFE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\ServerUtilities\  Bin\Release_TFE105\  ServerUtilities         .dll  %BUILDS%TFE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\WorldConverters\  Bin\Release_TFE105\  WorldConverters         .dll  %BUILDS%TFE105\Bin\  "Plugins\"
-copy /B %STEAMLIB%                  %BUILDS%TFE105\Bin\
-copy /B %SDLLIB%                    %BUILDS%TFE105\Bin\
-call Resources\DeployResources.bat  %BUILDS%TFE105\
-robocopy %BUILDS%TSE107\Mods\       %BUILDS%TFE105\Mods\ /E
+call :CopyFile  Core\                        Bin\Release_%GAMEBUILD%\  ClassicsCore            .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomDedicatedServer\       Bin\Release_%GAMEBUILD%\  DedicatedServer_Custom  .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomEngineGUI\             Bin\Release_%GAMEBUILD%\  EngineGUI               .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomGameClient\            Bin\Release_%GAMEBUILD%\  SeriousSam_Custom       .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomWorldEditor\           Bin\Release_%GAMEBUILD%\  SeriousEditor_Custom    .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\EntitiesTFE\       Bin\Release_%GAMEBUILD%\  Entities_Custom         .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\ExtraEntities\     Bin\Release_%GAMEBUILD%\  ClassicsExtras_Custom   .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\Game\              Bin\Release_%GAMEBUILD%\  Game_Custom             .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\GameGUI\           Bin\Release_%GAMEBUILD%\  GameGUI_Custom          .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  Extensions\Accessibility\    Bin\Release_%GAMEBUILD%\  Accessibility           .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\AdvancedHUD\      Bin\Release_%GAMEBUILD%\  AdvancedHUD             .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ExtendedInput\    Bin\Release_%GAMEBUILD%\  ExtendedInput           .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\LocalCheats\      Bin\Release_%GAMEBUILD%\  LocalCheats             .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ScriptingEngine\  Bin\Release_%GAMEBUILD%\  ScriptingEngine         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ServerUtilities\  Bin\Release_%GAMEBUILD%\  ServerUtilities         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\WorldConverters\  Bin\Release_%GAMEBUILD%\  WorldConverters         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+copy /B %STEAMLIB%                  %BUILDS%%GAMEBUILD%\Bin\
+copy /B %SDLLIB%                    %BUILDS%%GAMEBUILD%\Bin\
+call Resources\DeployResources.bat  %BUILDS%%GAMEBUILD%\
+robocopy %BUILDS%TSE107\Mods\       %BUILDS%%GAMEBUILD%\Mods\ /E
 
 echo ----------------------------
 echo Copying TSE 1.05 binaries...
 echo ----------------------------
 
 cd %REPO%
+set GAMEBUILD=TSE105
 
 :: Collect files for the TSE 1.05 build
-call :CopyFile  Core\                        Bin\Release_TSE105\  ClassicsCore            .dll  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  CustomDedicatedServer\       Bin\Release_TSE105\  DedicatedServer_Custom  .exe  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  CustomEngineGUI\             Bin\Release_TSE105\  EngineGUI               .dll  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  CustomGameClient\            Bin\Release_TSE105\  SeriousSam_Custom       .exe  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  CustomWorldEditor\           Bin\Release_TSE105\  SeriousEditor_Custom    .exe  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  CustomMod\EntitiesTFE\       Bin\Release_TSE105\  Entities_Custom         .dll  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  CustomMod\ExtraEntities\     Bin\Release_TSE105\  ClassicsExtras_Custom   .dll  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  CustomMod\Game\              Bin\Release_TSE105\  Game_Custom             .dll  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  CustomMod\GameGUI\           Bin\Release_TSE105\  GameGUI_Custom          .dll  %BUILDS%TSE105\Bin\  ""
-call :CopyFile  Extensions\Accessibility\    Bin\Release_TSE105\  Accessibility           .dll  %BUILDS%TSE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\AdvancedHUD\      Bin\Release_TSE105\  AdvancedHUD             .dll  %BUILDS%TSE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\ExtendedInput\    Bin\Release_TSE105\  ExtendedInput           .dll  %BUILDS%TSE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\LocalCheats\      Bin\Release_TSE105\  LocalCheats             .dll  %BUILDS%TSE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\ServerUtilities\  Bin\Release_TSE105\  ServerUtilities         .dll  %BUILDS%TSE105\Bin\  "Plugins\"
-call :CopyFile  Extensions\WorldConverters\  Bin\Release_TSE105\  WorldConverters         .dll  %BUILDS%TSE105\Bin\  "Plugins\"
-copy /B %STEAMLIB%                  %BUILDS%TSE105\Bin\
-copy /B %SDLLIB%                    %BUILDS%TSE105\Bin\
-call Resources\DeployResources.bat  %BUILDS%TSE105\
-robocopy %BUILDS%TSE107\Mods\       %BUILDS%TSE105\Mods\ /E
+call :CopyFile  Core\                        Bin\Release_%GAMEBUILD%\  ClassicsCore            .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomDedicatedServer\       Bin\Release_%GAMEBUILD%\  DedicatedServer_Custom  .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomEngineGUI\             Bin\Release_%GAMEBUILD%\  EngineGUI               .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomGameClient\            Bin\Release_%GAMEBUILD%\  SeriousSam_Custom       .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomWorldEditor\           Bin\Release_%GAMEBUILD%\  SeriousEditor_Custom    .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\EntitiesTFE\       Bin\Release_%GAMEBUILD%\  Entities_Custom         .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\ExtraEntities\     Bin\Release_%GAMEBUILD%\  ClassicsExtras_Custom   .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\Game\              Bin\Release_%GAMEBUILD%\  Game_Custom             .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\GameGUI\           Bin\Release_%GAMEBUILD%\  GameGUI_Custom          .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  Extensions\Accessibility\    Bin\Release_%GAMEBUILD%\  Accessibility           .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\AdvancedHUD\      Bin\Release_%GAMEBUILD%\  AdvancedHUD             .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ExtendedInput\    Bin\Release_%GAMEBUILD%\  ExtendedInput           .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\LocalCheats\      Bin\Release_%GAMEBUILD%\  LocalCheats             .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ScriptingEngine\  Bin\Release_%GAMEBUILD%\  ScriptingEngine         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ServerUtilities\  Bin\Release_%GAMEBUILD%\  ServerUtilities         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\WorldConverters\  Bin\Release_%GAMEBUILD%\  WorldConverters         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+copy /B %STEAMLIB%                  %BUILDS%%GAMEBUILD%\Bin\
+copy /B %SDLLIB%                    %BUILDS%%GAMEBUILD%\Bin\
+call Resources\DeployResources.bat  %BUILDS%%GAMEBUILD%\
+robocopy %BUILDS%TSE107\Mods\       %BUILDS%%GAMEBUILD%\Mods\ /E
 
 echo ----------------------------
 echo Copying TSE 1.07 binaries...
 echo ----------------------------
 
 cd %REPO%
+set GAMEBUILD=TSE107
 
 :: Collect files for the TSE 1.07 build
-call :CopyFile  Core\                        Bin\Release_TSE107\  ClassicsCore            .dll  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomDedicatedServer\       Bin\Release_TSE107\  DedicatedServer_Custom  .exe  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomEngineGUI\             Bin\Release_TSE107\  EngineGUI               .dll  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomGameClient\            Bin\Release_TSE107\  SeriousSam_Custom       .exe  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomShaders\               Bin\Release_TSE107\  Shaders                 .dll  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomWorldEditor\           Bin\Release_TSE107\  SeriousEditor_Custom    .exe  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomMod\EntitiesTFE\       Bin\Release_TSE107\  Entities_Custom         .dll  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomMod\ExtraEntities\     Bin\Release_TSE107\  ClassicsExtras_Custom   .dll  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomMod\Game\              Bin\Release_TSE107\  Game_Custom             .dll  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  CustomMod\GameGUI\           Bin\Release_TSE107\  GameGUI_Custom          .dll  %BUILDS%TSE107\Bin\  ""
-call :CopyFile  Extensions\Accessibility\    Bin\Release_TSE107\  Accessibility           .dll  %BUILDS%TSE107\Bin\  "Plugins\"
-call :CopyFile  Extensions\AdvancedHUD\      Bin\Release_TSE107\  AdvancedHUD             .dll  %BUILDS%TSE107\Bin\  "Plugins\"
-call :CopyFile  Extensions\ExtendedInput\    Bin\Release_TSE107\  ExtendedInput           .dll  %BUILDS%TSE107\Bin\  "Plugins\"
-call :CopyFile  Extensions\LocalCheats\      Bin\Release_TSE107\  LocalCheats             .dll  %BUILDS%TSE107\Bin\  "Plugins\"
-call :CopyFile  Extensions\ServerUtilities\  Bin\Release_TSE107\  ServerUtilities         .dll  %BUILDS%TSE107\Bin\  "Plugins\"
-call :CopyFile  Extensions\WorldConverters\  Bin\Release_TSE107\  WorldConverters         .dll  %BUILDS%TSE107\Bin\  "Plugins\"
-copy /B %STEAMLIB%                  %BUILDS%TSE107\Bin\
-copy /B %SDLLIB%                    %BUILDS%TSE107\Bin\
-call Resources\DeployResources.bat  %BUILDS%TSE107\
+call :CopyFile  Core\                        Bin\Release_%GAMEBUILD%\  ClassicsCore            .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomDedicatedServer\       Bin\Release_%GAMEBUILD%\  DedicatedServer_Custom  .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomEngineGUI\             Bin\Release_%GAMEBUILD%\  EngineGUI               .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomGameClient\            Bin\Release_%GAMEBUILD%\  SeriousSam_Custom       .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomShaders\               Bin\Release_%GAMEBUILD%\  Shaders                 .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomWorldEditor\           Bin\Release_%GAMEBUILD%\  SeriousEditor_Custom    .exe  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\EntitiesTFE\       Bin\Release_%GAMEBUILD%\  Entities_Custom         .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\ExtraEntities\     Bin\Release_%GAMEBUILD%\  ClassicsExtras_Custom   .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\Game\              Bin\Release_%GAMEBUILD%\  Game_Custom             .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  CustomMod\GameGUI\           Bin\Release_%GAMEBUILD%\  GameGUI_Custom          .dll  %BUILDS%%GAMEBUILD%\Bin\  ""
+call :CopyFile  Extensions\Accessibility\    Bin\Release_%GAMEBUILD%\  Accessibility           .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\AdvancedHUD\      Bin\Release_%GAMEBUILD%\  AdvancedHUD             .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ExtendedInput\    Bin\Release_%GAMEBUILD%\  ExtendedInput           .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\LocalCheats\      Bin\Release_%GAMEBUILD%\  LocalCheats             .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ScriptingEngine\  Bin\Release_%GAMEBUILD%\  ScriptingEngine         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\ServerUtilities\  Bin\Release_%GAMEBUILD%\  ServerUtilities         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+call :CopyFile  Extensions\WorldConverters\  Bin\Release_%GAMEBUILD%\  WorldConverters         .dll  %BUILDS%%GAMEBUILD%\Bin\  "Plugins\"
+copy /B %STEAMLIB%                  %BUILDS%%GAMEBUILD%\Bin\
+copy /B %SDLLIB%                    %BUILDS%%GAMEBUILD%\Bin\
+call Resources\DeployResources.bat  %BUILDS%%GAMEBUILD%\
 
 echo ----------------------------
 echo Cleaning up GRO packages...
