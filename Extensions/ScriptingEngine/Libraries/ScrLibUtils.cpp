@@ -99,6 +99,14 @@ static SQInteger Div(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   return 1;
 };
 
+static SQInteger Mod(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
+  Instance<FLOAT3D> *pOther = (Instance<FLOAT3D> *)InstanceAny::OfType(v, idxOther, typeid(FLOAT3D).raw_name());
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  sq_pushfloat(v, val % pOther->val);
+  return 1;
+};
+
 static SQInteger UnaryMinus(HSQUIRRELVM v, FLOAT3D &val) {
   VM &vm = GetVMClass(v);
 
@@ -131,6 +139,75 @@ static SQInteger ToString(HSQUIRRELVM v, FLOAT3D &val) {
 VECTOR_AXIS_FUNC(GetX, SetX, 1);
 VECTOR_AXIS_FUNC(GetY, SetY, 2);
 VECTOR_AXIS_FUNC(GetZ, SetZ, 3);
+
+static SQInteger Length(HSQUIRRELVM v) {
+  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  if (pInstance == NULL) return SQ_ERROR;
+
+  sq_pushfloat(v, pInstance->val.Length());
+  return 1;
+};
+
+static SQInteger ManhattanNorm(HSQUIRRELVM v) {
+  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  if (pInstance == NULL) return SQ_ERROR;
+
+  sq_pushfloat(v, pInstance->val.ManhattanNorm());
+  return 1;
+};
+
+static SQInteger MaxNorm(HSQUIRRELVM v) {
+  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  if (pInstance == NULL) return SQ_ERROR;
+
+  sq_pushfloat(v, pInstance->val.MaxNorm());
+  return 1;
+};
+
+static SQInteger Normalize(HSQUIRRELVM v) {
+  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = pInstance->val.Normalize();
+  return 1;
+};
+
+static SQInteger SafeNormalize(HSQUIRRELVM v) {
+  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = pInstance->val.SafeNormalize();
+  return 1;
+};
+
+static SQInteger Flip(HSQUIRRELVM v) {
+  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = pInstance->val.Flip();
+  return 1;
+};
+
+static SQRegFunction _aMethods[] = {
+  { "Length",        &Length, 1, "." },
+  { "ManhattanNorm", &ManhattanNorm, 1, "." },
+  { "MaxNorm",       &MaxNorm, 1, "." },
+  { "Normalize",     &Normalize, 1, "." },
+  { "SafeNormalize", &SafeNormalize, 1, "." },
+  { "Flip",          &Flip, 1, "." },
+};
 
 }; // namespace
 
@@ -187,18 +264,25 @@ static SQRegFunction _aGlobalFuncs[] = {
 
 void VM::RegisterUtils(void) {
   Table sqtUtils = Root().AddTable("Utils");
+  INDEX i;
 
   // Register classes
   {
     Class<FLOAT3D> sqcVector(GetVM(), "FLOAT3D", &SqVector::Constructor);
 
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqVector::_aMethods); i++) {
+      sqcVector.RegisterFunc(SqVector::_aMethods[i]);
+    }
+
     // Metamethods
-    sqcVector.RegisterMetamethod(sq::E_MM_ADD, &SqVector::Add);
-    sqcVector.RegisterMetamethod(sq::E_MM_SUB, &SqVector::Sub);
-    sqcVector.RegisterMetamethod(sq::E_MM_MUL, &SqVector::Mul);
-    sqcVector.RegisterMetamethod(sq::E_MM_DIV, &SqVector::Div);
-    sqcVector.RegisterMetamethod(sq::E_MM_UNM, &SqVector::UnaryMinus);
-    sqcVector.RegisterMetamethod(sq::E_MM_TOSTRING, &SqVector::ToString);
+    sqcVector.RegisterMetamethod(E_MM_ADD, &SqVector::Add);
+    sqcVector.RegisterMetamethod(E_MM_SUB, &SqVector::Sub);
+    sqcVector.RegisterMetamethod(E_MM_MUL, &SqVector::Mul);
+    sqcVector.RegisterMetamethod(E_MM_DIV, &SqVector::Div);
+    sqcVector.RegisterMetamethod(E_MM_MODULO, &SqVector::Mod);
+    sqcVector.RegisterMetamethod(E_MM_UNM, &SqVector::UnaryMinus);
+    sqcVector.RegisterMetamethod(E_MM_TOSTRING, &SqVector::ToString);
 
     // Position axes
     sqcVector.RegisterVar("x", &SqVector::GetX, &SqVector::SetX);
@@ -214,11 +298,11 @@ void VM::RegisterUtils(void) {
   }
 
   // Register functions
-  /*for (INDEX i = 0; i < ARRAYCOUNT(_aUtilsFuncs); i++) {
+  /*for (i = 0; i < ARRAYCOUNT(_aUtilsFuncs); i++) {
     sqtUtils.RegisterFunc(_aUtilsFuncs[i]);
   }*/
 
-  for (INDEX i = 0; i < ARRAYCOUNT(_aGlobalFuncs); i++) {
+  for (i = 0; i < ARRAYCOUNT(_aGlobalFuncs); i++) {
     Root().RegisterFunc(_aGlobalFuncs[i]);
   }
 };
