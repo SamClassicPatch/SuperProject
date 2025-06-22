@@ -24,6 +24,7 @@ This super project gathers everything together under a single solution for prope
 - `Docs` - Up-to-date contents of the [wiki](../../wiki) for any specific release.
 - `Extras` - Global dependencies that the projects utilize.
   - [`SDL`](https://libsdl.org/) - Cross-platform abstraction library for implementing proper support of game controllers.
+  - [`squirrel3`](http://squirrel-lang.org/) - Static library that implements Squirrel scripting language.
   - [`Steamworks`](https://partner.steamgames.com/) - SDK for enabling extended interactions with the Steam client.
   - [`XGizmo`](../../../XGizmo) - Headers with a variety of convenient classes and functions for Serious Engine 1.
   - [`zlib`](https://zlib.net/) - Static library for working with ZIP archives.
