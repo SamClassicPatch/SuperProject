@@ -1,4 +1,4 @@
-181
+183
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -981,5 +981,17 @@ Cannot open another game controller due to all %d slots being occupied!\n
 
 \0\>
  %d осей, %d кнопок, %d хаток\n
+
+\0\<
+  Extension: %s\n
+
+\0\>
+  Расширение: %s\n
+
+\0\<
+(for level format %d)\n
+
+\0\>
+(для формата уровня %d)\n
 
 \0\$

@@ -1,4 +1,4 @@
-576
+579
 
 \0\<
 Common options
@@ -2304,4 +2304,16 @@ Adjust mip factor of models
 allow static models to fade into the distance for optimization purposes
 \0\>
 разрешить статическим моделям исчезать вдали в целях оптимизации
+\0\<
+Extended Input
+\0\>
+Расширенный ввод
+\0\<
+Axis press threshold
+\0\>
+Порог нажатия оси
+\0\<
+threshold for moving any axis/stick to consider it as being "held down"
+\0\>
+порог перемещения любой оси или стика, чтобы считать его "нажатым"
 \0\$

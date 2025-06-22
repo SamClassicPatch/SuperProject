@@ -1,4 +1,4 @@
-27
+28
 
 \0\<
 Cannot load game theme config '%s':\n
@@ -124,4 +124,10 @@ Earth Golem buried %s in the ground
 %s was killed by an elemental
 \0\>
 Стихийный голем убил %s
+\0\<
+Squirrel scripts are unavailable!\n
+
+\0\>
+Поддержка Squirrel скриптов недоступна!\n
+
 \0\$
