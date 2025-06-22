@@ -93,4 +93,5 @@ Builds/**/*.zip
 # Localization tools
 !Localization/ExtractionTool/Depend.exe
 !Localization/ExtractionTool/Engine.dll
+Localization/*.gro
 Localization/*.log
