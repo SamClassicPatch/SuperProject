@@ -29,6 +29,20 @@ namespace sq {
 #define SQCLASS_SETTER_TABLE  "@@class_set_table@@"
 #define SQCLASS_GETTER_TABLE  "@@class_get_table@@"
 
+// Supported metamethod types for classes
+enum EMetamethod {
+  E_MM_ADD,
+  E_MM_SUB,
+  E_MM_MUL,
+  E_MM_DIV,
+  E_MM_UNM,
+  E_MM_MODULO,
+  E_MM_NEXTI,
+  E_MM_CMP,
+  E_MM_CLONED,
+  E_MM_TOSTRING,
+};
+
 // Abstract base for native Squirrel class declarations
 class AbstractClass : public TableBase {
   protected:
@@ -91,9 +105,17 @@ class Class : public AbstractClass {
   public:
     // Optional class functions
     typedef SQInteger (*FConstructor)(HSQUIRRELVM v, Type &val);
-    typedef SQInteger (*FSetter)(HSQUIRRELVM v, Type &val, SQInteger iValueInStack);
+    typedef SQInteger (*FSetter)(HSQUIRRELVM v, Type &val, SQInteger idxValue);
     typedef SQInteger (*FGetter)(HSQUIRRELVM v, Type &val);
-    typedef SQInteger (*FToString)(HSQUIRRELVM v, Type &val);
+
+    // Metamethod for performing an operation between itself and another value
+    typedef SQInteger (*FOther)(HSQUIRRELVM v, Type &val, SQInteger idxOther);
+
+    // Metamethod for performing an operation on itself
+    typedef SQInteger (*FSelf)(HSQUIRRELVM v, Type &val);
+
+    // Metamethod for iterating through the class
+    typedef SQInteger (*FNextIndex)(HSQUIRRELVM v, Type &val, const SQInteger *piPrev);
 
     // Instance factory for this class
     class Factory : public AbstractFactory {
@@ -155,22 +177,80 @@ class Class : public AbstractClass {
       if (pSetter != NULL) m_sqtSetters.SetValue(strVariable, (void *)pSetter);
     };
 
-    // Add metamethod for converting instances into strings
-    inline void RegisterToString(FToString pToString) {
+    // Add a custom metamethod
+    inline void RegisterMetamethod(EMetamethod eType, FOther pFunction) {
+      const SQChar *strName = NULL;
+
+      switch (eType) {
+        case E_MM_ADD:    strName = "_add"; break;
+        case E_MM_SUB:    strName = "_sub"; break;
+        case E_MM_MUL:    strName = "_mul"; break;
+        case E_MM_DIV:    strName = "_div"; break;
+        case E_MM_MODULO: strName = "_modulo"; break;
+        case E_MM_CMP:    strName = "_cmp"; break;
+        case E_MM_CLONED: strName = "_cloned"; break;
+
+        default: {
+          ASSERTALWAYS("Unknown metamethod type for FOther function!");
+          return;
+        }
+      }
+
+      ASSERT(strName != NULL);
       sq_pushobject(m_vm, m_obj); // Push class
 
-      sq_pushstring(m_vm, "_tostring", -1);
+      sq_pushstring(m_vm, strName, -1);
       sq_pushstring(m_vm, GetFactoryType().raw_name(), -1); // Free var
-      sq_pushuserpointer(m_vm, pToString); // Free var
-      sq_newclosure(m_vm, &ClassToString, 2);
-      sq_setnativeclosurename(m_vm, -1, "_tostring");
+      sq_pushuserpointer(m_vm, pFunction); // Free var
+      sq_newclosure(m_vm, &ClassMetaOther, 2);
+      sq_setnativeclosurename(m_vm, -1, strName);
+      sq_newslot(m_vm, -3, SQFalse);
+
+      sq_poptop(m_vm); // Pop class
+    };
+
+    // Add a custom metamethod
+    inline void RegisterMetamethod(EMetamethod eType, FSelf pFunction) {
+      const SQChar *strName = NULL;
+
+      switch (eType) {
+        case E_MM_UNM:      strName = "_unm"; break;
+        case E_MM_TOSTRING: strName = "_tostring"; break;
+
+        default: {
+          ASSERTALWAYS("Unknown metamethod type for FSelf function!");
+          return;
+        }
+      }
+
+      ASSERT(strName != NULL);
+      sq_pushobject(m_vm, m_obj); // Push class
+
+      sq_pushstring(m_vm, strName, -1);
+      sq_pushstring(m_vm, GetFactoryType().raw_name(), -1); // Free var
+      sq_pushuserpointer(m_vm, pFunction); // Free var
+      sq_newclosure(m_vm, &ClassMetaSelf, 2);
+      sq_setnativeclosurename(m_vm, -1, strName);
+      sq_newslot(m_vm, -3, SQFalse);
+
+      sq_poptop(m_vm); // Pop class
+    };
+
+    // Add a custom metamethod for iteration
+    inline void RegisterMetamethod(FNextIndex pFunction) {
+      sq_pushobject(m_vm, m_obj); // Push class
+
+      sq_pushstring(m_vm, "_nexti", -1);
+      sq_pushstring(m_vm, GetFactoryType().raw_name(), -1); // Free var
+      sq_pushuserpointer(m_vm, pFunction); // Free var
+      sq_newclosure(m_vm, &ClassMetaNextIndex, 2);
+      sq_setnativeclosurename(m_vm, -1, "_nexti");
       sq_newslot(m_vm, -3, SQFalse);
 
       sq_poptop(m_vm); // Pop class
     };
 
   protected:
-
     // Create new factory of a specific type
     virtual AbstractFactory *NewFactory(void) {
       return new Factory(m_pConstructor, m_pValReference);
@@ -187,7 +267,10 @@ class Class : public AbstractClass {
     static SQInteger ClassConstructor(HSQUIRRELVM v);
     static SQInteger ClassSet(HSQUIRRELVM v);
     static SQInteger ClassGet(HSQUIRRELVM v);
-    static SQInteger ClassToString(HSQUIRRELVM v);
+
+    static SQInteger ClassMetaOther(HSQUIRRELVM v); // FOther
+    static SQInteger ClassMetaSelf(HSQUIRRELVM v); // FSelf
+    static SQInteger ClassMetaNextIndex(HSQUIRRELVM v); // FNextIndex
 };
 
 template<class Type> inline
@@ -287,7 +370,7 @@ SQInteger Class<Type>::ClassGet(HSQUIRRELVM v) {
 };
 
 template<class Type> inline
-SQInteger Class<Type>::ClassToString(HSQUIRRELVM v) {
+SQInteger Class<Type>::ClassMetaOther(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
 
@@ -299,14 +382,67 @@ SQInteger Class<Type>::ClassToString(HSQUIRRELVM v) {
   if (pInstance == NULL) return SQ_ERROR;
 
   // Call conversion data for the data
-  FToString pFunc = (FToString)pToStringFunc;
-  Type *pRef = (Type *)pInstance->GetFactory()->m_pValReference;
+  FOther pFunc = (FOther)pToStringFunc;
+  Type *pRefSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  if (pRef != NULL) {
-    return pFunc(v, *pRef);
+  // Reference the instance data if there's no external reference
+  if (pRefSelf == NULL) pRefSelf = &((Instance<Type> *)pInstance)->val;
+
+  // Pass other value as an index in the stack
+  return pFunc(v, *pRefSelf, 2);
+};
+
+template<class Type> inline
+SQInteger Class<Type>::ClassMetaSelf(HSQUIRRELVM v) {
+  const SQChar *strFactoryType;
+  sq_getstring(v, -1, &strFactoryType);
+
+  SQUserPointer pToStringFunc;
+  sq_getuserpointer(v, -2, &pToStringFunc);
+
+  // Get current instance
+  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Call conversion data for the data
+  FSelf pFunc = (FSelf)pToStringFunc;
+  Type *pRefSelf = (Type *)pInstance->GetFactory()->m_pValReference;
+
+  // Reference the instance data if there's no external reference
+  if (pRefSelf == NULL) pRefSelf = &((Instance<Type> *)pInstance)->val;
+
+  return pFunc(v, *pRefSelf);
+};
+
+template<class Type> inline
+SQInteger Class<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
+  const SQChar *strFactoryType;
+  sq_getstring(v, -1, &strFactoryType);
+
+  SQUserPointer pToStringFunc;
+  sq_getuserpointer(v, -2, &pToStringFunc);
+
+  // Get current instance
+  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Get previous index
+  SQInteger iPrev;
+  bool bPrevIndex = false;
+
+  if (sq_gettype(v, 2) != OT_NULL) {
+    bPrevIndex = SQ_SUCCEEDED(sq_getinteger(v, 2, &iPrev));
   }
 
-  return pFunc(v, ((Instance<Type> *)pInstance)->val);
+  // Call conversion data for the data
+  FNextIndex pFunc = (FNextIndex)pToStringFunc;
+  Type *pRefSelf = (Type *)pInstance->GetFactory()->m_pValReference;
+
+  // Reference the instance data if there's no external reference
+  if (pRefSelf == NULL) pRefSelf = &((Instance<Type> *)pInstance)->val;
+
+  // Pass previous index only if it has been retrieved
+  return pFunc(v, *pRefSelf, bPrevIndex ? &iPrev : NULL);
 };
 
 }; // namespace
