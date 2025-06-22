@@ -1,4 +1,4 @@
-563
+576
 
 \0\<
 Common options
@@ -2252,4 +2252,56 @@ Colorazione graduale del mirino
 gradually change crosshair color depending on the target's health
 \0\>
 cambia gradualmente il colore del mirino a seconda della salute del bersaglio
+\0\<
+Extended input
+\0\>
+Input esteso
+\0\<
+proper support of game controllers and other input functionality
+\0\>
+supporto adeguato dei controller di gioco e di altre funzionalità di ingresso
+\0\<
+Force seasonal event
+\0\>
+Forza evento stagionale
+\0\<
+activate a specific seasonal event regardless of the current date
+\0\>
+attiva un evento stagionale specifico indipendentemente dalla data corrente
+\0\<
+Disable all events
+\0\>
+Disabilita tutti gli eventi
+\0\<
+Valentine's Day
+\0\>
+San Valentino
+\0\<
+Sam's Birthday
+\0\>
+Compleanno di Sam
+\0\<
+Classics Patch Anniversary
+\0\>
+Anniversario Classics Patch
+\0\<
+Halloween
+\0\>
+Halloween
+\0\<
+Modern scrollbars
+\0\>
+Barre di scorrimento moderne
+\0\<
+replace "Page Up" and "Page Down" buttons with proper scrollbars
+\0\>
+sostituisce i tasti "Pagina Su" e "Pagina Giù" con barre di scorrimento adeguate
+\0\<
+Adjust mip factor of models
+\0\>
+Regola fattore distanza modelli
+\0\<
+allow static models to fade into the distance for optimization purposes
+\0\>
+consente ai modelli statici di svanire in lontananza per scopi di ottimizzazione
 \0\$
