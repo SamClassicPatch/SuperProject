@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 namespace sq {
 
 // Timer.Value class methods
-namespace TimerValue {
+namespace SqTimerValue {
 
 static SQInteger Constructor(HSQUIRRELVM v, CTimerValue &tv) {
   SQFloat fOptSec;
@@ -103,10 +103,10 @@ void VM::RegisterTimer(void) {
   Table sqtTimer = Root().AddTable("Timer");
 
   // Register classes
-  Class<CTimerValue> sqcCounter(GetVM(), "Value", &TimerValue::Constructor);
-  sqcCounter.RegisterVar("sec",  &TimerValue::Sec, NULL);
-  sqcCounter.RegisterVar("msec", &TimerValue::MSec, NULL);
-  sqtTimer.SetClass(sqcCounter);
+  Class<CTimerValue> sqcTimerValue(GetVM(), "Value", &SqTimerValue::Constructor);
+  sqcTimerValue.RegisterVar("sec",  &SqTimerValue::Sec, NULL);
+  sqcTimerValue.RegisterVar("msec", &SqTimerValue::MSec, NULL);
+  sqtTimer.SetClass(sqcTimerValue);
 
   // Register functions
   for (INDEX i = 0; i < ARRAYCOUNT(_aTimerFuncs); i++) {
