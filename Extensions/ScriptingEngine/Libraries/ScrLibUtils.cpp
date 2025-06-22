@@ -213,6 +213,54 @@ static SQRegFunction _aMethods[] = {
 
 namespace Utils {
 
+static SQInteger NormFloatToByte(HSQUIRRELVM v) {
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+
+  sq_pushinteger(v, ::NormFloatToByte(f));
+  return 1;
+};
+
+static SQInteger NormByteToFloat(HSQUIRRELVM v) {
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  sq_pushfloat(v, ::NormByteToFloat(i));
+  return 1;
+};
+
+static SQInteger WrapAngle(HSQUIRRELVM v) {
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+
+  sq_pushfloat(v, ::WrapAngle(f));
+  return 1;
+};
+
+static SQInteger NormalizeAngle(HSQUIRRELVM v) {
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+
+  sq_pushfloat(v, ::NormalizeAngle(f));
+  return 1;
+};
+
+static SQInteger RadToDeg(HSQUIRRELVM v) {
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+
+  sq_pushfloat(v, ::AngleRad(f));
+  return 1;
+};
+
+static SQInteger DegToRad(HSQUIRRELVM v) {
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+
+  sq_pushfloat(v, ::RadAngle(f));
+  return 1;
+};
+
 static bool IncludeReturnCallback(sq::VM &) {
   return false; // Leave return value in the stack
 };
@@ -253,8 +301,14 @@ static SQInteger CompileScript(HSQUIRRELVM v) {
 }; // namespace
 
 // "Utils" namespace functions
-/*static SQRegFunction _aUtilsFuncs[] = {
-};*/
+static SQRegFunction _aUtilsFuncs[] = {
+  { "NormFloatToByte", &Utils::NormFloatToByte, 2, ".n" },
+  { "NormByteToFloat", &Utils::NormByteToFloat, 2, ".n" },
+  { "WrapAngle",       &Utils::WrapAngle, 2, ".n" },
+  { "NormalizeAngle",  &Utils::NormalizeAngle, 2, ".n" },
+  { "RadToDeg",        &Utils::RadToDeg, 2, ".n" },
+  { "DegToRad",        &Utils::DegToRad, 2, ".n" },
+};
 
 // Global functions
 static SQRegFunction _aGlobalFuncs[] = {
@@ -298,9 +352,9 @@ void VM::RegisterUtils(void) {
   }
 
   // Register functions
-  /*for (i = 0; i < ARRAYCOUNT(_aUtilsFuncs); i++) {
+  for (i = 0; i < ARRAYCOUNT(_aUtilsFuncs); i++) {
     sqtUtils.RegisterFunc(_aUtilsFuncs[i]);
-  }*/
+  }
 
   for (i = 0; i < ARRAYCOUNT(_aGlobalFuncs); i++) {
     Root().RegisterFunc(_aGlobalFuncs[i]);
