@@ -1,4 +1,4 @@
-181
+183
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -962,7 +962,7 @@ non connesso\n
 %d controller slots:\n
 
 \0\>
-%d slot controller:\n
+%d slot per controller:\n
 
 \0\<
 Connected '%s' to controller slot %d\n
@@ -981,5 +981,17 @@ Cannot open another game controller due to all %d slots being occupied!\n
 
 \0\>
 Impossibile utilizzare un altro controller di gioco poiché tutti i %d slot sono occupati!\n
+
+\0\<
+  Extension: %s\n
+
+\0\>
+  Estensione: %s\n
+
+\0\<
+(for level format %d)\n
+
+\0\>
+(per formato livello %d)\n
 
 \0\$
