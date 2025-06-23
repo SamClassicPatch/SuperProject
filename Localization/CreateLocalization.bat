@@ -50,13 +50,13 @@ xcopy "%RESDIR%Scripts\ClassicsPatch\Themes\02_Warped.des"             "%LOCALED
 xcopy "%RESDIR%Scripts\ClassicsPatch\Themes\03_TSE.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
 xcopy "%RESDIR%Scripts\ClassicsPatch\Themes\04_SSR.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
 
-xcopy "%RESDIR%Scripts\ClassicsPatch\00_ConfigProperties.des"          "%LOCALEDIR%Scripts\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\01_PatchSettings.des"             "%LOCALEDIR%Scripts\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\02_ServerSettings.des"            "%LOCALEDIR%Scripts\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\03_GameplaySettings.des"          "%LOCALEDIR%Scripts\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\20_PluginSettings.des"            "%LOCALEDIR%Scripts\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\50_ModSettings.des"               "%LOCALEDIR%Scripts\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\90_VanillaSettings.des"           "%LOCALEDIR%Scripts\ClassicsPatch\"
+xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\00_ConfigProperties.des"     "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\01_PatchSettings.des"        "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\02_ServerSettings.des"       "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\03_GameplaySettings.des"     "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\20_PluginSettings.des"       "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\50_ModSettings.des"          "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\90_VanillaSettings.des"      "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
 
 xcopy "%RESDIR%Scripts\NetSettings\__ClassicsPatch.des"                "%LOCALEDIR%Scripts\NetSettings\"
 
