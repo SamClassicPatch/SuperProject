@@ -1,4 +1,4 @@
-27
+28
 
 \0\<
 Cannot load game theme config '%s':\n
@@ -124,4 +124,10 @@ Il Golem di Terra ha seppellito %s
 %s was killed by an elemental
 \0\>
 %s è stato ucciso da un elementale
+\0\<
+Squirrel scripts are unavailable!\n
+
+\0\>
+Gli script Squirrel non sono disponibili!\n
+
 \0\$

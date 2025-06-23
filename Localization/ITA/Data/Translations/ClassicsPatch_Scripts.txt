@@ -1,4 +1,4 @@
-576
+579
 
 \0\<
 Common options
@@ -2295,7 +2295,7 @@ Barre di scorrimento moderne
 \0\<
 replace "Page Up" and "Page Down" buttons with proper scrollbars
 \0\>
-sostituisce i tasti "Pagina Su" e "Pagina Giù" con barre di scorrimento adeguate
+sostituisce i tasti "Pagina Su" e "Pagina Giù" con barre di scorrimento
 \0\<
 Adjust mip factor of models
 \0\>
@@ -2304,4 +2304,16 @@ Regola fattore distanza modelli
 allow static models to fade into the distance for optimization purposes
 \0\>
 consente ai modelli statici di svanire in lontananza per scopi di ottimizzazione
+\0\<
+Extended Input
+\0\>
+Input esteso
+\0\<
+Axis press threshold
+\0\>
+Zona morta levette
+\0\<
+threshold for moving any axis/stick to consider it as being "held down"
+\0\>
+soglia entro cui un asse/levetta può essere inclinata prima che venga registrato il comando
 \0\$
