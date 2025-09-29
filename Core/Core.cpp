@@ -18,11 +18,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "Base/CoreTimerHandler.h"
 #include "Networking/NetworkFunctions.h"
 
+static CTimerValue _tvClassicsPatchInit = __int64(0); // When Classics Patch was initialized
+
 static bool _bClassicsPatchRunning = false;
 static bool _bClassicsPatchCustomMod = false;
 
 static EClassicsPatchAppType _eAppType = k_EClassicsPatchAppType_Unknown; // Running application type
 static EClassicsPatchSeason _eSpecialEvent = k_EClassicsPatchSeason_None; // Current seasonal event
+
+__int64 ClassicsCore_GetInitTime(void) {
+  return _tvClassicsPatchInit.tv_llValue;
+};
 
 EClassicsPatchAppType ClassicsCore_GetAppType(void) {
   return _eAppType;
@@ -135,6 +141,9 @@ void ClassicsPatch_Init(void)
   // Report patch version
   CPrintF("Initializing Serious Sam Classics Patch v%s for %s v%s...\n",
     ClassicsCore_GetVersionName(), CHOOSE_FOR_GAME("TFE", "TSE", "TSE"), _SE_VER_STRING);
+
+  // Remember initialization time
+  _tvClassicsPatchInit = _pTimer->GetHighPrecisionTimer();
 
   // Initial preparation
   {

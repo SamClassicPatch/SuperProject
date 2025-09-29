@@ -122,8 +122,9 @@ COLOR CMenuGadget::GetCurrentColor(void) {
   // if selected
   if (mg_bFocused) {
     // oscilate towards selected color
-    FLOAT tmNow = _pTimer->GetHighPrecisionTimer().GetSeconds();
-    colRet = LerpColor((colUnselected >> 1) & 0x7F7F7F7F, colSelected, sin(tmNow * 10.0f) * 0.5f + 0.5f);
+    CTimerValue tvPatch(ClassicsCore_GetInitTime()); // [Cecil]
+    DOUBLE tmNow = (_pTimer->GetHighPrecisionTimer() - tvPatch).GetSeconds();
+    colRet = LerpColor((colUnselected >> 1) & 0x7F7F7F7F, colSelected, (FLOAT)sin(tmNow * 10.0) * 0.5f + 0.5f);
   }
 
   return colRet | CT_OPAQUE;

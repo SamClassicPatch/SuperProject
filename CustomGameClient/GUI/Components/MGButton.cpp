@@ -97,10 +97,11 @@ void CMGButton::Render(CDrawPort *pdp) {
     FLOAT tmExist = tmFade + tmIn + tmFade;
     FLOAT tmTotal = tmFade + tmIn + tmFade + tmOut;
 
-    FLOAT tmTime = _pTimer->GetHighPrecisionTimer().GetSeconds();
+    CTimerValue tvPatch(ClassicsCore_GetInitTime()); // [Cecil]
+    DOUBLE tmTime = (_pTimer->GetHighPrecisionTimer() - tvPatch).GetSeconds();
     FLOAT fFactor = 1;
 
-    if (tmTime > 0.1f) {
+    if (tmTime > 0.1) {
       tmTime = fmod(tmTime, tmTotal);
       fFactor = CalculateRatio(tmTime, 0, tmExist, tmFade / tmExist, tmFade / tmExist);
     }

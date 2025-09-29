@@ -71,7 +71,8 @@ void CGame::LCDEnd(void)
 
 void CGame::LCDPrepare(FLOAT fFade) {
   // Get current time and alpha value
-  _tmNow = (FLOAT)_pTimer->GetHighPrecisionTimer().GetSeconds();
+  CTimerValue tvPatch(ClassicsCore_GetInitTime()); // [Cecil]
+  _tmNow = (FLOAT)(_pTimer->GetHighPrecisionTimer() - tvPatch).GetSeconds();
   _ulA = NormFloatToByte(fFade);
 };
 

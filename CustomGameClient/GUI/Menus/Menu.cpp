@@ -504,7 +504,8 @@ static TIME _tmInitializationTick = -1;
 extern TIME _tmMenuLastTickDone;
 
 void SetMenuLerping(void) {
-  CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
+  CTimerValue tvPatch(ClassicsCore_GetInitTime()); // [Cecil]
+  CTimerValue tvNow = _pTimer->GetHighPrecisionTimer() - tvPatch;
 
   // if lerping was never set before
   if (_tmInitializationTick < 0) {
