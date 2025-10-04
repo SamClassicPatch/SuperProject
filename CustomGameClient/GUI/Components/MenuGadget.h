@@ -21,9 +21,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "MenuPrinting.h"
 
-#define DOING_NOTHING 0
-#define PRESS_KEY_WAITING 1
-#define RELEASE_RETURN_WAITING 2
+enum EGadgetKeyState {
+  GKS_DOING_NOTHING = 0,
+  GKS_PRESS_KEY_WAITING = 1,
+  GKS_RELEASE_RETURN_WAITING = 2,
+};
 
 #define EMPTYSLOTSTRING LOCALIZE("<save a new one>")
 
@@ -79,10 +81,10 @@ enum EValueEdit {
   VED_NONE = 0,
   VED_STRING, // Equivalent of vanilla '_bEditingString'
   VED_LIST,
+  VED_KEYBIND, // Equivalent of vanilla '_bDefiningKey'
 };
 
 // [Cecil] Declared here
-extern BOOL _bDefiningKey;
 extern EValueEdit _eEditingValue;
 extern CMenuGadget *_pmgLastActivatedGadget;
 

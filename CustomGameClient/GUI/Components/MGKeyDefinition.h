@@ -23,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 class CMGKeyDefinition : public CMenuGadget {
   public:
-    INDEX mg_iState;
+    EGadgetKeyState mg_iState;
     INDEX mg_iControlNumber;
 
     // [Cecil] Controls for editing passed from CCustomizeKeyboardMenu

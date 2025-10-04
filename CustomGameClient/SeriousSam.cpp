@@ -327,7 +327,7 @@ void UpdateInputEnabledState(void) {
   // and no menu is active and no console is active
   BOOL bShouldBeEnabled = (!IsIconic(_hwndMain) && !bMenuActive && GetGameAPI()->GetConState() == CS_OFF
                        && (GetGameAPI()->GetCompState() == CS_OFF || GetGameAPI()->GetCompState() == CS_ONINBACKGROUND))
-                       || _bDefiningKey;
+                       || _eEditingValue == VED_KEYBIND;
 
   // if should be turned off
   if ((!bShouldBeEnabled && _bInputEnabled) || _bReconsiderInput) {
@@ -1516,7 +1516,7 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         (MapVirtualKey(msg.wParam, 0) == 41 // scan code for '~'
         || msg.wParam == VK_F1)) || (IsBackPressed(msg) && _iAddonExecState == 3);
 
-      if (bConsoleKey && !_bDefiningKey) {
+      if (bConsoleKey && _eEditingValue != VED_KEYBIND) {
         sam_bToggleConsole = FALSE;
 
         if (_iAddonExecState == 3) {

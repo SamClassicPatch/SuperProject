@@ -24,7 +24,6 @@ FLOAT _fGadgetSideRatioR = 0.53f;
 
 extern CSoundData *_psdSelect;
 
-BOOL _bDefiningKey = FALSE;
 EValueEdit _eEditingValue = VED_NONE;
 CMenuGadget *_pmgLastActivatedGadget = NULL;
 

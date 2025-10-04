@@ -473,7 +473,7 @@ void CCustomizeAxisMenu::PostRender(CDrawPort *pdp) {
     }
   }
 
-  if (!_bDefiningKey) return;
+  if (_eEditingValue != VED_KEYBIND) return;
 
   // Render popup box
   CGameMenu::RenderPopup(pdp, 0.2f);

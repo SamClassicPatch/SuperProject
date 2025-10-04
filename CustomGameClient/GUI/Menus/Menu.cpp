@@ -446,7 +446,7 @@ void MenuOnMouseMove(PIX pixI, PIX pixJ) {
   }
   pixLastI = pixI;
   pixLastJ = pixJ;
-  _bMouseUsedLast = _eEditingValue == VED_NONE && !_bDefiningKey && !_pInput->IsInputEnabled();
+  _bMouseUsedLast = _eEditingValue == VED_NONE && !_pInput->IsInputEnabled();
 }
 
 void MenuUpdateMouseFocus(void) {
@@ -459,7 +459,7 @@ void MenuUpdateMouseFocus(void) {
   _pixCursorPosJ = pt.y;
 
   // if mouse not used last
-  if (!_bMouseUsedLast || _bDefiningKey || _eEditingValue != VED_NONE) {
+  if (!_bMouseUsedLast || _eEditingValue != VED_NONE) {
     // do nothing
     return;
   }
@@ -543,7 +543,7 @@ void SetMenuLerping(void) {
 // render mouse cursor if needed
 void RenderMouseCursor(CDrawPort *pdp) {
   // if mouse not used last
-  if ((!_bMouseUsedLast && _eEditingValue != VED_LIST) || _bDefiningKey) {
+  if ((!_bMouseUsedLast && _eEditingValue != VED_LIST) || _eEditingValue == VED_KEYBIND) {
     // don't render cursor
     return;
   }
@@ -751,7 +751,7 @@ BOOL DoMenu(CDrawPort *pdp) {
     CGameMenu::RenderPopup(&dpMenu, pgmCurrentMenu->gm_fPopupSize);
   }
 
-  const BOOL bEditingValue = (_eEditingValue != VED_NONE); // [Cecil]
+  BOOL bEditingValue = (_eEditingValue != VED_NONE); // [Cecil]
 
   // [Cecil] If not editing anything
   if (!bEditingValue) {
@@ -816,6 +816,9 @@ BOOL DoMenu(CDrawPort *pdp) {
 
   // [Cecil] Render menu extras on top of everything
   pgmCurrentMenu->PostRender(&dpMenu);
+
+  // [Cecil] Don't override the tooltip text during key bind editing
+  bEditingValue &= (_eEditingValue != VED_KEYBIND);
 
   // if there is some active gadget and it has tips
   if (pmgActive != NULL && (pmgActive->mg_strTip != "" || bEditingValue)) {

@@ -20,19 +20,19 @@ extern CSoundData *_psdSelect;
 extern CSoundData *_psdPress;
 
 CMGKeyDefinition::CMGKeyDefinition(void) {
-  mg_iState = DOING_NOTHING;
+  mg_iState = GKS_DOING_NOTHING;
   mg_pControls = NULL; // [Cecil]
 }
 
 void CMGKeyDefinition::OnActivate(void) {
   PlayMenuSound(_psdPress);
   SetBindingNames(/*bDefining=*/TRUE);
-  mg_iState = RELEASE_RETURN_WAITING;
+  mg_iState = GKS_RELEASE_RETURN_WAITING;
 }
 
 BOOL CMGKeyDefinition::OnKeyDown(PressedMenuButton pmb) {
   // if waiting for a key definition
-  if (mg_iState == PRESS_KEY_WAITING) {
+  if (mg_iState == GKS_PRESS_KEY_WAITING) {
     // do nothing
     return TRUE;
   }
@@ -146,10 +146,12 @@ void CMGKeyDefinition::DefineKey(INDEX iDik) {
 }
 
 void CMGKeyDefinition::Think(void) {
-  if (mg_iState == RELEASE_RETURN_WAITING) {
-    _bDefiningKey = TRUE;
+  if (mg_iState == GKS_RELEASE_RETURN_WAITING) {
+    _eEditingValue = VED_KEYBIND;
+
     extern BOOL _bMouseUsedLast;
     _bMouseUsedLast = FALSE;
+
     _pInput->SetJoyPolling(TRUE);
     _pInput->GetInput(FALSE);
 
@@ -175,11 +177,11 @@ void CMGKeyDefinition::Think(void) {
       }
 
       if (!bActivationKey) {
-        mg_iState = PRESS_KEY_WAITING;
+        mg_iState = GKS_PRESS_KEY_WAITING;
       }
     }
 
-  } else if (mg_iState == PRESS_KEY_WAITING) {
+  } else if (mg_iState == GKS_PRESS_KEY_WAITING) {
     _pInput->SetJoyPolling(TRUE);
     _pInput->GetInput(FALSE);
     for (INDEX iDik = 0; iDik < MAX_OVERALL_BUTTONS; iDik++) {
@@ -199,8 +201,12 @@ void CMGKeyDefinition::Think(void) {
         }
 
         // end defining loop
-        mg_iState = DOING_NOTHING;
-        _bDefiningKey = FALSE;
+        mg_iState = GKS_DOING_NOTHING;
+        _eEditingValue = VED_NONE;
+
+        // [Cecil] Clear any buffered input afterwards
+        _pInput->ClearInput();
+
         // refresh all buttons
         pgmCurrentMenu->FillListItems();
         break;

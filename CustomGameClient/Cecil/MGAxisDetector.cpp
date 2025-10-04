@@ -32,7 +32,7 @@ void CMGAxisDetector::OnActivate(void) {
 // Update axis detection
 void CMGAxisDetector::Think(void) {
   if (!mg_bDetecting) return;
-  _bDefiningKey = TRUE;
+  _eEditingValue = VED_KEYBIND;
 
   _pInput->SetJoyPolling(TRUE);
   _pInput->GetInput(FALSE);
@@ -114,7 +114,7 @@ void CMGAxisDetector::Render(CDrawPort *pdp) {
 // Select detected axis
 void CMGAxisDetector::FinishDetection(INDEX iSetAxis) {
   mg_bDetecting = FALSE;
-  _bDefiningKey = FALSE;
+  _eEditingValue = VED_NONE;
 
   // Set detected axis
   if (iSetAxis != -1) {
