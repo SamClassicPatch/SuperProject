@@ -578,7 +578,7 @@ static void ParseCFG_t(CTStream &strm, CListHead &lhAll) {
       FixupFileName_t(strLine);
 
       // Save it for the button gadget
-      if (pvs->vs_eType == CVarSetting::E_BUTTON) {
+      if (pvs != NULL && pvs->vs_eType == CVarSetting::E_BUTTON) {
         pvs->vs_strSchedule = strLine;
 
       // Include contents of it directly
