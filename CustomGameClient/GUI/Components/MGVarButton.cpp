@@ -39,6 +39,8 @@ CMGVarButton::CMGVarButton() : CMGEdit() {
   mg_vMouseScrollbarDrag = PIX2D(-1, -1);
   mg_bMouseOnScrollbar = FALSE;
   mg_iLastValueListOffset = -1;
+
+  mg_iState = GKS_DOING_NOTHING;
 };
 
 BOOL CMGVarButton::IsSeparator(void) {
@@ -73,6 +75,9 @@ PIXaabbox2D CMGVarButton::GetSliderBox(CDrawPort *pdp, INDEX iSliderType) {
 
 BOOL CMGVarButton::OnKeyDown(PressedMenuButton pmb)
 {
+  // [Cecil] Do nothing if waiting for a key definition
+  if (mg_iState == GKS_PRESS_KEY_WAITING) return TRUE;
+
   if (mg_pvsVar == NULL || mg_pvsVar->vs_eType == CVarSetting::E_SEPARATOR || !mg_pvsVar->Validate() || !mg_bEnabled) {
     // [Cecil] CMenuGadget::OnKeyDown() would call CMGEdit::OnActivate(), which shouldn't happen
     return pmb.Apply(TRUE);
@@ -137,6 +142,21 @@ BOOL CMGVarButton::OnKeyDown(PressedMenuButton pmb)
 
       gmCurrent.gm_fnmMenuCFG = strConfig;
       gmCurrent.StartMenu();
+
+      PlayMenuSound(_psdPress);
+      return TRUE;
+    }
+
+  // [Cecil] Key definition
+  } else if (mg_pvsVar->vs_eType == CVarSetting::E_KEYBIND) {
+    // Clear key bind on backspace
+    if (pmb.iKey == VK_BACK) {
+      DefineKey(KID_NONE);
+      return TRUE;
+
+    // Define new key
+    } else if (pmb.Apply(TRUE)) {
+      mg_iState = GKS_RELEASE_RETURN_WAITING;
 
       PlayMenuSound(_psdPress);
       return TRUE;
@@ -343,6 +363,10 @@ void CMGVarButton::Render(CDrawPort *pdp) {
             // Move text to the right of the box
             pixIR += vSliderSize(1) * 1.15f;
           }
+
+        // [Cecil] Append actual value to the custom one
+        } else {
+          strText += " (" + _pShell->GetValue(mg_pvsVar->vs_strVar) + ")";
         }
 
         // Write value text
@@ -363,8 +387,102 @@ void CMGVarButton::Render(CDrawPort *pdp) {
     case CVarSetting::E_BUTTON: {
       pdp->PutTextC(mg_pvsVar->vs_strName, pixIC, pixJ, GetCurrentColor());
     } break;
+
+    // Key bind
+    case CVarSetting::E_KEYBIND: {
+      // Check whether the variable is disabled
+      if (mg_pvsVar->vs_strFilter != "") {
+        mg_bEnabled = _pShell->GetINDEX(mg_pvsVar->vs_strFilter);
+      }
+
+      COLOR col = GetCurrentColor();
+      pdp->PutTextR(mg_pvsVar->vs_strName, pixIL, pixJ, col);
+      pdp->PutText(GetText(), pixIR, pixJ, col);
+    } break;
   }
 }
+
+// [Cecil] Thinking logic
+void CMGVarButton::Think(void) {
+  if (mg_iState == GKS_RELEASE_RETURN_WAITING) {
+    _eEditingValue = VED_KEYBIND;
+    SetText("?");
+
+    extern BOOL _bMouseUsedLast;
+    _bMouseUsedLast = FALSE;
+
+    _pInput->SetJoyPolling(TRUE);
+    _pInput->GetInput(FALSE);
+
+    if (_pInput->IsInputEnabled()) {
+      BOOL bActivationKey = !!_pInput->GetButtonState(KID_ENTER) || !!_pInput->GetButtonState(KID_MOUSE1);
+
+      // [Cecil] Check if extended input patches are initialized
+      static HPatchPlugin hInput = ClassicsExtensions_GetExtensionByName("PATCH_EXT_input");
+      BOOL bInputInit = FALSE;
+      ClassicsExtensions_CallSignal(hInput, "IsInitialized", &bInputInit, NULL);
+
+      if (bInputInit && !bActivationKey) {
+        // [Cecil] See if any controller buttons for binding activation are being held
+        for (INDEX iCtrl = 0; iCtrl < MAX_JOYSTICKS; iCtrl++) {
+          const INDEX iFirstButton = FIRST_JOYBUTTON + iCtrl * SDL_GAMEPAD_BUTTON_COUNT;
+
+          if (_pInput->GetButtonState(iFirstButton + SDL_GAMEPAD_BUTTON_SOUTH)
+           || _pInput->GetButtonState(iFirstButton + SDL_GAMEPAD_BUTTON_START)) {
+            bActivationKey = TRUE;
+            break;
+          }
+        }
+      }
+
+      if (!bActivationKey) {
+        mg_iState = GKS_PRESS_KEY_WAITING;
+      }
+    }
+
+  } else if (mg_iState == GKS_PRESS_KEY_WAITING) {
+    _pInput->SetJoyPolling(TRUE);
+    _pInput->GetInput(FALSE);
+
+    for (INDEX iDik = 0; iDik < MAX_OVERALL_BUTTONS; iDik++) {
+      // Skip keys that cannot be defined
+      if (iDik == KID_TILDE) continue;
+
+      if (!_pInput->GetButtonState(iDik)) continue;
+
+      // Don't define a new key by default
+      INDEX iSetKey = mg_pvsVar->vs_iValue;
+
+      // Define the new key
+      if (iDik != KID_ESCAPE) {
+        iSetKey = iDik;
+      }
+
+      // Update the option if any new button has been specified
+      DefineKey(iSetKey);
+
+      // End defining loop
+      mg_iState = GKS_DOING_NOTHING;
+      _eEditingValue = VED_NONE;
+
+      // Clear any buffered input afterwards
+      _pInput->ClearInput();
+      break;
+    }
+  }
+};
+
+// [Cecil] Define new key bind
+void CMGVarButton::DefineKey(INDEX iKID) {
+  // Update the option if any new button has been specified
+  if (iKID != mg_pvsVar->vs_iValue) {
+    mg_pvsVar->vs_iValue = iKID;
+    mg_pvsVar->vs_strValue = _pInput->GetButtonTransName(iKID);
+    OnVarChanged();
+  }
+
+  SetText(mg_pvsVar->vs_strValue);
+};
 
 // [Cecil] Signal that some variable has been changed
 void CMGVarButton::OnVarChanged(void) {

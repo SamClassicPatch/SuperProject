@@ -172,8 +172,8 @@ static void ParseAutoValue(CVarSetting *pvs, CTString &strLine) {
     if (fMax  > +1e6) ThrowF_t(TRANS("Range: max value is too high"));
     if (fStep < 1e-3) ThrowF_t(TRANS("Range: step value is too low"));
 
-    // Add each step from min to max
-    for (DOUBLE fAdd = fMin; fAdd < fMax; fAdd += fStep) {
+    // Add each step from min to max (minus a small epsilon to avoid rounding errors)
+    for (DOUBLE fAdd = fMin; fAdd < fMax - 1e-3; fAdd += fStep) {
       const DOUBLE fRatio = (fAdd - fMin) / (fMax - fMin);
 
       // E.g. "0.25" value and "25%" text
@@ -333,6 +333,10 @@ static void ParseCFG_t(CTStream &strm, CListHead &lhAll) {
 
       } else if (strLine == "Button") {
         pvs->vs_eType = CVarSetting::E_BUTTON;
+
+      } else if (strLine == "KeyBind") {
+        pvs->vs_eType = CVarSetting::E_KEYBIND;
+        pvs->vs_strTip = LOCALIZE("Enter - change binding, Backspace - unbind");
       }
 
     } else if (strLine.RemovePrefix("Schedule:")) {
@@ -776,6 +780,7 @@ BOOL CVarSetting::Validate(void) {
     case E_SEPARATOR:
     case E_TEXTBOX:
     case E_BUTTON:
+    case E_KEYBIND:
       return TRUE;
   }
 
@@ -866,6 +871,15 @@ BOOL CVarSetting::ApplyValue(void) {
         bNewValue = TRUE;
       }
     } break;
+
+    case CVarSetting::E_KEYBIND: {
+      // If bound some other key
+      if (vs_iValue != vs_iOrgValue) {
+        // Set to a new index
+        strNewValue.PrintF("%d", vs_iValue);
+        bNewValue = TRUE;
+      }
+    } break;
   }
 
   // No new value has been set
@@ -928,6 +942,17 @@ void CVarSetting::UpdateValue(void) {
 
       // Save hash value of the string
       vs_iOrgValue = static_cast<ULONG>(strValue.GetHash());
+    } break;
+
+    case CVarSetting::E_KEYBIND: {
+      // None by default
+      vs_iValue = vs_iOrgValue = KID_NONE;
+
+      // Set new key bind
+      if (strValue.ScanF("%d", &vs_iValue) != 0) {
+        vs_iOrgValue = vs_iValue;
+        vs_strValue = _pInput->GetButtonTransName(vs_iValue);
+      }
     } break;
   }
 };

@@ -27,6 +27,7 @@ class CVarSetting {
       E_TOGGLE,
       E_TEXTBOX,
       E_BUTTON,
+      E_KEYBIND,
     };
 
     // [Cecil] Slider types

@@ -42,6 +42,8 @@ class CMGVarButton : public CMGEdit {
     BOOL mg_bMouseOnScrollbar; // Whether the mouse was specifically on the scrollbar
     INDEX mg_iLastValueListOffset; // Value of mg_iValueListOffset
 
+    EGadgetKeyState mg_iState; // [Cecil]
+
     CMGVarButton(); // [Cecil]
     PIXaabbox2D GetSliderBox(CDrawPort *pdp, INDEX iSliderType);
     BOOL OnKeyDown(PressedMenuButton pmb);
@@ -51,6 +53,12 @@ class CMGVarButton : public CMGEdit {
     void Render(CDrawPort *pdp);
     BOOL IsSeparator(void);
     BOOL IsEnabled(void);
+
+    // [Cecil] Thinking logic
+    void Think(void);
+
+    // [Cecil] Define new key bind
+    void DefineKey(INDEX iKID);
 
     // [Cecil] Signal that some variable has been changed
     void OnVarChanged(void);
