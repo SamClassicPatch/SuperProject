@@ -41,7 +41,6 @@ CTimerValue _tvMenuQuickSave(0I64);
 CTFileName fnmPersistentSymbols = CTString("Scripts\\PersistentSymbols.ini");
 CTFileName fnmStartupScript     = CTString("Scripts\\Game_startup.ini");
 CTFileName fnmConsoleHistory    = CTString("Temp\\ConsoleHistory.txt");
-CTFileName fnmCommonControls    = CTString("Controls\\System\\Common.ctl");
 
 // force dependency for player class
 DECLARE_CTFILENAME( fnmPlayerClass, "Classes\\Player.ecl");
@@ -901,7 +900,7 @@ void CGame::GameHandleTimer(void)
 
     // if game is currently active
     if (gm_bGameOn) {
-      // [Cecil] Clear player actions if using the camera
+      // [Cecil] Clear player actions if using the observer camera
       if (GetGameAPI()->GetCamera().IsActive()) {
         ClearLocalActions();
 
@@ -1210,7 +1209,7 @@ void CGame::InitInternal( void)
 
   // load common controls
   try {
-    _ctrlCommonControls.Load_t(fnmCommonControls);
+    _ctrlCommonControls.Load_t(gam_strCommonControlsFile);
   } catch (char *strError) {
     FatalError(LOCALIZE("Cannot load common controls: %s\n"), strError);
   }
