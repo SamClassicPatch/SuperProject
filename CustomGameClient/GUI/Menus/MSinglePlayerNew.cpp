@@ -31,7 +31,7 @@ static inline void ToUpper(CTString &str) {
 
 // [Cecil] Open gameplay customization config
 static void OpenGameplayCustomization(void) {
-  static DECLARE_CTFILENAME(fnmConfig, "Scripts\\Menu\\ClassicsPatch\\03_GameplaySettings.cfg");
+  static DECLARE_CTFILENAME(fnmConfig, "Scripts\\Menu\\CustomizeSP_ClassicsPatch.cfg");
   CVarMenu::ChangeTo(TRANS("GAME CUSTOMIZATION"), fnmConfig);
 };
 
