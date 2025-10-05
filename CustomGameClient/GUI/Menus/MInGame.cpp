@@ -127,6 +127,14 @@ static void StopConfirm(void) {
 
 extern void ExitConfirm(void);
 
+// [Cecil] Toggle the observer camera and return to the game
+static void ToggleOCAM(void) {
+  BOOL &bToggle = GetGameAPI()->GetCamera().GetState();
+  bToggle = !bToggle;
+
+  StopMenus();
+};
+
 void CInGameMenu::Initialize_t(void) {
   gm_strName = "InGame";
   gm_pmgSelectedByDefault = &gm_mgQuickLoad;
@@ -159,6 +167,7 @@ void CInGameMenu::Initialize_t(void) {
   AddChild(&gm_mgQuickLoad);
   gm_mgQuickLoad.mg_pmgUp = &gm_mgQuit;
   gm_mgQuickLoad.mg_pmgDown = &gm_mgQuickSave;
+  gm_mgQuickLoad.mg_pmgLeft = &gm_mgOCAM;
   gm_mgQuickLoad.mg_pActivatedFunction = &StartCurrentQuickLoadMenu;
 
   gm_mgQuickSave.SetText(LOCALIZE("QUICK SAVE"));
@@ -168,6 +177,7 @@ void CInGameMenu::Initialize_t(void) {
   AddChild(&gm_mgQuickSave);
   gm_mgQuickSave.mg_pmgUp = &gm_mgQuickLoad;
   gm_mgQuickSave.mg_pmgDown = &gm_mgLoad;
+  gm_mgQuickSave.mg_pmgLeft = &gm_mgOCAM;
   gm_mgQuickSave.mg_pActivatedFunction = &QuickSaveFromMenu;
 
   gm_mgLoad.SetText(LOCALIZE("LOAD"));
@@ -177,6 +187,7 @@ void CInGameMenu::Initialize_t(void) {
   AddChild(&gm_mgLoad);
   gm_mgLoad.mg_pmgUp = &gm_mgQuickSave;
   gm_mgLoad.mg_pmgDown = &gm_mgSave;
+  gm_mgLoad.mg_pmgLeft = &gm_mgOCAM;
   gm_mgLoad.mg_pActivatedFunction = &StartCurrentLoadMenu;
 
   gm_mgSave.SetText(LOCALIZE("SAVE"));
@@ -186,12 +197,14 @@ void CInGameMenu::Initialize_t(void) {
   AddChild(&gm_mgSave);
   gm_mgSave.mg_pmgUp = &gm_mgLoad;
   gm_mgSave.mg_pmgDown = &gm_mgDemoRec;
+  gm_mgSave.mg_pmgLeft = &gm_mgOCAM;
   gm_mgSave.mg_pActivatedFunction = &StartCurrentSaveMenu;
 
   gm_mgDemoRec.mg_boxOnScreen = BoxBigRow(4.0f);
   gm_mgDemoRec.mg_bfsFontSize = BFS_LARGE;
   gm_mgDemoRec.mg_pmgUp = &gm_mgSave;
   gm_mgDemoRec.mg_pmgDown = &gm_mgHighScore;
+  gm_mgDemoRec.mg_pmgLeft = &gm_mgOCAM;
   gm_mgDemoRec.SetText("Text not set");
   AddChild(&gm_mgDemoRec);
   gm_mgDemoRec.mg_pActivatedFunction = NULL;
@@ -203,6 +216,7 @@ void CInGameMenu::Initialize_t(void) {
   AddChild(&gm_mgHighScore);
   gm_mgHighScore.mg_pmgUp = &gm_mgDemoRec;
   gm_mgHighScore.mg_pmgDown = &gm_mgOptions;
+  gm_mgHighScore.mg_pmgLeft = &gm_mgOCAM;
   gm_mgHighScore.mg_pActivatedFunction = &CHighScoreMenu::ChangeTo;
 
   gm_mgOptions.SetText(LOCALIZE("OPTIONS"));
@@ -212,6 +226,7 @@ void CInGameMenu::Initialize_t(void) {
   AddChild(&gm_mgOptions);
   gm_mgOptions.mg_pmgUp = &gm_mgHighScore;
   gm_mgOptions.mg_pmgDown = &gm_mgStop;
+  gm_mgOptions.mg_pmgLeft = &gm_mgOCAM;
   gm_mgOptions.mg_pActivatedFunction = &COptionsMenu::ChangeTo;
 
   gm_mgStop.SetText(LOCALIZE("STOP GAME"));
@@ -221,6 +236,7 @@ void CInGameMenu::Initialize_t(void) {
   AddChild(&gm_mgStop);
   gm_mgStop.mg_pmgUp = &gm_mgOptions;
   gm_mgStop.mg_pmgDown = &gm_mgQuit;
+  gm_mgStop.mg_pmgLeft = &gm_mgOCAM;
   gm_mgStop.mg_pActivatedFunction = &StopConfirm;
 
   gm_mgQuit.SetText(LOCALIZE("QUIT"));
@@ -230,7 +246,20 @@ void CInGameMenu::Initialize_t(void) {
   AddChild(&gm_mgQuit);
   gm_mgQuit.mg_pmgUp = &gm_mgStop;
   gm_mgQuit.mg_pmgDown = &gm_mgQuickLoad;
+  gm_mgQuit.mg_pmgLeft = &gm_mgOCAM;
   gm_mgQuit.mg_pActivatedFunction = &ExitConfirm;
+
+  // [Cecil] Observer camera
+  gm_mgOCAM.SetText(TRANS("Photo mode"));
+  gm_mgOCAM.mg_strTip = TRANS("toggle photo mode via the observer camera");
+  gm_mgOCAM.mg_bfsFontSize = BFS_MEDIUM;
+  gm_mgOCAM.mg_boxOnScreen = BoxLeftColumn(15.0f);
+  gm_mgOCAM.mg_iCenterI = -1;
+
+  gm_mgOCAM.mg_pmgRight = &gm_mgQuit;
+  gm_mgOCAM.mg_pActivatedFunction = &ToggleOCAM;
+
+  AddChild(&gm_mgOCAM);
 }
 
 static void SetDemoStartStopRecText(void);

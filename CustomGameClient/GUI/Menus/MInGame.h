@@ -38,6 +38,8 @@ class CInGameMenu : public CGameMenu {
     CMGButton gm_mgStop;
     CMGButton gm_mgQuit;
 
+    CMGButton gm_mgOCAM; // [Cecil] Observer camera toggle
+
     void Initialize_t(void);
     void StartMenu(void);
 

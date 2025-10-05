@@ -307,6 +307,11 @@ void CObserverCamera::Reset(BOOL bPlayback) {
   SetSpeed(1.0f);
 };
 
+// Retrieve camera state field
+BOOL &CObserverCamera::GetState(void) {
+  return cam_props.bActive;
+};
+
 // Check if camera is on
 BOOL CObserverCamera::IsActive(void) {
   // Camera can only be used during observing or in demos

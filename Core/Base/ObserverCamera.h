@@ -151,13 +151,16 @@ class CORE_API CObserverCamera {
     void Start(const CTFileName &fnmDemo);
 
     // Stop playback or camera altogether
-    virtual void Reset(BOOL bPlayback = FALSE);
+    void Reset(BOOL bPlayback = FALSE);
+
+    // Retrieve camera state field
+    BOOL &GetState(void);
 
     // Check if camera is on
-    virtual BOOL IsActive(void);
+    BOOL IsActive(void);
 
     // Start recording into a file
-    virtual BOOL StartRecording(void);
+    BOOL StartRecording(void);
 
   public:
     // Direct button input using default controls
