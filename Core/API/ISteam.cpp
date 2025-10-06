@@ -171,6 +171,17 @@ BOOL CSteamAPI::IsUsable(void) {
 #endif
 };
 
+// Check if Steam screenshots have been hooked
+BOOL CSteamAPI::IsScreenshotsHooked(void) {
+#if _PATCHCONFIG_STEAM_API
+  if (!IsUsable()) return FALSE;
+  return SteamScreenshots()->IsScreenshotsHooked();
+
+#else
+  return FALSE;
+#endif
+};
+
 // Interact with Steam once in a while
 void CSteamAPI::Update(void) {
 #if _PATCHCONFIG_STEAM_API
@@ -288,6 +299,10 @@ void CSteamAPI::WriteScreenshot(CImageInfo &ii) {
   if (!IsUsable()) return;
   STEAM_DEBUG1("CSteamAPI::WriteScreenshot() - ");
 
+  // Save local screenshot
+  extern void SaveLocalScreenshot(CImageInfo &iiScreenshot);
+  SaveLocalScreenshot(ii);
+
   if (ii.ii_BitsPerPixel != 24) {
     STEAM_DEBUG1("ERROR: Screenshot is not in 24-bit format\n");
     return;
@@ -379,11 +394,11 @@ void CSteamAPI::OnGameJoinRequested(GameRichPresenceJoinRequested_t *pCallback) 
 void CSteamAPI::OnScreenshotRequested(ScreenshotRequested_t *pCallback) {
   STEAM_DEBUG1("CSteamAPI::OnScreenshotRequested() - ");
 
-  // Trust observer camera to take the actual screenshot
+  // Take a screenshot using the observer camera
   if (GetGameAPI()->GetCamera().IsActive()) {
-    // [Cecil] FIXME: If Steam screenshot button differs from the observer camera (either one is rebound)
-    // and Steam's button is used, no screenshot will be made here because observer camera is never called
+    GetGameAPI()->GetCamera().TakeScreenshot();
     bScreenshotRequested = TRUE;
+
     STEAM_DEBUG1("OK: Requested a screenshot from observer camera\n");
     return;
   }

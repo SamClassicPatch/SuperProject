@@ -73,6 +73,9 @@ class CORE_API CSteamAPI {
     // Check if Steam has been initialized and can be used
     BOOL IsUsable(void);
 
+    // Check if Steam screenshots have been hooked
+    BOOL IsScreenshotsHooked(void);
+
     // Interact with Steam once in a while
     void Update(void);
 

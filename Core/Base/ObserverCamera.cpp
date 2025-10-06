@@ -758,8 +758,8 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     cp = FreeFly(penObserving);
   }
 
-  // Screenshot command has been sent
-  if (cam_ctl.bScreenshot) {
+  // Screenshot command has been sent (and Steam screenshots aren't hooked)
+  if (cam_ctl.bScreenshot && !GetSteamAPI()->IsScreenshotsHooked()) {
     cam_ctl.bScreenshot = FALSE;
     TakeScreenshot();
   }
@@ -818,6 +818,18 @@ static CTFileName MakeScreenShotName(void) {
   }
 };
 
+// Save local screenshot to disk
+void SaveLocalScreenshot(CImageInfo &iiScreenshot) {
+  try {
+    CTFileName fnmScreenshot = MakeScreenShotName();
+    iiScreenshot.SaveTGA_t(fnmScreenshot);
+    CPrintF(LOCALIZE("screen shot: %s\n"), fnmScreenshot.str_String);
+
+  } catch (char *strError) {
+    CPrintF(LOCALIZE("Cannot save screenshot:\n%s\n"), strError);
+  }
+};
+
 // Take a high quality screenshot of the current view
 void CObserverCamera::TakeScreenshot(void) {
   // Limit resolution
@@ -853,17 +865,9 @@ void CObserverCamera::TakeScreenshot(void) {
     pdpScreenshot->Unlock();
   }
 
-  // Request a screenshot from Steam, if it didn't do it automatically
-  GetSteamAPI()->TriggerScreenshot();
-
-  // Save screenshot as TGA
-  try {
-    CTFileName fnmScreenshot = MakeScreenShotName();
-    iiScreenshot.SaveTGA_t(fnmScreenshot);
-    CPrintF(LOCALIZE("screen shot: %s\n"), fnmScreenshot.str_String);
-
-  } catch (char *strError) {
-    CPrintF(LOCALIZE("Cannot save screenshot:\n%s\n"), strError);
+  // Save local screenshot (if Steam screenshots aren't hooked)
+  if (!GetSteamAPI()->IsScreenshotsHooked()) {
+    SaveLocalScreenshot(iiScreenshot);
   }
 
   // Destroy screenshot canvas
