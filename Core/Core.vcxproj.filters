@@ -267,6 +267,9 @@
     <ClInclude Include="Patches\Network.h">
       <Filter>Header Files\Patches headers</Filter>
     </ClInclude>
+    <ClInclude Include="Base\GlobalScreenshots.h">
+      <Filter>Header Files\Base headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdH.cpp">
@@ -484,6 +487,9 @@
     </ClCompile>
     <ClCompile Include="API\EnginePatches.cpp">
       <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\GlobalScreenshots.cpp">
+      <Filter>Source Files\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

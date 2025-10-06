@@ -15,6 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "Base/GlobalScreenshots.h"
+
 #if _PATCHCONFIG_STEAM_API
 
 // [Cecil] NOTE: Delay loaded, meaning that the library is actually hooked upon calling any function for the first time
@@ -35,9 +37,6 @@ static INDEX steam_iDebugOutput = 0;
 // Debug output macros
 #define STEAM_DEBUG1 if (steam_iDebugOutput >= 1) CPrintF
 #define STEAM_DEBUG2 if (steam_iDebugOutput >= 2) CPrintF
-
-// Drawport for making Steam screenshots from within the game
-static CDrawPort *_pdpScreenshot = NULL;
 
 // Constructor
 CSteamAPI::CSteamAPI() {
@@ -276,16 +275,15 @@ void CSteamAPI::SetScreenshotHook(CDrawPort *pdpScreenshotSurface) {
 #if _PATCHCONFIG_STEAM_API
 
   if (!IsUsable()) return;
-  _pdpScreenshot = pdpScreenshotSurface;
 
   // Update the hook state only if it doesn't match
-  bool bHookScreenshots = (steam_bHookScreenshots && _pdpScreenshot != NULL);
+  bool bHookScreenshots = (steam_bHookScreenshots && pdpScreenshotSurface != NULL);
 
   if (SteamScreenshots()->IsScreenshotsHooked() != bHookScreenshots) {
     SteamScreenshots()->HookScreenshots(bHookScreenshots);
 
     STEAM_DEBUG1("CSteamAPI::SetScreenshotHook(%s) - hook %s\n",
-      (_pdpScreenshot != NULL ? "<valid drawport>" : "<no drawport>"),
+      (pdpScreenshotSurface != NULL ? "<valid drawport>" : "<no drawport>"),
       (bHookScreenshots ? "enabled" : "disabled"));
   }
 
@@ -300,8 +298,7 @@ void CSteamAPI::WriteScreenshot(CImageInfo &ii) {
   STEAM_DEBUG1("CSteamAPI::WriteScreenshot() - ");
 
   // Save local screenshot
-  extern void SaveLocalScreenshot(CImageInfo &iiScreenshot);
-  SaveLocalScreenshot(ii);
+  IScreenshots::SaveLocal(ii);
 
   if (ii.ii_BitsPerPixel != 24) {
     STEAM_DEBUG1("ERROR: Screenshot is not in 24-bit format\n");
@@ -394,25 +391,13 @@ void CSteamAPI::OnGameJoinRequested(GameRichPresenceJoinRequested_t *pCallback) 
 void CSteamAPI::OnScreenshotRequested(ScreenshotRequested_t *pCallback) {
   STEAM_DEBUG1("CSteamAPI::OnScreenshotRequested() - ");
 
-  // Take a screenshot using the observer camera
-  if (GetGameAPI()->GetCamera().IsActive()) {
-    GetGameAPI()->GetCamera().TakeScreenshot();
+  if (IScreenshots::Request(iiScreenshot)) {
     bScreenshotRequested = TRUE;
+    STEAM_DEBUG1("OK: Took a new screenshot\n");
 
-    STEAM_DEBUG1("OK: Requested a screenshot from observer camera\n");
-    return;
-  }
-
-  if (_pdpScreenshot == NULL) {
+  } else {
     STEAM_DEBUG1("ERROR: No drawport to make a screenshot from\n");
-    return;
   }
-
-  // Take a new screenshot
-  _pdpScreenshot->GrabScreen(iiScreenshot, 0);
-  bScreenshotRequested = TRUE;
-
-  STEAM_DEBUG1("OK: Took a new screenshot\n");
 };
 
 void CSteamAPI::OnScreenshotReady(ScreenshotReady_t *pCallback) {

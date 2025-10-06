@@ -17,6 +17,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "ObserverCamera.h"
 
+#include "Base/GlobalScreenshots.h"
+
 // Global controls and properties for the observer camera
 CObserverCamera::CameraControl CObserverCamera::cam_ctl;
 CObserverCamera::CameraProps CObserverCamera::cam_props;
@@ -125,7 +127,6 @@ static INDEX ocam_kidBankingR   = KID_E;
 static INDEX ocam_kidFollow     = KID_F;
 static INDEX ocam_kidSnapshot   = KID_TAB;
 static INDEX ocam_kidChangeRes  = KID_F10;
-static INDEX ocam_kidScreenshot = KID_F12;
 
 static INDEX ocam_kidMoveF_1 = KID_W;
 static INDEX ocam_kidMoveB_1 = KID_S;
@@ -164,7 +165,6 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("user INDEX ocam_bResetToPlayer;",    &cam_ctl.bResetToPlayer);
   _pShell->DeclareSymbol("user INDEX ocam_bFollowPlayer;",     &cam_ctl.bFollowPlayer);
   _pShell->DeclareSymbol("user INDEX ocam_bSnapshot;",         &cam_ctl.bSnapshot);
-  _pShell->DeclareSymbol("user INDEX ocam_bScreenshot;",       &cam_ctl.bScreenshot);
 
   // Keys for the default controls
   _pShell->DeclareSymbol("persistent INDEX ocam_kidToggle;",     &ocam_kidToggle);
@@ -173,7 +173,6 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent INDEX ocam_kidFollow;",     &ocam_kidFollow);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidSnapshot;",   &ocam_kidSnapshot);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidChangeRes;",  &ocam_kidChangeRes);
-  _pShell->DeclareSymbol("persistent INDEX ocam_kidScreenshot;", &ocam_kidScreenshot);
 
   _pShell->DeclareSymbol("persistent INDEX ocam_kidMoveF_1;",    &ocam_kidMoveF_1);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidMoveB_1;",    &ocam_kidMoveB_1);
@@ -362,7 +361,6 @@ void CObserverCamera::UpdateControls(void) {
   const BOOL bBtnFollow   = _pInput->GetButtonState(ocam_kidFollow);
   const BOOL bBtnSnap     = _pInput->GetButtonState(ocam_kidSnapshot);
   const BOOL bBtnRes      = _pInput->GetButtonState(ocam_kidChangeRes);
-  const BOOL bBtnShot     = _pInput->GetButtonState(ocam_kidScreenshot);
 
   // Turn left
   static BOOL _bLeft = FALSE;
@@ -419,11 +417,6 @@ void CObserverCamera::UpdateControls(void) {
     }
   }
   _bRes = bBtnRes;
-
-  // Take screenshot
-  static BOOL _bShot = FALSE;
-  if (!_bShot && bBtnShot) cam_ctl.bScreenshot = TRUE;
-  _bShot = bBtnShot;
 
   // Movement and zoom
   cam_ctl.bMoveF = _pInput->GetButtonState(ocam_kidMoveF_1) || _pInput->GetButtonState(ocam_kidMoveF_2);
@@ -508,7 +501,7 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
       // Screenshot controls
       strControls += "\n";
       strControls += CTString(0, TRANS("Select resolution preset: %s\n"), _pInput->GetButtonTransName(ocam_kidChangeRes));
-      strControls += CTString(0, TRANS("Take HQ screenshot: %s\n"), _pInput->GetButtonTransName(ocam_kidScreenshot));
+      strControls += CTString(0, TRANS("Take HQ screenshot: %s\n"), _pInput->GetButtonTransName(sam_kidScreenshot));
     }
 
     pixInfoY += pixLineHeight;
@@ -684,7 +677,6 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
   // Camera is currently disabled
   if (!IsActive()) {
     cam_props.bActive = FALSE; // Prevent it from suddenly switching if the conditions are met
-    cam_ctl.bScreenshot = FALSE; // And from making screenshots
 
     // Remember player view position for the next activation
     if (IsDerivedFromID(pen, CPlayerEntity_ClassID)) {
@@ -758,12 +750,6 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     cp = FreeFly(penObserving);
   }
 
-  // Screenshot command has been sent (and Steam screenshots aren't hooked)
-  if (cam_ctl.bScreenshot && !GetSteamAPI()->IsScreenshotsHooked()) {
-    cam_ctl.bScreenshot = FALSE;
-    TakeScreenshot();
-  }
-
   // Prepare view projection
   CPerspectiveProjection3D prProjection;
   prProjection.FOVL() = cp.fFOV;
@@ -797,41 +783,8 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
   return TRUE;
 };
 
-// Create name for a new screenshot
-static CTFileName MakeScreenShotName(void) {
-  // Create base name from the world name
-  CTString strBase = CTString("ScreenShots\\") + _pNetwork->GetCurrentWorld().FileName();
-
-  INDEX iShot = 0;
-
-  FOREVER {
-    // Create full filename with the number
-    CTFileName fnmFull = CTString(0, "%s_shot%04d.tga", strBase, iShot);
-
-    // File doesn't exist yet, so it can be used
-    if (!FileExistsForWriting(fnmFull)) {
-      return fnmFull;
-    }
-
-    // Try the next number
-    iShot++;
-  }
-};
-
-// Save local screenshot to disk
-void SaveLocalScreenshot(CImageInfo &iiScreenshot) {
-  try {
-    CTFileName fnmScreenshot = MakeScreenShotName();
-    iiScreenshot.SaveTGA_t(fnmScreenshot);
-    CPrintF(LOCALIZE("screen shot: %s\n"), fnmScreenshot.str_String);
-
-  } catch (char *strError) {
-    CPrintF(LOCALIZE("Cannot save screenshot:\n%s\n"), strError);
-  }
-};
-
 // Take a high quality screenshot of the current view
-void CObserverCamera::TakeScreenshot(void) {
+BOOL CObserverCamera::TakeScreenshot(CImageInfo &iiScreenshot) {
   // Limit resolution
   cam_props.iScreenshotW = Clamp(cam_props.iScreenshotW, (INDEX)1, (INDEX)20000);
   cam_props.iScreenshotH = Clamp(cam_props.iScreenshotH, (INDEX)1, (INDEX)20000);
@@ -839,10 +792,10 @@ void CObserverCamera::TakeScreenshot(void) {
   // Create canvas for the screenshot
   CDrawPort *pdpScreenshot;
   _pGfx->CreateWorkCanvas(cam_props.iScreenshotW, cam_props.iScreenshotH, &pdpScreenshot);
-  if (pdpScreenshot == NULL) return;
 
-  // Use Steam's screenshot bitmap
-  CImageInfo &iiScreenshot = GetSteamAPI()->iiScreenshot;
+  if (pdpScreenshot == NULL) return FALSE;
+
+  BOOL bTaken = FALSE;
 
   if (pdpScreenshot->Lock()) {
     // Prepare view projection
@@ -863,13 +816,12 @@ void CObserverCamera::TakeScreenshot(void) {
     // Take screenshot
     pdpScreenshot->GrabScreen(iiScreenshot, 0);
     pdpScreenshot->Unlock();
-  }
 
-  // Save local screenshot (if Steam screenshots aren't hooked)
-  if (!GetSteamAPI()->IsScreenshotsHooked()) {
-    SaveLocalScreenshot(iiScreenshot);
+    bTaken = TRUE;
   }
 
   // Destroy screenshot canvas
   _pGfx->DestroyWorkCanvas(pdpScreenshot);
+
+  return bTaken;
 };

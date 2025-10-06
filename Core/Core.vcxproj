@@ -37,6 +37,7 @@
     <ClInclude Include="API\ISteam.h" />
     <ClInclude Include="Base\CoreTimerHandler.h" />
     <ClInclude Include="Base\GameDirectories.h" />
+    <ClInclude Include="Base\GlobalScreenshots.h" />
     <ClInclude Include="Base\InputApiCompatibility.h" />
     <ClInclude Include="Base\ObserverCamera.h" />
     <ClInclude Include="Base\Unzip.h" />
@@ -111,6 +112,7 @@
     <ClCompile Include="API\ISteam.cpp" />
     <ClCompile Include="Base\CoreTimerHandler.cpp" />
     <ClCompile Include="Base\GameDirectories.cpp" />
+    <ClCompile Include="Base\GlobalScreenshots.cpp" />
     <ClCompile Include="Base\ObserverCamera.cpp" />
     <ClCompile Include="Base\Unzip.cpp" />
     <ClCompile Include="Core.cpp" />

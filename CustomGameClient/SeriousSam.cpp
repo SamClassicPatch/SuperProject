@@ -30,6 +30,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "GUI/Menus/MenuStuff.h"
 
 // [Cecil] Classics patch
+#include <Core/Base/GlobalScreenshots.h>
 #include <Core/Query/QueryManager.h>
 #include <Core/Networking/Modules/VotingSystem.h>
 #include <Engine/Sound/SoundData.h>
@@ -38,6 +39,127 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "Cecil/WindowModes.h"
 
 #include <locale.h>
+
+// [Cecil] Conversion table for possible screenshot keys
+struct ShotKeyConversion {
+  INDEX iKID, iVirtKey;
+};
+
+static ShotKeyConversion _aShotKeys[] = {
+  { KID_1               , '1' },
+  { KID_2               , '2' },
+  { KID_3               , '3' },
+  { KID_4               , '4' },
+  { KID_5               , '5' },
+  { KID_6               , '6' },
+  { KID_7               , '7' },
+  { KID_8               , '8' },
+  { KID_9               , '9' },
+  { KID_0               , '0' },
+  { KID_MINUS           , 189 },
+  { KID_EQUALS          , 187 },
+
+  { KID_Q               , 'Q' },
+  { KID_W               , 'W' },
+  { KID_E               , 'E' },
+  { KID_R               , 'R' },
+  { KID_T               , 'T' },
+  { KID_Y               , 'Y' },
+  { KID_U               , 'U' },
+  { KID_I               , 'I' },
+  { KID_O               , 'O' },
+  { KID_P               , 'P' },
+  { KID_LBRACKET        , 219 },
+  { KID_RBRACKET        , 221 },
+  { KID_BACKSLASH       , 220 },
+
+  { KID_A               , 'A' },
+  { KID_S               , 'S' },
+  { KID_D               , 'D' },
+  { KID_F               , 'F' },
+  { KID_G               , 'G' },
+  { KID_H               , 'H' },
+  { KID_J               , 'J' },
+  { KID_K               , 'K' },
+  { KID_L               , 'L' },
+  { KID_SEMICOLON       , 186 },
+  { KID_APOSTROPHE      , 222 },
+
+  { KID_Z               , 'Z' },
+  { KID_X               , 'X' },
+  { KID_C               , 'C' },
+  { KID_V               , 'V' },
+  { KID_B               , 'B' },
+  { KID_N               , 'N' },
+  { KID_M               , 'M' },
+  { KID_COMMA           , 190 },
+  { KID_PERIOD          , 188 },
+  { KID_SLASH           , 191 },
+
+  { KID_F1              ,  VK_F1 },
+  { KID_F2              ,  VK_F2 },
+  { KID_F3              ,  VK_F3 },
+  { KID_F4              ,  VK_F4 },
+  { KID_F5              ,  VK_F5 },
+  { KID_F6              ,  VK_F6 },
+  { KID_F7              ,  VK_F7 },
+  { KID_F8              ,  VK_F8 },
+  { KID_F9              ,  VK_F9 },
+  { KID_F10             , VK_F10 },
+  { KID_F11             , VK_F11 },
+  { KID_F12             , VK_F12 },
+
+  { KID_ESCAPE          , VK_ESCAPE  },
+  { KID_BACKSPACE       , VK_BACK    },
+  { KID_TAB             , VK_TAB     },
+  { KID_CAPSLOCK        , VK_CAPITAL },
+  { KID_ENTER           , VK_RETURN  },
+  { KID_SPACE           , VK_SPACE   },
+
+  { KID_LSHIFT          , VK_LSHIFT   },
+  { KID_RSHIFT          , VK_RSHIFT   },
+  { KID_LCONTROL        , VK_LCONTROL },
+  { KID_RCONTROL        , VK_RCONTROL },
+  { KID_LALT            , VK_LMENU    },
+  { KID_RALT            , VK_RMENU    },
+
+  { KID_ARROWUP         , VK_UP       },
+  { KID_ARROWDOWN       , VK_DOWN     },
+  { KID_ARROWLEFT       , VK_LEFT     },
+  { KID_ARROWRIGHT      , VK_RIGHT    },
+  { KID_INSERT          , VK_INSERT   },
+  { KID_DELETE          , VK_DELETE   },
+  { KID_HOME            , VK_HOME     },
+  { KID_END             , VK_END      },
+  { KID_PAGEUP          , VK_PRIOR    },
+  { KID_PAGEDOWN        , VK_NEXT     },
+  { KID_PRINTSCR        , VK_SNAPSHOT },
+  { KID_SCROLLLOCK      , VK_SCROLL   },
+  { KID_PAUSE           , VK_PAUSE    },
+
+  { KID_NUM0            , VK_NUMPAD0 },
+  { KID_NUM1            , VK_NUMPAD1 },
+  { KID_NUM2            , VK_NUMPAD2 },
+  { KID_NUM3            , VK_NUMPAD3 },
+  { KID_NUM4            , VK_NUMPAD4 },
+  { KID_NUM5            , VK_NUMPAD5 },
+  { KID_NUM6            , VK_NUMPAD6 },
+  { KID_NUM7            , VK_NUMPAD7 },
+  { KID_NUM8            , VK_NUMPAD8 },
+  { KID_NUM9            , VK_NUMPAD9 },
+  { KID_NUMDECIMAL      , VK_DECIMAL },
+
+  { KID_NUMLOCK         , VK_NUMLOCK   },
+  { KID_NUMSLASH        , VK_DIVIDE    },
+  { KID_NUMMULTIPLY     , VK_MULTIPLY  },
+  { KID_NUMMINUS        , VK_SUBTRACT  },
+  { KID_NUMPLUS         , VK_ADD       },
+  { KID_NUMENTER        , VK_SEPARATOR },
+
+  { KID_MOUSE1          , VK_LBUTTON },
+  { KID_MOUSE2          , VK_RBUTTON },
+  { KID_MOUSE3          , VK_MBUTTON },
+};
 
 // Application state variables
 extern BOOL _bRunning = TRUE;
@@ -842,8 +964,8 @@ void DoGame(void) {
 
   // redraw the view
   if (!IsIconic(_hwndMain) && _pdpMenu != NULL && _pdpMenu->Lock()) {
-    // [Cecil] Set drawport that will be used for custom Steam screenshots
-    GetSteamAPI()->SetScreenshotHook(_pdpMenu);
+    // [Cecil] Set drawport that will be used for custom screenshots
+    IScreenshots::SetHook(_pdpMenu);
 
     // [Cecil] Keep rendering the game in the background while in menu
     BOOL bRenderGame = (!bMenuActive || sam_bBackgroundGameRender);
@@ -920,7 +1042,7 @@ void DoGame(void) {
 
   // [Cecil] Reset drawport for screenshots
   } else {
-    GetSteamAPI()->SetScreenshotHook(NULL);
+    IScreenshots::SetHook(NULL);
   }
 }
 
@@ -1596,6 +1718,29 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             _gmRunningGameMode = GM_NONE;
             StartNextDemo();
           }
+        }
+      }
+
+      // [Cecil] Check if the configured screenshot key has been pressed (if not rebinding keys and Steam screenshots aren't hooked)
+      if (msg.message == WM_KEYDOWN && _eEditingValue != VED_KEYBIND && !GetSteamAPI()->IsScreenshotsHooked())
+      {
+        for (INDEX iShotKey = 0; iShotKey < ARRAYCOUNT(_aShotKeys); iShotKey++) {
+          ShotKeyConversion &kc = _aShotKeys[iShotKey];
+
+          // Not the right key
+          if (kc.iKID != sam_kidScreenshot) continue;
+
+          // Check if the right key has been pressed
+          if (msg.wParam != kc.iVirtKey) continue;
+
+          // Take a screenshot
+          CImageInfo iiScreenshot;
+
+          if (IScreenshots::Request(iiScreenshot)) {
+            IScreenshots::SaveLocal(iiScreenshot);
+          }
+
+          break;
         }
       }
     } // loop while there are messages

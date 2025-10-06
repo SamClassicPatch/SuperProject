@@ -16,6 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "StdH.h"
 
 #include "Base/CoreTimerHandler.h"
+#include "Base/GlobalScreenshots.h"
 #include "Networking/NetworkFunctions.h"
 
 static CTimerValue _tvClassicsPatchInit = __int64(0); // When Classics Patch was initialized
@@ -198,10 +199,8 @@ void ClassicsPatch_Init(void)
 
   // Various initializations
   {
-    // Initialize networking
     INetwork::Initialize();
-
-    // Initialize Steam API
+    IScreenshots::Initialize();
     GetSteamAPI()->Init();
 
     // Load core plugins

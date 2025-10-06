@@ -27,7 +27,7 @@ class CORE_API CObserverCamera {
     struct CameraControl {
       INDEX bMoveF, bMoveB, bMoveL, bMoveR, bMoveU, bMoveD;
       INDEX bBankingL, bBankingR, bZoomIn, bZoomOut;
-      INDEX bResetToPlayer, bFollowPlayer, bSnapshot, bScreenshot;
+      INDEX bResetToPlayer, bFollowPlayer, bSnapshot;
       FLOAT fFOV;
 
       CameraControl() {
@@ -38,7 +38,7 @@ class CORE_API CObserverCamera {
       void Reset(void) {
         bMoveF = bMoveB = bMoveL = bMoveR = bMoveU = bMoveD = FALSE;
         bBankingL = bBankingR = bZoomIn = bZoomOut = FALSE;
-        bResetToPlayer = bFollowPlayer = bSnapshot = bScreenshot = FALSE;
+        bResetToPlayer = bFollowPlayer = bSnapshot = FALSE;
         fFOV = 90.0f;
       };
     };
@@ -176,7 +176,7 @@ class CORE_API CObserverCamera {
     BOOL Update(CEntity *pen, CDrawPort *pdp);
 
     // Take a high quality screenshot of the current view
-    void TakeScreenshot(void);
+    BOOL TakeScreenshot(CImageInfo &iiScreenshot);
 };
 
 #endif
