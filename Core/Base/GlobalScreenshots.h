@@ -20,8 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-// Rebindable key ID for taking global screenshots
-CORE_API extern INDEX sam_kidScreenshot;
+CORE_API extern INDEX sam_kidScreenshot; // Rebindable key ID for taking global screenshots
 
 // Interface with functions for working with global game screenshots
 namespace IScreenshots {
