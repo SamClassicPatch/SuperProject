@@ -1734,12 +1734,7 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
           if (msg.wParam != kc.iVirtKey) continue;
 
           // Take a screenshot
-          CImageInfo iiScreenshot;
-
-          if (IScreenshots::Request(iiScreenshot)) {
-            IScreenshots::SaveLocal(iiScreenshot);
-          }
-
+          IScreenshots::Request();
           break;
         }
       }

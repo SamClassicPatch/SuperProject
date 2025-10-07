@@ -54,11 +54,9 @@ class CORE_API CSteamAPI {
     ESteamAPIInitResult eApiState;
 
     BOOL bSteamOverlay;
-    BOOL bScreenshotRequested; // Requested to take a new screenshot
 
   public:
     CTString strJoinCommandMidGame;
-    CImageInfo iiScreenshot; // Custom screenshot to write (can be modified externally)
 
   public:
     // Constructor
@@ -102,9 +100,6 @@ class CORE_API CSteamAPI {
 
     // Make a custom Steam screenshot by manually writing a bitmap from image info
     void WriteScreenshot(CImageInfo &ii);
-
-    // Force Steam to take a screenshot (equivalent to manually pressing a screenshot button, e.g. F12)
-    void TriggerScreenshot(void);
 
     // Display text input for game controllers in big picture mode that doesn't obstruct a text field of some size
     BOOL ShowFloatingGamepadTextInput(PIX pixFieldX, PIX pixFieldY, PIX pixFieldW, PIX pixFieldH);

@@ -34,11 +34,8 @@ CORE_API void SetHook(CDrawPort *pdpScreenshotSurface);
 // Capture screenshot from the current drawport
 CORE_API BOOL Capture(CImageInfo &iiScreenshot);
 
-// Save local screenshot to disk
-CORE_API void SaveLocal(CImageInfo &iiScreenshot);
-
 // Try to take a new screenshot and request to save it
-CORE_API BOOL Request(CImageInfo &iiScreenshot);
+CORE_API BOOL Request(void);
 
 }; // namespace
 

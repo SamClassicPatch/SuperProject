@@ -29,6 +29,27 @@ enum EScreenshotFormat {
 INDEX sam_kidScreenshot = KID_F12; // Rebindable key ID for taking global screenshots
 static INDEX sam_iScreenshotFormat = E_SHOT_PNG; // File format to save the screenshot in
 
+static CTCriticalSection _csScreenshots;
+
+// Screenshots to save
+struct SBufferedScreenshot {
+  BOOL bWrite;
+  INDEX iFormat;
+  CTString fnm;
+  CImageInfo ii;
+
+  SBufferedScreenshot() : bWrite(FALSE), iFormat(E_SHOT_PNG) {};
+
+  inline void Clear(void) {
+    ii.Clear();
+    fnm = "";
+    bWrite = FALSE;
+  }
+};
+
+#define BUFFERED_SHOTS_COUNT 10
+static SBufferedScreenshot _aBufferedScreenshots[BUFFERED_SHOTS_COUNT];
+
 // The zlib version that the engine and the patch use does not have compressBound()
 static inline size_t CustomCompressBound(size_t iLen) {
   return iLen + (iLen >> 12) + (iLen >> 14) + 11;
@@ -76,6 +97,8 @@ static CDrawPort *_pdpScreenshot = NULL;
 
 // Initialize the interface
 void Initialize(void) {
+  _csScreenshots.cs_iIndex = -1;
+
   _pShell->DeclareSymbol("persistent INDEX sam_kidScreenshot;", &sam_kidScreenshot);
   _pShell->DeclareSymbol("persistent user INDEX sam_iScreenshotFormat;", &sam_iScreenshotFormat);
 };
@@ -125,8 +148,18 @@ static CTString MakeScreenshotName(INDEX iFormat) {
     // Create full filename with the number
     CTString fnmFull = CTString(0, "%s_shot%04d%s", strBase, iShot, strExt);
 
+    // Make sure this filename isn't buffered yet
+    BOOL bFree = TRUE;
+
+    for (INDEX iCheckBuffer = 0; iCheckBuffer < BUFFERED_SHOTS_COUNT; iCheckBuffer++) {
+      if (_aBufferedScreenshots[iCheckBuffer].fnm == fnmFull) {
+        bFree = FALSE;
+        break;
+      }
+    }
+
     // File doesn't exist yet, so it can be used
-    if (!FileExistsForWriting(fnmFull)) {
+    if (bFree && !FileExistsForWriting(fnmFull)) {
       return fnmFull;
     }
 
@@ -166,29 +199,74 @@ static void WriteScreenshot_t(CImageInfo &ii, const CTString &fnmScreenshot, IND
   }
 };
 
-// Save local screenshot to disk
-void SaveLocal(CImageInfo &iiScreenshot) {
-  try {
-    CTString fnmScreenshot = MakeScreenshotName(sam_iScreenshotFormat);
-    WriteScreenshot_t(iiScreenshot, fnmScreenshot, sam_iScreenshotFormat);
-    CPrintF(LOCALIZE("screen shot: %s\n"), fnmScreenshot.str_String);
+// Process one screenshot
+static DWORD __stdcall ProcessScreenshot(LPVOID pData) {
+  SBufferedScreenshot *pbs = (SBufferedScreenshot *)pData;
 
-  } catch (char *strError) {
-    CPrintF(LOCALIZE("Cannot save screenshot:\n%s\n"), strError);
+  // If the current buffer needs to be written
+  if (pbs->bWrite && pbs->ii.ii_Picture != NULL) {
+    // Save the screenshot to disk and then free it
+    try {
+      WriteScreenshot_t(pbs->ii, pbs->fnm, pbs->iFormat);
+      CPrintF(LOCALIZE("screen shot: %s\n"), pbs->fnm.str_String);
+
+    } catch (char *strError) {
+      CPrintF(LOCALIZE("Cannot save screenshot:\n%s\n"), strError);
+    }
+
+    pbs->Clear();
   }
+
+  return 0;
 };
 
 // Try to take a new screenshot and request to save it
-BOOL Request(CImageInfo &iiScreenshot) {
-  // Take a screenshot using the observer camera (if not in the menu)
-  const BOOL bInMenu = (GetGameAPI()->IsHooked() ? GetGameAPI()->IsMenuOn() : FALSE);
+BOOL Request(void) {
+  CTSingleLock slShot(&_csScreenshots, TRUE);
 
-  if (GetGameAPI()->GetCamera().IsActive() && !bInMenu) {
-    return GetGameAPI()->GetCamera().TakeScreenshot(iiScreenshot);
+  // Find a free buffer
+  SBufferedScreenshot *pbs = NULL;
+
+  for (INDEX i = 0; i < BUFFERED_SHOTS_COUNT; i++) {
+    if (!_aBufferedScreenshots[i].bWrite) {
+      pbs = &_aBufferedScreenshots[i];
+      break;
+    }
   }
 
+  if (pbs == NULL) return FALSE;
+
+  BOOL bResult;
+  const BOOL bInMenu = (GetGameAPI()->IsHooked() ? GetGameAPI()->IsMenuOn() : FALSE);
+
+  // Take a screenshot using the observer camera (if not in the menu)
+  if (GetGameAPI()->GetCamera().IsActive() && !bInMenu) {
+    bResult = GetGameAPI()->GetCamera().TakeScreenshot(pbs->ii);
+
   // Take a regular screenshot
-  return Capture(iiScreenshot);
+  } else {
+    bResult = Capture(pbs->ii);
+  }
+
+  // If a screenshot has been captured
+  if (bResult) {
+    CPutString(TRANS("Taking a screenshot...\n"));
+
+    // Ask Steam to save it on its own
+    GetSteamAPI()->WriteScreenshot(pbs->ii);
+
+    // Then signal to write it to disk under a specific format
+    pbs->iFormat = sam_iScreenshotFormat;
+    pbs->fnm = MakeScreenshotName(sam_iScreenshotFormat);
+    pbs->bWrite = TRUE;
+
+    // Create a separate thread for writing screenshots to disk
+    DWORD dwThreadID;
+    HANDLE hThread = CreateThread(NULL, 0, &ProcessScreenshot, (LPVOID)pbs, 0, &dwThreadID);
+    if (hThread != NULL) CloseHandle(hThread);
+  }
+
+  return bResult;
 };
 
 }; // namespace

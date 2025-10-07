@@ -57,9 +57,6 @@ void CSteamAPI::Reset(void) {
 
   bSteamOverlay = FALSE;
   strJoinCommandMidGame = "";
-
-  iiScreenshot.Clear();
-  bScreenshotRequested = FALSE;
 };
 
 // Initialize Steam API
@@ -213,15 +210,6 @@ void CSteamAPI::Update(void) {
     }
   }
 
-  // If requested a custom screenshot and it's present
-  if (bScreenshotRequested && iiScreenshot.ii_Picture != NULL) {
-    // Write it and then reset requested screenshot
-    WriteScreenshot(iiScreenshot);
-
-    iiScreenshot.Clear();
-    bScreenshotRequested = FALSE;
-  }
-
 #endif // _PATCHCONFIG_STEAM_API
 };
 
@@ -297,9 +285,6 @@ void CSteamAPI::WriteScreenshot(CImageInfo &ii) {
   if (!IsUsable()) return;
   STEAM_DEBUG1("CSteamAPI::WriteScreenshot() - ");
 
-  // Save local screenshot
-  IScreenshots::SaveLocal(ii);
-
   if (ii.ii_BitsPerPixel != 24) {
     STEAM_DEBUG1("ERROR: Screenshot is not in 24-bit format\n");
     return;
@@ -336,18 +321,6 @@ void CSteamAPI::WriteScreenshot(CImageInfo &ii) {
   STEAM_DEBUG1("OK: Wrote screenshot\n");
 
 #endif // _PATCHCONFIG_STEAM_API
-};
-
-// Force Steam to take a screenshot (equivalent to manually pressing a screenshot button, e.g. F12)
-void CSteamAPI::TriggerScreenshot(void) {
-#if _PATCHCONFIG_STEAM_API
-
-  if (!IsUsable()) return;
-  STEAM_DEBUG1("CSteamAPI::TriggerScreenshot()\n");
-
-  SteamScreenshots()->TriggerScreenshot();
-
-#endif
 };
 
 // Display text input for game controllers in big picture mode that doesn't obstruct a text field of some size
@@ -391,10 +364,8 @@ void CSteamAPI::OnGameJoinRequested(GameRichPresenceJoinRequested_t *pCallback) 
 void CSteamAPI::OnScreenshotRequested(ScreenshotRequested_t *pCallback) {
   STEAM_DEBUG1("CSteamAPI::OnScreenshotRequested() - ");
 
-  if (IScreenshots::Request(iiScreenshot)) {
-    bScreenshotRequested = TRUE;
+  if (IScreenshots::Request()) {
     STEAM_DEBUG1("OK: Took a new screenshot\n");
-
   } else {
     STEAM_DEBUG1("ERROR: No drawport to make a screenshot from\n");
   }
