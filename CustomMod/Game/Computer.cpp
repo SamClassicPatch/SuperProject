@@ -1193,10 +1193,12 @@ void CGame::ComputerRender(CDrawPort *pdp)
     return;
   }
 
+  CTimerValue tvPatch(ClassicsCore_GetInitTime()); // [Cecil]
+
   // if computer is not active
   if (_pGame->gm_csComputerState==CS_OFF) {
     // just remember time
-    tvComputerLast = _pTimer->GetHighPrecisionTimer();
+    tvComputerLast = _pTimer->GetHighPrecisionTimer() - tvPatch;
     // if a player wants computer
     if (_ppenPlayer!=NULL) {
       // start turning on
@@ -1208,7 +1210,7 @@ void CGame::ComputerRender(CDrawPort *pdp)
   }
  
   // calculate up-down speed to be independent of refresh speed
-  CTimerValue tvNow   = _pTimer->GetHighPrecisionTimer();
+  CTimerValue tvNow   = _pTimer->GetHighPrecisionTimer() - tvPatch;
   CTimerValue tvDelta = tvNow - tvComputerLast;
   tvComputerLast      = tvNow;
   FLOAT fFadeSpeed    = (FLOAT)(tvDelta.GetSeconds() / tmComputerFade);
