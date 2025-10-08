@@ -97,6 +97,48 @@ static void SetVanillaBinDirectory(void) {
 };
 
 void ClassicsPatch_Setup(EClassicsPatchAppType eApplicationType) {
+  // Make sure the right patch build has been installed
+  BOOL bWrongBuild = (_ulEngineBuildMajor != _SE_BUILD_MAJOR || _ulEngineBuildMinor != _SE_BUILD_MINOR);
+  BOOL bDetectedTSE = CHOOSE_FOR_GAME(FALSE, TRUE, TRUE);
+
+  // Check for TSE entities in case engine versions match
+  {
+    // Load any valid Entities library
+    CTString fnmDLL = IDir::AppPath() + IDir::FullLibPath("Entities");
+    HMODULE hDLL = LoadLibraryA(fnmDLL.str_String);
+
+    if (hDLL == NULL) {
+      fnmDLL = IDir::AppPath() + IDir::FullLibPath("EntitiesMP");
+      hDLL = LoadLibraryA(fnmDLL.str_String);
+    }
+
+    if (hDLL != NULL) {
+      // Check for the presence of various TSE entities
+      void *pClass1 = GetProcAddress(hDLL, "CAirElemental_DLLClass");
+      void *pClass2 = GetProcAddress(hDLL, "CExotechLarva_DLLClass");
+      void *pClass3 = GetProcAddress(hDLL, "CSummoner_DLLClass");
+      void *pClass4 = GetProcAddress(hDLL, "CSanta_DLLClass");
+      void *pClass5 = GetProcAddress(hDLL, "CTimeController_DLLClass");
+
+      bDetectedTSE = (pClass1 != NULL || pClass2 != NULL || pClass3 != NULL || pClass4 != NULL || pClass5 != NULL);
+      FreeLibrary(hDLL);
+    }
+
+    // Deem it the wrong build if:
+    // - TSE entities are detected by TFE build
+    // - TSE entities aren't detected by TSE build
+    bWrongBuild |= CHOOSE_FOR_GAME(bDetectedTSE, !bDetectedTSE, !bDetectedTSE);
+  }
+
+  if (bWrongBuild && !IFiles::IsReadable((IDir::AppPath() + "BypassBuildCheck").str_String)) {
+    FatalError("You seem to have installed the wrong build of Classics Patch for your game!\n"
+      "Expected Serious Engine version: %u.%u (%s)\n"
+      "Detected Serious Engine version: %u.%u (%s)\n\n"
+      "Make sure that you have downloaded and installed the correct build for the game and the engine version!",
+      _SE_BUILD_MAJOR, _SE_BUILD_MINOR, CHOOSE_FOR_GAME("TFE", "TSE", "TSE"),
+      _ulEngineBuildMajor, _ulEngineBuildMinor, bDetectedTSE ? "TSE" : "TFE");
+  }
+
   // Set application type
   _eAppType = eApplicationType;
 
