@@ -259,35 +259,34 @@ BOOL CSteamAPI::OpenWebPage(const char *strURL) {
 
 // Set drawport that will be used for making Steam screenshots from within the game
 // This makes Steam send screenshot requests instead of capturing the entire game window automatically
-void CSteamAPI::SetScreenshotHook(CDrawPort *pdpScreenshotSurface) {
+void CSteamAPI::SetScreenshotHook(BOOL bState) {
 #if _PATCHCONFIG_STEAM_API
 
   if (!IsUsable()) return;
 
   // Update the hook state only if it doesn't match
-  bool bHookScreenshots = (steam_bHookScreenshots && pdpScreenshotSurface != NULL);
+  bool bHookScreenshots = (steam_bHookScreenshots && bState);
 
   if (SteamScreenshots()->IsScreenshotsHooked() != bHookScreenshots) {
     SteamScreenshots()->HookScreenshots(bHookScreenshots);
 
     STEAM_DEBUG1("CSteamAPI::SetScreenshotHook(%s) - hook %s\n",
-      (pdpScreenshotSurface != NULL ? "<valid drawport>" : "<no drawport>"),
-      (bHookScreenshots ? "enabled" : "disabled"));
+      (bState ? "true" : "false"), (bHookScreenshots ? "enabled" : "disabled"));
   }
 
 #endif // _PATCHCONFIG_STEAM_API
 };
 
 // Make a custom Steam screenshot by manually writing a bitmap from image info
-void CSteamAPI::WriteScreenshot(CImageInfo &ii) {
+BOOL CSteamAPI::WriteScreenshot(CImageInfo &ii) {
 #if _PATCHCONFIG_STEAM_API
 
-  if (!IsUsable()) return;
+  if (!IsScreenshotsHooked()) return FALSE;
   STEAM_DEBUG1("CSteamAPI::WriteScreenshot() - ");
 
   if (ii.ii_BitsPerPixel != 24) {
     STEAM_DEBUG1("ERROR: Screenshot is not in 24-bit format\n");
-    return;
+    return FALSE;
   }
 
   const PIX pixW = ii.ii_Width;
@@ -295,7 +294,7 @@ void CSteamAPI::WriteScreenshot(CImageInfo &ii) {
 
   if (pixW <= 0 || pixH <= 0) {
     STEAM_DEBUG1("ERROR: Invalid screenshot dimensions\n");
-    return;
+    return FALSE;
   }
 
   const ULONG ulSize = pixW * pixH * (ii.ii_BitsPerPixel / 8);
@@ -319,7 +318,10 @@ void CSteamAPI::WriteScreenshot(CImageInfo &ii) {
   }
 
   STEAM_DEBUG1("OK: Wrote screenshot\n");
+  return TRUE;
 
+#else
+  return FALSE;
 #endif // _PATCHCONFIG_STEAM_API
 };
 

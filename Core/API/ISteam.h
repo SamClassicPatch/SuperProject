@@ -94,12 +94,12 @@ class CORE_API CSteamAPI {
     // Activate Steam Overlay web browser directly to the specified URL
     BOOL OpenWebPage(const char *strURL);
 
-    // Set drawport that will be used for making Steam screenshots from within the game
+    // Toggle whether Steam's screenshot system should be hooked by the game
     // This makes Steam send screenshot requests instead of capturing the entire game window automatically
-    void SetScreenshotHook(CDrawPort *pdpScreenshotSurface);
+    void SetScreenshotHook(BOOL bState);
 
     // Make a custom Steam screenshot by manually writing a bitmap from image info
-    void WriteScreenshot(CImageInfo &ii);
+    BOOL WriteScreenshot(CImageInfo &ii);
 
     // Display text input for game controllers in big picture mode that doesn't obstruct a text field of some size
     BOOL ShowFloatingGamepadTextInput(PIX pixFieldX, PIX pixFieldY, PIX pixFieldW, PIX pixFieldH);

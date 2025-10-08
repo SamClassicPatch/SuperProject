@@ -116,12 +116,13 @@ static ShotKeyConversion _aShotKeys[] = {
   { KID_ENTER           , VK_RETURN  },
   { KID_SPACE           , VK_SPACE   },
 
-  { KID_LSHIFT          , VK_LSHIFT   },
-  { KID_RSHIFT          , VK_RSHIFT   },
-  { KID_LCONTROL        , VK_LCONTROL },
-  { KID_RCONTROL        , VK_RCONTROL },
-  { KID_LALT            , VK_LMENU    },
-  { KID_RALT            , VK_RMENU    },
+  // [Cecil] NOTE: No distinction between left and right keys
+  { KID_LSHIFT          , VK_SHIFT   },
+  { KID_RSHIFT          , VK_SHIFT   },
+  { KID_LCONTROL        , VK_CONTROL },
+  { KID_RCONTROL        , VK_CONTROL },
+  { KID_LALT            , VK_MENU    },
+  { KID_RALT            , VK_MENU    },
 
   { KID_ARROWUP         , VK_UP       },
   { KID_ARROWDOWN       , VK_DOWN     },
@@ -1722,7 +1723,7 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
       }
 
       // [Cecil] Check if the configured screenshot key has been pressed (if not rebinding keys and Steam screenshots aren't hooked)
-      if (msg.message == WM_KEYDOWN && _eEditingValue != VED_KEYBIND && !GetSteamAPI()->IsScreenshotsHooked())
+      if ((msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) && _eEditingValue != VED_KEYBIND && !GetSteamAPI()->IsScreenshotsHooked())
       {
         for (INDEX iShotKey = 0; iShotKey < ARRAYCOUNT(_aShotKeys); iShotKey++) {
           ShotKeyConversion &kc = _aShotKeys[iShotKey];

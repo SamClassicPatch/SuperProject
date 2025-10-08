@@ -108,7 +108,7 @@ void SetHook(CDrawPort *pdpScreenshotSurface) {
   _pdpScreenshot = pdpScreenshotSurface;
 
   // Hook Steam screenshots
-  GetSteamAPI()->SetScreenshotHook(pdpScreenshotSurface);
+  GetSteamAPI()->SetScreenshotHook(pdpScreenshotSurface != NULL);
 };
 
 // Capture screenshot from the current drawport
@@ -199,13 +199,13 @@ static void WriteScreenshot_t(CImageInfo &ii, const CTString &fnmScreenshot, IND
   }
 };
 
-// Process one screenshot
-static DWORD __stdcall ProcessScreenshot(LPVOID pData) {
+// Process one buffered screenshot
+static DWORD __stdcall ProcessBufferedScreenshot(LPVOID pData) {
   SBufferedScreenshot *pbs = (SBufferedScreenshot *)pData;
 
-  // If the current buffer needs to be written
+  // If the current screenshot can be written
   if (pbs->bWrite && pbs->ii.ii_Picture != NULL) {
-    // Save the screenshot to disk and then free it
+    // Save it to disk and then free it
     try {
       WriteScreenshot_t(pbs->ii, pbs->fnm, pbs->iFormat);
       CPrintF(LOCALIZE("screen shot: %s\n"), pbs->fnm.str_String);
@@ -236,6 +236,9 @@ BOOL Request(void) {
 
   if (pbs == NULL) return FALSE;
 
+  // Clear the slot just in case
+  pbs->Clear();
+
   BOOL bResult;
   const BOOL bInMenu = (GetGameAPI()->IsHooked() ? GetGameAPI()->IsMenuOn() : FALSE);
 
@@ -248,9 +251,9 @@ BOOL Request(void) {
     bResult = Capture(pbs->ii);
   }
 
-  // If a screenshot has been captured
+  // If the screenshot has been captured
   if (bResult) {
-    CPutString(TRANS("Taking a screenshot...\n"));
+    CPutString(TRANS("Saving a new screenshot...\n"));
 
     // Ask Steam to save it on its own
     GetSteamAPI()->WriteScreenshot(pbs->ii);
@@ -260,9 +263,9 @@ BOOL Request(void) {
     pbs->fnm = MakeScreenshotName(sam_iScreenshotFormat);
     pbs->bWrite = TRUE;
 
-    // Create a separate thread for writing screenshots to disk
+    // Create a separate thread for writing it to disk
     DWORD dwThreadID;
-    HANDLE hThread = CreateThread(NULL, 0, &ProcessScreenshot, (LPVOID)pbs, 0, &dwThreadID);
+    HANDLE hThread = CreateThread(NULL, 0, &ProcessBufferedScreenshot, (LPVOID)pbs, 0, &dwThreadID);
     if (hThread != NULL) CloseHandle(hThread);
   }
 
