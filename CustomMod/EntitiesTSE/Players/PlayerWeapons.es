@@ -967,7 +967,7 @@ functions:
       GetCannonPos(vPos(1), vPos(2), vPos(3), fWeaponFOV);
     }
 
-    RenderPos(vPos, vRot, vDummy, fWeaponFOV);
+    RenderPos(m_iCurrentWeapon, vPos, vRot, vDummy, fWeaponFOV);
 
     // store FOV for Crosshair
     const FLOAT fFOV = ((CPerspectiveProjection3D &)prProjection).FOVL();
@@ -1909,7 +1909,7 @@ functions:
 
     // [Cecil] Adjust render position
     FLOAT fFOV = wpn_fFOV[m_iCurrentWeapon];
-    RenderPos(plPos.pl_PositionVector, plPos.pl_OrientationAngle, vPos, fFOV);
+    RenderPos(m_iCurrentWeapon, plPos.pl_PositionVector, plPos.pl_OrientationAngle, vPos, fFOV);
 
     // weapon offset
     if (!m_bMirrorFire) {

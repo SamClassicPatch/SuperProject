@@ -855,7 +855,7 @@ functions:
       GetCannonPos(vPos(1), vPos(2), vPos(3), fWeaponFOV);
     }
 
-    RenderPos(vPos, vRot, vDummy, fWeaponFOV);
+    RenderPos(m_iCurrentWeapon, vPos, vRot, vDummy, fWeaponFOV);
 
     // store FOV for Crosshair
     const FLOAT fFOV = ((CPerspectiveProjection3D &)prProjection).FOVL();

@@ -33,7 +33,7 @@ inline BOOL MirrorState(void) {
 };
 
 // Get weapon position for rendering
-void RenderPos(FLOAT3D &vPos, FLOAT3D &vRot, FLOAT3D &vFire, FLOAT &fFOV);
+void RenderPos(INDEX iWeapon, FLOAT3D &vPos, FLOAT3D &vRot, FLOAT3D &vFire, FLOAT &fFOV);
 
 // Get weapon position for Cannon depending on the game
 void GetCannonPos(FLOAT &fX, FLOAT &fY, FLOAT &fZ, FLOAT &fFOV);

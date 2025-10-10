@@ -22,10 +22,23 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "WeaponCustomization.h"
 
-// Weapon viewmodel customization
-static FLOAT wpn_afViewPos[3] = { 1.0f, 1.0f, 1.0f };
-static FLOAT wpn_afViewRot[3] = { 1.0f, 1.0f, 1.0f };
+// Global viewmodel customization
+static FLOAT wpn_fViewPosX = 1.0f;
+static FLOAT wpn_fViewPosY = 1.0f;
+static FLOAT wpn_fViewPosZ = 1.0f;
+static FLOAT wpn_fViewRotH = 1.0f;
+static FLOAT wpn_fViewRotP = 1.0f;
+static FLOAT wpn_fViewRotB = 1.0f;
 static FLOAT wpn_fViewFOV = 1.0f;
+
+// Per weapon viewmodel customization
+static FLOAT wpn_afAddPosX[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static FLOAT wpn_afAddPosY[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static FLOAT wpn_afAddPosZ[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static FLOAT wpn_afAddPosH[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static FLOAT wpn_afAddPosP[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static FLOAT wpn_afAddPosB[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static FLOAT wpn_afAddFOV [20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 static INDEX wpn_bTSECannon = CHOOSE_FOR_GAME(FALSE, TRUE, TRUE);
 
@@ -37,18 +50,45 @@ INDEX wpn_bPowerUpParticles = FALSE;
 
 // Reset weapon position
 static void ResetWeaponPosition(void) {
-  for (INDEX i = 0; i < 3; i++) {
-    wpn_afViewPos[i] = 1.0f;
-    wpn_afViewRot[i] = 1.0f;
+  wpn_fViewPosX = 1.0f;
+  wpn_fViewPosY = 1.0f;
+  wpn_fViewPosZ = 1.0f;
+  wpn_fViewRotH = 1.0f;
+  wpn_fViewRotP = 1.0f;
+  wpn_fViewRotB = 1.0f;
+  wpn_fViewFOV  = 1.0f;
+};
+
+static void ResetPerWeaponPositions(void) {
+  for (INDEX i = 0; i < 20; i++) {
+    wpn_afAddPosX[i] = 0.0f;
+    wpn_afAddPosY[i] = 0.0f;
+    wpn_afAddPosZ[i] = 0.0f;
+    wpn_afAddPosH[i] = 0.0f;
+    wpn_afAddPosP[i] = 0.0f;
+    wpn_afAddPosB[i] = 0.0f;
+    wpn_afAddFOV [i] = 0.0f;
   }
-  wpn_fViewFOV = 1.0f;
 };
 
 static void DeclareWeaponCustomizationSymbols(void) {
-  _pShell->DeclareSymbol("persistent user FLOAT wpn_afViewPos[3];", &wpn_afViewPos);
-  _pShell->DeclareSymbol("persistent user FLOAT wpn_afViewRot[3];", &wpn_afViewRot);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_fViewPosX;", &wpn_fViewPosX);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_fViewPosY;", &wpn_fViewPosY);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_fViewPosZ;", &wpn_fViewPosZ);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_fViewRotH;", &wpn_fViewRotH);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_fViewRotP;", &wpn_fViewRotP);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_fViewRotB;", &wpn_fViewRotB);
   _pShell->DeclareSymbol("persistent user FLOAT wpn_fViewFOV;", &wpn_fViewFOV);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_afAddPosX[20];", &wpn_afAddPosX);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_afAddPosY[20];", &wpn_afAddPosY);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_afAddPosZ[20];", &wpn_afAddPosZ);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_afAddPosH[20];", &wpn_afAddPosH);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_afAddPosP[20];", &wpn_afAddPosP);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_afAddPosB[20];", &wpn_afAddPosB);
+  _pShell->DeclareSymbol("persistent user FLOAT wpn_afAddFOV[20];", &wpn_afAddFOV);
+
   _pShell->DeclareSymbol("user void ResetWeaponPosition(void);", &ResetWeaponPosition);
+  _pShell->DeclareSymbol("user void ResetPerWeaponPositions(void);", &ResetPerWeaponPositions);
 
   _pShell->DeclareSymbol("persistent user INDEX wpn_bTSECannon;", &wpn_bTSECannon);
   _pShell->DeclareSymbol("persistent user INDEX wpn_bViewMirrored;", &wpn_bViewMirrored);
@@ -59,7 +99,10 @@ static void DeclareWeaponCustomizationSymbols(void) {
 };
 
 // Get weapon position for rendering
-void RenderPos(FLOAT3D &vPos, FLOAT3D &vRot, FLOAT3D &vFire, FLOAT &fFOV) {
+void RenderPos(INDEX iWeapon, FLOAT3D &vPos, FLOAT3D &vRot, FLOAT3D &vFire, FLOAT &fFOV) {
+  ASSERT(iWeapon >= 0 && iWeapon < 20);
+  iWeapon = Clamp(iWeapon, (INDEX)0, (INDEX)19);
+
   // Mirror the position
   if (MirrorState()) {
     FLOATmatrix3D mRot;
@@ -76,19 +119,28 @@ void RenderPos(FLOAT3D &vPos, FLOAT3D &vRot, FLOAT3D &vFire, FLOAT &fFOV) {
   }
 
   // Customizable position
-  vPos(1) *= wpn_afViewPos[0];
-  vPos(2) *= wpn_afViewPos[1];
-  vPos(3) *= wpn_afViewPos[2];
+  vPos(1) *= wpn_fViewPosX;
+  vPos(2) *= wpn_fViewPosY;
+  vPos(3) *= wpn_fViewPosZ;
+  vPos(1) += wpn_afAddPosX[iWeapon];
+  vPos(2) += wpn_afAddPosY[iWeapon];
+  vPos(3) += wpn_afAddPosZ[iWeapon];
 
-  vRot(1) *= wpn_afViewRot[0];
-  vRot(2) *= wpn_afViewRot[1];
-  vRot(3) *= wpn_afViewRot[2];
+  vRot(1) *= wpn_fViewRotH;
+  vRot(2) *= wpn_fViewRotP;
+  vRot(3) *= wpn_fViewRotB;
+  vRot(1) += wpn_afAddPosH[iWeapon];
+  vRot(2) += wpn_afAddPosP[iWeapon];
+  vRot(3) += wpn_afAddPosB[iWeapon];
 
-  vFire(1) *= wpn_afViewPos[0];
-  vFire(2) *= wpn_afViewPos[1];
-  vFire(3) *= wpn_afViewPos[2];
+  vFire(1) *= wpn_fViewPosX;
+  vFire(2) *= wpn_fViewPosY;
+  vFire(3) *= wpn_fViewPosZ;
+  vFire(1) += wpn_afAddPosX[iWeapon];
+  vFire(2) += wpn_afAddPosY[iWeapon];
+  vFire(3) += wpn_afAddPosZ[iWeapon];
 
-  fFOV = Clamp(fFOV * wpn_fViewFOV, 1.0f, 170.0f);
+  fFOV = Clamp(fFOV * wpn_fViewFOV + wpn_afAddFOV[iWeapon], 1.0f, 170.0f);
 };
 
 // Get weapon position for Cannon depending on the game
