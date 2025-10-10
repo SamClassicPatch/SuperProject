@@ -155,6 +155,11 @@ static void ParseAutoValue(CVarSetting *pvs, CTString &strLine) {
       ThrowF_t(TRANS("Range property requires three numbers: min, max and step"));
     }
 
+    // Use integer arithmetic to avoid rounding errors smaller than the epsilon (0.001)
+    const INDEX iMin = fMin * 1000;
+    const INDEX iMax = fMax * 1000;
+    const INDEX iStep = fStep * 1000;
+
     // 0 - numbers as is; 1 - min..max ratio
     INDEX iDisplayType = 0;
 
@@ -168,37 +173,24 @@ static void ParseAutoValue(CVarSetting *pvs, CTString &strLine) {
     }
 
     // Safety checks
-    if (fMin  < -1e6) ThrowF_t(TRANS("Range: min value is too low"));
-    if (fMax  > +1e6) ThrowF_t(TRANS("Range: max value is too high"));
-    if (fStep < 1e-3) ThrowF_t(TRANS("Range: step value is too low"));
+    if (iMin < (INDEX)-1e9) ThrowF_t(TRANS("Range: min value is too low"));
+    if (iMax > (INDEX)+1e9) ThrowF_t(TRANS("Range: max value is too high"));
+    if (iStep == 0) ThrowF_t(TRANS("Range: step value is too low"));
 
-    // Add each step from min to max (minus a small epsilon to avoid rounding errors)
-    for (DOUBLE fAdd = fMin; fAdd < fMax - 1e-3; fAdd += fStep) {
-      const DOUBLE fRatio = (fAdd - fMin) / (fMax - fMin);
-
+    // Add each step from min to max (inclusive)
+    for (INDEX iAdd = iMin; iAdd <= iMax; iAdd += iStep) {
       // E.g. "0.25" value and "25%" text
       CTString &strValue = pvs->vs_astrValues.Push();
-      strValue.PrintF("%g", fAdd);
+      strValue.PrintF("%g", (DOUBLE)iAdd * 0.001);
 
       CTString &strText = pvs->vs_astrTexts.Push();
 
       if (iDisplayType == 1) {
+        const DOUBLE fRatio = DOUBLE(iAdd - iMin) / DOUBLE(iMax - iMin);
         strText.PrintF("%d%%", (INDEX)floor(fRatio * 100.0 + 0.5));
       } else {
         strText = strValue;
       }
-    }
-
-    // Add maximum value
-    CTString &strMaxValue = pvs->vs_astrValues.Push();
-    strMaxValue.PrintF("%g", fMax);
-
-    CTString &strMaxText = pvs->vs_astrTexts.Push();
-
-    if (iDisplayType == 1) {
-      strMaxText = "100%";
-    } else {
-      strMaxText = strMaxValue;
     }
 
   // Add screen resolutions from the list file
