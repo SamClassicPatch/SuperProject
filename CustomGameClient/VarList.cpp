@@ -175,7 +175,7 @@ static void ParseAutoValue(CVarSetting *pvs, CTString &strLine) {
     // Safety checks
     if (iMin < (INDEX)-1e9) ThrowF_t(TRANS("Range: min value is too low"));
     if (iMax > (INDEX)+1e9) ThrowF_t(TRANS("Range: max value is too high"));
-    if (iStep == 0) ThrowF_t(TRANS("Range: step value is too low"));
+    if (iStep <= 0) ThrowF_t(TRANS("Range: step value is too low"));
 
     // Add each step from min to max (inclusive)
     for (INDEX iAdd = iMin; iAdd <= iMax; iAdd += iStep) {
