@@ -36,7 +36,8 @@ void CMGLevelCategory::OnActivate(void) {
 // Categories with level lists
 static INDEX _ctCats = 0;
 
-#define MAX_CUSTOM_CATEGORIES 10
+#define MAX_CUSTOM_CATEGORIES 17
+#define MAX_BIG_CATEGORIES    10
 
 // Initialize categories
 void CLevelCategoriesMenu::Initialize_t(void) {
@@ -119,8 +120,9 @@ void CLevelCategoriesMenu::AddCategory(INDEX i, const CTString &strName, const C
   mg.SetText(strName);
   mg.mg_strTip = strTip;
 
-  mg.mg_bfsFontSize = BFS_LARGE;
-  mg.mg_boxOnScreen = BoxBigRow(i - 1);
+  const BOOL bBig = (_ctCats <= MAX_BIG_CATEGORIES);
+  mg.mg_bfsFontSize = (bBig ? BFS_LARGE : BFS_MEDIUM);
+  mg.mg_boxOnScreen = (bBig ? BoxBigRow(i - 1) : BoxMediumRow(i - 2));
   mg.mg_pActivatedFunction = NULL;
 
   const INDEX ct = _ctCats + 1;
