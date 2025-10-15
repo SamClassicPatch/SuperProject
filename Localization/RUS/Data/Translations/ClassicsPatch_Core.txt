@@ -1,4 +1,4 @@
-183
+178
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -853,43 +853,11 @@ Follow current player: %s\n
 Следовать за игроком: %s\n
 
 \0\<
-Zoom in/out: %s\n
+Zoom in/out: %s/%s\n
 
 \0\>
-Приближение: %s\n
+Приближение: %s/%s\n
 
-\0\<
-Mouse Wheel
-\0\>
-Колесо мыши
-\0\<
-Tilt left/right: %s / %s\n
-
-\0\>
-Наклон влево/вправо: %s / %s\n
-
-\0\<
-Move down: %s / %s\n
-
-\0\>
-Движение вниз: %s / %s\n
-
-\0\<
-Move up: %s / %s\n
-
-\0\>
-Движение вверх: %s / %s\n
-
-\0\<
-Movement: %s / %s\n
-
-\0\>
-Передвижение: %s / %s\n
-
-\0\<
-Arrow keys
-\0\>
-Стрелочки
 \0\<
 Disabled
 \0\>
@@ -993,5 +961,11 @@ Cannot open another game controller due to all %d slots being occupied!\n
 
 \0\>
 (для формата уровня %d)\n
+
+\0\<
+Saving a new screenshot...\n
+
+\0\>
+Сохранение нового скриншота...\n
 
 \0\$

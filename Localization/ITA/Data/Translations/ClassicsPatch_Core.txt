@@ -1,4 +1,4 @@
-183
+177
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -853,43 +853,11 @@ Follow current player: %s\n
 Segui il giocatore corrente: %s\n
 
 \0\<
-Zoom in/out: %s\n
+Zoom in/out: %s/%s\n
 
 \0\>
-Ingrandisci/riduci: %s\n
+Ingrandisci/riduci: %s/%s\n
 
-\0\<
-Mouse Wheel
-\0\>
-Rotellina del mouse
-\0\<
-Tilt left/right: %s / %s\n
-
-\0\>
-Inclinazione a sinistra/destra: %s / %s\n
-
-\0\<
-Move down: %s / %s\n
-
-\0\>
-Muovi giù: %s / %s\n
-
-\0\<
-Move up: %s / %s\n
-
-\0\>
-Muovi sù: %s / %s\n
-
-\0\<
-Movement: %s / %s\n
-
-\0\>
-Movimento: %s / %s\n
-
-\0\<
-Arrow keys
-\0\>
-Tasti freccia
 \0\<
 Disabled
 \0\>

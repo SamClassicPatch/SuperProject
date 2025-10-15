@@ -1,9 +1,5 @@
-579
+640
 
-\0\<
-Common options
-\0\>
-Общие настройки
 \0\<
 The First Encounter directory
 \0\>
@@ -965,17 +961,13 @@ how transparent the crosshair should be
 \0\>
 насколько прозрачным должен быть прицел
 \0\<
-Player options
-\0\>
-Настройки игрока
-\0\<
 Vanilla FOV
 \0\>
 Стандартное поле зрения
 \0\<
-vanilla command for changing field of view in Cooperative mode
+vanilla command for changing field of view in Cooperative mode (plr_fFOV)
 \0\>
-стандартная команда для изменения поля зрения в кооперативном режиме
+стандартная команда для изменения поля зрения в кооперативном режиме (plr_fFOV)
 \0\<
 Decorated server names
 \0\>
@@ -993,9 +985,9 @@ Yes (only player view)
 \0\>
 Да (только для вида игрока)
 \0\<
-Advanced HUD
+Advanced HUD (AHUD)
 \0\>
-Расширенный интерфейс
+Расширенный интерфейс (AHUD)
 \0\<
 Replace HUD
 \0\>
@@ -1005,13 +997,17 @@ replace vanilla or modded HUD with the plugin one
 \0\>
 заменить стандартный или модифицированный интерфейс версией из плагина
 \0\<
-Vanilla
+Don't replace
 \0\>
-Стандартный
+Не заменять
 \0\<
-Vanilla and modded (experimental)
+Replace vanilla
 \0\>
-Станд. и из мода (экспериментальная функция)
+Заменить стандартный
+\0\<
+Replace vanilla and modded (experimental)
+\0\>
+Заменить станд. и из мода (экспериментальная функция)
 \0\<
 HUD theme
 \0\>
@@ -1033,9 +1029,9 @@ The Second Encounter
 \0\>
 Второе пришествие
 \0\<
-Screen edges X
+Screen edges X (AHUD)
 \0\>
-Край экрана X
+Край экрана X (AHUD)
 \0\<
 define how far the horizontal screen edges should be
 \0\>
@@ -1045,9 +1041,9 @@ define how far the horizontal screen edges should be
 \0\>
 5 (по умолчанию)
 \0\<
-Screen edges Y
+Screen edges Y (AHUD)
 \0\>
-Край экрана Y
+Край экрана Y (AHUD)
 \0\<
 define how far the vertical screen edges should be
 \0\>
@@ -1081,9 +1077,9 @@ Signal strength
 \0\>
 Сила сигнала
 \0\<
-Show ammo row
+Show ammo row (AHUD)
 \0\>
-Показать боеприпасы
+Показать боеприпасы (AHUD)
 \0\<
 display a row of available ammunition in the bottom right corner
 \0\>
@@ -1153,17 +1149,17 @@ colorize zoom wheel based on the health level of a target
 \0\>
 окрашивать снайперский прицел в зависимости от количества здоровья цели
 \0\<
-Show depleted ammo
+Show depleted ammo (AHUD)
 \0\>
-Отображать израсходованные боеприпасы
+Отображать израсходованные боеприпасы (AHUD)
 \0\<
 display icon in the ammunition row even when the weapon is out of ammo
 \0\>
 отображать иконку с боеприпасами, даже если они полностью израсходованы
 \0\<
-Show high score
+Show high score (AHUD)
 \0\>
-Отображать рекорд
+Отображать рекорд (AHUD)
 \0\<
 display high score on the top of the screen
 \0\>
@@ -1304,10 +1300,6 @@ Forbid vanilla clients
 make the server exclusive to clients with the patch for better compatibility
 \0\>
 сделать сервер эксклюзивным для клиентов с патчем для лучшей совместимости
-\0\<
-Game options
-\0\>
-Настройки игры
 \0\<
 Gameplay options
 \0\>
@@ -1613,9 +1605,9 @@ replace sniper bullets specifically
 \0\>
 чем заменить снайперские пули
 \0\<
-Show lives
+Show lives (AHUD)
 \0\>
-Показать жизни
+Показать жизни (AHUD)
 \0\<
 display amount of remaining lives above the messages
 \0\>
@@ -2316,4 +2308,256 @@ Axis press threshold
 threshold for moving any axis/stick to consider it as being "held down"
 \0\>
 порог перемещения любой оси или стика, чтобы считать его "нажатым"
+\0\<
+Weapon viewmodel
+\0\>
+Модель оружия
+\0\<
+Viewmodel position X
+\0\>
+Позиция оружия по оси X
+\0\<
+Viewmodel position Y
+\0\>
+Позиция оружия по оси Y
+\0\<
+Viewmodel position Z
+\0\>
+Позиция оружия по оси Z
+\0\<
+Viewmodel rotation H
+\0\>
+Поворот оружия по углу H
+\0\<
+Viewmodel rotation P
+\0\>
+Поворот оружия по углу P
+\0\<
+Viewmodel rotation B
+\0\>
+Поворот оружия по углу B
+\0\<
+Viewmodel FOV
+\0\>
+Угол обзора оружия
+\0\<
+multiply viewmodel FOV (wpn_fViewFOV)
+\0\>
+умножить угол обзора модели оружия (wpn_fViewFOV)
+\0\<
+Global screenshots
+\0\>
+Глобальные скриншоты
+\0\<
+Take screenshot
+\0\>
+Сделать скриншот
+\0\<
+Screenshot format
+\0\>
+Формат скриншота
+\0\<
+file format to save global screenshots in
+\0\>
+формат файла для сохранения глобальных скриншотов
+\0\<
+Camera properties
+\0\>
+Свойства камеры
+\0\<
+OCAM Info
+\0\>
+OCAM Информация
+\0\<
+display information about the observer camera while it's active
+\0\>
+отображать информацию о камера наблюдателя, пока она активна
+\0\<
+Only properties
+\0\>
+Только свойства
+\0\<
+Properties and controls
+\0\>
+Свойства и управление
+\0\<
+OCAM Demo speed control
+\0\>
+OCAM Контроль скорости демонстраций
+\0\<
+allow observer camera to control demo speed during playback
+\0\>
+разрешить камере наблюдателя контролировать скорость воспроизведения демонстраций
+\0\<
+OCAM Demo smooth movement
+\0\>
+OCAM Плавное передвижение в демо
+\0\<
+allow observer camera to move smoothly between recorded points during playback
+\0\>
+разрешить камере наблюдателя плавно двигаться между точками во время воспроизведения демонстраций
+\0\<
+OCAM Demo movement tension
+\0\>
+OCAM Напряжение передвижения в демо
+\0\<
+how smooth the camera movement should be during playback (lower value = more precision)
+\0\>
+насколько плавно камера должна передвигаться во время воспроизведения (меньшее значение - большая точность)
+\0\<
+OCAM FOV
+\0\>
+OCAM Угол обзора
+\0\<
+current field of view of the observer camera
+\0\>
+текущий угол обзора камеры наблюдателя
+\0\<
+OCAM Speed multiplier
+\0\>
+OCAM Множитель скорости
+\0\<
+observer camera movement speed
+\0\>
+скорость передвижения камеры наблюдателя
+\0\<
+OCAM Tilt angle multiplier
+\0\>
+OCAM Множитель угла наклона
+\0\<
+how much the observer camera should tilt left and right using the controls
+\0\>
+насколько камера наблюдателя должна наклоняться влево и вправо с помощью управления
+\0\<
+OCAM FOV change multiplier
+\0\>
+OCAM Множитель изменения угла обзора
+\0\<
+how fast to change the observer camera FOV using the controls
+\0\>
+насколько быстро менять угол обзора камеры наблюдателя с помощью управления
+\0\<
+OCAM Movement smoothing
+\0\>
+OCAM Сглаживание движения
+\0\<
+how much to multiply the camera speed by to make it move smoother
+\0\>
+насколько умножить скорость камеры для сглаживания ее движения
+\0\<
+OCAM Rotation smoothing
+\0\>
+OCAM Сглаживание поворота
+\0\<
+how much to multiply the camera speed by to make it rotate smoother
+\0\>
+насколько умножить скорость камеры для сглаживания ее поворота
+\0\<
+OCAM Follow distance
+\0\>
+OCAM Расстояние для следования
+\0\<
+how close to the current player the observer camera should be
+\0\>
+насколько близко камера наблюдателя должна придерживаться текущего игрока
+\0\<
+Camera controls
+\0\>
+Управление камерой
+\0\<
+Default OCAM controls
+\0\>
+Стандартное управление OCAM
+\0\<
+allow controlling the observer camera using the default controls that can be rebound below
+\0\>
+разрешить управление камерой наблюдателя с помощью кнопок, которые можно переназначить ниже
+\0\<
+OCAM Toggle
+\0\>
+OCAM Переключить
+\0\<
+OCAM Tilt left
+\0\>
+OCAM Наклон влево
+\0\<
+OCAM Tilt right
+\0\>
+OCAM Наклон вправо
+\0\<
+OCAM Zoom in
+\0\>
+OCAM Приблизиться
+\0\<
+OCAM Zoom out
+\0\>
+OCAM Отдалиться
+\0\<
+OCAM Teleport
+\0\>
+OCAM Телепортация
+\0\<
+OCAM Reset
+\0\>
+OCAM Сброс
+\0\<
+OCAM Follow player
+\0\>
+OCAM Следование за игроком
+\0\<
+OCAM Position snapshot
+\0\>
+OCAM Снимок позиции
+\0\<
+OCAM Screenshot resolution
+\0\>
+OCAM Разрешение скриншота
+\0\<
+Camera movement
+\0\>
+Движение камеры
+\0\<
+OCAM Move forward
+\0\>
+OCAM Движение вперед
+\0\<
+OCAM Move backward
+\0\>
+OCAM Движение назад
+\0\<
+OCAM Move left
+\0\>
+OCAM Движение влево
+\0\<
+OCAM Move right
+\0\>
+OCAM Движение вправо
+\0\<
+OCAM Move up
+\0\>
+OCAM Движение вверх
+\0\<
+OCAM Move down
+\0\>
+OCAM Движение вниз
+\0\<
+Camera movement (alt)
+\0\>
+Движение камеры (втор.)
+\0\<
+Menu options
+\0\>
+Настройки меню
+\0\<
+Visual options
+\0\>
+Визуальные настройки
+\0\<
+Weapon viewmodel customization
+\0\>
+Настройка модели оружия от первого лица
+\0\<
+customize viewmodel position
+\0\>
+настроить позицию модели оружия от первого лица
 \0\$

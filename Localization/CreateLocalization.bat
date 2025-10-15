@@ -13,67 +13,69 @@ set PACKSCRIPT=Assemble%LANGCODE%.bat
 echo.
 echo Copying "Controls" files...
 
-xcopy "%RESDIR%Controls\06-ClassicsPatchCtrl1.des" "%LOCALEDIR%Controls\"
-xcopy "%RESDIR%Controls\06-ClassicsPatchCtrl2.des" "%LOCALEDIR%Controls\"
-xcopy "%RESDIR%Controls\06-ClassicsPatchCtrl3.des" "%LOCALEDIR%Controls\"
-xcopy "%RESDIR%Controls\06-ClassicsPatchCtrl4.des" "%LOCALEDIR%Controls\"
+xcopy /y "%RESDIR%Controls\06-ClassicsPatchCtrl1.des" "%LOCALEDIR%Controls\"
+xcopy /y "%RESDIR%Controls\06-ClassicsPatchCtrl2.des" "%LOCALEDIR%Controls\"
+xcopy /y "%RESDIR%Controls\06-ClassicsPatchCtrl3.des" "%LOCALEDIR%Controls\"
+xcopy /y "%RESDIR%Controls\06-ClassicsPatchCtrl4.des" "%LOCALEDIR%Controls\"
 
 :: Data
 echo.
 echo Copying "Data" files...
 
-xcopy "%RESDIR%Data\ClassicsPatch\LevelCategories\00_TFE.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
-xcopy "%RESDIR%Data\ClassicsPatch\LevelCategories\01_TSE.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
-xcopy "%RESDIR%Data\ClassicsPatch\LevelCategories\02_SSR.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
+xcopy /y "%RESDIR%Data\ClassicsPatch\LevelCategories\00_TFE.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
+xcopy /y "%RESDIR%Data\ClassicsPatch\LevelCategories\01_TSE.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
+xcopy /y "%RESDIR%Data\ClassicsPatch\LevelCategories\02_SSR.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
 
 :: Scripts
 echo.
 echo Copying "Scripts" files...
 
-xcopy "%RESDIR%Scripts\Addons\ClassicsPatch_Full.des"                  "%LOCALEDIR%Scripts\Addons\"
-xcopy "%RESDIR%Scripts\Addons\ClassicsPatch_Minimal.des"               "%LOCALEDIR%Scripts\Addons\"
-xcopy "%RESDIR%Scripts\Addons\ClassicsPatch_Vanilla.des"               "%LOCALEDIR%Scripts\Addons\"
+xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatch_Full.des"                  "%LOCALEDIR%Scripts\Addons\"
+xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatch_Minimal.des"               "%LOCALEDIR%Scripts\Addons\"
+xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatch_Vanilla.des"               "%LOCALEDIR%Scripts\Addons\"
 
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\00_Green.des"     "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\01_Blue.des"      "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\02_Yellow.des"    "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\03_Bleached.des"  "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\04_Demonic.des"   "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\05_Retro.des"     "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\06_Candy.des"     "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\07_BlackMesa.des" "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\08_Inverted.des"  "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\00_Green.des"     "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\01_Blue.des"      "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\02_Yellow.des"    "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\03_Bleached.des"  "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\04_Demonic.des"   "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\05_Retro.des"     "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\06_Candy.des"     "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\07_BlackMesa.des" "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\08_Inverted.des"  "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
 
-xcopy "%RESDIR%Scripts\ClassicsPatch\Themes\00_SyncWithHUD.des"        "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\Themes\01_TFE.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\Themes\02_Warped.des"             "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\Themes\03_TSE.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
-xcopy "%RESDIR%Scripts\ClassicsPatch\Themes\04_SSR.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\Themes\00_SyncWithHUD.des"        "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\Themes\01_TFE.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\Themes\02_Warped.des"             "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\Themes\03_TSE.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\Themes\04_SSR.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
 
-xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\00_ConfigProperties.des"     "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\01_PatchSettings.des"        "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\02_ServerSettings.des"       "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\03_GameplaySettings.des"     "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\20_PluginSettings.des"       "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\50_ModSettings.des"          "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
-xcopy "%RESDIR%Scripts\Menu\ClassicsPatch\90_VanillaSettings.des"      "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\00_ConfigProperties.des"     "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\01_CommonSettings.des"       "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\02_HUD.des"                  "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\03_ObserverCamera.des"       "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\04_OtherSettings.des"        "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\20_PluginSettings.des"       "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\50_ModSettings.des"          "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\51_ServerSettings.des"       "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
+xcopy /y "%RESDIR%Scripts\Menu\ClassicsPatch\52_GameplaySettings.des"     "%LOCALEDIR%Scripts\Menu\ClassicsPatch\"
 
-xcopy "%RESDIR%Scripts\NetSettings\__ClassicsPatch.des"                "%LOCALEDIR%Scripts\NetSettings\"
+xcopy /y "%RESDIR%Scripts\NetSettings\__ClassicsPatch.des"                "%LOCALEDIR%Scripts\NetSettings\"
 
 :: Translation tables
 echo.
 echo Creating translation tables...
 
-xcopy "%MAINDIR%Empty.txt" "%LOCALEDIR%Data\Translations\"
+xcopy /y "%MAINDIR%Empty.txt" "%LOCALEDIR%Data\Translations\"
 rename "%LOCALEDIR%Data\Translations\Empty.txt" "ClassicsPatch_Core.txt"
 
-xcopy "%MAINDIR%Empty.txt" "%LOCALEDIR%Data\Translations\"
+xcopy /y "%MAINDIR%Empty.txt" "%LOCALEDIR%Data\Translations\"
 rename "%LOCALEDIR%Data\Translations\Empty.txt" "ClassicsPatch_Game.txt"
 
-xcopy "%MAINDIR%Empty.txt" "%LOCALEDIR%Data\Translations\"
+xcopy /y "%MAINDIR%Empty.txt" "%LOCALEDIR%Data\Translations\"
 rename "%LOCALEDIR%Data\Translations\Empty.txt" "ClassicsPatch_Mod.txt"
 
-xcopy "%MAINDIR%Empty.txt" "%LOCALEDIR%Data\Translations\"
+xcopy /y "%MAINDIR%Empty.txt" "%LOCALEDIR%Data\Translations\"
 rename "%LOCALEDIR%Data\Translations\Empty.txt" "ClassicsPatch_Scripts.txt"
 
 :: Translation script
@@ -130,7 +132,7 @@ echo @echo off> %PACKSCRIPT%
 
 echo.>> %PACKSCRIPT%
 echo pushd %%~dp0>> %PACKSCRIPT%
-echo del SE1_ClassicsPatch_%LANGCODE%.gro /q>> %PACKSCRIPT%
+echo if exist SE1_ClassicsPatch_%LANGCODE%.gro del SE1_ClassicsPatch_%LANGCODE%.gro /q>> %PACKSCRIPT%
 
 echo.>> %PACKSCRIPT%
 echo pushd %LANGCODE%\>> %PACKSCRIPT%

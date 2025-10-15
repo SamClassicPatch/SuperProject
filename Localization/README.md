@@ -7,6 +7,9 @@ Each localization sits under its own folder named after a language code accordin
 
 Localization creation tools are located under the `ExtractionTool/` directory, which is a **Depend** utility that ships with **Serious Sam: The Second Encounter v1.07** by default.
 
+> [!IMPORTANT]
+> When localizing strings in text files, make sure to always save them as ANSI (e.g. with a Windows-1252 encoding for European languages) and **never** as UTF-8 because the game only recognizes single-byte character encodings!
+
 # How to create new languages
 
 1. Run `CreateLocalization.bat` script and type in the language code (e.g. `HRV`). This script will copy all the files that need to be translated from English and also create empty translation tables.

@@ -1,9 +1,5 @@
-579
+576
 
-\0\<
-Common options
-\0\>
-Opzioni comuni
 \0\<
 The First Encounter directory
 \0\>
@@ -965,17 +961,13 @@ how transparent the crosshair should be
 \0\>
 specifica quanto dovrebbe essere trasparente il mirino
 \0\<
-Player options
-\0\>
-Opzioni del giocatore
-\0\<
 Vanilla FOV
 \0\>
 Campo visivo originale
 \0\<
-vanilla command for changing field of view in Cooperative mode
+vanilla command for changing field of view in Cooperative mode (plr_fFOV)
 \0\>
-comando originale per modificare il campo visivo in modalità Cooperativa
+comando originale per modificare il campo visivo in modalità Cooperativa (plr_fFOV)
 \0\<
 Decorated server names
 \0\>
@@ -993,9 +985,9 @@ Yes (only player view)
 \0\>
 Sì (solo visuale giocatore)
 \0\<
-Advanced HUD
+Advanced HUD (AHUD)
 \0\>
-HUD avanzato
+HUD avanzato (AHUD)
 \0\<
 Replace HUD
 \0\>
@@ -1005,13 +997,13 @@ replace vanilla or modded HUD with the plugin one
 \0\>
 sostituisce l'HUD originale o modificato con quello del componente aggiuntivo
 \0\<
-Vanilla
+Replace vanilla
 \0\>
-Originale
+Sostituisci originale
 \0\<
-Vanilla and modded (experimental)
+Replace vanilla and modded (experimental)
 \0\>
-Originale e modificato (sperimentale)
+Sostituisci originale e modificato (sperimentale)
 \0\<
 HUD theme
 \0\>
@@ -1033,9 +1025,9 @@ The Second Encounter
 \0\>
 The Second Encounter
 \0\<
-Screen edges X
+Screen edges X (AHUD)
 \0\>
-Bordi dello schermo X
+Bordi dello schermo X (AHUD)
 \0\<
 define how far the horizontal screen edges should be
 \0\>
@@ -1045,9 +1037,9 @@ definisce quanto devono essere distanti i bordi orizzontali dello schermo
 \0\>
 5 (predefinito)
 \0\<
-Screen edges Y
+Screen edges Y (AHUD)
 \0\>
-Bordi dello schermo Y
+Bordi dello schermo Y (AHUD)
 \0\<
 define how far the vertical screen edges should be
 \0\>
@@ -1081,9 +1073,9 @@ Signal strength
 \0\>
 Potenza del segnale
 \0\<
-Show ammo row
+Show ammo row (AHUD)
 \0\>
-Mostra le munizioni
+Mostra le munizioni (AHUD)
 \0\<
 display a row of available ammunition in the bottom right corner
 \0\>
@@ -1153,17 +1145,17 @@ colorize zoom wheel based on the health level of a target
 \0\>
 Colora il mirino del fucile di precisione in base alla salute del bersaglio
 \0\<
-Show depleted ammo
+Show depleted ammo (AHUD)
 \0\>
-Mostra munizioni esaurite
+Mostra munizioni esaurite (AHUD)
 \0\<
 display icon in the ammunition row even when the weapon is out of ammo
 \0\>
 visualizza l'icona delle munizioni anche quando l'arma è senza munizioni
 \0\<
-Show high score
+Show high score (AHUD)
 \0\>
-Mostra punteggio
+Mostra punteggio (AHUD)
 \0\<
 display high score on the top of the screen
 \0\>
@@ -1304,10 +1296,6 @@ Vieta client senza Classics Patch
 make the server exclusive to clients with the patch for better compatibility
 \0\>
 per la migliore compatibilità, rende il server esclusivo per i client con la patch
-\0\<
-Game options
-\0\>
-Opzioni di gioco
 \0\<
 Gameplay options
 \0\>
@@ -1613,9 +1601,9 @@ replace sniper bullets specifically
 \0\>
 sostituisce i proiettili di precisione
 \0\<
-Show lives
+Show lives (AHUD)
 \0\>
-Mostra la salute
+Mostra la salute (AHUD)
 \0\<
 display amount of remaining lives above the messages
 \0\>
