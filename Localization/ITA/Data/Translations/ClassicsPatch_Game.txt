@@ -1,4 +1,4 @@
-90
+92
 
 \0\<
 Window
@@ -269,18 +269,6 @@ Joining a game via Steam: %s\n
 Partecipa ad una partita tramite Steam: %s\n
 
 \0\<
-AutoValue: Unknown variable '%s'
-\0\>
-AutoValue: Variabile sconosciuta '%s'
-\0\<
-AutoValue: Expected display adapter index
-\0\>
-AutoValue: Previsto l'indice della scheda grafica
-\0\<
-AutoValue: Cannot load resolution list
-\0\>
-AutoValue: Impossibile caricare l'elenco delle risoluzioni
-\0\<
 Range: step value is too low
 \0\>
 Range: il valore di incremento è troppo basso
@@ -296,6 +284,18 @@ Range: il valore minimo è troppo basso
 Range property requires three numbers: min, max and step
 \0\>
 La proprietà "Range" richiede tre valori: minimo, massimo e incremento
+\0\<
+AutoValue: Unknown variable '%s'
+\0\>
+AutoValue: Variabile sconosciuta '%s'
+\0\<
+AutoValue: Expected display adapter index
+\0\>
+AutoValue: Previsto l'indice della scheda grafica
+\0\<
+AutoValue: Cannot load resolution list
+\0\>
+AutoValue: Impossibile caricare l'elenco delle risoluzioni
 \0\<
 PROPERTIES
 \0\>
@@ -435,4 +435,12 @@ C'è amore nell'aria? SBAGLIATO! Fumo e odore di napalm aleggiano\n
 nell'aria mentre ti fai strada tra l'orda di Mental, uccidendo\n
 chiunque intralci il tuo cammino per quello che hanno fatto ai tuoi\n
 cari! È il momento perfetto per spezzare cuori alieni... a mani nude!
+\0\<
+toggle photo mode via the observer camera
+\0\>
+attiva/disattiva la modalità foto tramite la telecamera dell'osservatore
+\0\<
+Photo mode
+\0\>
+Modalità foto
 \0\$

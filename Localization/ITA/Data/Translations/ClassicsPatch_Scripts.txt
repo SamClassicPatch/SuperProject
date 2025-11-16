@@ -1,4 +1,4 @@
-576
+640
 
 \0\<
 The First Encounter directory
@@ -997,6 +997,10 @@ replace vanilla or modded HUD with the plugin one
 \0\>
 sostituisce l'HUD originale o modificato con quello del componente aggiuntivo
 \0\<
+Don't replace
+\0\>
+Non sostituire
+\0\<
 Replace vanilla
 \0\>
 Sostituisci originale
@@ -1091,11 +1095,11 @@ usa colori personalizzati per l'HUD
 \0\<
 HUD color preset
 \0\>
-Preimpostazione colore HUD
+Profilo colore HUD
 \0\<
 select preset for HUD colorization
 \0\>
-seleziona una preimpostazione per la colorazione dell'HUD
+seleziona un profilo per la colorazione dell'HUD
 \0\<
 Display patch version
 \0\>
@@ -2304,4 +2308,256 @@ Zona morta levette
 threshold for moving any axis/stick to consider it as being "held down"
 \0\>
 soglia entro cui un asse/levetta può essere inclinata prima che venga registrato il comando
+\0\<
+Weapon viewmodel
+\0\>
+Modello arma
+\0\<
+Viewmodel position X
+\0\>
+Posizione X modello
+\0\<
+Viewmodel position Y
+\0\>
+Posizione Y modello
+\0\<
+Viewmodel position Z
+\0\>
+Posizione Z modello
+\0\<
+Viewmodel rotation H
+\0\>
+Rotazione H modello
+\0\<
+Viewmodel rotation P
+\0\>
+Rotazione P modello
+\0\<
+Viewmodel rotation B
+\0\>
+Rotazione B modello
+\0\<
+Viewmodel FOV
+\0\>
+Campo visivo modello
+\0\<
+multiply viewmodel FOV (wpn_fViewFOV)
+\0\>
+moltiplica il campo visivo del modello dell'arma (wpn_fViewFOV)
+\0\<
+Global screenshots
+\0\>
+Istantanee schermo
+\0\<
+Take screenshot
+\0\>
+Cattura schermo
+\0\<
+Screenshot format
+\0\>
+Formato istantanea
+\0\<
+file format to save global screenshots in
+\0\>
+formato del file in cui salvare le istantanee dello schermo
+\0\<
+Camera properties
+\0\>
+Proprietà telecamera
+\0\<
+OCAM Info
+\0\>
+Informazioni OCAM
+\0\<
+display information about the observer camera while it's active
+\0\>
+visualizza le informazioni sulla telecamera dell'osservatore mentre è attiva
+\0\<
+Only properties
+\0\>
+Solo proprietà
+\0\<
+Properties and controls
+\0\>
+Proprietà e comandi
+\0\<
+OCAM Demo speed control
+\0\>
+Controllo velocità Demo OCAM
+\0\<
+allow observer camera to control demo speed during playback
+\0\>
+consente alla telecamera dell'osservatore di controllare la velocità della demo durante la riproduzione
+\0\<
+OCAM Demo smooth movement
+\0\>
+Movimento fluido OCAM Demo
+\0\<
+allow observer camera to move smoothly between recorded points during playback
+\0\>
+consente alla telecamera dell'osservatore di muoversi in modo fluido tra i punti registrati durante la riproduzione
+\0\<
+OCAM Demo movement tension
+\0\>
+Precisione movimento OCAM Demo
+\0\<
+how smooth the camera movement should be during playback (lower value = more precision)
+\0\>
+precisione del movimento della telecamera durante la riproduzione (valore più basso = maggiore precisione)
+\0\<
+OCAM FOV
+\0\>
+Campo visivo OCAM
+\0\<
+current field of view of the observer camera
+\0\>
+campo visivo attuale della telecamera dell'osservatore
+\0\<
+OCAM Speed multiplier
+\0\>
+Velocità OCAM
+\0\<
+observer camera movement speed
+\0\>
+velocità di movimento della telecamera dell'osservatore
+\0\<
+OCAM Tilt angle multiplier
+\0\>
+Inclinazione OCAM
+\0\<
+how much the observer camera should tilt left and right using the controls
+\0\>
+livello di inclinazione della telecamera dell'osservatore usando gli appositi comandi
+\0\<
+OCAM FOV change multiplier
+\0\>
+Variazione campo visivo OCAM
+\0\<
+how fast to change the observer camera FOV using the controls
+\0\>
+velocità di variazione del campo visivo della telecamera dell'osservatore usando gli appositi comandi
+\0\<
+OCAM Movement smoothing
+\0\>
+Velocità movimento OCAM
+\0\<
+how much to multiply the camera speed by to make it move smoother
+\0\>
+moltiplicatore della velocità di movimento della telecamera dell'osservatore
+\0\<
+OCAM Rotation smoothing
+\0\>
+Velocità rotazione OCAM
+\0\<
+how much to multiply the camera speed by to make it rotate smoother
+\0\>
+moltiplicatore della velocità di rotazione della telecamera dell'osservatore
+\0\<
+OCAM Follow distance
+\0\>
+Distanza OCAM
+\0\<
+how close to the current player the observer camera should be
+\0\>
+distanza della telecamera dell'osservatore dal giocatore attuale
+\0\<
+Camera controls
+\0\>
+Comandi telecamera
+\0\<
+Default OCAM controls
+\0\>
+Comandi OCAM predefiniti
+\0\<
+allow controlling the observer camera using the default controls that can be rebound below
+\0\>
+consente di controllare la telecamera dell'osservatore usando i comandi predefiniti riassegnabili di seguito
+\0\<
+OCAM Toggle
+\0\>
+attiva/disattiva OCAM
+\0\<
+OCAM Tilt left
+\0\>
+Inclinazione a sinistra OCAM
+\0\<
+OCAM Tilt right
+\0\>
+Inclinazione a destra OCAM
+\0\<
+OCAM Zoom in
+\0\>
+Ingrandisci OCAM
+\0\<
+OCAM Zoom out
+\0\>
+Riduci OCAM
+\0\<
+OCAM Teleport
+\0\>
+Teletrasporto OCAM
+\0\<
+OCAM Reset
+\0\>
+Ripristina OCAM
+\0\<
+OCAM Follow player
+\0\>
+Segui giocatore OCAM
+\0\<
+OCAM Position snapshot
+\0\>
+Posizione OCAM istantanea
+\0\<
+OCAM Screenshot resolution
+\0\>
+Risoluzione istantanea OCAM
+\0\<
+Camera movement
+\0\>
+Movimento telecamera
+\0\<
+OCAM Move forward
+\0\>
+Muovi avanti OCAM
+\0\<
+OCAM Move backward
+\0\>
+Muovi indietro OCAM
+\0\<
+OCAM Move left
+\0\>
+Muovi a sinistra OCAM
+\0\<
+OCAM Move right
+\0\>
+Muovi a destra OCAM
+\0\<
+OCAM Move up
+\0\>
+Muovi su OCAM
+\0\<
+OCAM Move down
+\0\>
+Muovi giù OCAM
+\0\<
+Camera movement (alt)
+\0\>
+Movimento telecamera (alt.)
+\0\<
+Menu options
+\0\>
+Opzioni menu
+\0\<
+Visual options
+\0\>
+Opzioni visive
+\0\<
+Weapon viewmodel customization
+\0\>
+Personalizzazione modello arma
+\0\<
+customize viewmodel position
+\0\>
+modifica la posizione del modello dell'arma
 \0\$

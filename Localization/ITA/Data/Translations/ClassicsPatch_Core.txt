@@ -1,4 +1,4 @@
-177
+178
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -915,12 +915,6 @@ Disconnected '%s' from controller slot %d\n
 '%s' disconnesso dallo slot controller %d\n
 
 \0\<
- %d axes, %d buttons, %d hats\n
-
-\0\>
- %d assi, %d pulsanti, %d interruttori a cappello\n
-
-\0\<
 not connected\n
 
 \0\>
@@ -951,6 +945,12 @@ Cannot open another game controller due to all %d slots being occupied!\n
 Impossibile utilizzare un altro controller di gioco poiché tutti i %d slot sono occupati!\n
 
 \0\<
+ %d axes, %d buttons, %d hats\n
+
+\0\>
+ %d assi, %d pulsanti, %d hat switch\n
+
+\0\<
   Extension: %s\n
 
 \0\>
@@ -961,5 +961,11 @@ Impossibile utilizzare un altro controller di gioco poiché tutti i %d slot sono 
 
 \0\>
 (per formato livello %d)\n
+
+\0\<
+Saving a new screenshot...\n
+
+\0\>
+Salvataggio istantanea schermo...\n
 
 \0\$
