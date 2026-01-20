@@ -1,4 +1,4 @@
-/* Copyright (c) 2024-2025 Dreamy Cecil
+/* Copyright (c) 2024-2026 Dreamy Cecil
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as published by
 the Free Software Foundation
@@ -127,7 +127,7 @@ functions:
       fDamageAmmount *= 0.5f;
     }
 
-    // [Cecil] NOTE: It probably meant to be "Destroyer" but it isn't
+    // [Cecil] NOTE: It was probably meant to be "Destroyer" but it isn't
     // can't harm own class
     if (!IsOfClass(penInflictor, "Demon")) {
       CEnemyBase::ReceiveDamage(penInflictor, dmtType, fDamageAmmount, vHitPoint, vDirection);

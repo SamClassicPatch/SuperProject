@@ -1,4 +1,4 @@
-/* Copyright (c) 2022-2025 Dreamy Cecil
+/* Copyright (c) 2022-2026 Dreamy Cecil
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as published by
 the Free Software Foundation
@@ -261,7 +261,7 @@ static void PatchInfo(void) {
     "\n- Patch version: %s"
     "\n- API version: %s"
     "\n- Compiler version: %d"
-    "\n\n(c) Dreamy Cecil, 2022-2025\n",
+    "\n\n(c) Dreamy Cecil, 2022-2026\n",
   CHOOSE_FOR_GAME("TFE", "TSE", "TSE"), _SE_VER_STRING,
   ClassicsCore_GetVersionName(),
   CLASSICSPATCH_STRINGIFY(CLASSICSPATCH_INTERFACE_VERSION),

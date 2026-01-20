@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-// [Cecil] NOTE: These header declares methods from TSE 1.07 but also some from TFE 1.05 for compatibility
+// [Cecil] NOTE: This header declares methods from TSE 1.07 but also some from TFE 1.05 for compatibility
 
 // init particle effects
 void DECL_DLL InitParticles(void);
