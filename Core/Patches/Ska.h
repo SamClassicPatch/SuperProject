@@ -110,6 +110,9 @@ CORE_API void P_shaDoFogPass(void);
 // Wrap up shader rendering
 CORE_API void P_shaEnd(void);
 
+// Set light colors
+CORE_API void P_shaSetLightColor(COLOR colAmbient, COLOR colLight);
+
 #endif
 
 #endif // _PATCHCONFIG_FIX_SKA

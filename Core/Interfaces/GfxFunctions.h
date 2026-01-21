@@ -131,6 +131,8 @@ namespace Haze {
 
 GFX_FUNC SLONG &TexSaturation(void) { return *(SLONG *)0x602A08B4; }; // _slTexSaturation
 GFX_FUNC SLONG &TexHueShift(void)   { return *(SLONG *)0x602C7294; }; // _slTexHueShift
+GFX_FUNC SLONG &ShdSaturation(void) { return *(SLONG *)0x602A08B8; }; // _slShdSaturation
+GFX_FUNC SLONG &ShdHueShift(void)   { return *(SLONG *)0x602C7298; }; // _slShdHueShift
 
 // The same order as in GFX_SetGraphicsPointers()
 

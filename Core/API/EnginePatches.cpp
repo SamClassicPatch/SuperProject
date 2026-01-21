@@ -335,6 +335,10 @@ void ICorePatches::Ska(void) {
   pShaEnd = &shaEnd;
   CreatePatch(pShaEnd, &P_shaEnd, "shaEnd()");
 
+  extern void (*pShaSetLightColor)(COLOR, COLOR);
+  pShaSetLightColor = &shaSetLightColor;
+  CreatePatch(pShaSetLightColor, &P_shaSetLightColor, "shaSetLightColor(...)");
+
   extern void (CModelInstance::*pModelInstanceCopyFunc)(CModelInstance &);
   pModelInstanceCopyFunc = &CModelInstance::Copy;
   CreatePatch(pModelInstanceCopyFunc, &CModelInstancePatch::P_Copy, "CModelInstance::Copy(...)");

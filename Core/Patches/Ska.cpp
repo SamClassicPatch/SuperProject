@@ -30,6 +30,7 @@ CSkaPatch _SkaPatch;
 // Original function pointers
 void (CModelInstance::*pModelInstanceCopyFunc)(CModelInstance &) = NULL;
 void (*pShaEnd)(void) = NULL;
+void (*pShaSetLightColor)(COLOR, COLOR) = NULL;
 
 void CModelInstancePatch::P_Copy(CModelInstance &miOther) {
   // Proceed to the original function
@@ -131,7 +132,9 @@ void P_shaDoFogPass(void) {
     IGfx::SetTextureWrapping(GFX_CLAMP, GFX_CLAMP);
     IGfx::SetTexture(IGfx::Fog::Texture(), IGfx::Fog::TexParams());
     IGfx::SetTexCoordArray(_SkaPatch.aFogUVMap, FALSE);
-    IGfx::SetConstantColor(IGfx::Fog::Params().fp_colColor);
+    // [Cecil] Adjust fog color
+    const COLOR colF = AdjustColor(IGfx::Fog::Params().fp_colColor, IGfx::TexHueShift(), IGfx::TexSaturation());
+    IGfx::SetConstantColor(colF);
     IGfx::BlendFunc(GFX_SRC_ALPHA, GFX_INV_SRC_ALPHA);
     IGfx::EnableBlend();
 
@@ -166,6 +169,16 @@ void P_shaEnd(void) {
 
   // Proceed to the original function
   pShaEnd();
+};
+
+// Set light colors
+void P_shaSetLightColor(COLOR colAmbient, COLOR colLight) {
+  // Adjust light colors
+  colAmbient = AdjustColor(colAmbient, IGfx::ShdHueShift(), IGfx::ShdSaturation());
+  colLight   = AdjustColor(colLight,   IGfx::ShdHueShift(), IGfx::ShdSaturation());
+
+  // Proceed to the original function
+  pShaSetLightColor(colAmbient, colLight);
 };
 
 #endif
