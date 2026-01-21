@@ -33,12 +33,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 SHADER_MAIN(MultiLayer)
 {
+  // [Cecil] Set texture wrapping *before* the texture
+  shaSetTextureWrapping(GFX_REPEAT, GFX_REPEAT);
+
   // this will be reused for all layers
   FLOAT fLayerTiling = 1.0f;
 
   // do 0th layer pass - base layer
   shaSetTexture(LAYER0_TEXTURE);
-  shaSetTextureWrapping(GFX_REPEAT, GFX_REPEAT);
   shaSetUVMap(LAYER0_UVMAP);
   shaSetColor(LAYER0_COLOR);
   shaEnableDepthTest();

@@ -26,8 +26,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 SHADER_MAIN(SpecularDS)
 {
 #if 0
-  shaSetTexture(BASE_TEXTURE);
+  // [Cecil] Set texture wrapping *before* the texture
   shaSetTextureWrapping(GFX_REPEAT, GFX_REPEAT);
+  shaSetTexture(BASE_TEXTURE);
   shaSetUVMap(BASE_UVMAP);
   shaSetColor(BASE_COLOR);
   shaEnableDepthTest(TRUE);

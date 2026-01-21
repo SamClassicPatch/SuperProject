@@ -329,11 +329,11 @@ void ICorePatches::Ska(void) {
   CreatePatch(pFogHazeFunc, &P_DoFogAndHaze, "RM_DoFogAndHaze(...)");
 
   void (*pFogPassFunc)(void) = &shaDoFogPass;
-  FuncPatch_ForceRewrite(7); // Rewrite complex instruction
   CreatePatch(pFogPassFunc, &P_shaDoFogPass, "shaDoFogPass(...)");
 
-  void (*pSetWrappingFunc)(GfxWrap, GfxWrap) = &shaSetTextureWrapping;
-  CreatePatch(pSetWrappingFunc, &P_shaSetTextureWrapping, "shaSetTextureWrapping(...)");
+  extern void (*pShaEnd)(void);
+  pShaEnd = &shaEnd;
+  CreatePatch(pShaEnd, &P_shaEnd, "shaEnd()");
 
   extern void (CModelInstance::*pModelInstanceCopyFunc)(CModelInstance &);
   pModelInstanceCopyFunc = &CModelInstance::Copy;

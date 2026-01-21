@@ -44,16 +44,10 @@ class CSkaPatch {
     GFXTexCoord *aHazeUVMap;
     GFXColor *acolVtxHaze;
 
-    // Texture wrapping set by the shader
-    GfxWrap aTexWrap[2];
-
   public:
     // Constructor
     CSkaPatch() {
       ResetArrays();
-
-      aTexWrap[0] = GFX_REPEAT;
-      aTexWrap[1] = GFX_REPEAT;
     };
 
     // Reset temporary arrays
@@ -113,8 +107,8 @@ CORE_API void P_DoFogAndHaze(BOOL bOpaqueSurface);
 // Render additional pass for fog and haze
 CORE_API void P_shaDoFogPass(void);
 
-// Set texture wrapping
-CORE_API void P_shaSetTextureWrapping(GfxWrap eWrapU, GfxWrap eWrapV);
+// Wrap up shader rendering
+CORE_API void P_shaEnd(void);
 
 #endif
 

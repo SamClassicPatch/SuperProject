@@ -29,6 +29,7 @@ CSkaPatch _SkaPatch;
 
 // Original function pointers
 void (CModelInstance::*pModelInstanceCopyFunc)(CModelInstance &) = NULL;
+void (*pShaEnd)(void) = NULL;
 
 void CModelInstancePatch::P_Copy(CModelInstance &miOther) {
   // Proceed to the original function
@@ -155,18 +156,16 @@ void P_shaDoFogPass(void) {
     // Render haze pass
     IGfx::DrawElements(ctIndices, paIndices);
   }
-
-  // Restore texture wrapping set by the shader
-  IGfx::SetTextureWrapping(_SkaPatch.aTexWrap[0], _SkaPatch.aTexWrap[1]);
 };
 
-// Set texture wrapping 
-void P_shaSetTextureWrapping(GfxWrap eWrapU, GfxWrap eWrapV) {
-  // Remember shader's texture wrapping
-  _SkaPatch.aTexWrap[0] = eWrapU;
-  _SkaPatch.aTexWrap[1] = eWrapV;
+// Wrap up shader rendering
+void P_shaEnd(void) {
+  // Reset texture wrapping prior to rendering with any of the default shaders,
+  // which erroneously set the textures before the needed texture wrapping
+  IGfx::SetTextureWrapping(GFX_REPEAT, GFX_REPEAT);
 
-  IGfx::SetTextureWrapping(eWrapU, eWrapV);
+  // Proceed to the original function
+  pShaEnd();
 };
 
 #endif

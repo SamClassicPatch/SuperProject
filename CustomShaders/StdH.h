@@ -33,8 +33,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // [Cecil] TODO: Make SKA patches work in Debug
 #ifdef NDEBUG
-#define shaDoFogPass          P_shaDoFogPass
-#define shaSetTextureWrapping P_shaSetTextureWrapping
+#define shaDoFogPass P_shaDoFogPass
 #endif
 
 #endif // _PATCHCONFIG_ENGINEPATCHES
