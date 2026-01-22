@@ -1956,7 +1956,14 @@ static void PrintStats( CDrawPort *pdpDrawPort)
   
   // determine proper text scale for statistics display
   FLOAT fTextScale = HEIGHT_SCALING(pdpDrawPort);
-  
+
+  // [Cecil] Additional text scale multiplication
+  static CSymbolPtr pfTextScaling("ahud_fTextScaling");
+
+  if (pfTextScaling.Exists()) {
+    fTextScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
+  }
+
   // display resolution info (if needed)
   if( hud_bShowResolution) {
     CTString strRes;

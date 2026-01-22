@@ -2135,6 +2135,14 @@ functions:
       PIX pixDPWidth  = pdp->GetWidth();
       PIX pixDPHeight = pdp->GetHeight();
       FLOAT fScale = HEIGHT_SCALING(pdp);
+
+      // [Cecil] Additional text scale multiplication
+      static CSymbolPtr pfTextScaling("ahud_fTextScaling");
+
+      if (pfTextScaling.Exists()) {
+        fScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
+      }
+
       pdp->SetFont( _pfdDisplayFont);
       pdp->SetTextScaling( fScale);
       pdp->SetTextAspect( 1.0f);
@@ -2210,6 +2218,13 @@ functions:
     PIX pixDPWidth  = pdp->GetWidth();
     PIX pixDPHeight = pdp->GetHeight();
     FLOAT fScale = HEIGHT_SCALING(pdp);
+
+    // [Cecil] Additional text scale multiplication
+    static CSymbolPtr pfTextScaling("ahud_fTextScaling");
+
+    if (pfTextScaling.Exists()) {
+      fScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
+    }
 
     // [Cecil] Determine vertical screen edge offset
     static CSymbolPtr piScreenEdge("ahud_iScreenEdgeY");
@@ -2325,6 +2340,14 @@ functions:
       PIX pixDPWidth  = pdp->GetWidth();
       PIX pixDPHeight = pdp->GetHeight();
       FLOAT fScale = HEIGHT_SCALING(pdp);
+
+      // [Cecil] Additional text scale multiplication
+      static CSymbolPtr pfTextScaling("ahud_fTextScaling");
+
+      if (pfTextScaling.Exists()) {
+        fScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
+      }
+
       pdp->SetFont( _pfdDisplayFont);
       pdp->SetTextScaling( fScale);
       pdp->SetTextAspect( 1.0f);

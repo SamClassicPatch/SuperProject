@@ -24,6 +24,7 @@ extern CPluginSymbol _psTheme;
 
 extern CPluginSymbol _psScreenEdgeX;
 extern CPluginSymbol _psScreenEdgeY;
+extern CPluginSymbol _psTextScaling;
 extern CPluginSymbol _psIconShake;
 
 #if SE1_GAME == SS_TFE

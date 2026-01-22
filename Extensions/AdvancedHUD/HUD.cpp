@@ -157,7 +157,8 @@ BOOL CHud::PrepareHUD(CPlayer *penCurrent, CDrawPort *pdpCurrent)
   _pfdCurrentNumbers = &_afdNumbers[iCurrentTheme];
 
   // Calculate relative scaling for the text font
-  _fTextFontScale = (FLOAT)_pfdDisplayFont->GetHeight() / (FLOAT)_pfdCurrentText->GetHeight();
+  const FLOAT fTextScaling = Clamp(_psTextScaling.GetFloat(), 0.05f, 2.0f);
+  _fTextFontScale = (FLOAT)_pfdDisplayFont->GetHeight() / (FLOAT)_pfdCurrentText->GetHeight() * fTextScaling;
 
   // Determine current gamemode
   _eGameMode = E_GM_SP;

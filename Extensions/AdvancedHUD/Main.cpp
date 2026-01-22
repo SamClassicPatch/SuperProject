@@ -35,6 +35,7 @@ CPluginSymbol _psEnable(SSF_PERSISTENT | SSF_USER, INDEX(1));
 
 CPluginSymbol _psScreenEdgeX(SSF_PERSISTENT | SSF_USER, INDEX(5));
 CPluginSymbol _psScreenEdgeY(SSF_PERSISTENT | SSF_USER, INDEX(5));
+CPluginSymbol _psTextScaling(SSF_PERSISTENT | SSF_USER, FLOAT(1.0f));
 CPluginSymbol _psIconShake(SSF_PERSISTENT | SSF_USER, INDEX(1));
 
 #if SE1_GAME == SS_TFE
@@ -89,6 +90,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 
   _psScreenEdgeX.Register("ahud_iScreenEdgeX");
   _psScreenEdgeY.Register("ahud_iScreenEdgeY");
+  _psTextScaling.Register("ahud_fTextScaling");
   _psIconShake.Register("ahud_bIconShake");
 
   #if SE1_GAME == SS_TFE

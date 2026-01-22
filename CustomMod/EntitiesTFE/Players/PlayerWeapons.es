@@ -1288,16 +1288,24 @@ functions:
       pdp->FlushRenderingQueue();
     }
 
+    FLOAT fTextScale = HEIGHT_SCALING(pdp);
+
+    // [Cecil] Additional text scale multiplication
+    static CSymbolPtr pfTextScaling("ahud_fTextScaling");
+
+    if (pfTextScaling.Exists()) {
+      fTextScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
+    }
+
     // if there is still time
     TIME tmDelta = m_tmLastTarget - tmNow;
     if( tmDelta>0) {
       // printout current target info
       SLONG slDPWidth  = pdp->GetWidth();
       SLONG slDPHeight = pdp->GetHeight();
-      FLOAT fScaling   = HEIGHT_SCALING(pdp);
       // set font and scale
       pdp->SetFont( _pfdDisplayFont);
-      pdp->SetTextScaling( fScaling);
+      pdp->SetTextScaling(fTextScale);
       pdp->SetTextAspect( 1.0f);
       // do faded printout
       ULONG ulA = (FLOAT)ulAlpha * Clamp( 2*tmDelta, 0.0f, 1.0f);
@@ -1325,7 +1333,7 @@ functions:
       // set font and scale
       pdp->SetFont( _pfdDisplayFont);
       pdp->SetTextAspect( 1.0f);
-      pdp->SetTextScaling(HEIGHT_SCALING(pdp));
+      pdp->SetTextScaling(fTextScale);
       // do printout only if coordinates are valid
       const FLOAT fMax = Max( Max( vRayHit(1), vRayHit(2)), vRayHit(3));
       const FLOAT fMin = Min( Min( vRayHit(1), vRayHit(2)), vRayHit(3));
