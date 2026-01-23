@@ -30,7 +30,8 @@ class CSplitStartMenu : public CGameMenu {
     CMGTrigger gm_mgGameType;
     CMGTrigger gm_mgDifficulty;
     CMGButton gm_mgLevel;
-    CMGButton gm_mgOptions;
+    CMGButton gm_mgGameOptions;
+    CMGButton gm_mgPatchOptions; // [Cecil]
     CMGButton gm_mgStart;
 
     void Initialize_t(void);

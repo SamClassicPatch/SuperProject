@@ -43,6 +43,12 @@ static void StartGameOptionsFromSplitScreen(void) {
   CVarMenu::ChangeTo(LOCALIZE("GAME OPTIONS"), fnmConfig);
 };
 
+// [Cecil] Open gameplay settings from the patch
+static void StartPatchGameplayOptionsFromSplitScreen(void) {
+  static DECLARE_CTFILENAME(fnmConfig, "Scripts\\Menu\\ClassicsPatch\\52_GameplaySettings.cfg");
+  CVarMenu::ChangeTo(TRANS("GAME CUSTOMIZATION"), fnmConfig);
+};
+
 static void StartSplitScreenGame(void) {
   GetGameAPI()->SetStartSplitCfg(GetGameAPI()->GetMenuSplitCfg());
 
@@ -101,26 +107,37 @@ void CSplitStartMenu::Initialize_t(void) {
   gm_mgLevel.mg_bfsFontSize = BFS_MEDIUM;
   gm_mgLevel.mg_iCenterI = -1;
   gm_mgLevel.mg_pmgUp = &gm_mgDifficulty;
-  gm_mgLevel.mg_pmgDown = &gm_mgOptions;
+  gm_mgLevel.mg_pmgDown = &gm_mgGameOptions;
   gm_mgLevel.mg_strTip = LOCALIZE("choose the level to start");
   gm_mgLevel.mg_pActivatedFunction = &StartSelectLevelFromSplit;
   AddChild(&gm_mgLevel);
 
   // options button
-  gm_mgOptions.SetText(LOCALIZE("Game options"));
-  gm_mgOptions.mg_boxOnScreen = BoxMediumRow(3);
-  gm_mgOptions.mg_bfsFontSize = BFS_MEDIUM;
-  gm_mgOptions.mg_iCenterI = 0;
-  gm_mgOptions.mg_pmgUp = &gm_mgLevel;
-  gm_mgOptions.mg_pmgDown = &gm_mgStart;
-  gm_mgOptions.mg_strTip = LOCALIZE("adjust game rules");
-  gm_mgOptions.mg_pActivatedFunction = &StartGameOptionsFromSplitScreen;
-  AddChild(&gm_mgOptions);
+  gm_mgGameOptions.SetText(LOCALIZE("Game options"));
+  gm_mgGameOptions.mg_boxOnScreen = BoxMediumRow(3);
+  gm_mgGameOptions.mg_bfsFontSize = BFS_MEDIUM;
+  gm_mgGameOptions.mg_iCenterI = 0;
+  gm_mgGameOptions.mg_pmgUp = &gm_mgLevel;
+  gm_mgGameOptions.mg_pmgDown = &gm_mgPatchOptions;
+  gm_mgGameOptions.mg_strTip = LOCALIZE("adjust game rules");
+  gm_mgGameOptions.mg_pActivatedFunction = &StartGameOptionsFromSplitScreen;
+  AddChild(&gm_mgGameOptions);
+
+  // [Cecil] Gameplay options from the patch
+  gm_mgPatchOptions.SetText(TRANS("Customize game"));
+  gm_mgPatchOptions.mg_boxOnScreen = BoxMediumRow(4);
+  gm_mgPatchOptions.mg_bfsFontSize = BFS_MEDIUM;
+  gm_mgPatchOptions.mg_iCenterI = 0;
+  gm_mgPatchOptions.mg_pmgUp = &gm_mgGameOptions;
+  gm_mgPatchOptions.mg_pmgDown = &gm_mgStart;
+  gm_mgPatchOptions.mg_strTip = TRANS("adjust gameplay settings from the classics patch");
+  gm_mgPatchOptions.mg_pActivatedFunction = &StartPatchGameplayOptionsFromSplitScreen;
+  AddChild(&gm_mgPatchOptions);
 
   // start button
   gm_mgStart.mg_bfsFontSize = BFS_LARGE;
   gm_mgStart.mg_boxOnScreen = BoxBigRow(4);
-  gm_mgStart.mg_pmgUp = &gm_mgOptions;
+  gm_mgStart.mg_pmgUp = &gm_mgPatchOptions;
   gm_mgStart.mg_pmgDown = &gm_mgGameType;
   gm_mgStart.SetText(LOCALIZE("START"));
   AddChild(&gm_mgStart);
