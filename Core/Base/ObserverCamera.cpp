@@ -344,9 +344,19 @@ BOOL CObserverCamera::StartRecording(void) {
 void CObserverCamera::UpdateControls(void) {
   // Toggle the camera itself
   const BOOL bBtnToggle = _pInput->GetButtonState(ocam_kidToggle);
-
   static BOOL _bToggle = FALSE;
-  if (!_bToggle && bBtnToggle) cam_props.bActive = !cam_props.bActive;
+
+  if (!_bToggle && bBtnToggle) {
+    cam_props.bActive = !cam_props.bActive;
+
+    // Toggle pause for the photo mode in singleplayer if it's of the opposite state
+    if (_gmRunningGameMode == GM_SINGLE_PLAYER) {
+      if (!!IsActive() ^ !!_pNetwork->IsPaused()) {
+        _pNetwork->TogglePause();
+      }
+    }
+  }
+
   _bToggle = bBtnToggle;
 
   // Camera or default controls are disabled

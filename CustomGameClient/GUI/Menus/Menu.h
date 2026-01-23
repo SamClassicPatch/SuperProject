@@ -135,20 +135,8 @@ extern void PlayMenuSound(CSoundData *psd, BOOL bOverOtherSounds = TRUE);
 #define MAX_GAME_LOCAL_PLAYERS Min((INDEX)GetGameAPI()->GetLocalPlayerCount(), (INDEX)4)
 
 extern CListHead _lhServers;
-
 extern INDEX _iLocalPlayer;
-
-enum GameMode {
-  GM_NONE = 0,
-  GM_SINGLE_PLAYER,
-  GM_NETWORK,
-  GM_SPLIT_SCREEN,
-  GM_DEMO,
-  GM_INTRO,
-};
-extern GameMode _gmMenuGameMode;
-extern GameMode _gmRunningGameMode;
-
+extern ERunningGameMode _gmMenuGameMode;
 extern CGameMenu *pgmCurrentMenu;
 
 #include "GameMenu.h"

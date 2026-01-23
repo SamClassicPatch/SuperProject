@@ -38,8 +38,7 @@ extern CTextureObject *_ptoLogoEAX;
 INDEX _iLocalPlayer = -1;
 extern BOOL _bPlayerMenuFromSinglePlayer = FALSE;
 
-GameMode _gmMenuGameMode = GM_NONE;
-GameMode _gmRunningGameMode = GM_NONE;
+ERunningGameMode _gmMenuGameMode = GM_NONE;
 CListHead _lhServers;
 
 void OnPlayerSelect(void);

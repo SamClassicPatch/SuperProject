@@ -39,6 +39,20 @@ CORE_API extern CTString cli_strConnectPassword;
 // Current values of input axes
 CORE_API extern FLOAT inp_afAxisValues[MAX_OVERALL_AXES];
 
+// [Cecil] NOTE: Moved here from GameClient solely for the observer camera
+// [Cecil] TODO: Expand this into the API for easy determination of where the game simulation is currently running from
+enum ERunningGameMode {
+  GM_NONE = 0,
+  GM_SINGLE_PLAYER,
+  GM_NETWORK,
+  GM_SPLIT_SCREEN,
+  GM_DEMO,
+  GM_INTRO,
+};
+
+// Where the current game is being ran from
+CORE_API extern ERunningGameMode _gmRunningGameMode;
+
 namespace ICore {
 
 // Own constants to replace engine ones

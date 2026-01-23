@@ -132,6 +132,13 @@ static void ToggleOCAM(void) {
   BOOL &bToggle = GetGameAPI()->GetCamera().GetState();
   bToggle = !bToggle;
 
+  // Toggle pause for the photo mode in singleplayer if it's of the opposite state
+  if (_gmRunningGameMode == GM_SINGLE_PLAYER) {
+    if (!!GetGameAPI()->GetCamera().IsActive() ^ !!_pNetwork->IsPaused()) {
+      _pNetwork->TogglePause();
+    }
+  }
+
   StopMenus();
 };
 

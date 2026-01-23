@@ -51,6 +51,9 @@ CTString cli_strConnectPassword = "";
 // Current values of input axes
 FLOAT inp_afAxisValues[MAX_OVERALL_AXES];
 
+// Where the current game is being ran from
+ERunningGameMode _gmRunningGameMode = GM_NONE;
+
 // Toggle vanilla query manager
 void ICore::DisableGameSpy(void) {
 #if _PATCHCONFIG_NEW_QUERY
