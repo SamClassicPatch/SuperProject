@@ -207,8 +207,10 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   ClassicsPlugins()->RegisterMethod(TRUE, "void", "SampleSetString", "CTString, CTString", &SampleSetString);
   ClassicsPlugins()->RegisterMethod(TRUE, "void", "SampleCallSignal", "CTString, INDEX",   &SampleCallSignal);
 
-  // Add custom chat command
+  // Add custom chat command for everyone and set description for it
   ClassicsChat_RegisterCommand("dummy", &DummyChatCommand);
+  ClassicsChat_SetCommandAccess("dummy", k_EChatCommandAccessLevel_Everyone, FALSE);
+  ClassicsChat_SetCommandInfo("dummy", "[args]", "Dummy chat command from the extension sample");
 };
 
 // Module cleanup

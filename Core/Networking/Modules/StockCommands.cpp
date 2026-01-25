@@ -19,9 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "Networking/NetworkFunctions.h"
 #include "ClientLogging.h"
 
-// Parse command as a normal chat message for clients without administrator rights
-#define IGNORE_CLIENTS { if (!CActiveClient::IsAdmin(iClient)) return FALSE; }
-
 // Display name of the current map
 BOOL IStockCommands::CurrentMap(CTString &strResult, INDEX, const CTString &) {
   CWorld &wo = *IWorld::GetWorld();
@@ -72,17 +69,8 @@ BOOL IStockCommands::RemoteConsole(CTString &strResult, INDEX iClient, const CTS
   const CTString strClientName = GetComm().Server_GetClientName(iClient);
   const INDEX iIdentity = _aClientIdentities.Index(ac.pClient);
 
+  // Log commands from non-server clients
   if (!GetComm().Server_IsClientLocal(iClient)) {
-    // Not a server operator
-    if (ac.eRole != CActiveClient::E_OPERATOR) {
-      CPrintF(TRANS("Client '%s' (identity %d) is trying to execute a command:\n"), strClientName, iIdentity);
-      CPrintF("> %s\n", strArguments);
-
-      strResult = TRANS("You are not a server operator!");
-      return TRUE;
-    }
-
-    // Log commands from non-server clients
     CPrintF(TRANS("Client '%s' (identity %d) is executing a command:\n"), strClientName, iIdentity);
     CPrintF("> %s\n", strArguments);
   }
@@ -95,16 +83,6 @@ BOOL IStockCommands::RemoteConsole(CTString &strResult, INDEX iClient, const CTS
 
 // Save game remotely
 BOOL IStockCommands::RemoteSave(CTString &strResult, INDEX iClient, const CTString &strArguments) {
-  const CActiveClient &ac = _aActiveClients[iClient];
-
-  // Not a server operator
-  if (!GetComm().Server_IsClientLocal(iClient)
-   && _aActiveClients[iClient].eRole != CActiveClient::E_OPERATOR)
-  {
-    strResult = TRANS("You are not a server operator!");
-    return TRUE;
-  }
-
   CTString strSaveFile = "SaveGame\\Network\\";
 
   if (strArguments == "") {
@@ -290,8 +268,6 @@ void PrintClientLog(CTString &strResult, INDEX iIdentity, INDEX iCharacter) {
 
 // Display log of all clients
 BOOL IStockCommands::ClientLog(CTString &strResult, INDEX iClient, const CTString &strArgs) {
-  IGNORE_CLIENTS;
-
   // No clients
   if (_aClientIdentities.Count() == 0) {
     strResult = "No clients have been logged!";
@@ -380,8 +356,6 @@ static CTString ReasonedClientAction(INDEX &iIdentity, CTString &strReason, CTSt
 
 // Ban a specific client
 BOOL IStockCommands::BanClient(CTString &strResult, INDEX iClient, const CTString &strArguments) {
-  IGNORE_CLIENTS;
-
   // Get arguments
   INDEX iIdentity;
   FLOAT fTime;
@@ -400,8 +374,6 @@ BOOL IStockCommands::BanClient(CTString &strResult, INDEX iClient, const CTStrin
 
 // Mute a specific client
 BOOL IStockCommands::MuteClient(CTString &strResult, INDEX iClient, const CTString &strArguments) {
-  IGNORE_CLIENTS;
-
   // Get arguments
   INDEX iIdentity;
   FLOAT fTime;
@@ -420,8 +392,6 @@ BOOL IStockCommands::MuteClient(CTString &strResult, INDEX iClient, const CTStri
 
 // Kick a specific client
 BOOL IStockCommands::KickClient(CTString &strResult, INDEX iClient, const CTString &strArguments) {
-  IGNORE_CLIENTS;
-
   // Get arguments
   INDEX iIdentity;
   CTString strReason;

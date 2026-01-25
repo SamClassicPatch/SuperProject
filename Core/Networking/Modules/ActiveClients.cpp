@@ -125,3 +125,10 @@ BOOL CActiveClient::IsAdmin(INDEX iClient) {
   return (_aActiveClients[iClient].eRole != CActiveClient::E_CLIENT
        || GetComm().Server_IsClientLocal(iClient));
 };
+
+// Check if some client has operator rights
+BOOL CActiveClient::IsOperator(INDEX iClient) {
+  // Authorized as an admin or the operator
+  return (_aActiveClients[iClient].eRole == CActiveClient::E_OPERATOR
+       || GetComm().Server_IsClientLocal(iClient));
+};

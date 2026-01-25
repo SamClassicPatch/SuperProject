@@ -92,6 +92,9 @@ class CORE_API CActiveClient {
 
     // Check if some client has administrator rights
     static BOOL IsAdmin(INDEX iClient);
+
+    // Check if some client has operator rights
+    static BOOL IsOperator(INDEX iClient);
 };
 
 // Active clients by client IDs on the server
