@@ -20,6 +20,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "Networking/Modules/VotingSystem.h"
 #include "Networking/Modules/ClientLogging.h"
 
+#include <STLIncludesBegin.h>
+#include <map>
+#include <STLIncludesEnd.h>
+
 // Prefix that the chat commands start with
 CTString ser_strCommandPrefix = "!";
 
@@ -146,6 +150,83 @@ BOOL HandleChatCommand(INDEX iClient, const CTString &strCommand)
   return TRUE;
 };
 
+// Map of references to chat commands that need to be listed stored in the alphabetical order
+typedef std::map<CTString, const ChatCommand_t *> CListedCommands;
+
+namespace std {
+  // Sort strings alphabetically
+  template<>
+  struct less<CTString> : binary_function<CTString, CTString, bool> {
+    bool operator()(const CTString &str1, const CTString &str2) const {
+      return strcmp(str1, str2) < 0;
+    };
+  };
+};
+
+// List available chat commands
+BOOL IStockCommands::ListCommands(CTString &strResult, INDEX iClient, const CTString &strArguments) {
+  // Gather available commands for a specific client
+  CListedCommands mapList;
+  CChatCommands::const_iterator it;
+
+  INDEX ctCommands = 0;
+
+  for (it = _mapChatCommands.begin(); it != _mapChatCommands.end(); it++) {
+    const ChatCommand_t &con = it->second;
+
+    // Don't list higher access commands for clients without elevated privileges
+    if (!CActiveClient::IsOperator(iClient) && con.eAccess == k_EChatCommandAccessLevel_Operator) continue;
+    if (!CActiveClient::IsAdmin(iClient) && con.eAccess == k_EChatCommandAccessLevel_Admin) continue;
+
+    // Don't list hidden commands for non-admins
+    if (!CActiveClient::IsAdmin(iClient) && con.bHidden) continue;
+
+    mapList[it->first] = &con;
+    ctCommands++;
+  }
+
+  if (ctCommands == 0) {
+    strResult = TRANS("No chat commands available");
+    return TRUE;
+  }
+
+  // How many commands to list per page
+  INDEX ctPerPage = 8;
+
+  const INDEX ctPages = ceil((FLOAT)ctCommands / (FLOAT)ctPerPage);
+
+  // Determine the current page
+  INDEX iPage = 1;
+
+  if (((CTString &)strArguments).ScanF("%d", &iPage) >= 1) {
+    iPage = Clamp(iPage, (INDEX)1, ctPages);
+  }
+
+  strResult.PrintF(TRANS("^cffffffAvailable commands (page %d/%d):"), iPage, ctPages);
+  strResult += "\n^cffffff--------------------------------";
+
+  CListedCommands::const_iterator itList = mapList.begin();
+  std::advance(itList, (iPage - 1) * ctPerPage);
+
+  while (--ctPerPage >= 0 && itList != mapList.end()) {
+    // Append argument list
+    CTString strArgs = "";
+
+    if (itList->second->strArgumentList != "") {
+      strArgs = itList->second->strArgumentList;
+      strArgs.TrimSpacesLeft();
+      strArgs = " " + strArgs;
+    }
+
+    strResult += CTString(0, "\n  ^cffdf00%s%s%s^r - %s", ser_strCommandPrefix.str_String, itList->first.str_String,
+      strArgs.str_String, itList->second->strDescription);
+
+    itList++;
+  }
+
+  return TRUE;
+};
+
 void ClassicsChat_RegisterCommand(const char *strName, FEngineChatCommand pFunction)
 {
   ChatCommand_t &com = _mapChatCommands[strName];
@@ -259,6 +340,9 @@ void Chat(void) {
   _pShell->DeclareSymbol("user CTString ser_strOperatorPassword;", &ser_strOperatorPassword);
 
   // Register default chat commands
+  ClassicsChat_RegisterCommand("help", &IStockCommands::ListCommands);
+  ClassicsChat_SetCommandInfo("help", "[page]", TRANS("Display a list of available commands on a specific page"));
+
   ClassicsChat_RegisterCommand("map", &IStockCommands::CurrentMap);
   ClassicsChat_SetCommandInfo("map", "", TRANS("Display the name of the current level and its world file"));
 
