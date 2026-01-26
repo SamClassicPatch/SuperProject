@@ -41,12 +41,16 @@ FLOAT con_tmConsoleFade = 0.5f;
 // [Cecil] Use bigger font in console (0 - never; 1 - only last lines; 2 - always)
 INDEX con_iBigFont = 0;
 FLOAT con_fBigFontScale = 1.0f;
+INDEX con_bTabHelpInfo = TRUE;
 
 // [Cecil] Screen height
 static PIX _pixSizeJ = 0;
 
 // [Cecil] Current console font
 static CFontData *_pfdCurrentFont = _pfdConsoleFont;
+
+// [Cecil] List of help messages per shell symbol
+static se1::map<CTString, CTString> _mapShellSymbolHelp;
 
 // [Cecil] Check if should use big font
 static inline BOOL UseBigFont(BOOL bLastLines) {
@@ -80,6 +84,54 @@ static void SetConsoleFont(CDrawPort *pdp, BOOL bLastLines) {
 // [Cecil] Reset console font
 static void ResetConsoleFont(void) {
   _pfdDisplayFont->SetVariableWidth();
+};
+
+// [Cecil] Load help for shell symbols
+void LoadConsoleHelp(void) {
+  CTString strSymbol, strHelp;
+
+  try {
+    // Open the symbol help file
+    CTFileStream strm;
+    strm.Open_t(CTString("Help\\ShellSymbols.txt"));
+
+    while (!strm.AtEOF()) {
+      // Read the symbol name and its help
+      strm.GetLine_t(strSymbol, ':');
+      strSymbol.TrimSpacesLeft();
+      strSymbol.TrimSpacesRight();
+
+      strm.GetLine_t(strHelp, '$');
+      strHelp.TrimSpacesLeft();
+      strHelp.TrimSpacesRight();
+
+      // Extract the help string from the surrounding '-' symbols with their respective line breaks
+      ULONG ulFirstBreak = IData::FindChar(strHelp, '\n');
+
+      if (ulFirstBreak != -1) {
+        ULONG ctChars = -1;
+        const char *pLastBreak = strrchr(strHelp, '\n');
+
+        if (pLastBreak != NULL) {
+          // This may be 0 if the first and the last line breaks are the same, which results in an empty help string
+          ctChars = ULONG(pLastBreak - strHelp.str_String) - ulFirstBreak;
+        }
+
+        if (ctChars == 0) {
+          strHelp = "";
+        } else {
+          strHelp = IData::ExtractSubstr(strHelp, ulFirstBreak + 1, ctChars - 1);
+        }
+      }
+
+      if (strHelp != "") {
+        _mapShellSymbolHelp[strSymbol] = strHelp;
+      }
+    }
+
+  } catch (char *strError) {
+    (void)strError;
+  }
 };
 
 // find a line with given number in a multi-line string counting from end of string
@@ -523,6 +575,16 @@ char *strrnonsym(const char *strString)
   return NULL;
 }
 
+// [Cecil] Get help string for a specific shell symbol
+const char *GetHelpForSymbol(const CTString &strSymbol) {
+  se1::map<CTString, CTString>::const_iterator it = _mapShellSymbolHelp.find(strSymbol);
+
+  if (it != _mapShellSymbolHelp.end()) return it->second.str_String;
+
+  // No description placeholder
+  static const char *strNoDesc = TRANS("No description");
+  return strNoDesc;
+};
 
 static void Key_Tab( BOOL bShift)
 {
@@ -547,6 +609,13 @@ static void Key_Tab( BOOL bShift)
     // printout all symbols that matches (if not only one, and not TAB only)
     INDEX ctSymbolsFound=0;
     BOOL  bFirstFound = FALSE;
+
+    // [Cecil] Alternating colors for listed symbols
+    const char *strColorReg = "^cffd700";
+    const char *strColorAlt = "^cee9c00";
+    const char *strCurrentColor = strColorReg;
+    BOOL bAltColor = FALSE;
+
     CTString strLastMatched;
     {FOREACHINDYNAMICARRAY( _pShell->sh_assSymbols, CShellSymbol, itss) {
       // TAB only pressd?
@@ -559,15 +628,35 @@ static void Key_Tab( BOOL bShift)
         // can we print last found symbol ?
         if( strLastMatched!="") {
           if( !bFirstFound) CPrintF( "  -\n");
-          CPrintF( "  %s\n", strLastMatched);
+
+          // [Cecil] Add color and symbol help, if needed
+          if (con_bTabHelpInfo) {
+            CPrintF( "  %s%s^r - %s\n", strCurrentColor, strLastMatched.str_String, GetHelpForSymbol(strLastMatched));
+
+            // [Cecil] Switch colors for the next entry
+            bAltColor = !bAltColor;
+            strCurrentColor = bAltColor ? strColorAlt : strColorReg;
+
+          } else {
+            CPrintF( "  %s\n", strLastMatched.str_String);
+          }
+
           bFirstFound = TRUE;
         }
         strLastMatched = strSymbol;
         ctSymbolsFound++;
       }
     }}
+
     // print last symbol
-    if( ctSymbolsFound>1) CPrintF( "  %s\n", strLastMatched);
+    if (ctSymbolsFound > 1) {
+      // [Cecil] Add color and symbol help, if needed
+      if (con_bTabHelpInfo) {
+        CPrintF( "  %s%s^r - %s\n", strCurrentColor, strLastMatched.str_String, GetHelpForSymbol(strLastMatched));
+      } else {
+        CPrintF( "  %s\n", strLastMatched.str_String);
+      }
+    }
   }
 
   // for each of symbols in the shell

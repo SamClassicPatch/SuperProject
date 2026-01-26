@@ -1190,8 +1190,10 @@ void CGame::InitInternal( void)
   // [Cecil] Use bigger font in console
   extern INDEX con_iBigFont;
   extern FLOAT con_fBigFontScale;
+  extern INDEX con_bTabHelpInfo;
   _pShell->DeclareSymbol("persistent user INDEX con_iBigFont;", &con_iBigFont);
   _pShell->DeclareSymbol("persistent user FLOAT con_fBigFontScale;", &con_fBigFontScale);
+  _pShell->DeclareSymbol("persistent user INDEX con_bTabHelpInfo;", &con_bTabHelpInfo);
 
   // load persistent symbols
   if (!_bDedicatedServer) {
@@ -1199,6 +1201,10 @@ void CGame::InitInternal( void)
   }
   // execute the startup script
   _pShell->Execute(CTString("include \"")+fnmStartupScript+"\";");
+
+  // [Cecil] Load help for shell symbols
+  extern void LoadConsoleHelp(void);
+  LoadConsoleHelp();
 
   // check the size and pointer of player control variables that are local to each player
   if (ctl_slPlayerControlsSize<=0
