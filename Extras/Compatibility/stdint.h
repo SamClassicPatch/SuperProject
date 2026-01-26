@@ -1,4 +1,4 @@
-/* Copyright (c) 2025 Dreamy Cecil
+/* Copyright (c) 2025-2026 Dreamy Cecil
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as published by
 the Free Software Foundation
@@ -20,14 +20,26 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-typedef signed char      int8_t;
-typedef short            int16_t;
-typedef int              int32_t;
-typedef __int64          int64_t;
-typedef unsigned char    uint8_t;
-typedef unsigned short   uint16_t;
-typedef unsigned int     uint32_t;
+typedef signed __int8 int8_t;
+typedef unsigned __int8 uint8_t;
+typedef signed __int16 int16_t;
+typedef unsigned __int16 uint16_t;
+typedef signed __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
+
+#ifdef _WIN64
+  typedef __int64 intptr_t;
+#else
+  typedef int intptr_t;
+#endif
+
+#ifdef _WIN64
+  typedef unsigned __int64 uintptr_t;
+#else
+  typedef unsigned int uintptr_t;
+#endif
 
 #define INT8_MIN   (-127 - 1)
 #define INT16_MIN  (-32767 - 1)

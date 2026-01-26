@@ -25,7 +25,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Compatibility with C++11
 #if _MSC_VER < 1600
   #define nullptr NULL
-  typedef size_t intptr_t;
   #include <Extras/Compatibility/stdint.h>
 #else
   #include <cstdint>

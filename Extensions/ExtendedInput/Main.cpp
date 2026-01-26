@@ -20,7 +20,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Define extension
 CLASSICSPATCH_DEFINE_EXTENSION("PATCH_EXT_input", k_EPluginFlagEngine, CORE_PATCH_VERSION,
   "Dreamy Cecil", "Extended Input",
-  "Extended input functionality that includes proper support of game controllers.");
+  "Extended input functionality that includes proper support of game controllers. Relies on SDL "
+  CLASSICSPATCH_STRINGIFY(SDL_MAJOR_VERSION) "." CLASSICSPATCH_STRINGIFY(SDL_MINOR_VERSION) "." CLASSICSPATCH_STRINGIFY(SDL_MICRO_VERSION) ".");
 
 CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "IsInitialized",   &CInputPatch::IsInitialized },

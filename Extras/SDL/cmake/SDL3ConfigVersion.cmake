@@ -1,7 +1,7 @@
 # SDL3 CMake version configuration file:
-# This file is meant to be placed in a cmake subfolder of SDL3-devel-3.2.8-VC.zip
+# This file is meant to be placed in a cmake subfolder of SDL3-devel-3.4.0-VC.zip
 
-set(PACKAGE_VERSION "3.2.8")
+set(PACKAGE_VERSION "3.4.0")
 
 if(PACKAGE_FIND_VERSION_RANGE)
     # Package version must be in the requested version range

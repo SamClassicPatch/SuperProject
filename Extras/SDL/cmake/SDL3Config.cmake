@@ -1,5 +1,5 @@
 # SDL3 CMake configuration file:
-# This file is meant to be placed in a cmake subfolder of SDL3-devel-3.2.8-VC.zip
+# This file is meant to be placed in a cmake subfolder of SDL3-devel-3.4.0-VC.zip
 
 cmake_minimum_required(VERSION 3.0...3.28)
 
