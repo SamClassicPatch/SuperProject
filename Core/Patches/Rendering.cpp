@@ -107,6 +107,12 @@ void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDr
     fNewFOV = ATan(Tan(fNewFOV * 0.5f) * fOppositeAspectRatio / ppr.pr_AspectRatio) * 2.0f;
   }
 
+  // [Cecil] NOTE: Player code never does this at the end of CPlayer::SetupView() function for some reason specifically in TFE, and not TSE,
+  // which leads to some very rare and bizarre bugs, one of which involves player tags from Advanced HUD during demos in TFE (see issue #19)
+  #if SE1_GAME == SS_TFE
+    apr->ObjectPlacementL() = CPlacement3D(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0));
+  #endif
+
   // Proceed to the original function
   (*pRenderView)(woWorld, enViewer, apr, dp);
 
