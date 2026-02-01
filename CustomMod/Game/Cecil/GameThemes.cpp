@@ -111,8 +111,9 @@ void CGameTheme::Load(const CTString &strFile, BOOL bNewTheme) {
     }
 
   } catch (char *strError) {
+    // [Cecil] NOTE: Don't return from the function here to allow it to load default values from an empty config instead
     CPrintF(TRANS("Cannot load game theme config '%s':\n%s\n"), strFile.str_String, strError);
-    return;
+    iniConfig.Clear();
   }
 
   // Loading new config

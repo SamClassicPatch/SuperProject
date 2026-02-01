@@ -82,7 +82,6 @@ CSoundData *_psdSelect = NULL;
 CSoundData *_psdPress = NULL;
 CSoundObject *_psoMenuSound = NULL;
 
-static CTextureObject _toPointer;
 static CTextureObject _toLogoMenuA;
 static CTextureObject _toLogoMenuB;
 
@@ -275,7 +274,6 @@ void InitializeMenus(void) {
     _psoMenuSound = new CSoundObject;
 
     // initialize and load menu textures
-    _toPointer.SetData_t(CTFILENAME("Textures\\General\\Pointer.tex"));
     _toLogoMenuA.SetData_t(CTFILENAME("Textures\\Logo\\sam_menulogo256a.tex"));
     _toLogoMenuB.SetData_t(CTFILENAME("Textures\\Logo\\sam_menulogo256b.tex"));
 
