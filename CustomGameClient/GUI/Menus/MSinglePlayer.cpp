@@ -333,7 +333,7 @@ void CSinglePlayerMenu::StartMenu(void) {
 
   } else {
     // [Cecil] Unparent training button
-    gm_mgTraining.SetParent(NULL);
+    gm_mgTraining.Expunge();
 
     gm_mgLoad.mg_boxOnScreen = BoxBigRow(3.0f);
     gm_mgLoad.mg_pmgUp = &gm_mgQuickLoad;

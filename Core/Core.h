@@ -39,8 +39,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Extras/XGizmo/Interfaces/Render.h>
 #include <Extras/XGizmo/Interfaces/World.h>
 #include <Extras/XGizmo/Objects/AnyValue.h>
-#include <Extras/XGizmo/Objects/LinkedNode.h>
 #include <Extras/XGizmo/Objects/MapStructure.h>
+#include <Extras/XGizmo/Objects/Node.h>
 #include <Extras/XGizmo/Objects/StructPtr.h>
 #include <Extras/XGizmo/Objects/SymbolPtr.h>
 

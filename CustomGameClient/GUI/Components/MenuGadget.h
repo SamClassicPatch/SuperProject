@@ -33,7 +33,7 @@ enum EGadgetKeyState {
 extern FLOAT _fGadgetSideRatioL;
 extern FLOAT _fGadgetSideRatioR;
 
-class CMenuGadget : public CLinkedNode {
+class CMenuGadget : public CNode {
   public:
     FLOATaabbox2D mg_boxOnScreen;
     BOOL mg_bVisible;

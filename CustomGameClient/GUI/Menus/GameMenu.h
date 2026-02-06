@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #pragma once
 #endif
 
-class CGameMenu : public CLinkedNode {
+class CGameMenu : public CNode {
   public:
     FLOAT gm_fPopupSize; // [Cecil] Considered a popup if the size is bigger than 0 (replacing 'gm_bPopup')
     CTString gm_strName; // menu name (for mod interface only)
@@ -52,6 +52,11 @@ class CGameMenu : public CLinkedNode {
 
     // [Cecil] Render popup box in a separate method
     static void RenderPopup(CDrawPort *pdp, FLOAT fPopupSize);
+
+    // Wrapper method for compatibility
+    __forceinline void AddChild(class CMenuGadget *pNode) {
+      AddTail((CNode *)pNode);
+    };
 };
 
 #endif /* include-once check. */
