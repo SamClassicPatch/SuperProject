@@ -87,14 +87,16 @@ void CCompMessage::Format(CDrawPort *pdp, PIX pixMaxWidth) {
   cm_strFormattedText = "";
   cm_ctFormattedLines = 1;
 
+  INDEX i, ct;
+
   // Get stats
   if (strncmp(cm_strText, "$STAT", 5) == 0) {
     cm_strFormattedText = _strStatsDetails;
 
     // Count line breaks
-    INDEX ct = cm_strFormattedText.Length();
+    ct = cm_strFormattedText.Length();
 
-    for (INDEX i = 0; i < ct; i++) {
+    for (i = 0; i < ct; i++) {
       if (cm_strFormattedText[i] == '\n') {
         cm_ctFormattedLines++;
       }
@@ -102,43 +104,8 @@ void CCompMessage::Format(CDrawPort *pdp, PIX pixMaxWidth) {
     return;
   }
 
-  // Find last character that fits
-  CTString str = cm_strText;
-  INDEX i = IData::TextFitsInWidth(pdp, pixMaxWidth, str);
-  INDEX ct = cm_strText.Length();
-
-  // If it's not at the end
-  while (i < ct) {
-    // Go back until a certain word delimiter
-    INDEX iDelimiter = i;
-
-    while (--iDelimiter >= 0) {
-      char ch = str[iDelimiter];
-
-      // If found a suitable delimiter
-      switch (ch) {
-        case ' ': case '\n': case '\t': case '\r':
-          // Get the character after it and terminate the loop
-          i = iDelimiter + 1;
-          iDelimiter = 0;
-          break;
-      }
-    }
-
-    // Get part that fits and save the rest
-    CTString strPart;
-    str.Split(i, strPart, str);
-
-    // Add this part and go to a new line
-    cm_strFormattedText += strPart + "\n";
-
-    // Find next last character of that fits
-    i = IData::TextFitsInWidth(pdp, pixMaxWidth, str);
-    ct = str.Length();
-  }
-
-  // Add the rest of the string
-  cm_strFormattedText += str;
+  // [Cecil] Add formatted original text
+  cm_strFormattedText += IData::FormatStringForWidth(pdp, pixMaxWidth, cm_strText);
 
   // Count line breaks
   ct = cm_strFormattedText.Length();
