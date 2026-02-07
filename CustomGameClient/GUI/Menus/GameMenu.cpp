@@ -44,8 +44,6 @@ void CGameMenu::KillAllFocuses(void) {
   }
 }
 
-void CGameMenu::Think(void) {}
-
 // +-1 -> hit top/bottom when pressing up/down on keyboard
 // +-2 -> pressed pageup/pagedown on keyboard
 // +-3 -> pressed arrow up/down  button in menu

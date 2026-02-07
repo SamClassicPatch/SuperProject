@@ -27,6 +27,8 @@ class CConfirmMenu : public CGameMenu {
     typedef void (*CConfirmFunc)(void);
 
   public:
+    CTString gm_strLabel; // [Cecil] Original label string before formatting
+
     CMGButton gm_mgConfirmLabel;
     CMGButton gm_mgConfirmYes;
     CMGButton gm_mgConfirmNo;
@@ -49,6 +51,9 @@ class CConfirmMenu : public CGameMenu {
 
     // [Cecil] Set label and button text
     void SetText(const CTString &strLabel, const CTString &strYes = "", const CTString &strNo = "");
+
+    // [Cecil] Extra processing
+    virtual void PreRender(CDrawPort *pdp);
 
     // [Cecil] Change to the menu
     static void ChangeTo(const CTString &strLabel, CConfirmFunc pFuncYes, CConfirmFunc pFuncNo,

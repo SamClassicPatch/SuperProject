@@ -184,8 +184,8 @@ void NotifyAboutCurrentSeason(void) {
       strText = TRANS(
         "Happy Valentine's Day!\n\n"
 
-        "Love is in the air? WRONG! Smoke and the smell of napalm are in\n"
-        "the air as you tear through Mental's horde, killing everyone in\n"
+        "Love is in the air? WRONG! Smoke and the smell of napalm are in "
+        "the air as you tear through Mental's horde, killing everyone in "
         "your path for what they did to your loved ones!\n"
         "It's the perfect time to break alien hearts... with your bare hands!"
       );
@@ -197,9 +197,9 @@ void NotifyAboutCurrentSeason(void) {
       strText = TRANS(
         "Happy Birthday to Serious Sam!\n\n"
 
-        "March 21st saw the birth of a man who vowed to save all of\n"
+        "March 21st saw the birth of a man who vowed to save all of "
         "humanity by any means necessary!\n"
-        "But unfortunately for Sam, Mental stole all the cakes and stuffed\n"
+        "But unfortunately for Sam, Mental stole all the cakes and stuffed "
         "them into his horde. It's time for a real birthday bash!"
       );
       strStartDate = TRANS("March 19");
@@ -210,9 +210,9 @@ void NotifyAboutCurrentSeason(void) {
       strText = TRANS(
         "Happy Anniversary to Classics Patch!\n\n"
 
-        "The very first release of Classics Patch was on June 22, 2022.\n"
-        "Mental was so excited about this anniversary that he simply could\n"
-        "not resist the temptation to throw his own party for his horde,\n"
+        "The very first release of Classics Patch was on June 22, 2022. "
+        "Mental was so excited about this anniversary that he simply could "
+        "not resist the temptation to throw his own party for his horde, "
         "who had eaten their fill of cakes and other colorful pastries.\n"
         "It's time to crash this party!"
       );
@@ -224,9 +224,9 @@ void NotifyAboutCurrentSeason(void) {
       strText = TRANS(
         "Happy Halloween!\n\n"
 
-        "On this special occasion, Mental's horde ate so much candy and\n"
+        "On this special occasion, Mental's horde ate so much candy and "
         "pumpkins that all of their internal organs turned into them!\n"
-        "Although, as delicious as it looks, I wouldn't recommend eating it."
+        "Although, as delicious as it looks, I would recommend against eating it."
       );
       strStartDate = TRANS("October 1");
       strEndDate   = TRANS("October 31");
@@ -236,7 +236,7 @@ void NotifyAboutCurrentSeason(void) {
       strText = TRANS(
         "Merry Christmas & Happy Holidays!\n\n"
 
-        "Enjoy the snowy winter wonderland as you pulp Mental's horde\n"
+        "Enjoy the snowy winter wonderland as you pulp Mental's horde "
         "into festive-looking chunks!\n"
         "That Kleer skull will look beautiful on the Christmas tree..."
       );

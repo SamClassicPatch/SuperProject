@@ -45,7 +45,10 @@ class CGameMenu : public CNode {
     virtual BOOL OnKeyUp(PressedMenuButton pmb); // [Cecil]
     virtual BOOL OnMouseHeld(PressedMenuButton pmb); // [Cecil]
     virtual BOOL OnChar(MSG msg);
-    virtual void Think(void);
+    virtual void Think(void) {};
+
+    // [Cecil] Render extras below the gadgets
+    virtual void PreRender(CDrawPort *pdp) {};
 
     // [Cecil] Render extras on top of all gadgets
     virtual void PostRender(CDrawPort *pdp) {};

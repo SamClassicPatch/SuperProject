@@ -774,6 +774,9 @@ BOOL DoMenu(CDrawPort *pdp) {
     }
   }
 
+  // [Cecil] Render/process menu extras below everything
+  pgmCurrentMenu->PreRender(&dpMenu);
+
   BOOL bStilInMenus = FALSE;
   _pGame->MenuPreRenderMenu(pgmCurrentMenu->gm_strName);
   // for each menu gadget
@@ -811,7 +814,7 @@ BOOL DoMenu(CDrawPort *pdp) {
     pmgActive->Render(&dpMenu);
   }
 
-  // [Cecil] Render menu extras on top of everything
+  // [Cecil] Render/process menu extras on top of everything
   pgmCurrentMenu->PostRender(&dpMenu);
 
   // [Cecil] Don't override the tooltip text during key bind editing

@@ -112,7 +112,8 @@ void CConfirmMenu::BeSmall(FLOAT fHeight) {
 
 // [Cecil] Set label and button text
 void CConfirmMenu::SetText(const CTString &strLabel, const CTString &strYes, const CTString &strNo) {
-  gm_mgConfirmLabel.SetText(strLabel);
+  gm_strLabel = strLabel;
+  gm_mgConfirmLabel.SetText("");
   gm_mgConfirmYes.SetText(strYes == "" ? LOCALIZE("YES") : strYes);
   gm_mgConfirmNo.SetText(strNo == "" ? LOCALIZE("NO") : strNo);
 };
@@ -125,6 +126,17 @@ BOOL CConfirmMenu::OnKeyDown(PressedMenuButton pmb) {
   }
   return CGameMenu::OnKeyDown(pmb);
 }
+
+// [Cecil] Extra processing
+void CConfirmMenu::PreRender(CDrawPort *pdp) {
+  // Don't bother formatting any text if there's nothing to format or it's already set
+  if (gm_strLabel == "" || gm_mgConfirmLabel.GetText() != "") return;
+
+  // Format the label string and set it to the label gadget
+  const PIXaabbox2D boxArea = FloatBoxToPixBox(pdp, gm_mgConfirmLabel.mg_boxOnScreen);
+  const PIX pixMaxWidth = boxArea.Size()(1);
+  gm_mgConfirmLabel.SetText(IData::FormatStringForWidth(pdp, pixMaxWidth, gm_strLabel));
+};
 
 // [Cecil] Change to the menu
 void CConfirmMenu::ChangeTo(const CTString &strLabel, CConfirmFunc pFuncYes, CConfirmFunc pFuncNo,
