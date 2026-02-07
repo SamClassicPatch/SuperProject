@@ -140,6 +140,14 @@ BOOL CMGVarButton::OnKeyDown(PressedMenuButton pmb)
       FlushVarSettings(FALSE);
       gmCurrent.EndMenu();
 
+      // Reset held mouse buttons
+      extern void ReleaseHeldMouseButtons(void);
+      ReleaseHeldMouseButtons();
+
+      // Reset gadget under the cursor
+      extern CMenuGadget *_pmgUnderCursor;
+      _pmgUnderCursor = NULL;
+
       gmCurrent.gm_fnmMenuCFG = strConfig;
       gmCurrent.StartMenu();
 
