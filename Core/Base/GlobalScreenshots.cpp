@@ -242,9 +242,19 @@ BOOL Request(void) {
   BOOL bResult;
   const BOOL bInMenu = (GetGameAPI()->IsHooked() ? GetGameAPI()->IsMenuOn() : FALSE);
 
+  // [Cecil] TEMP: Disable observer camera screenshots under Direct3D for the time being (see issues #47 and #48)
+  const BOOL bD3D = (_pGfx->GetCurrentAPI() == GAT_D3D);
+
   // Take a screenshot using the observer camera (if not in the menu)
   if (GetGameAPI()->GetCamera().IsActive() && !bInMenu) {
-    bResult = GetGameAPI()->GetCamera().TakeScreenshot(pbs->ii);
+    // [Cecil] TEMP: Take regular screenshots instead of using OCAM under Direct3D
+    if (bD3D) {
+      bResult = Capture(pbs->ii);
+      CPutString(TRANS("^cff0000WARNING! OCAM screenshots are temporarily disabled in Direct3D due to internal issues! Use OpenGL to take screenshots using OCAM!\n"));
+
+    } else {
+      bResult = GetGameAPI()->GetCamera().TakeScreenshot(pbs->ii);
+    }
 
   // Take a regular screenshot
   } else {
