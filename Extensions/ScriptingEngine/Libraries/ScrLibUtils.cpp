@@ -456,6 +456,136 @@ static SQInteger DegToRad(HSQUIRRELVM v) {
   return 1;
 };
 
+static SQInteger MakeRotationMatrix(HSQUIRRELVM v) {
+  // Get a vector value
+  Instance<FLOAT3D> *pv = InstanceOfType(v, 2, FLOAT3D);
+  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  ::MakeRotationMatrix(*pm, pv->val);
+  return 1;
+};
+
+static SQInteger MakeRotationMatrixFast(HSQUIRRELVM v) {
+  // Get a vector value
+  Instance<FLOAT3D> *pv = InstanceOfType(v, 2, FLOAT3D);
+  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  ::MakeRotationMatrixFast(*pm, pv->val);
+  return 1;
+};
+
+static SQInteger MakeInverseRotationMatrix(HSQUIRRELVM v) {
+  // Get a vector value
+  Instance<FLOAT3D> *pv = InstanceOfType(v, 2, FLOAT3D);
+  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  ::MakeInverseRotationMatrix(*pm, pv->val);
+  return 1;
+};
+
+static SQInteger MakeInverseRotationMatrixFast(HSQUIRRELVM v) {
+  // Get a vector value
+  Instance<FLOAT3D> *pv = InstanceOfType(v, 2, FLOAT3D);
+  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  ::MakeInverseRotationMatrixFast(*pm, pv->val);
+  return 1;
+};
+
+static SQInteger DecomposeRotationMatrix(HSQUIRRELVM v) {
+  // Get a matrix value
+  Instance<FLOATmatrix3D> *pm = InstanceOfType(v, 2, FLOATmatrix3D);
+  if (pm == NULL) return sq_throwerror(v, "expected FLOATmatrix3D value");
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  ::DecomposeRotationMatrix(*pv, pm->val);
+  return 1;
+};
+
+static SQInteger DecomposeRotationMatrixNoSnap(HSQUIRRELVM v) {
+  // Get a matrix value
+  Instance<FLOATmatrix3D> *pm = InstanceOfType(v, 2, FLOATmatrix3D);
+  if (pm == NULL) return sq_throwerror(v, "expected FLOATmatrix3D value");
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  ::DecomposeRotationMatrixNoSnap(*pv, pm->val);
+  return 1;
+};
+
+static SQInteger AnglesToDirectionVector(HSQUIRRELVM v) {
+  // Get a vector value
+  Instance<FLOAT3D> *pvAngles = InstanceOfType(v, 2, FLOAT3D);
+  if (pvAngles == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a vector instance
+  FLOAT3D *pvDir;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pvDir)) return SQ_ERROR;
+
+  ::AnglesToDirectionVector(pvAngles->val, *pvDir);
+  return 1;
+};
+
+static SQInteger DirectionVectorToAngles(HSQUIRRELVM v) {
+  // Get a vector value
+  Instance<FLOAT3D> *pvDir = InstanceOfType(v, 2, FLOAT3D);
+  if (pvDir == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a vector instance
+  FLOAT3D *pvAngles;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pvAngles)) return SQ_ERROR;
+
+  ::DirectionVectorToAngles(pvDir->val, *pvAngles);
+  return 1;
+};
+
+static SQInteger DirectionVectorToAnglesNoSnap(HSQUIRRELVM v) {
+  // Get a vector value
+  Instance<FLOAT3D> *pvDir = InstanceOfType(v, 2, FLOAT3D);
+  if (pvDir == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a vector instance
+  FLOAT3D *pvAngles;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pvAngles)) return SQ_ERROR;
+
+  ::DirectionVectorToAnglesNoSnap(pvDir->val, *pvAngles);
+  return 1;
+};
+
+static SQInteger UpVectorToAngles(HSQUIRRELVM v) {
+  // Get a vector value
+  Instance<FLOAT3D> *pvDir = InstanceOfType(v, 2, FLOAT3D);
+  if (pvDir == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a vector instance
+  FLOAT3D *pvAngles;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pvAngles)) return SQ_ERROR;
+
+  ::UpVectorToAngles(pvDir->val, *pvAngles);
+  return 1;
+};
+
 static bool IncludeReturnCallback(sq::VM &) {
   return false; // Leave return value in the stack
 };
@@ -503,6 +633,17 @@ static SQRegFunction _aUtilsFuncs[] = {
   { "NormalizeAngle",  &Utils::NormalizeAngle, 2, ".n" },
   { "RadToDeg",        &Utils::RadToDeg, 2, ".n" },
   { "DegToRad",        &Utils::DegToRad, 2, ".n" },
+
+  { "MakeRotationMatrix",            &Utils::MakeRotationMatrix, 2, ".x" },
+  { "MakeRotationMatrixFast",        &Utils::MakeRotationMatrixFast, 2, ".x" },
+  { "MakeInverseRotationMatrix",     &Utils::MakeInverseRotationMatrix, 2, ".x" },
+  { "MakeInverseRotationMatrixFast", &Utils::MakeInverseRotationMatrixFast, 2, ".x" },
+  { "DecomposeRotationMatrix",       &Utils::DecomposeRotationMatrix, 2, ".x" },
+  { "DecomposeRotationMatrixNoSnap", &Utils::DecomposeRotationMatrixNoSnap, 2, ".x" },
+  { "AnglesToDirectionVector",       &Utils::AnglesToDirectionVector, 2, ".x" },
+  { "DirectionVectorToAngles",       &Utils::DirectionVectorToAngles, 2, ".x" },
+  { "DirectionVectorToAnglesNoSnap", &Utils::DirectionVectorToAnglesNoSnap, 2, ".x" },
+  { "UpVectorToAngles",              &Utils::UpVectorToAngles, 2, ".x" },
 };
 
 // Global functions
