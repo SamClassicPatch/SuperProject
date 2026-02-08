@@ -38,8 +38,8 @@ static SQInteger Add(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   FLOAT3D *pv;
   if (!vm.Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
 
-  // Get vector value
-  Instance<FLOAT3D> *pOther = (Instance<FLOAT3D> *)InstanceAny::OfType(v, idxOther, typeid(FLOAT3D).raw_name());
+  // Get a vector value
+  Instance<FLOAT3D> *pOther = InstanceOfType(v, idxOther, FLOAT3D);
   if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
 
   *pv = val + pOther->val;
@@ -53,8 +53,8 @@ static SQInteger Sub(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   FLOAT3D *pv;
   if (!vm.Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
 
-  // Get vector value
-  Instance<FLOAT3D> *pOther = (Instance<FLOAT3D> *)InstanceAny::OfType(v, idxOther, typeid(FLOAT3D).raw_name());
+  // Get a vector value
+  Instance<FLOAT3D> *pOther = InstanceOfType(v, idxOther, FLOAT3D);
   if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
 
   *pv = val - pOther->val;
@@ -68,8 +68,8 @@ static SQInteger Mul(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   FLOAT3D *pv;
   if (!vm.Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
 
-  // Get vector value
-  Instance<FLOAT3D> *pOther = (Instance<FLOAT3D> *)InstanceAny::OfType(v, idxOther, typeid(FLOAT3D).raw_name());
+  // Get a vector value
+  Instance<FLOAT3D> *pOther = InstanceOfType(v, idxOther, FLOAT3D);
 
   // Or a float value
   if (pOther == NULL) {
@@ -91,7 +91,7 @@ static SQInteger Div(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   FLOAT3D *pv;
   if (!vm.Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
 
-  // Get float value
+  // Get a float value
   SQFloat f;
   if (SQ_FAILED(sq_getfloat(v, idxOther, &f))) return sq_throwerror(v, "expected float value");
 
@@ -100,7 +100,7 @@ static SQInteger Div(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
 };
 
 static SQInteger Mod(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
-  Instance<FLOAT3D> *pOther = (Instance<FLOAT3D> *)InstanceAny::OfType(v, idxOther, typeid(FLOAT3D).raw_name());
+  Instance<FLOAT3D> *pOther = InstanceOfType(v, idxOther, FLOAT3D);
   if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
 
   sq_pushfloat(v, val % pOther->val);
@@ -141,7 +141,7 @@ VECTOR_AXIS_FUNC(GetY, SetY, 2);
 VECTOR_AXIS_FUNC(GetZ, SetZ, 3);
 
 static SQInteger Length(HSQUIRRELVM v) {
-  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  Instance<FLOAT3D> *pInstance = InstanceOfType(v, 1, FLOAT3D);
   if (pInstance == NULL) return SQ_ERROR;
 
   sq_pushfloat(v, pInstance->val.Length());
@@ -149,7 +149,7 @@ static SQInteger Length(HSQUIRRELVM v) {
 };
 
 static SQInteger ManhattanNorm(HSQUIRRELVM v) {
-  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  Instance<FLOAT3D> *pInstance = InstanceOfType(v, 1, FLOAT3D);
   if (pInstance == NULL) return SQ_ERROR;
 
   sq_pushfloat(v, pInstance->val.ManhattanNorm());
@@ -157,7 +157,7 @@ static SQInteger ManhattanNorm(HSQUIRRELVM v) {
 };
 
 static SQInteger MaxNorm(HSQUIRRELVM v) {
-  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  Instance<FLOAT3D> *pInstance = InstanceOfType(v, 1, FLOAT3D);
   if (pInstance == NULL) return SQ_ERROR;
 
   sq_pushfloat(v, pInstance->val.MaxNorm());
@@ -165,7 +165,7 @@ static SQInteger MaxNorm(HSQUIRRELVM v) {
 };
 
 static SQInteger Normalize(HSQUIRRELVM v) {
-  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  Instance<FLOAT3D> *pInstance = InstanceOfType(v, 1, FLOAT3D);
   if (pInstance == NULL) return SQ_ERROR;
 
   // Create a vector instance
@@ -177,7 +177,7 @@ static SQInteger Normalize(HSQUIRRELVM v) {
 };
 
 static SQInteger SafeNormalize(HSQUIRRELVM v) {
-  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  Instance<FLOAT3D> *pInstance = InstanceOfType(v, 1, FLOAT3D);
   if (pInstance == NULL) return SQ_ERROR;
 
   // Create a vector instance
@@ -189,7 +189,7 @@ static SQInteger SafeNormalize(HSQUIRRELVM v) {
 };
 
 static SQInteger Flip(HSQUIRRELVM v) {
-  Instance<FLOAT3D> *pInstance = (Instance<FLOAT3D> *)InstanceAny::OfType(v, 1, typeid(FLOAT3D).raw_name());
+  Instance<FLOAT3D> *pInstance = InstanceOfType(v, 1, FLOAT3D);
   if (pInstance == NULL) return SQ_ERROR;
 
   // Create a vector instance

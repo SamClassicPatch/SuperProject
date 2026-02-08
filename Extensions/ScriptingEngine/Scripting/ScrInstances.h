@@ -79,6 +79,10 @@ class InstanceAny {
     // Get instance of a some native class from the stack by finding and matching the factory using its type
     // This is a helper method strictly for metamethods of a specific class
     static InstanceAny *OfType(HSQUIRRELVM v, SQInteger idx, const SQChar *strFactoryType);
+
+    // Shortcut for retrieving an instance of a specific class type
+    #define InstanceOfType(v, idx, Type) \
+      ((Instance< Type > *)InstanceAny::OfType(v, idx, typeid(Type).raw_name()))
 };
 
 // Class instance that holds a value of a specific type
