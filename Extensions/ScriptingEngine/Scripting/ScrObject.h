@@ -114,9 +114,26 @@ class Object {
       sq_poptop(m_vm); // Pop object
     };
 
-    // Special case to make the compiler shut it
+    // Add an indexed value to the object
+    template<class Type> inline
+    void BindValue(SQInteger i, const Type &val, bool bStaticVar) {
+      sq_pushobject(m_vm, m_obj); // Push object
+
+      // Create a new slot with the value under an index
+      sq_pushinteger(m_vm, i);
+      Value<Type>(val).Push(m_vm);
+      sq_newslot(m_vm, -3, bStaticVar);
+
+      sq_poptop(m_vm); // Pop object
+    };
+
+    // Special cases to make the compiler shut it
     inline void BindValue(const SQChar *strName, const char *val, bool bStaticVar) {
       BindValue(strName, CTString(val), bStaticVar);
+    };
+
+    inline void BindValue(SQInteger i, const char *val, bool bStaticVar) {
+      BindValue(i, CTString(val), bStaticVar);
     };
 
     // Add a closure to the object

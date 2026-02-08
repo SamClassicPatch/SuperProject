@@ -348,6 +348,11 @@ void VM::RegisterUtils(void) {
     sqcVector.RegisterVar("p", &SqVector::GetY, &SqVector::SetY);
     sqcVector.RegisterVar("b", &SqVector::GetZ, &SqVector::SetZ);
 
+    // Indices
+    sqcVector.RegisterIndex(1, &SqVector::GetX, &SqVector::SetX);
+    sqcVector.RegisterIndex(2, &SqVector::GetY, &SqVector::SetY);
+    sqcVector.RegisterIndex(3, &SqVector::GetZ, &SqVector::SetZ);
+
     Root().SetClass(sqcVector);
   }
 

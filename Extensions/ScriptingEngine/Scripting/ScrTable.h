@@ -55,10 +55,16 @@ class TableBase : public Object {
     };
 
   public:
-    // Add a value
+    // Add a value as a variable
     template<class Type> inline
     void SetValue(const SQChar *strName, const Type &val) {
       BindValue(strName, val, false);
+    };
+
+    // Add an indexed value
+    template<class Type> inline
+    void SetIndexedValue(SQInteger i, const Type &val) {
+      BindValue(i, val, false);
     };
 
     // Add a closure

@@ -177,6 +177,12 @@ class Class : public AbstractClass {
       if (pSetter != NULL) m_sqtSetters.SetValue(strVariable, (void *)pSetter);
     };
 
+    // Add getter and optional setter methods for working with some index
+    inline void RegisterIndex(SQInteger iIndex, FGetter pGetter, FSetter pSetter) {
+      if (pGetter != NULL) m_sqtGetters.SetIndexedValue(iIndex, (void *)pGetter);
+      if (pSetter != NULL) m_sqtSetters.SetIndexedValue(iIndex, (void *)pSetter);
+    };
+
     // Add a custom metamethod
     inline void RegisterMetamethod(EMetamethod eType, FOther pFunction) {
       const SQChar *strName = NULL;
