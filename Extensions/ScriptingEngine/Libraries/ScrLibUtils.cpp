@@ -68,19 +68,27 @@ static SQInteger Mul(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   FLOAT3D *pv;
   if (!vm.Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
 
-  // Get a vector value
-  Instance<FLOAT3D> *pOther = InstanceOfType(v, idxOther, FLOAT3D);
+  // Get a matrix value
+  Instance<FLOATmatrix3D> *pOtherMat = InstanceOfType(v, idxOther, FLOATmatrix3D);
 
-  // Or a float value
-  if (pOther == NULL) {
-    SQFloat f;
-    if (SQ_FAILED(sq_getfloat(v, idxOther, &f))) return sq_throwerror(v, "expected FLOAT3D or float value");
-
-    *pv = val * f;
+  if (pOtherMat != NULL) {
+    *pv = val * pOtherMat->val;
     return 1;
   }
 
-  *pv = val * pOther->val;
+  // Or a vector value
+  Instance<FLOAT3D> *pOtherVec = InstanceOfType(v, idxOther, FLOAT3D);
+
+  if (pOtherVec != NULL) {
+    *pv = val * pOtherVec->val;
+    return 1;
+  }
+
+  // Or a float value
+  SQFloat f;
+  if (SQ_FAILED(sq_getfloat(v, idxOther, &f))) return sq_throwerror(v, "expected FLOATmatrix3D or FLOAT3D or float value");
+
+  *pv = val * f;
   return 1;
 };
 
@@ -207,6 +215,193 @@ static SQRegFunction _aMethods[] = {
   { "Normalize",     &Normalize, 1, "." },
   { "SafeNormalize", &SafeNormalize, 1, "." },
   { "Flip",          &Flip, 1, "." },
+};
+
+}; // namespace
+
+// FLOATmatrix3D class methods
+namespace SqMatrix {
+
+static SQInteger Constructor(HSQUIRRELVM v, FLOATmatrix3D &val) {
+  SQFloat f;
+
+  if (SQ_SUCCEEDED(sq_getfloat(v, 2, &f))) {
+    val = FLOATmatrix3D(f);
+  } else {
+    val = FLOATmatrix3D(0);
+  }
+
+  return 0;
+};
+
+static SQInteger Add(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
+  VM &vm = GetVMClass(v);
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!vm.Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  // Get a matrix value
+  Instance<FLOATmatrix3D> *pOther = InstanceOfType(v, idxOther, FLOATmatrix3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOATmatrix3D value");
+
+  *pm = val + pOther->val;
+  return 1;
+};
+
+static SQInteger Sub(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
+  VM &vm = GetVMClass(v);
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!vm.Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  // Get a matrix value
+  Instance<FLOATmatrix3D> *pOther = InstanceOfType(v, idxOther, FLOATmatrix3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOATmatrix3D value");
+
+  *pm = val - pOther->val;
+  return 1;
+};
+
+static SQInteger Mul(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
+  VM &vm = GetVMClass(v);
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!vm.Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  // Get a matrix value
+  Instance<FLOATmatrix3D> *pOtherMat = InstanceOfType(v, idxOther, FLOATmatrix3D);
+
+  if (pOtherMat != NULL) {
+    *pm = val * pOtherMat->val;
+    return 1;
+  }
+
+  // Or a float value
+  SQFloat f;
+  if (SQ_FAILED(sq_getfloat(v, idxOther, &f))) return sq_throwerror(v, "expected FLOATmatrix3D or float value");
+
+  *pm = val * f;
+  return 1;
+};
+
+static SQInteger Div(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
+  VM &vm = GetVMClass(v);
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!vm.Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  // Get a float value
+  SQFloat f;
+  if (SQ_FAILED(sq_getfloat(v, idxOther, &f))) return sq_throwerror(v, "expected float value");
+
+  *pm = val / f;
+  return 1;
+};
+
+static SQInteger UnaryMinus(HSQUIRRELVM v, FLOATmatrix3D &val) {
+  VM &vm = GetVMClass(v);
+
+  // Create a matrix instance
+  FLOATmatrix3D *pm;
+  if (!vm.Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+
+  *pm = !val;
+  return 1;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, FLOATmatrix3D &val) {
+  CTString str(0, "[%g, %g, %g; %g, %g, %g; %g, %g, %g]",
+    val(1, 1), val(1, 2), val(1, 3),
+    val(2, 1), val(2, 2), val(2, 3),
+    val(3, 1), val(3, 2), val(3, 3));
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+#define MATRIX_VALUE_FUNC(_Get, _Set, _RowIndex, _ColumnIndex) \
+  static SQInteger _Get(HSQUIRRELVM v, FLOATmatrix3D &val) { \
+    sq_pushfloat(v, val(_RowIndex, _ColumnIndex)); \
+    return 1; \
+  }; \
+  static SQInteger _Set(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxValue) { \
+    if (SQ_FAILED(sq_getfloat(v, idxValue, &val(_RowIndex, _ColumnIndex)))) { \
+      return sq_throwerror(v, "expected a number value for a matrix value"); \
+    } \
+    return 1; \
+  };
+
+MATRIX_VALUE_FUNC(Get11, Set11, 1, 1);
+MATRIX_VALUE_FUNC(Get12, Set12, 1, 2);
+MATRIX_VALUE_FUNC(Get13, Set13, 1, 3);
+
+MATRIX_VALUE_FUNC(Get21, Set21, 2, 1);
+MATRIX_VALUE_FUNC(Get22, Set22, 2, 2);
+MATRIX_VALUE_FUNC(Get23, Set23, 2, 3);
+
+MATRIX_VALUE_FUNC(Get31, Set31, 3, 1);
+MATRIX_VALUE_FUNC(Get32, Set32, 3, 2);
+MATRIX_VALUE_FUNC(Get33, Set33, 3, 3);
+
+static SQInteger Diagonal(HSQUIRRELVM v) {
+  Instance<FLOATmatrix3D> *pInstance = InstanceOfType(v, 1, FLOATmatrix3D);
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Get a vector value
+  Instance<FLOAT3D> *pOtherVec = InstanceOfType(v, 2, FLOAT3D);
+
+  if (pOtherVec != NULL) {
+    pInstance->val.Diagonal(pOtherVec->val);
+    return 0;
+  }
+
+  // Or a float value
+  SQFloat f;
+  if (SQ_FAILED(sq_getfloat(v, 2, &f))) return sq_throwerror(v, "expected FLOAT3D or float value");
+
+  pInstance->val.Diagonal(f);
+  return 0;
+};
+
+static SQInteger GetRow(HSQUIRRELVM v) {
+  Instance<FLOATmatrix3D> *pInstance = InstanceOfType(v, 1, FLOATmatrix3D);
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Get an index
+  SQInteger i;
+  if (SQ_FAILED(sq_getinteger(v, 2, &i))) return sq_throwerror(v, "expected number value");
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = pInstance->val.GetRow(i);
+  return 1;
+};
+
+static SQInteger GetColumn(HSQUIRRELVM v) {
+  Instance<FLOATmatrix3D> *pInstance = InstanceOfType(v, 1, FLOATmatrix3D);
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Get an index
+  SQInteger i;
+  if (SQ_FAILED(sq_getinteger(v, 2, &i))) return sq_throwerror(v, "expected number value");
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = pInstance->val.GetColumn(i);
+  return 1;
+};
+
+static SQRegFunction _aMethods[] = {
+  { "Diagonal",  &Diagonal, 2, ".n|x" },
+  { "GetRow",    &GetRow, 2, ".n" },
+  { "GetColumn", &GetColumn, 2, ".n" },
 };
 
 }; // namespace
@@ -354,6 +549,36 @@ void VM::RegisterUtils(void) {
     sqcVector.RegisterIndex(3, &SqVector::GetZ, &SqVector::SetZ);
 
     Root().SetClass(sqcVector);
+
+    Class<FLOATmatrix3D> sqcMatrix(GetVM(), "FLOATmatrix3D", &SqMatrix::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqMatrix::_aMethods); i++) {
+      sqcMatrix.RegisterFunc(SqMatrix::_aMethods[i]);
+    }
+
+    // Metamethods
+    sqcMatrix.RegisterMetamethod(E_MM_ADD, &SqMatrix::Add);
+    sqcMatrix.RegisterMetamethod(E_MM_SUB, &SqMatrix::Sub);
+    sqcMatrix.RegisterMetamethod(E_MM_MUL, &SqMatrix::Mul);
+    sqcMatrix.RegisterMetamethod(E_MM_DIV, &SqMatrix::Div);
+    sqcMatrix.RegisterMetamethod(E_MM_UNM, &SqMatrix::UnaryMinus);
+    sqcMatrix.RegisterMetamethod(E_MM_TOSTRING, &SqMatrix::ToString);
+
+    // Row and column values
+    sqcMatrix.RegisterVar("m11", &SqMatrix::Get11, &SqMatrix::Set11);
+    sqcMatrix.RegisterVar("m12", &SqMatrix::Get12, &SqMatrix::Set12);
+    sqcMatrix.RegisterVar("m13", &SqMatrix::Get13, &SqMatrix::Set13);
+
+    sqcMatrix.RegisterVar("m21", &SqMatrix::Get21, &SqMatrix::Set21);
+    sqcMatrix.RegisterVar("m22", &SqMatrix::Get22, &SqMatrix::Set22);
+    sqcMatrix.RegisterVar("m23", &SqMatrix::Get23, &SqMatrix::Set23);
+
+    sqcMatrix.RegisterVar("m31", &SqMatrix::Get31, &SqMatrix::Set31);
+    sqcMatrix.RegisterVar("m32", &SqMatrix::Get32, &SqMatrix::Set32);
+    sqcMatrix.RegisterVar("m33", &SqMatrix::Get33, &SqMatrix::Set33);
+
+    Root().SetClass(sqcMatrix);
   }
 
   // Register functions
