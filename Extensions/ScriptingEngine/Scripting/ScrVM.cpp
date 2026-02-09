@@ -187,6 +187,7 @@ VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDe
     if (ulInitFlags & VMLIB_ENTITIES)   RegisterEntities();
     if (ulInitFlags & VMLIB_FILESYSTEM) RegisterFileSystem();
     if (ulInitFlags & VMLIB_INPUT)      RegisterInput();
+    if (ulInitFlags & VMLIB_MATH)       RegisterMath();
     if (ulInitFlags & VMLIB_MESSAGE)    RegisterMessage();
     if (ulInitFlags & VMLIB_NETWORK)    RegisterNetwork();
     if (ulInitFlags & VMLIB_SHELL)      RegisterShell();

@@ -40,6 +40,7 @@
     <ClCompile Include="Libraries\ScrLibEntities.cpp" />
     <ClCompile Include="Libraries\ScrLibFileSystem.cpp" />
     <ClCompile Include="Libraries\ScrLibInput.cpp" />
+    <ClCompile Include="Libraries\ScrLibMath.cpp" />
     <ClCompile Include="Libraries\ScrLibMessage.cpp" />
     <ClCompile Include="Libraries\ScrLibNetwork.cpp" />
     <ClCompile Include="Libraries\ScrLibShell.cpp" />

@@ -40,12 +40,13 @@ enum InitFlagsVM {
   VMLIB_ENTITIES   = (1 << 10),
   VMLIB_FILESYSTEM = (1 << 11),
   VMLIB_INPUT      = (1 << 12),
-  VMLIB_MESSAGE    = (1 << 13),
-  VMLIB_NETWORK    = (1 << 14),
-  VMLIB_SHELL      = (1 << 15),
-  VMLIB_TIMER      = (1 << 16),
-  VMLIB_UTILS      = (1 << 17),
-  VMLIB_WORLD      = (1 << 18),
+  VMLIB_MATH       = (1 << 13),
+  VMLIB_MESSAGE    = (1 << 14),
+  VMLIB_NETWORK    = (1 << 15),
+  VMLIB_SHELL      = (1 << 16),
+  VMLIB_TIMER      = (1 << 17),
+  VMLIB_UTILS      = (1 << 18),
+  VMLIB_WORLD      = (1 << 19),
 };
 
 class VM {
@@ -193,6 +194,7 @@ class VM {
     void RegisterEntities(void);
     void RegisterFileSystem(void);
     void RegisterInput(void);
+    void RegisterMath(void);
     void RegisterMessage(void);
     void RegisterNetwork(void);
     void RegisterShell(void);

@@ -98,5 +98,8 @@
     <ClCompile Include="Libraries\ScrLibUtils.cpp">
       <Filter>Source Files\Libraries</Filter>
     </ClCompile>
+    <ClCompile Include="Libraries\ScrLibMath.cpp">
+      <Filter>Source Files\Libraries</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
