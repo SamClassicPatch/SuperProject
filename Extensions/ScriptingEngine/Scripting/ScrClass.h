@@ -84,7 +84,7 @@ class AbstractClass : public TableBase {
   protected:
 
     // Helper method for retrieving a variable name as a key and a setter/getter function as a value
-    static bool GetFunctionForVariable(HSQUIRRELVM v, const SQChar **pstrVariable, SQUserPointer *ppFunc);
+    static bool GetFunctionForVariable(HSQUIRRELVM v, const SQChar **pstrVariable, bool &bIndex, SQUserPointer *ppFunc);
 
     static SQInteger ClassWeakRef(HSQUIRRELVM v) {
       // Push weak reference of the instance
@@ -243,7 +243,12 @@ class Class : public AbstractClass {
     };
 
     // Add a custom metamethod for iteration
-    inline void RegisterMetamethod(FNextIndex pFunction) {
+    inline void RegisterMetamethod(EMetamethod eType, FNextIndex pFunction) {
+      if (eType != E_MM_NEXTI) {
+        ASSERTALWAYS("Unknown metamethod type for FNextIndex function!");
+        return;
+      }
+
       sq_pushobject(m_vm, m_obj); // Push class
 
       sq_pushstring(m_vm, "_nexti", -1);
@@ -287,13 +292,9 @@ SQInteger Class<Type>::ClassConstructor(HSQUIRRELVM v) {
 
   // Create a new instance using a factory
   AbstractFactory *pFactory = AbstractFactory::Find(v, strFactoryType);
+  if (pFactory == NULL) return sq_throwerror(v, "no instance factory");
 
-  if (pFactory == NULL) {
-    sq_throwerror(v, "no instance factory");
-    return SQ_ERROR;
-  }
-
-  // Couldn't create a new instance
+  // Create a new copy instance
   InstanceAny *pInstance = pFactory->NewInstance(v, 1);
   if (pInstance == NULL) return SQ_ERROR;
 
@@ -302,13 +303,11 @@ SQInteger Class<Type>::ClassConstructor(HSQUIRRELVM v) {
 
   // Call custom constructor
   FConstructor pFunc = (FConstructor)pFactory->m_pConstructorFunc;
-  Type *pRef = (Type *)pFactory->m_pValReference;
+  Type *pSelf = (Type *)pFactory->m_pValReference;
 
-  if (pRef != NULL) {
-    return pFunc(v, *pRef);
-  }
+  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
 
-  return pFunc(v, ((Instance<Type> *)pInstance)->val);
+  return pFunc(v, *pSelf);
 };
 
 template<class Type> inline
@@ -323,24 +322,28 @@ SQInteger Class<Type>::ClassSet(HSQUIRRELVM v) {
 
   // Retrieve setter method for the variable
   const SQChar *strVariable;
+  bool bIndex;
   SQUserPointer pPtrToFunc;
 
-  if (!GetFunctionForVariable(v, &strVariable, &pPtrToFunc)) {
+  if (!GetFunctionForVariable(v, &strVariable, bIndex, &pPtrToFunc)) {
     SQChar strError[256];
-    scsprintf(strError, 256, "variable '%s' is read-only or does not exist", strVariable);
+
+    if (bIndex) {
+      scsprintf(strError, 256, "index '%s' is read-only or does not exist", strVariable);
+    } else {
+      scsprintf(strError, 256, "variable '%s' is read-only or does not exist", strVariable);
+    }
 
     return sq_throwerror(v, strError);
   }
 
   // Call setter method for the data
   FSetter pFunc = (FSetter)pPtrToFunc;
-  Type *pRef = (Type *)pInstance->GetFactory()->m_pValReference;
+  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  if (pRef != NULL) {
-    return pFunc(v, *pRef, 3);
-  }
+  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
 
-  return pFunc(v, ((Instance<Type> *)pInstance)->val, 3);
+  return pFunc(v, *pSelf, 3);
 };
 
 template<class Type> inline
@@ -355,24 +358,28 @@ SQInteger Class<Type>::ClassGet(HSQUIRRELVM v) {
 
   // Retrieve getter method for the variable
   const SQChar *strVariable;
+  bool bIndex;
   SQUserPointer pPtrToFunc;
 
-  if (!GetFunctionForVariable(v, &strVariable, &pPtrToFunc)) {
+  if (!GetFunctionForVariable(v, &strVariable, bIndex, &pPtrToFunc)) {
     SQChar strError[256];
-    scsprintf(strError, 256, "variable '%s' cannot be read from", strVariable);
+
+    if (bIndex) {
+      scsprintf(strError, 256, "index '%s' cannot be read from", strVariable);
+    } else {
+      scsprintf(strError, 256, "variable '%s' cannot be read from", strVariable);
+    }
 
     return sq_throwerror(v, strError);
   }
 
   // Call getter method for the data
   FGetter pFunc = (FGetter)pPtrToFunc;
-  Type *pRef = (Type *)pInstance->GetFactory()->m_pValReference;
+  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  if (pRef != NULL) {
-    return pFunc(v, *pRef);
-  }
+  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
 
-  return pFunc(v, ((Instance<Type> *)pInstance)->val);
+  return pFunc(v, *pSelf);
 };
 
 template<class Type> inline
@@ -389,13 +396,13 @@ SQInteger Class<Type>::ClassMetaOther(HSQUIRRELVM v) {
 
   // Call conversion data for the data
   FOther pFunc = (FOther)pToStringFunc;
-  Type *pRefSelf = (Type *)pInstance->GetFactory()->m_pValReference;
+  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
   // Reference the instance data if there's no external reference
-  if (pRefSelf == NULL) pRefSelf = &((Instance<Type> *)pInstance)->val;
+  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
 
   // Pass other value as an index in the stack
-  return pFunc(v, *pRefSelf, 2);
+  return pFunc(v, *pSelf, 2);
 };
 
 template<class Type> inline
@@ -412,12 +419,12 @@ SQInteger Class<Type>::ClassMetaSelf(HSQUIRRELVM v) {
 
   // Call conversion data for the data
   FSelf pFunc = (FSelf)pToStringFunc;
-  Type *pRefSelf = (Type *)pInstance->GetFactory()->m_pValReference;
+  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
   // Reference the instance data if there's no external reference
-  if (pRefSelf == NULL) pRefSelf = &((Instance<Type> *)pInstance)->val;
+  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
 
-  return pFunc(v, *pRefSelf);
+  return pFunc(v, *pSelf);
 };
 
 template<class Type> inline
@@ -442,13 +449,13 @@ SQInteger Class<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
 
   // Call conversion data for the data
   FNextIndex pFunc = (FNextIndex)pToStringFunc;
-  Type *pRefSelf = (Type *)pInstance->GetFactory()->m_pValReference;
+  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
   // Reference the instance data if there's no external reference
-  if (pRefSelf == NULL) pRefSelf = &((Instance<Type> *)pInstance)->val;
+  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
 
   // Pass previous index only if it has been retrieved
-  return pFunc(v, *pRefSelf, bPrevIndex ? &iPrev : NULL);
+  return pFunc(v, *pSelf, bPrevIndex ? &iPrev : NULL);
 };
 
 }; // namespace

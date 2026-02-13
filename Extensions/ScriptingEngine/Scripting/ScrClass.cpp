@@ -117,9 +117,17 @@ AbstractFactory *AbstractClass::GetFactory(void) {
 };
 
 // Helper method for retrieving a variable name as a key and a setter/getter function as a value
-bool AbstractClass::GetFunctionForVariable(HSQUIRRELVM v, const SQChar **pstrVariable, SQUserPointer *ppFunc) {
+bool AbstractClass::GetFunctionForVariable(HSQUIRRELVM v, const SQChar **pstrVariable, bool &bIndex, SQUserPointer *ppFunc) {
   sq_push(v, 2); // Push variable name argument on top
-  sq_getstring(v, -1, pstrVariable); // Remember it
+
+  *pstrVariable = NULL;
+  bIndex = (sq_gettype(v, -1) != OT_STRING);
+
+  // Remember it as an actual string by converting it, if needed (pushes a new string)
+  if (SQ_SUCCEEDED(sq_tostring(v, -1))) {
+    sq_getstring(v, -1, pstrVariable);
+    sq_poptop(v);
+  }
 
   // Try to find a method for this variable in the table
   if (SQ_FAILED(sq_rawget(v, -2))) return false;
