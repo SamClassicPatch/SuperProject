@@ -602,6 +602,102 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
   return pFunc(v, *pSelf, bPrevIndex ? &iPrev : NULL);
 };
 
+// Define getter and setter functions for an integer field of some native Squirrel class
+// _ClassType - Type that's used in the Class<> template for the class with the field
+// _ValueGet & _ValueSet - A way of retrieving the field from 'val' variable for getting and setting values
+// Example: SQCLASS_GETSET_INT(GetShells, SetShells, CAmmoPack, val.m_iShells, val.m_iShells)
+#define SQCLASS_GETSET_INT(_GetFuncName, _SetFuncName, _ClassType, _ValueGet, _ValueSet) \
+  static SQInteger _GetFuncName(HSQUIRRELVM v, _ClassType &val) { \
+    sq_pushinteger(v, (_ValueGet)); \
+    return 1; \
+  }; \
+  static SQInteger _SetFuncName(HSQUIRRELVM v, _ClassType &val, SQInteger idxValue) { \
+    SQInteger i; \
+    if (SQ_FAILED(sq_getinteger(v, idxValue, &i))) { \
+      return sq_throwerror(v, "expected an integer value"); \
+    } \
+    (_ValueSet) = i; \
+    return 1; \
+  }
+
+// Define getter and setter functions for a float field of some native Squirrel class
+// _ClassType - Type that's used in the Class<> template for the class with the field
+// _ValueGet & _ValueSet - A way of retrieving the field from 'val' variable for getting and setting values
+// Example: SQCLASS_GETSET_FLOAT(GetTime, SetTime, CTrigger, val.m_fWaitTime, val.m_fWaitTime)
+#define SQCLASS_GETSET_FLOAT(_GetFuncName, _SetFuncName, _ClassType, _ValueGet, _ValueSet) \
+  static SQInteger _GetFuncName(HSQUIRRELVM v, _ClassType &val) { \
+    sq_pushfloat(v, (_ValueGet)); \
+    return 1; \
+  }; \
+  static SQInteger _SetFuncName(HSQUIRRELVM v, _ClassType &val, SQInteger idxValue) { \
+    SQFloat f; \
+    if (SQ_FAILED(sq_getfloat(v, idxValue, &f))) { \
+      return sq_throwerror(v, "expected a number value"); \
+    } \
+    (_ValueSet) = f; \
+    return 1; \
+  }
+
+// Define getter and setter functions for a boolean field of some native Squirrel class
+// _ClassType - Type that's used in the Class<> template for the class with the field
+// _ValueGet & _ValueSet - A way of retrieving the field from 'val' variable for getting and setting values
+// Example: SQCLASS_GETSET_BOOL(GetFixed, SetFixed, CFontData, val.fd_bFixedWidth, val.fd_bFixedWidth)
+#define SQCLASS_GETSET_BOOL(_GetFuncName, _SetFuncName, _ClassType, _ValueGet, _ValueSet) \
+  static SQInteger _GetFuncName(HSQUIRRELVM v, _ClassType &val) { \
+    sq_pushbool(v, (_ValueGet)); \
+    return 1; \
+  }; \
+  static SQInteger _SetFuncName(HSQUIRRELVM v, _ClassType &val, SQInteger idxValue) { \
+    SQBool b; \
+    if (SQ_FAILED(sq_getbool(v, idxValue, &b))) { \
+      return sq_throwerror(v, "expected a boolean value"); \
+    } \
+    (_ValueSet) = b; \
+    return 1; \
+  }
+
+// Define getter and setter functions for a string field of some native Squirrel class
+// _ClassType - Type that's used in the Class<> template for the class with the field
+// _ValueGet & _ValueSet - A way of retrieving the field from 'val' variable for getting and setting values
+// Example: SQCLASS_GETSET_STRING(GetDesc, SetDesc, CWorld, val.wo_strDescription, val.wo_strDescription)
+#define SQCLASS_GETSET_STRING(_GetFuncName, _SetFuncName, _ClassType, _ValueGet, _ValueSet) \
+  static SQInteger _GetFuncName(HSQUIRRELVM v, _ClassType &val) { \
+    sq_pushstring(v, (_ValueGet), -1); \
+    return 1; \
+  }; \
+  static SQInteger _SetFuncName(HSQUIRRELVM v, _ClassType &val, SQInteger idxValue) { \
+    const SQChar *str; \
+    if (SQ_FAILED(sq_getstring(v, idxValue, &str))) { \
+      return sq_throwerror(v, "expected a string value"); \
+    } \
+    (_ValueSet) = str; \
+    return 1; \
+  }
+
+// Define getter function for a field of some native Squirrel class that contains a value of another class
+// _ClassType - Type that's used in the Class<> template for the class with the field
+// _ValueType - Type of the field that is another valid Squirrel class
+// _ValueGet - A way of retrieving the field from 'val' variable for getting values
+// Example: SQCLASS_GET_INSTANCE(GetPos, CPlacement3D, FLOAT3D, val.pl_PositionVector)
+#define SQCLASS_GET_INSTANCE(_GetFuncName, _ClassType, _ValueType, _ValueGet) \
+  static SQInteger _GetFuncName(HSQUIRRELVM v, _ClassType &val) { \
+    if (!GetVMClass(v).Root().CreatePointerInstanceOf(#_ValueType, &(_ValueGet))) return SQ_ERROR; \
+    return 1; \
+  }
+
+// Define setter function for a field of some native Squirrel class that contains a value of another class
+// _ClassType - Type that's used in the Class<> template for the class with the field
+// _ValueType - Type of the field that is another valid Squirrel class
+// _ValueSet - A way of retrieving the field from 'val' variable for setting values
+// Example: SQCLASS_SET_INSTANCE(SetRot, CPlacement3D, FLOAT3D, val.pl_OrientationAngle)
+#define SQCLASS_SET_INSTANCE(_SetFuncName, _ClassType, _ValueType, _ValueGet) \
+  static SQInteger _SetFuncName(HSQUIRRELVM v, _ClassType &val, SQInteger idxValue) { \
+    _ValueType *pOther = InstanceValueOfType(v, idxValue, _ValueType); \
+    if (pOther == NULL) return sq_throwerror(v, "expected " #_ValueType " value"); \
+    (_ValueGet) = *pOther; \
+    return 1; \
+  }
+
 }; // namespace
 
 #endif

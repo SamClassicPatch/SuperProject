@@ -122,21 +122,9 @@ static SQInteger ToString(HSQUIRRELVM v, FLOAT3D &val) {
   return 1;
 };
 
-#define VECTOR_AXIS_FUNC(_Get, _Set, _AxisIndex) \
-  static SQInteger _Get(HSQUIRRELVM v, FLOAT3D &val) { \
-    sq_pushfloat(v, val(_AxisIndex)); \
-    return 1; \
-  }; \
-  static SQInteger _Set(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxValue) { \
-    if (SQ_FAILED(sq_getfloat(v, idxValue, &val(_AxisIndex)))) { \
-      return sq_throwerror(v, "expected a number value for a vector axis"); \
-    } \
-    return 1; \
-  };
-
-VECTOR_AXIS_FUNC(GetX, SetX, 1);
-VECTOR_AXIS_FUNC(GetY, SetY, 2);
-VECTOR_AXIS_FUNC(GetZ, SetZ, 3);
+SQCLASS_GETSET_FLOAT(GetX, SetX, FLOAT3D, val(1), val(1));
+SQCLASS_GETSET_FLOAT(GetY, SetY, FLOAT3D, val(2), val(2));
+SQCLASS_GETSET_FLOAT(GetZ, SetZ, FLOAT3D, val(3), val(3));
 
 static SQInteger Length(HSQUIRRELVM v) {
   FLOAT3D *pVal = InstanceValueOfType(v, 1, FLOAT3D);
@@ -302,29 +290,17 @@ static SQInteger ToString(HSQUIRRELVM v, FLOATmatrix3D &val) {
   return 1;
 };
 
-#define MATRIX_VALUE_FUNC(_Get, _Set, _RowIndex, _ColumnIndex) \
-  static SQInteger _Get(HSQUIRRELVM v, FLOATmatrix3D &val) { \
-    sq_pushfloat(v, val(_RowIndex, _ColumnIndex)); \
-    return 1; \
-  }; \
-  static SQInteger _Set(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxValue) { \
-    if (SQ_FAILED(sq_getfloat(v, idxValue, &val(_RowIndex, _ColumnIndex)))) { \
-      return sq_throwerror(v, "expected a number value for a matrix value"); \
-    } \
-    return 1; \
-  };
+SQCLASS_GETSET_FLOAT(Get11, Set11, FLOATmatrix3D, val(1, 1), val(1, 1));
+SQCLASS_GETSET_FLOAT(Get12, Set12, FLOATmatrix3D, val(1, 2), val(1, 2));
+SQCLASS_GETSET_FLOAT(Get13, Set13, FLOATmatrix3D, val(1, 3), val(1, 3));
 
-MATRIX_VALUE_FUNC(Get11, Set11, 1, 1);
-MATRIX_VALUE_FUNC(Get12, Set12, 1, 2);
-MATRIX_VALUE_FUNC(Get13, Set13, 1, 3);
+SQCLASS_GETSET_FLOAT(Get21, Set21, FLOATmatrix3D, val(2, 1), val(2, 1));
+SQCLASS_GETSET_FLOAT(Get22, Set22, FLOATmatrix3D, val(2, 2), val(2, 2));
+SQCLASS_GETSET_FLOAT(Get23, Set23, FLOATmatrix3D, val(2, 3), val(2, 3));
 
-MATRIX_VALUE_FUNC(Get21, Set21, 2, 1);
-MATRIX_VALUE_FUNC(Get22, Set22, 2, 2);
-MATRIX_VALUE_FUNC(Get23, Set23, 2, 3);
-
-MATRIX_VALUE_FUNC(Get31, Set31, 3, 1);
-MATRIX_VALUE_FUNC(Get32, Set32, 3, 2);
-MATRIX_VALUE_FUNC(Get33, Set33, 3, 3);
+SQCLASS_GETSET_FLOAT(Get31, Set31, FLOATmatrix3D, val(3, 1), val(3, 1));
+SQCLASS_GETSET_FLOAT(Get32, Set32, FLOATmatrix3D, val(3, 2), val(3, 2));
+SQCLASS_GETSET_FLOAT(Get33, Set33, FLOATmatrix3D, val(3, 3), val(3, 3));
 
 static SQInteger Diagonal(HSQUIRRELVM v) {
   FLOATmatrix3D *pVal = InstanceValueOfType(v, 1, FLOATmatrix3D);
