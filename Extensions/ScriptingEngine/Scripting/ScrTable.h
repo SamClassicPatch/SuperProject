@@ -89,11 +89,12 @@ class TableBase : public Object {
 
     // Create an instance of a specific class and retrieve its value
     template<class Type> inline
-    bool CreateInstanceOf(const SQChar *strClassName, Type **ppVal) {
-      Instance<Type> *pInstance = NULL;
+    bool CreateInstanceOf(const SQChar *strClassName, Type **ppVal, Instance<Type> **ppInstance = NULL) {
+      Instance<Type> *pInstance;
       if (!CreateInstance(strClassName, (InstanceAny **)&pInstance)) return false;
 
       *ppVal = &pInstance->val;
+      if (ppInstance != NULL) *ppInstance = pInstance;
       return true;
     };
 };

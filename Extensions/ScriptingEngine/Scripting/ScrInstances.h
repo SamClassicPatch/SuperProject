@@ -83,6 +83,18 @@ class InstanceAny {
     // Shortcut for retrieving an instance of a specific class type
     #define InstanceOfType(v, idx, Type) \
       ((Instance< Type > *)InstanceAny::OfType(v, idx, typeid(Type).raw_name()))
+
+    template<class Type>
+    static Type *RetrieveValue(HSQUIRRELVM v, SQInteger idx, Type *pTemplateDummy) {
+      InstanceAny *pInstance = OfType(v, idx, typeid(Type).raw_name());
+      if (pInstance == NULL) return NULL;
+
+      return &((Instance<Type> *)pInstance)->val;
+    };
+
+    // Shortcut for retrieving a value from its instance of a specific class type
+    #define InstanceValueOfType(v, idx, Type) \
+      InstanceAny::RetrieveValue(v, idx, (Type *)NULL)
 };
 
 // Class instance that holds a value of a specific type

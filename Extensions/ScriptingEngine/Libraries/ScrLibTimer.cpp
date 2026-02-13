@@ -21,18 +21,14 @@ namespace sq {
 namespace SqTimerValue {
 
 static SQInteger Constructor(HSQUIRRELVM v, CTimerValue &tv) {
-  SQFloat fOptSec;
+  tv.tv_llValue = 0;
 
   // Optional value
+  SQFloat fOptSec;
   if (SQ_SUCCEEDED(sq_getfloat(v, 2, &fOptSec))) {
     tv = CTimerValue((DOUBLE)fOptSec);
-
-  // Default value
-  } else {
-    tv.tv_llValue = 0;
   }
 
-  // No error
   return 0;
 };
 
