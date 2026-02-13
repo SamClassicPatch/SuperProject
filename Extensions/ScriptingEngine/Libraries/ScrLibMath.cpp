@@ -362,6 +362,217 @@ static SQRegFunction _aMethods[] = {
 
 }; // namespace
 
+// CPlacement3D class methods
+namespace SqPlacement {
+
+static SQInteger Constructor(HSQUIRRELVM v, CPlacement3D &val) {
+  val = CPlacement3D(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0));
+
+  FLOAT3D *pPos = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pPos != NULL) val.pl_PositionVector = *pPos;
+
+  FLOAT3D *pRot = InstanceValueOfType(v, 3, FLOAT3D);
+  if (pRot != NULL) val.pl_OrientationAngle = *pRot;
+
+  return 0;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, CPlacement3D &val) {
+  CTString str(0, "pl([%g, %g, %g]; [%g, %g, %g])",
+    val.pl_PositionVector(1), val.pl_PositionVector(2), val.pl_PositionVector(3),
+    val.pl_OrientationAngle(1), val.pl_OrientationAngle(2), val.pl_OrientationAngle(3));
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+SQCLASS_GET_INSTANCE(GetPos, CPlacement3D, FLOAT3D, val.pl_PositionVector);
+SQCLASS_SET_INSTANCE(SetPos, CPlacement3D, FLOAT3D, val.pl_PositionVector);
+SQCLASS_GET_INSTANCE(GetRot, CPlacement3D, FLOAT3D, val.pl_OrientationAngle);
+SQCLASS_SET_INSTANCE(SetRot, CPlacement3D, FLOAT3D, val.pl_OrientationAngle);
+
+static SQInteger Rotate_TrackBall(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a vector value
+  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  pVal->Rotate_TrackBall(*pOther);
+  return 0;
+};
+
+static SQInteger Rotate_Airplane(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a vector value
+  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  pVal->Rotate_Airplane(*pOther);
+  return 0;
+};
+
+static SQInteger Rotate_HPB(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a vector value
+  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  pVal->Rotate_HPB(*pOther);
+  return 0;
+};
+
+static SQInteger Translate_OwnSystem(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a vector value
+  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  pVal->Translate_OwnSystem(*pOther);
+  return 0;
+};
+
+static SQInteger Translate_AbsoluteSystem(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a vector value
+  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  pVal->Translate_AbsoluteSystem(*pOther);
+  return 0;
+};
+
+static SQInteger GetDirectionVector(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  pVal->GetDirectionVector(*pv);
+  return 1;
+};
+
+static SQInteger AbsoluteToRelative(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a placement value
+  CPlacement3D *pOther = InstanceValueOfType(v, 2, CPlacement3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected CPlacement3D value");
+
+  pVal->AbsoluteToRelative(*pOther);
+  return 0;
+};
+
+static SQInteger AbsoluteToRelativeSmooth(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a placement value
+  CPlacement3D *pOther = InstanceValueOfType(v, 2, CPlacement3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected CPlacement3D value");
+
+  pVal->AbsoluteToRelativeSmooth(*pOther);
+  return 0;
+};
+
+static SQInteger RelativeToAbsolute(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a placement value
+  CPlacement3D *pOther = InstanceValueOfType(v, 2, CPlacement3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected CPlacement3D value");
+
+  pVal->RelativeToAbsolute(*pOther);
+  return 0;
+};
+
+static SQInteger RelativeToAbsoluteSmooth(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get a placement value
+  CPlacement3D *pOther = InstanceValueOfType(v, 2, CPlacement3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected CPlacement3D value");
+
+  pVal->RelativeToAbsoluteSmooth(*pOther);
+  return 0;
+};
+
+static SQInteger RelativeToRelative(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get two placement values
+  CPlacement3D *pOther1 = InstanceValueOfType(v, 2, CPlacement3D);
+  CPlacement3D *pOther2 = InstanceValueOfType(v, 3, CPlacement3D);
+  if (pOther1 == NULL || pOther2 == NULL) return sq_throwerror(v, "expected two CPlacement3D values");
+
+  pVal->RelativeToRelative(*pOther1, *pOther2);
+  return 0;
+};
+
+static SQInteger RelativeToRelativeSmooth(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get two placement values
+  CPlacement3D *pOther1 = InstanceValueOfType(v, 2, CPlacement3D);
+  CPlacement3D *pOther2 = InstanceValueOfType(v, 3, CPlacement3D);
+  if (pOther1 == NULL || pOther2 == NULL) return sq_throwerror(v, "expected two CPlacement3D values");
+
+  pVal->RelativeToRelativeSmooth(*pOther1, *pOther2);
+  return 0;
+};
+
+static SQInteger Lerp(HSQUIRRELVM v) {
+  CPlacement3D *pVal = InstanceValueOfType(v, 1, CPlacement3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get two placement values
+  CPlacement3D *pOther1 = InstanceValueOfType(v, 2, CPlacement3D);
+  if (pOther1 == NULL) return sq_throwerror(v, "expected CPlacement3D value");
+
+  CPlacement3D *pOther2 = InstanceValueOfType(v, 3, CPlacement3D);
+  if (pOther2 == NULL) return sq_throwerror(v, "expected CPlacement3D value");
+
+  // Get a float value
+  SQFloat fFactor;
+  if (SQ_FAILED(sq_getfloat(v, 4, &fFactor))) return sq_throwerror(v, "expected float value");
+
+  pVal->Lerp(*pOther1, *pOther2, fFactor);
+  return 0;
+};
+
+static SQRegFunction _aMethods[] = {
+  { "Rotate_TrackBall",         &Rotate_TrackBall, 2, ".x" },
+  { "Rotate_Airplane",          &Rotate_Airplane, 2, ".x" },
+  { "Rotate_HPB",               &Rotate_HPB, 2, ".x" },
+  { "Translate_OwnSystem",      &Translate_OwnSystem, 2, ".x" },
+  { "Translate_AbsoluteSystem", &Translate_AbsoluteSystem, 2, ".x" },
+  { "GetDirectionVector",       &GetDirectionVector, 1, "." },
+  { "AbsoluteToRelative",       &AbsoluteToRelative, 2, ".x" },
+  { "AbsoluteToRelativeSmooth", &AbsoluteToRelativeSmooth, 2, ".x" },
+  { "RelativeToAbsolute",       &RelativeToAbsolute, 2, ".x" },
+  { "RelativeToAbsoluteSmooth", &RelativeToAbsoluteSmooth, 2, ".x" },
+  { "RelativeToRelative",       &RelativeToRelative, 3, ".xx" },
+  { "RelativeToRelativeSmooth", &RelativeToRelativeSmooth, 3, ".xx" },
+  { "Lerp",                     &Lerp, 4, ".xxn" },
+};
+
+}; // namespace
+
 namespace Math {
 
 static SQInteger NormFloatToByte(HSQUIRRELVM v) {
@@ -634,6 +845,26 @@ void VM::RegisterMath(void) {
     sqcMatrix.RegisterVar("m33", &SqMatrix::Get33, &SqMatrix::Set33);
 
     Root().SetClass(sqcMatrix);
+  }
+  {
+    Class<CPlacement3D> sqcPlacement(GetVM(), "CPlacement3D", &SqPlacement::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqPlacement::_aMethods); i++) {
+      sqcPlacement.RegisterFunc(SqPlacement::_aMethods[i]);
+    }
+
+    // Metamethods
+    sqcPlacement.RegisterMetamethod(E_MM_TOSTRING, &SqPlacement::ToString);
+
+    // Position and rotation
+    sqcPlacement.RegisterVar("pos", &SqPlacement::GetPos, &SqPlacement::SetPos);
+    sqcPlacement.RegisterVar("rot", &SqPlacement::GetRot, &SqPlacement::SetRot);
+
+    sqcPlacement.RegisterVar("pl_PositionVector",   &SqPlacement::GetPos, &SqPlacement::SetPos);
+    sqcPlacement.RegisterVar("pl_OrientationAngle", &SqPlacement::GetRot, &SqPlacement::SetRot);
+
+    Root().SetClass(sqcPlacement);
   }
 
   // Register functions
