@@ -25,6 +25,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
+#define SQCLASS_PTRNAME(_ClassName) (CTString(0, "@@%s_ptr_type@@", _ClassName).str_String)
+
 #define SQCLASS_FACTORY_TABLE "@@class_factory_table@@"
 #define SQCLASS_SETTER_TABLE  "@@class_set_table@@"
 #define SQCLASS_GETTER_TABLE  "@@class_get_table@@"
@@ -99,9 +101,9 @@ class AbstractClass : public TableBase {
     };
 };
 
-// Native Squirrel class of a specific type
+// Individual native Squirrel class of a specific type
 template<class Type>
-class Class : public AbstractClass {
+class InternalClass : public AbstractClass {
   public:
     // Optional class functions
     typedef SQInteger (*FConstructor)(HSQUIRRELVM v, Type &val);
@@ -117,58 +119,28 @@ class Class : public AbstractClass {
     // Metamethod for iterating through the class
     typedef SQInteger (*FNextIndex)(HSQUIRRELVM v, Type &val, const SQInteger *piPrev);
 
-    // Instance factory for this class
-    class Factory : public AbstractFactory {
-      public:
-        Factory(FConstructor pSetConstructor, Type *pSetValueReference) :
-          AbstractFactory(pSetConstructor, pSetValueReference, typeid(Type))
-        {
-        };
-
-        virtual InstanceAny *NewInstance(HSQUIRRELVM vmSet, SQInteger idx) {
-          InstanceAny *pNew;
-
-          // Create instance with a reference to the value
-          if (m_pValReference != NULL) {
-            pNew = new Instance<Type &>(vmSet, this, *(Type *)m_pValReference);
-
-          // Create instance with its own value
-          } else {
-            pNew = new Instance<Type>(vmSet, this);
-          }
-
-          // Couldn't set it up
-          if (!pNew->Setup(idx)) {
-            delete pNew;
-            return NULL;
-          }
-
-          return pNew;
-        };
-    };
-
   private:
     FConstructor m_pConstructor; // Optional constructor method
     Type *m_pValReference; // Original value for all class instances to reference
 
   private:
     // Cannot be reassigned
-    Class(const Class &other);
-    void operator=(const Class &other);
+    InternalClass(const InternalClass &other);
+    void operator=(const InternalClass &other);
 
   public:
     // Construct a Squirrel class declaration that creates instances with own copies of values
-    Class(HSQUIRRELVM vmSet, const SQChar *strName, FConstructor pSetConstructor) :
-      AbstractClass(vmSet, strName), m_pConstructor(pSetConstructor), m_pValReference(NULL)
+    InternalClass(HSQUIRRELVM vmSet, const SQChar *strName, bool bPtrType, FConstructor pSetConstructor) :
+      AbstractClass(vmSet, bPtrType ? SQCLASS_PTRNAME(strName) : strName), m_pConstructor(pSetConstructor), m_pValReference(NULL)
     {
-      Init(&ClassConstructor, &ClassSet, &ClassGet);
+      Init(bPtrType ? &ClassPtrConstructor : &ClassConstructor, &ClassSet, &ClassGet);
     };
 
     // Construct a Squirrel class declaration that creates instances with a reference to some external value
-    Class(HSQUIRRELVM vmSet, const SQChar *strName, FConstructor pSetConstructor, Type &valSetReference) :
-      AbstractClass(vmSet, strName), m_pConstructor(pSetConstructor), m_pValReference(&valSetReference)
+    InternalClass(HSQUIRRELVM vmSet, const SQChar *strName, bool bPtrType, FConstructor pSetConstructor, Type &valSetReference) :
+      AbstractClass(vmSet, bPtrType ? SQCLASS_PTRNAME(strName) : strName), m_pConstructor(pSetConstructor), m_pValReference(&valSetReference)
     {
-      Init(&ClassConstructor, &ClassSet, &ClassGet);
+      Init(bPtrType ? &ClassPtrConstructor : &ClassConstructor, &ClassSet, &ClassGet);
     };
 
     // Add getter and optional setter methods for working with some variable
@@ -264,7 +236,7 @@ class Class : public AbstractClass {
   protected:
     // Create new factory of a specific type
     virtual AbstractFactory *NewFactory(void) {
-      return new Factory(m_pConstructor, m_pValReference);
+      return new Class<Type>::Factory(m_pConstructor, m_pValReference);
     };
 
     // Get type info for a factory
@@ -276,6 +248,7 @@ class Class : public AbstractClass {
   protected:
 
     static SQInteger ClassConstructor(HSQUIRRELVM v);
+    static SQInteger ClassPtrConstructor(HSQUIRRELVM v);
     static SQInteger ClassSet(HSQUIRRELVM v);
     static SQInteger ClassGet(HSQUIRRELVM v);
 
@@ -284,8 +257,134 @@ class Class : public AbstractClass {
     static SQInteger ClassMetaNextIndex(HSQUIRRELVM v); // FNextIndex
 };
 
+class AbstractClassRegistrar {
+  public:
+    virtual const AbstractClass &GetCopyClass(void) const = 0;
+    virtual const AbstractClass &GetPointerClass(void) const = 0;
+};
+
+// Registrar for a native Squirrel class of a specific type with an additional pointer type
+template<class Type>
+class Class : public AbstractClassRegistrar {
+  public:
+    typedef typename InternalClass<Type>::FConstructor FConstructor;
+    typedef typename InternalClass<Type>::FSetter      FSetter;
+    typedef typename InternalClass<Type>::FGetter      FGetter;
+
+    typedef typename InternalClass<Type>::FOther     FOther;
+    typedef typename InternalClass<Type>::FSelf      FSelf;
+    typedef typename InternalClass<Type>::FNextIndex FNextIndex;
+
+    // Instance factory for this class
+    class Factory : public AbstractFactory {
+      public:
+        Factory(FConstructor pSetConstructor, Type *pSetValueReference) :
+          AbstractFactory(pSetConstructor, pSetValueReference, typeid(Type))
+        {
+        };
+
+        virtual InstanceAny *NewInstance(HSQUIRRELVM vmSet, SQInteger idx, SQUserPointer pData = NULL) {
+          InstanceAny *pNew;
+
+          // Create a pointer instance
+          if (pData != NULL) {
+            if (m_pValReference != NULL) {
+              pNew = new InstancePtr<Type>(vmSet, this, (Type *)m_pValReference);
+            } else {
+              pNew = new InstancePtr<Type>(vmSet, this, (Type *)pData);
+            }
+
+          // Create a copy instance
+          } else {
+            if (m_pValReference != NULL) {
+              pNew = new InstanceCopy<Type &>(vmSet, this, *(Type *)m_pValReference);
+            } else {
+              pNew = new InstanceCopy<Type>(vmSet, this);
+            }
+          }
+
+          // Couldn't set it up
+          if (!pNew->Setup(idx)) {
+            delete pNew;
+            return NULL;
+          }
+
+          return pNew;
+        };
+    };
+
+  private:
+    InternalClass<Type> m_sqcCopy; // Class as is that holds a unique copy of the value
+    InternalClass<Type> m_sqcPtr; // Pointer class that holds a reference to some value
+
+  private:
+    // Cannot be reassigned
+    Class(const Class &other);
+    void operator=(const Class &other);
+
+  public:
+    // Construct a Squirrel class declaration that creates instances with own copies of values
+    Class(HSQUIRRELVM vmSet, const SQChar *strName, FConstructor pSetConstructor) :
+      m_sqcCopy(vmSet, strName, false, pSetConstructor),
+      m_sqcPtr(vmSet, strName, true, pSetConstructor)
+    {
+    };
+
+    // Construct a Squirrel class declaration that creates instances with a reference to some external value
+    Class(HSQUIRRELVM vmSet, const SQChar *strName, FConstructor pSetConstructor, Type &valSetReference) :
+      m_sqcCopy(vmSet, strName, false, pSetConstructor, valSetReference),
+      m_sqcPtr(vmSet, strName, true, pSetConstructor, valSetReference)
+    {
+    };
+
+    // Add getter and optional setter methods for working with some variable
+    inline void RegisterVar(const SQChar *strVariable, FGetter pGetter, FSetter pSetter) {
+      m_sqcCopy.RegisterVar(strVariable, pGetter, pSetter);
+      m_sqcPtr.RegisterVar(strVariable, pGetter, pSetter);
+    };
+
+    // Add getter and optional setter methods for working with some index
+    inline void RegisterIndex(SQInteger iIndex, FGetter pGetter, FSetter pSetter) {
+      m_sqcCopy.RegisterIndex(iIndex, pGetter, pSetter);
+      m_sqcPtr.RegisterIndex(iIndex, pGetter, pSetter);
+    };
+
+    // Add a custom metamethod
+    inline void RegisterMetamethod(EMetamethod eType, FOther pFunction) {
+      m_sqcCopy.RegisterMetamethod(eType, pFunction);
+      m_sqcPtr.RegisterMetamethod(eType, pFunction);
+    };
+
+    // Add a custom metamethod
+    inline void RegisterMetamethod(EMetamethod eType, FSelf pFunction) {
+      m_sqcCopy.RegisterMetamethod(eType, pFunction);
+      m_sqcPtr.RegisterMetamethod(eType, pFunction);
+    };
+
+    // Add a custom metamethod for iteration
+    inline void RegisterMetamethod(EMetamethod eType, FNextIndex pFunction) {
+      m_sqcCopy.RegisterMetamethod(eType, pFunction);
+      m_sqcPtr.RegisterMetamethod(eType, pFunction);
+    };
+
+    // Register function using Squirrel declaration
+    inline void RegisterFunc(const SQRegFunction &regfunc) {
+      m_sqcCopy.RegisterFunc(regfunc);
+      m_sqcPtr.RegisterFunc(regfunc);
+    };
+
+  public:
+    virtual const AbstractClass &GetCopyClass(void) const {
+      return m_sqcCopy;
+    };
+
+    virtual const AbstractClass &GetPointerClass(void) const {
+      return m_sqcPtr;
+    };
+};
+
 template<class Type> inline
-SQInteger Class<Type>::ClassConstructor(HSQUIRRELVM v) {
+SQInteger InternalClass<Type>::ClassConstructor(HSQUIRRELVM v) {
   // Retrieve passed factory type
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
@@ -305,13 +404,38 @@ SQInteger Class<Type>::ClassConstructor(HSQUIRRELVM v) {
   FConstructor pFunc = (FConstructor)pFactory->m_pConstructorFunc;
   Type *pSelf = (Type *)pFactory->m_pValReference;
 
-  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
+  if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
 
   return pFunc(v, *pSelf);
 };
 
 template<class Type> inline
-SQInteger Class<Type>::ClassSet(HSQUIRRELVM v) {
+SQInteger InternalClass<Type>::ClassPtrConstructor(HSQUIRRELVM v) {
+  // Retrieve passed factory type
+  const SQChar *strFactoryType;
+  sq_getstring(v, -1, &strFactoryType);
+
+  // Create a new instance using a factory
+  AbstractFactory *pFactory = AbstractFactory::Find(v, strFactoryType);
+  if (pFactory == NULL) return sq_throwerror(v, "no instance factory");
+
+  // Retrieve passed data
+  SQUserPointer pData;
+
+  if (SQ_FAILED(sq_getuserpointer(v, 2, &pData)) || pData == NULL) {
+    return sq_throwerror(v, "couldn't get passed data for a pointer instance");
+  }
+
+  // Create a new pointer instance
+  InstanceAny *pInstance = pFactory->NewInstance(v, 1, pData);
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // No need to call a constructor on a pointer instance, otherwise the value will be reset for no reason
+  return 0;
+};
+
+template<class Type> inline
+SQInteger InternalClass<Type>::ClassSet(HSQUIRRELVM v) {
   // Retrieve passed factory type
   const SQChar *strFactoryType;
   sq_getstring(v, -2, &strFactoryType);
@@ -341,13 +465,17 @@ SQInteger Class<Type>::ClassSet(HSQUIRRELVM v) {
   FSetter pFunc = (FSetter)pPtrToFunc;
   Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
+  if (pInstance->IsPointer()) {
+    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
+  } else {
+    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
+  }
 
   return pFunc(v, *pSelf, 3);
 };
 
 template<class Type> inline
-SQInteger Class<Type>::ClassGet(HSQUIRRELVM v) {
+SQInteger InternalClass<Type>::ClassGet(HSQUIRRELVM v) {
   // Retrieve passed factory type
   const SQChar *strFactoryType;
   sq_getstring(v, -2, &strFactoryType);
@@ -377,13 +505,17 @@ SQInteger Class<Type>::ClassGet(HSQUIRRELVM v) {
   FGetter pFunc = (FGetter)pPtrToFunc;
   Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
+  if (pInstance->IsPointer()) {
+    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
+  } else {
+    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
+  }
 
   return pFunc(v, *pSelf);
 };
 
 template<class Type> inline
-SQInteger Class<Type>::ClassMetaOther(HSQUIRRELVM v) {
+SQInteger InternalClass<Type>::ClassMetaOther(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
 
@@ -399,14 +531,18 @@ SQInteger Class<Type>::ClassMetaOther(HSQUIRRELVM v) {
   Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
   // Reference the instance data if there's no external reference
-  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
+  if (pInstance->IsPointer()) {
+    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
+  } else {
+    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
+  }
 
   // Pass other value as an index in the stack
   return pFunc(v, *pSelf, 2);
 };
 
 template<class Type> inline
-SQInteger Class<Type>::ClassMetaSelf(HSQUIRRELVM v) {
+SQInteger InternalClass<Type>::ClassMetaSelf(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
 
@@ -422,13 +558,17 @@ SQInteger Class<Type>::ClassMetaSelf(HSQUIRRELVM v) {
   Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
   // Reference the instance data if there's no external reference
-  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
+  if (pInstance->IsPointer()) {
+    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
+  } else {
+    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
+  }
 
   return pFunc(v, *pSelf);
 };
 
 template<class Type> inline
-SQInteger Class<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
+SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
 
@@ -452,7 +592,11 @@ SQInteger Class<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
   Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
   // Reference the instance data if there's no external reference
-  if (pSelf == NULL) pSelf = &((Instance<Type> *)pInstance)->val;
+  if (pInstance->IsPointer()) {
+    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
+  } else {
+    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
+  }
 
   // Pass previous index only if it has been retrieved
   return pFunc(v, *pSelf, bPrevIndex ? &iPrev : NULL);

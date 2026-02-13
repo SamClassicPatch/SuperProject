@@ -75,8 +75,11 @@ class TableBase : public Object {
     // Add a table (can be used to facilitate namespaces)
     void SetTable(const SQChar *strName, const TableBase &objTable);
 
-    // Add a class
+    // Add an individual internal class
     void SetClass(const class AbstractClass &objClass);
+
+    // Add a class using a registrar
+    void SetClass(const class AbstractClassRegistrar &objClass);
 
     // Bind an empty table
     Table AddTable(const SQChar *strName, bool bStatic = false);
@@ -89,11 +92,24 @@ class TableBase : public Object {
 
     // Create an instance of a specific class and retrieve its value
     template<class Type> inline
-    bool CreateInstanceOf(const SQChar *strClassName, Type **ppVal, Instance<Type> **ppInstance = NULL) {
-      Instance<Type> *pInstance;
+    bool CreateInstanceOf(const SQChar *strClassName, Type **ppVal, InstanceCopy<Type> **ppInstance = NULL) {
+      InstanceCopy<Type> *pInstance;
       if (!CreateInstance(strClassName, (InstanceAny **)&pInstance)) return false;
 
       *ppVal = &pInstance->val;
+      if (ppInstance != NULL) *ppInstance = pInstance;
+      return true;
+    };
+
+    // Create a pointer instance of some class defined in the table and push it on top of the stack
+    bool CreatePointerInstance(const SQChar *strClassName, SQUserPointer pData, InstanceAny **ppInstance = NULL);
+
+    // Create a pointer instance of a specific class by passing some value into it
+    template<class Type> inline
+    bool CreatePointerInstanceOf(const SQChar *strClassName, Type *pData, InstancePtr<Type> **ppInstance = NULL) {
+      InstancePtr<Type> *pInstance;
+      if (!CreatePointerInstance(strClassName, pData, (InstanceAny **)&pInstance)) return false;
+
       if (ppInstance != NULL) *ppInstance = pInstance;
       return true;
     };

@@ -58,6 +58,9 @@ class InstanceAny {
     // Destructor
     virtual ~InstanceAny() {};
 
+    // Whether this instance contains a pointer to an existing value instead of a unique copy of it
+    virtual bool IsPointer(void) = 0;
+
     // Get instance's VM
     __forceinline HSQUIRRELVM GetVM(void) const { return m_vm; };
 
@@ -89,7 +92,11 @@ class InstanceAny {
       InstanceAny *pInstance = OfType(v, idx, typeid(Type).raw_name());
       if (pInstance == NULL) return NULL;
 
-      return &((Instance<Type> *)pInstance)->val;
+      if (pInstance->IsPointer()) {
+        return ((InstancePtr<Type> *)pInstance)->pval;
+      }
+
+      return &((InstanceCopy<Type> *)pInstance)->val;
     };
 
     // Shortcut for retrieving a value from its instance of a specific class type
@@ -100,18 +107,41 @@ class InstanceAny {
 // Class instance that holds a value of a specific type
 // The value may be a pointer/reference for holding references to existing values instead
 template<class Type>
-class Instance : public InstanceAny {
+class InstanceCopy : public InstanceAny {
   public:
     Type val; // Instantiated value
 
     // Constructor for instances with a default value
-    Instance(HSQUIRRELVM vmSet, AbstractFactory *pFactory) : InstanceAny(vmSet, pFactory), val()
+    InstanceCopy(HSQUIRRELVM vmSet, AbstractFactory *pFactory) : InstanceAny(vmSet, pFactory), val()
     {
     };
 
     // Constructor for instances with an existing value
-    Instance(HSQUIRRELVM vmSet, AbstractFactory *pFactory, Type valSet) : InstanceAny(vmSet, pFactory), val(valSet)
+    InstanceCopy(HSQUIRRELVM vmSet, AbstractFactory *pFactory, Type valSet) : InstanceAny(vmSet, pFactory), val(valSet)
     {
+    };
+
+    // This instance contains a unique copy of a value
+    virtual bool IsPointer(void) {
+      return false;
+    };
+};
+
+// Class instance that holds a pointer to a value of a specific type
+// The value may be a pointer/reference for holding references to existing values instead
+template<class Type>
+class InstancePtr : public InstanceAny {
+  public:
+    Type *pval; // Referenced value
+
+    // Constructor for instances with an existing value
+    InstancePtr(HSQUIRRELVM vmSet, AbstractFactory *pFactory, Type *pvalSet) : InstanceAny(vmSet, pFactory), pval(pvalSet)
+    {
+    };
+
+    // This instance contains a pointer to an existing value
+    virtual bool IsPointer(void) {
+      return true;
     };
 };
 
@@ -155,8 +185,9 @@ class AbstractFactory {
   public:
 
     // Create a class instance for holding specific data from an instance in the stack
+    // Specifying a pointer to some data creates a pointer instance instead of a copy instance
     // Throws Squirrel error and returns NULL on error
-    virtual InstanceAny *NewInstance(HSQUIRRELVM vmSet, SQInteger idx) = 0;
+    virtual InstanceAny *NewInstance(HSQUIRRELVM vmSet, SQInteger idx, SQUserPointer pData = NULL) = 0;
 
     // Find a factory by its type in the VM's registry
     // This is a helper method strictly for metamethods of a specific class

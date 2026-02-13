@@ -38,6 +38,11 @@ void TableBase::SetClass(const AbstractClass &objClass) {
   sq_poptop(m_vm); // Pop table
 };
 
+void TableBase::SetClass(const AbstractClassRegistrar &objClass) {
+  SetClass(objClass.GetCopyClass());
+  SetClass(objClass.GetPointerClass());
+};
+
 Table TableBase::AddTable(const SQChar *strName, bool bStatic) {
   sq_pushobject(m_vm, m_obj); // Push table
   sq_pushstring(m_vm, strName, -1);
@@ -79,6 +84,30 @@ bool TableBase::CreateInstance(const SQChar *strClassName, InstanceAny **ppInsta
   sq_pushroottable(m_vm);
 
   if (SQ_FAILED(sq_call(m_vm, 1, SQTrue, SQTrue))) {
+    sq_poptop(m_vm); // Pop class declaration
+    return false;
+  }
+
+  // Retrieve the instance
+  if (ppInstance != NULL) {
+    *ppInstance = InstanceAny::Retrieve(m_vm, -1);
+  }
+
+  sq_remove(m_vm, -2); // Pop class declaration
+  return true;
+};
+
+bool TableBase::CreatePointerInstance(const SQChar *strClassName, SQUserPointer pData, InstanceAny **ppInstance) {
+  // Push class declaration
+  if (!PushObject(SQCLASS_PTRNAME(strClassName))) return false;
+
+  // Use it as a constructor function to create an instance
+  sq_pushroottable(m_vm);
+
+  // Pust the data that needs to be set into the instance as an extra constructor argument
+  sq_pushuserpointer(m_vm, pData);
+
+  if (SQ_FAILED(sq_call(m_vm, 2, SQTrue, SQTrue))) {
     sq_poptop(m_vm); // Pop class declaration
     return false;
   }
