@@ -126,6 +126,17 @@ SQCLASS_GETSET_FLOAT(GetX, SetX, FLOAT3D, val(1), val(1));
 SQCLASS_GETSET_FLOAT(GetY, SetY, FLOAT3D, val(2), val(2));
 SQCLASS_GETSET_FLOAT(GetZ, SetZ, FLOAT3D, val(3), val(3));
 
+static SQInteger Equal(HSQUIRRELVM v) {
+  FLOAT3D *pVal = InstanceValueOfType(v, 1, FLOAT3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  sq_pushbool(v, *pVal == *pOther);
+  return 1;
+};
+
 static SQInteger Length(HSQUIRRELVM v) {
   FLOAT3D *pVal = InstanceValueOfType(v, 1, FLOAT3D);
   if (pVal == NULL) return SQ_ERROR;
@@ -187,6 +198,7 @@ static SQInteger Flip(HSQUIRRELVM v) {
 };
 
 static SQRegFunction _aMethods[] = {
+  { "Equal",         &Equal, 2, ".x" },
   { "Length",        &Length, 1, "." },
   { "ManhattanNorm", &ManhattanNorm, 1, "." },
   { "MaxNorm",       &MaxNorm, 1, "." },
@@ -358,6 +370,269 @@ static SQRegFunction _aMethods[] = {
   { "Diagonal",  &Diagonal, 2, ".n|x" },
   { "GetRow",    &GetRow, 2, ".n" },
   { "GetColumn", &GetColumn, 2, ".n" },
+};
+
+}; // namespace
+
+// FLOATaabbox3D class methods
+namespace SqBox {
+
+static SQInteger Constructor(HSQUIRRELVM v, FLOATaabbox3D &val) {
+  // Try to get the starting point as the first argument
+  FLOAT3D *pPoint = InstanceValueOfType(v, 2, FLOAT3D);
+
+  if (pPoint != NULL) {
+    FLOAT3D *pMax = InstanceValueOfType(v, 3, FLOAT3D);
+    SQFloat fRadius;
+
+    // Try creating a box with min and max values
+    if (pMax != NULL) {
+      val = FLOATaabbox3D(*pPoint, *pMax);
+
+    // Or a box with a center point and a radius
+    } else if (SQ_SUCCEEDED(sq_getfloat(v, 3, &fRadius))) {
+      val = FLOATaabbox3D(*pPoint, fRadius);
+
+    // Or just a simple point
+    } else {
+      val = FLOATaabbox3D(*pPoint);
+    }
+  }
+
+  return 0;
+};
+
+static SQInteger AddPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
+  FLOAT3D *pOther = InstanceValueOfType(v, idxOther, FLOAT3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a box instance
+  FLOATaabbox3D *pbox;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
+
+  *pbox = val;
+  *pbox += *pOther;
+  return 1;
+};
+
+static SQInteger SubPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
+  FLOAT3D *pOther = InstanceValueOfType(v, idxOther, FLOAT3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Create a box instance
+  FLOATaabbox3D *pbox;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
+
+  *pbox = val;
+  *pbox -= *pOther;
+  return 1;
+};
+
+static SQInteger Union(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
+  FLOATaabbox3D *pOther = InstanceValueOfType(v, idxOther, FLOATaabbox3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+
+  // Create a box instance
+  FLOATaabbox3D *pbox;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
+
+  *pbox = val;
+  *pbox |= *pOther;
+  return 1;
+};
+
+static SQInteger Intersection(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
+  FLOATaabbox3D *pOther = InstanceValueOfType(v, idxOther, FLOATaabbox3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+
+  // Create a box instance
+  FLOATaabbox3D *pbox;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
+
+  *pbox = val;
+  *pbox &= *pOther;
+  return 1;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, FLOATaabbox3D &val) {
+  CTString str(0, "box[%g, %g, %g; %g, %g, %g]",
+    val.Min()(1), val.Min()(2), val.Min()(3),
+    val.Max()(1), val.Max()(2), val.Max()(3));
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+SQCLASS_GET_INSTANCE(GetMin, FLOATaabbox3D, FLOAT3D, val.minvect);
+SQCLASS_SET_INSTANCE(SetMin, FLOATaabbox3D, FLOAT3D, val.minvect);
+
+SQCLASS_GET_INSTANCE(GetMax, FLOATaabbox3D, FLOAT3D, val.maxvect);
+SQCLASS_SET_INSTANCE(SetMax, FLOATaabbox3D, FLOAT3D, val.maxvect);
+
+static SQInteger Equal(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  FLOATaabbox3D *pOther = InstanceValueOfType(v, 2, FLOATaabbox3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+
+  sq_pushbool(v, *pVal == *pOther);
+  return 1;
+};
+
+static SQInteger SetToNormalizedEmpty(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  pVal->SetToNormalizedEmpty();
+  return 0;
+};
+
+static SQInteger Size(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = pVal->Size();
+  return 1;
+};
+
+static SQInteger Center(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = pVal->Center();
+  return 1;
+};
+
+static SQInteger IsEmpty(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  sq_pushbool(v, pVal->IsEmpty());
+  return 1;
+};
+
+static SQInteger Contains(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get other box
+  FLOATaabbox3D *pOther = InstanceValueOfType(v, 2, FLOATaabbox3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+
+  sq_pushbool(v, (*pVal >= *pOther));
+  return 1;
+};
+
+static SQInteger IsInside(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get other box
+  FLOATaabbox3D *pOther = InstanceValueOfType(v, 2, FLOATaabbox3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+
+  sq_pushbool(v, (*pVal <= *pOther));
+  return 1;
+};
+
+static SQInteger HasContactWith(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get other box
+  FLOATaabbox3D *pOther = InstanceValueOfType(v, 2, FLOATaabbox3D);
+  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+
+  // Get optional epsilon
+  SQFloat fEpsilon;
+  if (SQ_FAILED(sq_getfloat(v, 3, &fEpsilon))) fEpsilon = 0.0f;
+
+  sq_pushbool(v, pVal->HasContactWith(*pOther, fEpsilon));
+  return 1;
+};
+
+static SQInteger TouchesSphere(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  // Get sphere center
+  FLOAT3D *pvCenter = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pvCenter == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  // Get sphere radius
+  SQFloat fRadius;
+  sq_getfloat(v, 3, &fRadius);
+
+  sq_pushbool(v, pVal->TouchesSphere(*pvCenter, fRadius));
+  return 1;
+};
+
+static SQInteger Expand(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+  pVal->Expand(f);
+  return 0;
+};
+
+static SQInteger ExpandByFactor(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+  pVal->ExpandByFactor(f);
+  return 0;
+};
+
+static SQInteger StretchByFactor(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+  pVal->StretchByFactor(f);
+  return 0;
+};
+
+static SQInteger StretchByVector(HSQUIRRELVM v) {
+  FLOATaabbox3D *pVal = InstanceValueOfType(v, 1, FLOATaabbox3D);
+  if (pVal == NULL) return SQ_ERROR;
+
+  FLOAT3D *pv = InstanceValueOfType(v, 2, FLOAT3D);
+  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+
+  pVal->StretchByVector(*pv);
+  return 0;
+};
+
+static SQRegFunction _aMethods[] = {
+  { "Equal", &Equal, 2, ".x" },
+  { "SetToNormalizedEmpty", &SetToNormalizedEmpty, 1, "." },
+
+  { "Size",    &Size, 1, "." },
+  { "Center",  &Center, 1, "." },
+  { "IsEmpty", &IsEmpty, 1, "." },
+
+  { "Contains",       &Contains, 2, ".x" },
+  { "IsInside",       &IsInside, 2, ".x" },
+  { "HasContactWith", &HasContactWith, -2, ".xn" },
+  { "TouchesSphere",  &TouchesSphere, 3, ".xn" },
+
+  { "Expand",           &Expand, 2, ".n" },
+  { "ExpandByFactor",   &ExpandByFactor, 2, ".n" },
+  { "StretchByFactor",  &StretchByFactor, 2, ".n" },
+  { "StretchByVector",  &StretchByVector, 2, ".x" },
 };
 
 }; // namespace
@@ -845,6 +1120,27 @@ void VM::RegisterMath(void) {
     sqcMatrix.RegisterVar("m33", &SqMatrix::Get33, &SqMatrix::Set33);
 
     Root().SetClass(sqcMatrix);
+  }
+  {
+    Class<FLOATaabbox3D> sqcBox(GetVM(), "FLOATaabbox3D", &SqBox::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqBox::_aMethods); i++) {
+      sqcBox.RegisterFunc(SqBox::_aMethods[i]);
+    }
+
+    // Metamethods
+    sqcBox.RegisterMetamethod(E_MM_ADD, &SqBox::AddPos);
+    sqcBox.RegisterMetamethod(E_MM_SUB, &SqBox::SubPos);
+    sqcBox.RegisterMetamethod(E_MM_MUL, &SqBox::Union);
+    sqcBox.RegisterMetamethod(E_MM_DIV, &SqBox::Intersection);
+    sqcBox.RegisterMetamethod(E_MM_TOSTRING, &SqBox::ToString);
+
+    // Min and max points
+    sqcBox.RegisterVar("min", &SqBox::GetMin, &SqBox::SetMin);
+    sqcBox.RegisterVar("max", &SqBox::GetMax, &SqBox::SetMax);
+
+    Root().SetClass(sqcBox);
   }
   {
     Class<CPlacement3D> sqcPlacement(GetVM(), "CPlacement3D", &SqPlacement::Constructor);
