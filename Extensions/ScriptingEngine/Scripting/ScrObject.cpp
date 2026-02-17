@@ -42,9 +42,9 @@ void Object::Release(void) {
 };
 
 // Check if a slot exists under some key
-bool Object::Contains(const SQChar *strName) const {
+bool Object::Contains(const SQChar *strKey) const {
   sq_pushobject(m_vm, m_obj); // Push object
-  sq_pushstring(m_vm, strName, -1);
+  sq_pushstring(m_vm, strKey, -1);
 
   if (SQ_FAILED(sq_get(m_vm, -2))) {
     sq_poptop(m_vm); // Pop object
@@ -78,36 +78,32 @@ SQInteger Object::GetSize(void) const {
   sq_pushobject(m_vm, m_obj);
   SQInteger iSize = sq_getsize(m_vm, -1);
   sq_poptop(m_vm);
-
   return iSize;
 };
 
-// Register function using Squirrel declaration
-void Object::RegisterFunc(const SQRegFunction &regfunc) {
+// Add a closure to the object
+void Object::RegisterFunc(const SQChar *strKey, SQFUNCTION pFunc, bool bStatic) {
   sq_pushobject(m_vm, m_obj); // Push object
-  sq_pushstring(m_vm, regfunc.name, -1);
-
-  // Create new closure and set it up
-  sq_newclosure(m_vm, regfunc.f, 0);
-
-  sq_setparamscheck(m_vm, regfunc.nparamscheck, regfunc.typemask);
-  sq_setnativeclosurename(m_vm, -1, regfunc.name);
 
   // Create a new slot with the closure under a name
-  sq_newslot(m_vm, -3, SQFalse);
+  sq_pushstring(m_vm, strKey, -1);
+  sq_newclosure(m_vm, pFunc, 0);
+  sq_setnativeclosurename(m_vm, -1, strKey);
+  sq_newslot(m_vm, -3, bStatic);
 
   sq_poptop(m_vm); // Pop object
 };
 
-// Add a closure to the object
-void Object::BindFunc(const SQChar *strName, SQFUNCTION pFunc, bool bStaticVar) {
+// Add a closure to the object using Squirrel declaration
+void Object::RegisterFunc(const SQRegFunction &regfunc) {
   sq_pushobject(m_vm, m_obj); // Push object
 
   // Create a new slot with the closure under a name
-  sq_pushstring(m_vm, strName, -1);
-  sq_newclosure(m_vm, pFunc, 0);
-  sq_setnativeclosurename(m_vm, -1, strName);
-  sq_newslot(m_vm, -3, bStaticVar);
+  sq_pushstring(m_vm, regfunc.name, -1);
+  sq_newclosure(m_vm, regfunc.f, 0);
+  sq_setparamscheck(m_vm, regfunc.nparamscheck, regfunc.typemask);
+  sq_setnativeclosurename(m_vm, -1, regfunc.name);
+  sq_newslot(m_vm, -3, SQFalse);
 
   sq_poptop(m_vm); // Pop object
 };

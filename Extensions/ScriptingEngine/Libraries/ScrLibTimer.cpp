@@ -96,13 +96,13 @@ static SQRegFunction _aTimerFuncs[] = {
 };
 
 void VM::RegisterTimer(void) {
-  Table sqtTimer = Root().AddTable("Timer");
+  Table sqtTimer = Root().RegisterTable("Timer");
 
   // Register classes
   Class<CTimerValue> sqcTimerValue(GetVM(), "Value", &SqTimerValue::Constructor);
   sqcTimerValue.RegisterVar("sec",  &SqTimerValue::Sec, NULL);
   sqcTimerValue.RegisterVar("msec", &SqTimerValue::MSec, NULL);
-  sqtTimer.SetClass(sqcTimerValue);
+  sqtTimer.AddClass(sqcTimerValue);
 
   // Register functions
   for (INDEX i = 0; i < ARRAYCOUNT(_aTimerFuncs); i++) {
@@ -110,7 +110,7 @@ void VM::RegisterTimer(void) {
   }
 
   // Register variables
-  Const().SetValue("TickQuantum", _pTimer->TickQuantum);
+  Const().RegisterValue("TickQuantum", _pTimer->TickQuantum);
 };
 
 }; // namespace

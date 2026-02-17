@@ -65,7 +65,7 @@ static SQRegFunction _aGlobalFuncs[] = {
 };
 
 void VM::RegisterUtils(void) {
-  Table sqtUtils = Root().AddTable("Utils");
+  Table sqtUtils = Root().RegisterTable("Utils");
   INDEX i;
 
   // Register functions

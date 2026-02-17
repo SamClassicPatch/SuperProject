@@ -76,12 +76,6 @@ class AbstractClass : public TableBase {
       return m_strClassName;
     };
 
-    // Set static value under some key
-    template<class Type> inline
-    void SetStaticValue(const SQChar *strName, const Type &val) {
-      BindValue(strName, val, true);
-    };
-
   // Metamethods
   protected:
 
@@ -144,15 +138,10 @@ class InternalClass : public AbstractClass {
     };
 
     // Add getter and optional setter methods for working with some variable
-    inline void RegisterVar(const SQChar *strVariable, FGetter pGetter, FSetter pSetter) {
-      if (pGetter != NULL) m_sqtGetters.SetValue(strVariable, (void *)pGetter);
-      if (pSetter != NULL) m_sqtSetters.SetValue(strVariable, (void *)pSetter);
-    };
-
-    // Add getter and optional setter methods for working with some index
-    inline void RegisterIndex(SQInteger iIndex, FGetter pGetter, FSetter pSetter) {
-      if (pGetter != NULL) m_sqtGetters.SetIndexedValue(iIndex, (void *)pGetter);
-      if (pSetter != NULL) m_sqtSetters.SetIndexedValue(iIndex, (void *)pSetter);
+    template<class KeyType> inline
+    void RegisterVar(const KeyType &valKey, FGetter pGetter, FSetter pSetter) {
+      if (pGetter != NULL) m_sqtGetters.RegisterValue(valKey, (void *)pGetter);
+      if (pSetter != NULL) m_sqtSetters.RegisterValue(valKey, (void *)pSetter);
     };
 
     // Add a custom metamethod
@@ -338,15 +327,10 @@ class Class : public AbstractClassRegistrar {
     };
 
     // Add getter and optional setter methods for working with some variable
-    inline void RegisterVar(const SQChar *strVariable, FGetter pGetter, FSetter pSetter) {
-      m_sqcCopy.RegisterVar(strVariable, pGetter, pSetter);
-      m_sqcPtr.RegisterVar(strVariable, pGetter, pSetter);
-    };
-
-    // Add getter and optional setter methods for working with some index
-    inline void RegisterIndex(SQInteger iIndex, FGetter pGetter, FSetter pSetter) {
-      m_sqcCopy.RegisterIndex(iIndex, pGetter, pSetter);
-      m_sqcPtr.RegisterIndex(iIndex, pGetter, pSetter);
+    template<class KeyType> inline
+    void RegisterVar(const KeyType &valKey, FGetter pGetter, FSetter pSetter) {
+      m_sqcCopy.RegisterVar(valKey, pGetter, pSetter);
+      m_sqcPtr.RegisterVar(valKey, pGetter, pSetter);
     };
 
     // Add a custom metamethod
@@ -367,7 +351,7 @@ class Class : public AbstractClassRegistrar {
       m_sqcPtr.RegisterMetamethod(eType, pFunction);
     };
 
-    // Register function using Squirrel declaration
+    // Add a closure to the object using Squirrel declaration
     inline void RegisterFunc(const SQRegFunction &regfunc) {
       m_sqcCopy.RegisterFunc(regfunc);
       m_sqcPtr.RegisterFunc(regfunc);

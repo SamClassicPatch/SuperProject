@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#ifndef CECIL_INCL_OLD_SQOBJECT_H
-#define CECIL_INCL_OLD_SQOBJECT_H
+#ifndef CECIL_INCL_SQOBJECT_H
+#define CECIL_INCL_SQOBJECT_H
 
 #ifdef PRAGMA_ONCE
   #pragma once
@@ -87,7 +87,7 @@ class Object {
     void Release(void);
 
     // Check if a slot exists under some key
-    bool Contains(const SQChar *strName) const;
+    bool Contains(const SQChar *strKey) const;
 
     // Get value of a slot under some key from the object, if it exists
     Object GetValue(const SQChar *strKey) const;
@@ -95,49 +95,54 @@ class Object {
     // Get size of the Squirrel object
     SQInteger GetSize(void) const;
 
-    // Register function using Squirrel declaration
+  // Bindings for various values (public interface)
+  public:
+
+    // Add a closure to the object
+    void RegisterFunc(const SQChar *strKey, SQFUNCTION pFunc, bool bStatic);
+
+    // Add a closure to the object using Squirrel declaration
     void RegisterFunc(const SQRegFunction &regfunc);
 
-  // Bindings for various values
+  // Bindings for various values (to be used selectively for more complex structure implementations)
   protected:
 
     // Add a value to the object
-    template<class Type> inline
-    void BindValue(const SQChar *strName, const Type &val, bool bStaticVar) {
+    template<class KeyType, class ValueType> inline
+    void BindAnyValue(const KeyType &valKey, const ValueType &valValue, bool bStaticVar) {
       sq_pushobject(m_vm, m_obj); // Push object
 
-      // Create a new slot with the value under a name
-      sq_pushstring(m_vm, strName, -1);
-      Value<Type>(val).Push(m_vm);
+      // Create a new slot with the value under a key
+      Value<KeyType>(valKey).Push(m_vm);
+      Value<ValueType>(valValue).Push(m_vm);
       sq_newslot(m_vm, -3, bStaticVar);
 
       sq_poptop(m_vm); // Pop object
     };
 
-    // Add an indexed value to the object
+    // Add a value to the object under a variable name
     template<class Type> inline
-    void BindValue(SQInteger i, const Type &val, bool bStaticVar) {
-      sq_pushobject(m_vm, m_obj); // Push object
-
-      // Create a new slot with the value under an index
-      sq_pushinteger(m_vm, i);
-      Value<Type>(val).Push(m_vm);
-      sq_newslot(m_vm, -3, bStaticVar);
-
-      sq_poptop(m_vm); // Pop object
+    void BindValue(const SQChar *valKey, const Type &valValue, bool bStaticVar) {
+      BindAnyValue(CTString(valKey), valValue, bStaticVar);
     };
 
-    // Special cases to make the compiler shut it
-    inline void BindValue(const SQChar *strName, const char *val, bool bStaticVar) {
-      BindValue(strName, CTString(val), bStaticVar);
+    // Add a value to the object under an index
+    template<class Type> inline
+    void BindValue(SQInteger valKey, const Type &valValue, bool bStaticVar) {
+      BindAnyValue(valKey, valValue, bStaticVar);
     };
 
-    inline void BindValue(SQInteger i, const char *val, bool bStaticVar) {
-      BindValue(i, CTString(val), bStaticVar);
+    // Special cases for the compiler to catch string literals of any length
+
+    // Add a string value to the object under a variable name
+    inline void BindValue(const SQChar *valKey, const SQChar *valValue, bool bStaticVar) {
+      BindAnyValue(CTString(valKey), CTString(valValue), bStaticVar);
     };
 
-    // Add a closure to the object
-    void BindFunc(const SQChar *strName, SQFUNCTION pFunc, bool bStaticVar);
+    // Add a string value to the object under an index
+    inline void BindValue(SQInteger valKey, const SQChar *valValue, bool bStaticVar) {
+      BindAnyValue(valKey, CTString(valValue), bStaticVar);
+    };
 };
 
 }; // namespace

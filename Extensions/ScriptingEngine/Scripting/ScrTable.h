@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#ifndef CECIL_INCL_OLD_SQTABLE_H
-#define CECIL_INCL_OLD_SQTABLE_H
+#ifndef CECIL_INCL_SQTABLE_H
+#define CECIL_INCL_SQTABLE_H
 
 #ifdef PRAGMA_ONCE
   #pragma once
@@ -54,35 +54,29 @@ class TableBase : public Object {
     {
     };
 
+  // Bindings for various values (public interface)
   public:
+
     // Add a value as a variable
-    template<class Type> inline
-    void SetValue(const SQChar *strName, const Type &val) {
-      BindValue(strName, val, false);
-    };
-
-    // Add an indexed value
-    template<class Type> inline
-    void SetIndexedValue(SQInteger i, const Type &val) {
-      BindValue(i, val, false);
-    };
-
-    // Add a closure
-    inline void SetFunc(const SQChar *strName, SQFUNCTION pFunc) {
-      BindFunc(strName, pFunc, false);
+    template<class KeyType, class ValueType> inline
+    void RegisterValue(const KeyType &valKey, const ValueType &valValue, bool bStatic = false) {
+      BindValue(valKey, valValue, bStatic);
     };
 
     // Add a table (can be used to facilitate namespaces)
-    void SetTable(const SQChar *strName, const TableBase &objTable);
+    void AddTable(const SQChar *strName, const TableBase &objTable);
 
     // Add an individual internal class
-    void SetClass(const class AbstractClass &objClass);
+    void AddClass(const class AbstractClass &objClass);
 
     // Add a class using a registrar
-    void SetClass(const class AbstractClassRegistrar &objClass);
+    void AddClass(const class AbstractClassRegistrar &objClass);
 
     // Bind an empty table
-    Table AddTable(const SQChar *strName, bool bStatic = false);
+    Table RegisterTable(const SQChar *strName, bool bStatic = false);
+
+  // Dynamic management
+  public:
 
     // Find some object inside the table by name and push it on top of the stack
     bool PushObject(const SQChar *strName);

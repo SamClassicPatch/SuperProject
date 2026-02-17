@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#ifndef CECIL_INCL_OLD_SQCONST_H
-#define CECIL_INCL_OLD_SQCONST_H
+#ifndef CECIL_INCL_SQCONST_H
+#define CECIL_INCL_SQCONST_H
 
 #ifdef PRAGMA_ONCE
   #pragma once
@@ -42,7 +42,7 @@ class Enumeration : public Object {
   public:
     // Add an integer constant
     #define SET_INT_VALUE(_Type) \
-      inline void SetValue(const SQChar *strName, const _Type iValue) { BindValue(strName, iValue, false); };
+      inline void RegisterValue(const SQChar *strName, const _Type iValue) { BindValue(strName, iValue, false); };
 
     SET_INT_VALUE(SBYTE);
     SET_INT_VALUE(UBYTE);
@@ -56,16 +56,17 @@ class Enumeration : public Object {
     #undef SET_INT_VALUE
 
     // Add a float constant
-    inline void SetValue(const SQChar *strName, const FLOAT fValue) {
+    inline void RegisterValue(const SQChar *strName, const FLOAT fValue) {
       BindValue(strName, fValue, false);
     };
 
-    inline void SetValue(const SQChar *strName, const DOUBLE fValue) {
+    // Add a float constant
+    inline void RegisterValue(const SQChar *strName, const DOUBLE fValue) {
       BindValue(strName, fValue, false);
     };
 
     // Add a string constant
-    inline void SetValue(const SQChar *strName, const SQChar *strValue) {
+    inline void RegisterValue(const SQChar *strName, const SQChar *strValue) {
       BindValue(strName, strValue, false);
     };
 };

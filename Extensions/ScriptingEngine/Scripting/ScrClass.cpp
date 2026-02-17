@@ -30,8 +30,8 @@ void AbstractClass::Init(SQFUNCTION pConstructorMethod, SQFUNCTION pSetMethod, S
   sq_settypetag(m_vm, -1, (SQUserPointer)pFactory);
 
   // Create static tables of setter & getter methods
-  m_sqtSetters = AddTable(SQCLASS_SETTER_TABLE, true);
-  m_sqtGetters = AddTable(SQCLASS_GETTER_TABLE, true);
+  m_sqtSetters = RegisterTable(SQCLASS_SETTER_TABLE, true);
+  m_sqtGetters = RegisterTable(SQCLASS_GETTER_TABLE, true);
 
   // Define metamethods
   sq_pushstring(m_vm, "constructor", -1);

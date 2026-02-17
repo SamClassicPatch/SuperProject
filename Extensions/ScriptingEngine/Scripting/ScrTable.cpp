@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
-void TableBase::SetTable(const SQChar *strName, const TableBase &objTable) {
+void TableBase::AddTable(const SQChar *strName, const TableBase &objTable) {
   sq_pushobject(m_vm, m_obj); // Push table
 
   sq_pushstring(m_vm, strName, -1);
@@ -27,7 +27,7 @@ void TableBase::SetTable(const SQChar *strName, const TableBase &objTable) {
   sq_poptop(m_vm); // Pop table
 };
 
-void TableBase::SetClass(const AbstractClass &objClass) {
+void TableBase::AddClass(const AbstractClass &objClass) {
   const CTString &strName = objClass.GetName();
   sq_pushobject(m_vm, m_obj); // Push table
 
@@ -38,12 +38,12 @@ void TableBase::SetClass(const AbstractClass &objClass) {
   sq_poptop(m_vm); // Pop table
 };
 
-void TableBase::SetClass(const AbstractClassRegistrar &objClass) {
-  SetClass(objClass.GetCopyClass());
-  SetClass(objClass.GetPointerClass());
+void TableBase::AddClass(const AbstractClassRegistrar &objClass) {
+  AddClass(objClass.GetCopyClass());
+  AddClass(objClass.GetPointerClass());
 };
 
-Table TableBase::AddTable(const SQChar *strName, bool bStatic) {
+Table TableBase::RegisterTable(const SQChar *strName, bool bStatic) {
   sq_pushobject(m_vm, m_obj); // Push table
   sq_pushstring(m_vm, strName, -1);
 

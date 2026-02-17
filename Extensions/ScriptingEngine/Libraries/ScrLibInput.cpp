@@ -124,7 +124,7 @@ static SQRegFunction _aInputFuncs[] = {
 };
 
 void VM::RegisterInput(void) {
-  Table sqtInput = Root().AddTable("Input");
+  Table sqtInput = Root().RegisterTable("Input");
 
   // Register functions
   for (INDEX i = 0; i < ARRAYCOUNT(_aInputFuncs); i++) {
@@ -134,7 +134,7 @@ void VM::RegisterInput(void) {
   // Input buttons
   Enumeration enButtons(GetVM());
 
-#define ADD_KEY(_Key) enButtons.SetValue(#_Key, (SQInteger)_Key)
+#define ADD_KEY(_Key) enButtons.RegisterValue(#_Key, (SQInteger)_Key)
   ADD_KEY(KID_NONE          );
   ADD_KEY(KID_1             );
   ADD_KEY(KID_2             );
@@ -254,7 +254,7 @@ void VM::RegisterInput(void) {
   // Input axes
   Enumeration enAxes(GetVM());
 
-#define ADD_AXIS(_AxisName, _AxisValue) enAxes.SetValue(_AxisName, (SQInteger)_AxisValue)
+#define ADD_AXIS(_AxisName, _AxisValue) enAxes.RegisterValue(_AxisName, (SQInteger)_AxisValue)
   ADD_AXIS("None",          AXIS_NONE);
   ADD_AXIS("X1",            MOUSE_X_AXIS);
   ADD_AXIS("Y1",            MOUSE_Y_AXIS);

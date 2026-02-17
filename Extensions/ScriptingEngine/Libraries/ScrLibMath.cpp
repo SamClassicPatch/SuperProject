@@ -1052,7 +1052,7 @@ static SQRegFunction _aMathFuncs[] = {
 };
 
 void VM::RegisterMath(void) {
-  Table sqtMath = Root().AddTable("Math");
+  Table sqtMath = Root().RegisterTable("Math");
   INDEX i;
 
   // Register classes
@@ -1084,11 +1084,11 @@ void VM::RegisterMath(void) {
     sqcVector.RegisterVar("b", &SqVector::GetZ, &SqVector::SetZ);
 
     // Indices
-    sqcVector.RegisterIndex(1, &SqVector::GetX, &SqVector::SetX);
-    sqcVector.RegisterIndex(2, &SqVector::GetY, &SqVector::SetY);
-    sqcVector.RegisterIndex(3, &SqVector::GetZ, &SqVector::SetZ);
+    sqcVector.RegisterVar(1, &SqVector::GetX, &SqVector::SetX);
+    sqcVector.RegisterVar(2, &SqVector::GetY, &SqVector::SetY);
+    sqcVector.RegisterVar(3, &SqVector::GetZ, &SqVector::SetZ);
 
-    Root().SetClass(sqcVector);
+    Root().AddClass(sqcVector);
   }
   {
     Class<FLOATmatrix3D> sqcMatrix(GetVM(), "FLOATmatrix3D", &SqMatrix::Constructor);
@@ -1119,7 +1119,7 @@ void VM::RegisterMath(void) {
     sqcMatrix.RegisterVar("m32", &SqMatrix::Get32, &SqMatrix::Set32);
     sqcMatrix.RegisterVar("m33", &SqMatrix::Get33, &SqMatrix::Set33);
 
-    Root().SetClass(sqcMatrix);
+    Root().AddClass(sqcMatrix);
   }
   {
     Class<FLOATaabbox3D> sqcBox(GetVM(), "FLOATaabbox3D", &SqBox::Constructor);
@@ -1140,7 +1140,7 @@ void VM::RegisterMath(void) {
     sqcBox.RegisterVar("min", &SqBox::GetMin, &SqBox::SetMin);
     sqcBox.RegisterVar("max", &SqBox::GetMax, &SqBox::SetMax);
 
-    Root().SetClass(sqcBox);
+    Root().AddClass(sqcBox);
   }
   {
     Class<CPlacement3D> sqcPlacement(GetVM(), "CPlacement3D", &SqPlacement::Constructor);
@@ -1160,7 +1160,7 @@ void VM::RegisterMath(void) {
     sqcPlacement.RegisterVar("pl_PositionVector",   &SqPlacement::GetPos, &SqPlacement::SetPos);
     sqcPlacement.RegisterVar("pl_OrientationAngle", &SqPlacement::GetRot, &SqPlacement::SetRot);
 
-    Root().SetClass(sqcPlacement);
+    Root().AddClass(sqcPlacement);
   }
 
   // Register functions
