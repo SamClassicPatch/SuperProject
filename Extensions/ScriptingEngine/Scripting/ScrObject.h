@@ -95,6 +95,49 @@ class Object {
     // Get size of the Squirrel object
     SQInteger GetSize(void) const;
 
+    // Set value of a slot under some key from the object
+    // Returns false if the value could not be set (e.g. wrong type or key doesn't exist)
+    template<class Type> inline
+    bool SetValue(const SQChar *strKey, const Type &val) const {
+      sq_pushobject(m_vm, m_obj); // Push object
+
+      // Push key and value to set
+      sq_pushstring(m_vm, strKey, -1);
+      Value<Type>(val).Push(m_vm);
+
+      if (SQ_FAILED(sq_set(m_vm, -2))) {
+        sq_pop(m_vm, 3); // Value [-1], key [-2], object [-3]
+        return false;
+      }
+
+      sq_poptop(m_vm); // Pop object
+      return true;
+    };
+
+    // Get value of a slot under some key from the object
+    // Returns false if the value could not be retrieved (e.g. wrong type or key doesn't exist)
+    template<class Type> inline
+    bool GetValue(const SQChar *strKey, Type *pVal) const {
+      sq_pushobject(m_vm, m_obj); // Push object
+
+      // Push value from some slot by its key
+      sq_pushstring(m_vm, strKey, -1);
+
+      if (SQ_FAILED(sq_get(m_vm, -2))) {
+        sq_poptop(m_vm); // Pop object
+        return false;
+      }
+
+      // Retrieve value into the supplied pointer
+      Value<Type> val;
+      bool bResult = val.Get(m_vm);
+
+      if (bResult) *pVal = val.val;
+
+      sq_pop(m_vm, 2); // Value [-1], object [-2]
+      return bResult;
+    };
+
   // Bindings for various values (public interface)
   public:
 
@@ -108,40 +151,39 @@ class Object {
   protected:
 
     // Add a value to the object
-    template<class KeyType, class ValueType> inline
-    void BindAnyValue(const KeyType &valKey, const ValueType &valValue, bool bStaticVar) {
+    inline void BindAnyValue(const AbstractValue &valKey, const AbstractValue &valValue, bool bStatic) {
       sq_pushobject(m_vm, m_obj); // Push object
 
       // Create a new slot with the value under a key
-      Value<KeyType>(valKey).Push(m_vm);
-      Value<ValueType>(valValue).Push(m_vm);
-      sq_newslot(m_vm, -3, bStaticVar);
+      valKey.Push(m_vm);
+      valValue.Push(m_vm);
+      sq_newslot(m_vm, -3, bStatic);
 
       sq_poptop(m_vm); // Pop object
     };
 
     // Add a value to the object under a variable name
-    template<class Type> inline
-    void BindValue(const SQChar *valKey, const Type &valValue, bool bStaticVar) {
-      BindAnyValue(CTString(valKey), valValue, bStaticVar);
+    template<class Type> __forceinline
+    void BindValue(const SQChar *valKey, const Type &valValue, bool bStatic) {
+      BindAnyValue(Value<CTString>(valKey), Value<Type>(valValue), bStatic);
     };
 
     // Add a value to the object under an index
-    template<class Type> inline
-    void BindValue(SQInteger valKey, const Type &valValue, bool bStaticVar) {
-      BindAnyValue(valKey, valValue, bStaticVar);
+    template<class Type> __forceinline
+    void BindValue(SQInteger valKey, const Type &valValue, bool bStatic) {
+      BindAnyValue(Value<SQInteger>(valKey), Value<Type>(valValue), bStatic);
     };
 
     // Special cases for the compiler to catch string literals of any length
 
     // Add a string value to the object under a variable name
-    inline void BindValue(const SQChar *valKey, const SQChar *valValue, bool bStaticVar) {
-      BindAnyValue(CTString(valKey), CTString(valValue), bStaticVar);
+    __forceinline void BindValue(const SQChar *valKey, const SQChar *valValue, bool bStatic) {
+      BindAnyValue(Value<CTString>(valKey), Value<CTString>(valValue), bStatic);
     };
 
     // Add a string value to the object under an index
-    inline void BindValue(SQInteger valKey, const SQChar *valValue, bool bStaticVar) {
-      BindAnyValue(valKey, CTString(valValue), bStaticVar);
+    __forceinline void BindValue(SQInteger valKey, const SQChar *valValue, bool bStatic) {
+      BindAnyValue(Value<SQInteger>(valKey), Value<CTString>(valValue), bStatic);
     };
 };
 
