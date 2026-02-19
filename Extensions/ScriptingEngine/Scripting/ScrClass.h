@@ -31,6 +31,17 @@ namespace sq {
 #define SQCLASS_SETTER_TABLE  "@@class_set_table@@"
 #define SQCLASS_GETTER_TABLE  "@@class_get_table@@"
 
+// Struct for registering class methods that wrap the first object in the stack into a direct value for convenience
+template<class Type>
+struct Method {
+  typedef SQInteger (*FType)(HSQUIRRELVM v, Type &val);
+
+  const SQChar *name;
+  FType f;
+  SQInteger nparamscheck;
+  const SQChar *typemask;
+};
+
 // Supported metamethod types for classes
 enum EMetamethod {
   E_MM_ADD,
@@ -222,6 +233,21 @@ class InternalClass : public AbstractClass {
       sq_poptop(m_vm); // Pop class
     };
 
+    // Add a custom class method
+    inline void RegisterMethod(const Method<Type> &regfunc) {
+      sq_pushobject(m_vm, m_obj); // Push class
+
+      sq_pushstring(m_vm, regfunc.name, -1);
+      sq_pushstring(m_vm, GetFactoryType().raw_name(), -1); // Free var
+      sq_pushuserpointer(m_vm, regfunc.f); // Free var
+      sq_newclosure(m_vm, &ClassMethod, 2);
+      sq_setparamscheck(m_vm, regfunc.nparamscheck, regfunc.typemask);
+      sq_setnativeclosurename(m_vm, -1, regfunc.name);
+      sq_newslot(m_vm, -3, SQFalse);
+
+      sq_poptop(m_vm); // Pop class
+    };
+
   protected:
     // Create new factory of a specific type
     virtual AbstractFactory *NewFactory(void) {
@@ -241,6 +267,7 @@ class InternalClass : public AbstractClass {
     static SQInteger ClassSet(HSQUIRRELVM v);
     static SQInteger ClassGet(HSQUIRRELVM v);
 
+    static SQInteger ClassMethod(HSQUIRRELVM v); // Method<Type>::FType
     static SQInteger ClassMetaOther(HSQUIRRELVM v); // FOther
     static SQInteger ClassMetaSelf(HSQUIRRELVM v); // FSelf
     static SQInteger ClassMetaNextIndex(HSQUIRRELVM v); // FNextIndex
@@ -351,10 +378,10 @@ class Class : public AbstractClassRegistrar {
       m_sqcPtr.RegisterMetamethod(eType, pFunction);
     };
 
-    // Add a closure to the object using Squirrel declaration
-    inline void RegisterFunc(const SQRegFunction &regfunc) {
-      m_sqcCopy.RegisterFunc(regfunc);
-      m_sqcPtr.RegisterFunc(regfunc);
+    // Add a custom class method
+    inline void RegisterMethod(const Method<Type> &regfunc) {
+      m_sqcCopy.RegisterMethod(regfunc);
+      m_sqcPtr.RegisterMethod(regfunc);
     };
 
   public:
@@ -487,6 +514,31 @@ SQInteger InternalClass<Type>::ClassGet(HSQUIRRELVM v) {
 
   // Call getter method for the data
   FGetter pFunc = (FGetter)pPtrToFunc;
+  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
+
+  if (pInstance->IsPointer()) {
+    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
+  } else {
+    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
+  }
+
+  return pFunc(v, *pSelf);
+};
+
+template<class Type> inline
+SQInteger InternalClass<Type>::ClassMethod(HSQUIRRELVM v) {
+  const SQChar *strFactoryType;
+  sq_getstring(v, -1, &strFactoryType);
+
+  SQUserPointer pToStringFunc;
+  sq_getuserpointer(v, -2, &pToStringFunc);
+
+  // Get current instance
+  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Call conversion data for the data
+  Method<Type>::FType pFunc = (Method<Type>::FType)pToStringFunc;
   Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
   if (pInstance->IsPointer()) {
