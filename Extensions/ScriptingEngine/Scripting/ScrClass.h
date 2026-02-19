@@ -413,8 +413,8 @@ SQInteger InternalClass<Type>::ClassConstructor(HSQUIRRELVM v) {
 
   // Call custom constructor
   FConstructor pFunc = (FConstructor)pFactory->m_pConstructorFunc;
-  Type *pSelf = (Type *)pFactory->m_pValReference;
 
+  Type *pSelf = (Type *)pFactory->m_pValReference;
   if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
 
   return pFunc(v, *pSelf);
@@ -451,9 +451,9 @@ SQInteger InternalClass<Type>::ClassSet(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -2, &strFactoryType);
 
-  // Get current instance
-  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
-  if (pInstance == NULL) return SQ_ERROR;
+  // Get current instance value
+  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Retrieve setter method for the variable
   const SQChar *strVariable;
@@ -474,15 +474,8 @@ SQInteger InternalClass<Type>::ClassSet(HSQUIRRELVM v) {
 
   // Call setter method for the data
   FSetter pFunc = (FSetter)pPtrToFunc;
-  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  if (pInstance->IsPointer()) {
-    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
-  } else {
-    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
-  }
-
-  return pFunc(v, *pSelf, 3);
+  return pFunc(v, *pInstanceValue, 3);
 };
 
 template<class Type> inline
@@ -491,9 +484,9 @@ SQInteger InternalClass<Type>::ClassGet(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -2, &strFactoryType);
 
-  // Get current instance
-  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
-  if (pInstance == NULL) return SQ_ERROR;
+  // Get current instance value
+  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Retrieve getter method for the variable
   const SQChar *strVariable;
@@ -514,15 +507,8 @@ SQInteger InternalClass<Type>::ClassGet(HSQUIRRELVM v) {
 
   // Call getter method for the data
   FGetter pFunc = (FGetter)pPtrToFunc;
-  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  if (pInstance->IsPointer()) {
-    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
-  } else {
-    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
-  }
-
-  return pFunc(v, *pSelf);
+  return pFunc(v, *pInstanceValue);
 };
 
 template<class Type> inline
@@ -533,21 +519,14 @@ SQInteger InternalClass<Type>::ClassMethod(HSQUIRRELVM v) {
   SQUserPointer pToStringFunc;
   sq_getuserpointer(v, -2, &pToStringFunc);
 
-  // Get current instance
-  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
-  if (pInstance == NULL) return SQ_ERROR;
+  // Get current instance value
+  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  if (pInstanceValue == NULL) return SQ_ERROR;
 
-  // Call conversion data for the data
+  // Call class method for the data
   Method<Type>::FType pFunc = (Method<Type>::FType)pToStringFunc;
-  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  if (pInstance->IsPointer()) {
-    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
-  } else {
-    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
-  }
-
-  return pFunc(v, *pSelf);
+  return pFunc(v, *pInstanceValue);
 };
 
 template<class Type> inline
@@ -558,23 +537,15 @@ SQInteger InternalClass<Type>::ClassMetaOther(HSQUIRRELVM v) {
   SQUserPointer pToStringFunc;
   sq_getuserpointer(v, -2, &pToStringFunc);
 
-  // Get current instance
-  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
-  if (pInstance == NULL) return SQ_ERROR;
+  // Get current instance value
+  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  if (pInstanceValue == NULL) return SQ_ERROR;
 
-  // Call conversion data for the data
+  // Call metamethod for the data
   FOther pFunc = (FOther)pToStringFunc;
-  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
-
-  // Reference the instance data if there's no external reference
-  if (pInstance->IsPointer()) {
-    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
-  } else {
-    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
-  }
 
   // Pass other value as an index in the stack
-  return pFunc(v, *pSelf, 2);
+  return pFunc(v, *pInstanceValue, 2);
 };
 
 template<class Type> inline
@@ -585,22 +556,14 @@ SQInteger InternalClass<Type>::ClassMetaSelf(HSQUIRRELVM v) {
   SQUserPointer pToStringFunc;
   sq_getuserpointer(v, -2, &pToStringFunc);
 
-  // Get current instance
-  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
-  if (pInstance == NULL) return SQ_ERROR;
+  // Get current instance value
+  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  if (pInstanceValue == NULL) return SQ_ERROR;
 
-  // Call conversion data for the data
+  // Call metamethod for the data
   FSelf pFunc = (FSelf)pToStringFunc;
-  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
 
-  // Reference the instance data if there's no external reference
-  if (pInstance->IsPointer()) {
-    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
-  } else {
-    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
-  }
-
-  return pFunc(v, *pSelf);
+  return pFunc(v, *pInstanceValue);
 };
 
 template<class Type> inline
@@ -611,9 +574,9 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
   SQUserPointer pToStringFunc;
   sq_getuserpointer(v, -2, &pToStringFunc);
 
-  // Get current instance
-  InstanceAny *pInstance = InstanceAny::OfType(v, 1, strFactoryType);
-  if (pInstance == NULL) return SQ_ERROR;
+  // Get current instance value
+  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Get previous index
   SQInteger iPrev;
@@ -623,19 +586,11 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
     bPrevIndex = SQ_SUCCEEDED(sq_getinteger(v, 2, &iPrev));
   }
 
-  // Call conversion data for the data
+  // Call metamethod for the data
   FNextIndex pFunc = (FNextIndex)pToStringFunc;
-  Type *pSelf = (Type *)pInstance->GetFactory()->m_pValReference;
-
-  // Reference the instance data if there's no external reference
-  if (pInstance->IsPointer()) {
-    if (pSelf == NULL) pSelf = ((InstancePtr<Type> *)pInstance)->pval;
-  } else {
-    if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
-  }
 
   // Pass previous index only if it has been retrieved
-  return pFunc(v, *pSelf, bPrevIndex ? &iPrev : NULL);
+  return pFunc(v, *pInstanceValue, bPrevIndex ? &iPrev : NULL);
 };
 
 // Define getter and setter functions for an integer field of some native Squirrel class
