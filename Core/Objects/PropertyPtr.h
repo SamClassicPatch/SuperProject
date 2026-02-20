@@ -47,8 +47,11 @@ class CPropertyPtr : public CPropertyPtr_XGizmoBase {
       {
       #if SE1_GAME != SS_REV
         // Find property data and try to find it by name or ID
-        const CEntityProperty *pep = FindPropertyByVariable(strClass, strVariable);
-        _pep = IWorld::PropertyForNameOrId(_lch, pep->ep_eptType, pep->ep_strName, pep->ep_ulID);
+        const CEntityProperty *pepData = FindPropertyByVariable(strClass, strVariable);
+
+        if (pepData != NULL) {
+          _pep = IWorld::PropertyForNameOrId(_lch, pepData->ep_eptType, pepData->ep_strName, pepData->ep_ulID);
+        }
       #else
         _pep = _lch->PropertyForVariable(strVariable);
       #endif
