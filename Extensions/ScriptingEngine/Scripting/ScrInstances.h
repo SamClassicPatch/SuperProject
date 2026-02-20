@@ -83,10 +83,6 @@ class InstanceAny {
     // This is a helper method strictly for metamethods of a specific class
     static InstanceAny *OfType(HSQUIRRELVM v, SQInteger idx, const SQChar *strFactoryType);
 
-    // Shortcut for retrieving an instance of a specific class type
-    #define InstanceOfType(v, idx, Type) \
-      ((Instance< Type > *)InstanceAny::OfType(v, idx, typeid(Type).raw_name()))
-
     template<class Type>
     static Type *RetrieveValue(HSQUIRRELVM v, SQInteger idx, const SQChar *strFactoryType, Type *pTemplateDummy) {
       InstanceAny *pInstance = OfType(v, idx, strFactoryType);
