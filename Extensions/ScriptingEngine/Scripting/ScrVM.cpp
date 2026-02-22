@@ -498,7 +498,9 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
       strObj = "'" + strObj + "'";
     }
 
-    CPrintF("[SQ] [%d] " DEBUGOUT_TYPE("%s") " = %s\n", (int)i, sq_gettypename(eType), strObj);
+    int iFromTop = i - ct - 1;
+    int iFromBtm = i;
+    CPrintF("[SQ] [%d : %d] " DEBUGOUT_TYPE("%s") " = %s\n", iFromTop, iFromBtm, sq_gettypename(eType), strObj);
   }
 };
 
