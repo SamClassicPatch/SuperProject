@@ -75,6 +75,9 @@ class TableBase : public Object {
     // Bind an empty table
     Table RegisterTable(const SQChar *strName, bool bStatic = false);
 
+    // Bind a full clone of another table
+    Table CloneTable(const SQChar *strName, const TableBase &objOther, bool bStatic = false);
+
   // Dynamic management
   public:
 

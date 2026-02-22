@@ -45,16 +45,33 @@ void TableBase::AddClass(const AbstractClassRegistrar &objClass) {
 
 Table TableBase::RegisterTable(const SQChar *strName, bool bStatic) {
   sq_pushobject(m_vm, m_obj); // Push table
+
+  // Create new table under some name
   sq_pushstring(m_vm, strName, -1);
-
-  HSQOBJECT objTable;
   sq_newtable(m_vm);
-  sq_getstackobj(m_vm, -1, &objTable);
-  Table table(m_vm, objTable);
 
-  sq_newslot(m_vm, -3, bStatic ? SQTrue : SQFalse);
+  // Create a table object from the stack and add register it in the current table
+  Table table(m_vm, -1);
+  sq_newslot(m_vm, -3, bStatic);
+
   sq_poptop(m_vm); // Pop table
+  return table;
+};
 
+Table TableBase::CloneTable(const SQChar *strName, const TableBase &objOther, bool bStatic) {
+  sq_pushobject(m_vm, m_obj); // Push table
+
+  // Clone another table under some name
+  sq_pushobject(m_vm, objOther.m_obj);
+  sq_pushstring(m_vm, strName, -1);
+  sq_clone(m_vm, -2);
+  sq_remove(m_vm, -3);
+
+  // Create a table object from the stack and add register it in the current table
+  Table table(m_vm, -1);
+  sq_newslot(m_vm, -3, bStatic);
+
+  sq_poptop(m_vm); // Pop table
   return table;
 };
 
