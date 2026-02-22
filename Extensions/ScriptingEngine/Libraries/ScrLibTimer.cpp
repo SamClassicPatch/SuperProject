@@ -20,8 +20,10 @@ namespace sq {
 // Timer.Value class methods
 namespace SqTimerValue {
 
-static SQInteger Constructor(HSQUIRRELVM v, CTimerValue &tv) {
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CTimerValue &tv) {
   tv.tv_llValue = 0;
+
+  if (ctArgs <= 0) return 0;
 
   // Optional value
   SQFloat fOptSec;

@@ -67,7 +67,7 @@ static SQInteger GetButtonTransName(HSQUIRRELVM v) {
 static SQInteger GetButtonState(HSQUIRRELVM v) {
   SQInteger i;
   sq_getinteger(v, 2, &i);
-  sq_pushbool(v, _pInput->GetButtonState(i) ? SQTrue : SQFalse);
+  sq_pushbool(v, _pInput->GetButtonState(i));
   return 1;
 };
 

@@ -34,7 +34,7 @@ namespace sq {
 // Struct for registering class methods that wrap the first object in the stack into a direct value for convenience
 template<class Type>
 struct Method {
-  typedef SQInteger (*FType)(HSQUIRRELVM v, Type &val);
+  typedef SQInteger (*FType)(HSQUIRRELVM v, int ctArgs, Type &val);
 
   const SQChar *name;
   FType f;
@@ -111,7 +111,7 @@ template<class Type>
 class InternalClass : public AbstractClass {
   public:
     // Optional class functions
-    typedef SQInteger (*FConstructor)(HSQUIRRELVM v, Type &val);
+    typedef SQInteger (*FConstructor)(HSQUIRRELVM v, int ctArgs, Type &val);
     typedef SQInteger (*FSetter)(HSQUIRRELVM v, Type &val, SQInteger idxValue);
     typedef SQInteger (*FGetter)(HSQUIRRELVM v, Type &val);
 
@@ -441,7 +441,8 @@ SQInteger InternalClass<Type>::ClassConstructor(HSQUIRRELVM v) {
   Type *pSelf = (Type *)pFactory->m_pValReference;
   if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
 
-  return pFunc(v, *pSelf);
+  // Amount of the arguments = stack top minus instance [1], factory type [-1]
+  return pFunc(v, sq_gettop(v) - 2, *pSelf);
 };
 
 template<class Type> inline
@@ -550,7 +551,8 @@ SQInteger InternalClass<Type>::ClassMethod(HSQUIRRELVM v) {
   // Call class method for the data
   Method<Type>::FType pFunc = (Method<Type>::FType)pToStringFunc;
 
-  return pFunc(v, *pInstanceValue);
+  // Amount of the arguments = stack top minus instance [1], factory type [-1], method function [-2]
+  return pFunc(v, sq_gettop(v) - 3, *pInstanceValue);
 };
 
 template<class Type> inline

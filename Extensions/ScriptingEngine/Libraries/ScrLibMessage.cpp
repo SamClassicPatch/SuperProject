@@ -45,7 +45,7 @@ static SQInteger Question(HSQUIRRELVM v) {
   sq_getstring(v, 2, &str);
 
   bool bYes = MessageBoxA(NULL, str, LOCALIZE("Question"), MB_YESNO | MB_ICONQUESTION | MB_SETFOREGROUND | MB_TASKMODAL) == IDYES;
-  sq_pushbool(v, bYes ? SQTrue : SQFalse);
+  sq_pushbool(v, bYes);
   return 1;
 };
 
