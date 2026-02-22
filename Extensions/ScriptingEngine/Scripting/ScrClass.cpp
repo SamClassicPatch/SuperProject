@@ -17,21 +17,35 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
-void AbstractClass::Init(SQFUNCTION pConstructorMethod, SQFUNCTION pSetMethod, SQFUNCTION pGetMethod) {
+void AbstractClass::Init(SQFUNCTION pConstructorMethod, SQFUNCTION pSetMethod, SQFUNCTION pGetMethod, const AbstractClass *pBaseToExtend) {
   AbstractFactory *pFactory = GetFactory();
   const char *strFactoryType = GetFactoryType().raw_name();
 
+  // Push base class that will be extended
+  const bool bHasBase = (pBaseToExtend != NULL);
+
+  if (bHasBase) {
+    sq_pushobject(m_vm, pBaseToExtend->m_obj);
+  }
+
   // Create a new class and store a reference to it
-  sq_newclass(m_vm, SQFalse);
+  sq_newclass(m_vm, bHasBase);
   sq_getstackobj(m_vm, -1, &m_obj);
   sq_addref(m_vm, &m_obj);
 
   // Set typetag from the pointer to the instance factory
   sq_settypetag(m_vm, -1, (SQUserPointer)pFactory);
 
+  // Clone static tables of setter & getter methods from the base class
+  if (bHasBase) {
+    m_sqtSetters = CloneTable(SQCLASS_SETTER_TABLE, pBaseToExtend->m_sqtSetters, true);
+    m_sqtGetters = CloneTable(SQCLASS_GETTER_TABLE, pBaseToExtend->m_sqtGetters, true);
+
   // Create static tables of setter & getter methods
-  m_sqtSetters = RegisterTable(SQCLASS_SETTER_TABLE, true);
-  m_sqtGetters = RegisterTable(SQCLASS_GETTER_TABLE, true);
+  } else {
+    m_sqtSetters = RegisterTable(SQCLASS_SETTER_TABLE, true);
+    m_sqtGetters = RegisterTable(SQCLASS_GETTER_TABLE, true);
+  }
 
   // Define metamethods
   sq_pushstring(m_vm, "constructor", -1);
