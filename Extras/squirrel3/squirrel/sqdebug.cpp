@@ -114,5 +114,7 @@ void SQVM::Raise_ParamTypeError(SQInteger nparam,SQInteger typemask,SQInteger ty
             StringCat(exptypes,SQString::Create(_ss(this), IdType2Name((SQObjectType)mask), -1), exptypes);
         }
     }
-    Raise_Error(_SC("parameter %d has an invalid type '%s' ; expected: '%s'"), nparam, IdType2Name((SQObjectType)type), _stringval(exptypes));
+
+    // [Cecil] If SQInteger is 8 bytes long, 'nparam' shifts formatting of all arguments by 4 bytes
+    Raise_Error(_SC("parameter %d has an invalid type '%s' ; expected: '%s'"), (int)nparam, IdType2Name((SQObjectType)type), _stringval(exptypes));
 }
