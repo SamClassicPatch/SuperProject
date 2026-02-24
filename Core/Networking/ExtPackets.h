@@ -129,6 +129,12 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
       memset(aulFields, 0, sizeof(aulFields));
     };
 
+    // Copy event data from another event
+    inline void Copy(const EExtEntityEvent &eeOther) {
+      ee_slEvent = eeOther.ee_slEvent;
+      memcpy(aulFields, eeOther.aulFields, sizeof(aulFields));
+    };
+
     // Convert entity ID into a pointer
     inline ULONG EntityFromID(INDEX i) {
       return (ULONG)IWorld::FindEntityByID(IWorld::GetWorld(), aulFields[i]);
@@ -201,7 +207,10 @@ class CORE_API CExtEntityEvent : public CExtEntityPacket {
     void SetEvent(CEntityEvent &ee, size_t iEventSize);
 
     // Copy event data from another event
-    void Copy(const EExtEntityEvent &eeOther, ULONG ctSetFields);
+    inline void Copy(const EExtEntityEvent &eeOther, ULONG ctSetFields) {
+      eEvent.Copy(eeOther);
+      ctFields = ctSetFields;
+    };
 
   public:
     EXTPACKET_DEFINEFORTYPE(k_EPacketType_EntityEvent);

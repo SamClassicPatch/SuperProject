@@ -35,18 +35,10 @@ void CExtEntityEvent::SetEvent(CEntityEvent &ee, size_t iEventSize) {
   if (iEventSize == 0) return;
 
   // Count 4-byte fields
-  ctFields = ceilf(FLOAT(iEventSize) * 0.25f);
+  ctFields = (iEventSize + 3) / 4;
 
   void *pEventData = ((UBYTE *)&ee) + iSkip;
   memcpy(eEvent.aulFields, pEventData, iEventSize);
-};
-
-// Copy event data from another event
-void CExtEntityEvent::Copy(const EExtEntityEvent &eeOther, ULONG ctSetFields) {
-  eEvent.ee_slEvent = eeOther.ee_slEvent;
-  memcpy(eEvent.aulFields, eeOther.aulFields, sizeof(eEvent.aulFields));
-
-  ctFields = ctSetFields;
 };
 
 bool CExtEntityEvent::Write(CNetworkMessage &nm) {
