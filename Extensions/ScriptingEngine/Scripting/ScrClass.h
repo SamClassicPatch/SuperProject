@@ -477,7 +477,8 @@ SQInteger InternalClass<Type>::ClassSet(HSQUIRRELVM v) {
   sq_getstring(v, -2, &strFactoryType);
 
   // Get current instance value
-  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  Type *pInstanceValue;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
   if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Retrieve setter method for the variable
@@ -510,7 +511,8 @@ SQInteger InternalClass<Type>::ClassGet(HSQUIRRELVM v) {
   sq_getstring(v, -2, &strFactoryType);
 
   // Get current instance value
-  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  Type *pInstanceValue;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
   if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Retrieve getter method for the variable
@@ -545,7 +547,8 @@ SQInteger InternalClass<Type>::ClassMethod(HSQUIRRELVM v) {
   sq_getuserpointer(v, -2, &pToStringFunc);
 
   // Get current instance value
-  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  Type *pInstanceValue;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
   if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Call class method for the data
@@ -564,7 +567,8 @@ SQInteger InternalClass<Type>::ClassMetaOther(HSQUIRRELVM v) {
   sq_getuserpointer(v, -2, &pToStringFunc);
 
   // Get current instance value
-  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  Type *pInstanceValue;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
   if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Call metamethod for the data
@@ -583,7 +587,8 @@ SQInteger InternalClass<Type>::ClassMetaSelf(HSQUIRRELVM v) {
   sq_getuserpointer(v, -2, &pToStringFunc);
 
   // Get current instance value
-  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  Type *pInstanceValue;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
   if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Call metamethod for the data
@@ -601,7 +606,8 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
   sq_getuserpointer(v, -2, &pToStringFunc);
 
   // Get current instance value
-  Type *pInstanceValue = InstanceAny::RetrieveValue(v, 1, strFactoryType, (Type *)NULL);
+  Type *pInstanceValue;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
   if (pInstanceValue == NULL) return SQ_ERROR;
 
   // Get previous index
@@ -709,8 +715,7 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
 // Example: SQCLASS_SET_INSTANCE(SetRot, CPlacement3D, FLOAT3D, val.pl_OrientationAngle)
 #define SQCLASS_SET_INSTANCE(_SetFuncName, _ClassType, _ValueType, _ValueGet) \
   static SQInteger _SetFuncName(HSQUIRRELVM v, _ClassType &val, SQInteger idxValue) { \
-    _ValueType *pOther = InstanceValueOfType(v, idxValue, _ValueType); \
-    if (pOther == NULL) return sq_throwerror(v, "expected " #_ValueType " value"); \
+    GetInstanceValueVerify(_ValueType, pOther, v, idxValue); \
     (_ValueGet) = *pOther; \
     return 1; \
   }

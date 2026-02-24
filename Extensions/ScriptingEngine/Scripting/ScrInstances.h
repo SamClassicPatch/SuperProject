@@ -84,9 +84,13 @@ class InstanceAny {
     static InstanceAny *OfType(HSQUIRRELVM v, SQInteger idx, const SQChar *strFactoryType);
 
     template<class Type>
-    static Type *RetrieveValue(HSQUIRRELVM v, SQInteger idx, const SQChar *strFactoryType, Type *pTemplateDummy) {
+    static void RetrieveValue(HSQUIRRELVM v, SQInteger idx, const SQChar *strFactoryType, Type **pPointerForValue) {
       InstanceAny *pInstance = OfType(v, idx, strFactoryType);
-      if (pInstance == NULL) return NULL;
+
+      if (pInstance == NULL) {
+        *pPointerForValue = NULL;
+        return;
+      }
 
       Type *pValue = (Type *)pInstance->GetFactory()->m_pValReference;
 
@@ -97,12 +101,23 @@ class InstanceAny {
         if (pValue == NULL) pValue = &((InstanceCopy<Type> *)pInstance)->val;
       }
 
-      return pValue;
+      *pPointerForValue = pValue;
     };
 
-    // Shortcut for retrieving a value from its instance of a specific class type
-    #define InstanceValueOfType(v, idx, Type) \
-      InstanceAny::RetrieveValue(v, idx, typeid(Type).raw_name(), (Type *)NULL)
+    // Shortcut for retrieving a pointer to a value from an instance in the stack
+    #define GetInstanceValue(_Type, _PointerVariable, v, idx) \
+      _Type *_PointerVariable; \
+      InstanceAny::RetrieveValue(v, idx, typeid(_Type).raw_name(), &_PointerVariable);
+
+    // Shortcut for retrieving a pointer to a value from an instance in the stack and verifying its type for a specific argument of a class method
+    #define GetInstanceValueVerifyN(_Type, _PointerVariable, v, idx, _ClassName) \
+      _Type *_PointerVariable; \
+      InstanceAny::RetrieveValue(v, idx, typeid(_Type).raw_name(), &_PointerVariable); \
+      if (_PointerVariable == NULL) return sq_throwerror(v, CTString(0, "expected " _ClassName " value in argument %d", idx - 1));
+
+    // Shortcut for retrieving a pointer to a value from an instance in the stack and verifying its type for a specific argument of a class method
+    #define GetInstanceValueVerify(_Type, _PointerVariable, v, idx) \
+      GetInstanceValueVerifyN(_Type, _PointerVariable, v, idx, #_Type)
 };
 
 // Class instance that holds a value of a specific type

@@ -37,8 +37,7 @@ static SQInteger Add(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
 
   // Get a vector value
-  FLOAT3D *pOther = InstanceValueOfType(v, idxOther, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
   *pv = val + *pOther;
   return 1;
@@ -50,8 +49,7 @@ static SQInteger Sub(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
 
   // Get a vector value
-  FLOAT3D *pOther = InstanceValueOfType(v, idxOther, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
   *pv = val - *pOther;
   return 1;
@@ -63,7 +61,7 @@ static SQInteger Mul(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
 
   // Get a matrix value
-  FLOATmatrix3D *pOtherMat = InstanceValueOfType(v, idxOther, FLOATmatrix3D);
+  GetInstanceValue(FLOATmatrix3D, pOtherMat, v, idxOther);
 
   if (pOtherMat != NULL) {
     *pv = val * *pOtherMat;
@@ -71,7 +69,7 @@ static SQInteger Mul(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   }
 
   // Or a vector value
-  FLOAT3D *pOtherVec = InstanceValueOfType(v, idxOther, FLOAT3D);
+  GetInstanceValue(FLOAT3D, pOtherVec, v, idxOther);
 
   if (pOtherVec != NULL) {
     *pv = val * *pOtherVec;
@@ -100,9 +98,7 @@ static SQInteger Div(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
 };
 
 static SQInteger Mod(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
-  FLOAT3D *pOther = InstanceValueOfType(v, idxOther, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
-
+  GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
   sq_pushfloat(v, val % *pOther);
   return 1;
 };
@@ -127,9 +123,7 @@ SQCLASS_GETSET_FLOAT(GetY, SetY, FLOAT3D, val(2), val(2));
 SQCLASS_GETSET_FLOAT(GetZ, SetZ, FLOAT3D, val(3), val(3));
 
 static SQInteger Equal(HSQUIRRELVM v, int, FLOAT3D &val) {
-  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
-
+  GetInstanceValueVerify(FLOAT3D, pOther, v, 2);
   sq_pushbool(v, val == *pOther);
   return 1;
 };
@@ -209,8 +203,7 @@ static SQInteger Add(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
   if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
 
   // Get a matrix value
-  FLOATmatrix3D *pOther = InstanceValueOfType(v, idxOther, FLOATmatrix3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOATmatrix3D value");
+  GetInstanceValueVerify(FLOATmatrix3D, pOther, v, idxOther);
 
   *pm = val + *pOther;
   return 1;
@@ -222,8 +215,7 @@ static SQInteger Sub(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
   if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
 
   // Get a matrix value
-  FLOATmatrix3D *pOther = InstanceValueOfType(v, idxOther, FLOATmatrix3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOATmatrix3D value");
+  GetInstanceValueVerify(FLOATmatrix3D, pOther, v, idxOther);
 
   *pm = val - *pOther;
   return 1;
@@ -235,7 +227,7 @@ static SQInteger Mul(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
   if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
 
   // Get a matrix value
-  FLOATmatrix3D *pOtherMat = InstanceValueOfType(v, idxOther, FLOATmatrix3D);
+  GetInstanceValue(FLOATmatrix3D, pOtherMat, v, idxOther);
 
   if (pOtherMat != NULL) {
     *pm = val * *pOtherMat;
@@ -295,7 +287,7 @@ SQCLASS_GETSET_FLOAT(Get33, Set33, FLOATmatrix3D, val(3, 3), val(3, 3));
 
 static SQInteger Diagonal(HSQUIRRELVM v, int, FLOATmatrix3D &val) {
   // Get a vector value
-  FLOAT3D *pOtherVec = InstanceValueOfType(v, 2, FLOAT3D);
+  GetInstanceValue(FLOAT3D, pOtherVec, v, 2);
 
   if (pOtherVec != NULL) {
     val.Diagonal(*pOtherVec);
@@ -351,11 +343,10 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, FLOATaabbox3D &val) {
   if (ctArgs <= 0) return 0;
 
   // Try to get the starting point as the first argument
-  FLOAT3D *pPoint = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pPoint == NULL) return 0;
+  GetInstanceValueVerify(FLOAT3D, pPoint, v, 2);
 
   if (ctArgs > 1) {
-    FLOAT3D *pMax = InstanceValueOfType(v, 3, FLOAT3D);
+    GetInstanceValue(FLOAT3D, pMax, v, 3);
     SQFloat fRadius;
 
     // Try creating a box with min and max values
@@ -368,6 +359,8 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, FLOATaabbox3D &val) {
       val = FLOATaabbox3D(*pPoint, fRadius);
       return 0;
     }
+
+    return sq_throwerror(v, "expected FLOAT3D or number value");
   }
 
   // Or just a simple point
@@ -376,8 +369,7 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, FLOATaabbox3D &val) {
 };
 
 static SQInteger AddPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
-  FLOAT3D *pOther = InstanceValueOfType(v, idxOther, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
   // Create a box instance
   FLOATaabbox3D *pbox;
@@ -389,8 +381,7 @@ static SQInteger AddPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
 };
 
 static SQInteger SubPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
-  FLOAT3D *pOther = InstanceValueOfType(v, idxOther, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
   // Create a box instance
   FLOATaabbox3D *pbox;
@@ -402,8 +393,7 @@ static SQInteger SubPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
 };
 
 static SQInteger Union(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
-  FLOATaabbox3D *pOther = InstanceValueOfType(v, idxOther, FLOATaabbox3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+  GetInstanceValueVerify(FLOATaabbox3D, pOther, v, idxOther);
 
   // Create a box instance
   FLOATaabbox3D *pbox;
@@ -415,8 +405,7 @@ static SQInteger Union(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
 };
 
 static SQInteger Intersection(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
-  FLOATaabbox3D *pOther = InstanceValueOfType(v, idxOther, FLOATaabbox3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+  GetInstanceValueVerify(FLOATaabbox3D, pOther, v, idxOther);
 
   // Create a box instance
   FLOATaabbox3D *pbox;
@@ -442,9 +431,7 @@ SQCLASS_GET_INSTANCE(GetMax, FLOATaabbox3D, FLOAT3D, val.maxvect);
 SQCLASS_SET_INSTANCE(SetMax, FLOATaabbox3D, FLOAT3D, val.maxvect);
 
 static SQInteger Equal(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
-  FLOATaabbox3D *pOther = InstanceValueOfType(v, 2, FLOATaabbox3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
-
+  GetInstanceValueVerify(FLOATaabbox3D, pOther, v, 2);
   sq_pushbool(v, val == *pOther);
   return 1;
 };
@@ -478,27 +465,20 @@ static SQInteger IsEmpty(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
 };
 
 static SQInteger Contains(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
-  // Get other box
-  FLOATaabbox3D *pOther = InstanceValueOfType(v, 2, FLOATaabbox3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
-
+  GetInstanceValueVerify(FLOATaabbox3D, pOther, v, 2);
   sq_pushbool(v, (val >= *pOther));
   return 1;
 };
 
 static SQInteger IsInside(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
-  // Get other box
-  FLOATaabbox3D *pOther = InstanceValueOfType(v, 2, FLOATaabbox3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
-
+  GetInstanceValueVerify(FLOATaabbox3D, pOther, v, 2);
   sq_pushbool(v, (val <= *pOther));
   return 1;
 };
 
 static SQInteger HasContactWith(HSQUIRRELVM v, int ctArgs, FLOATaabbox3D &val) {
   // Get other box
-  FLOATaabbox3D *pOther = InstanceValueOfType(v, 2, FLOATaabbox3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOATaabbox3D value");
+  GetInstanceValueVerify(FLOATaabbox3D, pOther, v, 2);
 
   // Get optional epsilon
   SQFloat fEpsilon = 0.0f;
@@ -510,8 +490,7 @@ static SQInteger HasContactWith(HSQUIRRELVM v, int ctArgs, FLOATaabbox3D &val) {
 
 static SQInteger TouchesSphere(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
   // Get sphere center
-  FLOAT3D *pvCenter = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pvCenter == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pvCenter, v, 2);
 
   // Get sphere radius
   SQFloat fRadius;
@@ -543,9 +522,7 @@ static SQInteger StretchByFactor(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
 };
 
 static SQInteger StretchByVector(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
-  FLOAT3D *pv = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
-
+  GetInstanceValueVerify(FLOAT3D, pv, v, 2);
   val.StretchByVector(*pv);
   return 0;
 };
@@ -578,12 +555,12 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CPlacement3D &val) {
   val = CPlacement3D(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0));
 
   if (ctArgs > 0) {
-    FLOAT3D *pPos = InstanceValueOfType(v, 2, FLOAT3D);
+    GetInstanceValueVerify(FLOAT3D, pPos, v, 2);
     if (pPos != NULL) val.pl_PositionVector = *pPos;
   }
 
   if (ctArgs > 1) {
-    FLOAT3D *pRot = InstanceValueOfType(v, 3, FLOAT3D);
+    GetInstanceValueVerify(FLOAT3D, pRot, v, 3);
     if (pRot != NULL) val.pl_OrientationAngle = *pRot;
   }
 
@@ -604,46 +581,31 @@ SQCLASS_GET_INSTANCE(GetRot, CPlacement3D, FLOAT3D, val.pl_OrientationAngle);
 SQCLASS_SET_INSTANCE(SetRot, CPlacement3D, FLOAT3D, val.pl_OrientationAngle);
 
 static SQInteger Rotate_TrackBall(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a vector value
-  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
-
+  GetInstanceValueVerify(FLOAT3D, pOther, v, 2);
   val.Rotate_TrackBall(*pOther);
   return 0;
 };
 
 static SQInteger Rotate_Airplane(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a vector value
-  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
-
+  GetInstanceValueVerify(FLOAT3D, pOther, v, 2);
   val.Rotate_Airplane(*pOther);
   return 0;
 };
 
 static SQInteger Rotate_HPB(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a vector value
-  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
-
+  GetInstanceValueVerify(FLOAT3D, pOther, v, 2);
   val.Rotate_HPB(*pOther);
   return 0;
 };
 
 static SQInteger Translate_OwnSystem(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a vector value
-  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
-
+  GetInstanceValueVerify(FLOAT3D, pOther, v, 2);
   val.Translate_OwnSystem(*pOther);
   return 0;
 };
 
 static SQInteger Translate_AbsoluteSystem(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a vector value
-  FLOAT3D *pOther = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected FLOAT3D value");
-
+  GetInstanceValueVerify(FLOAT3D, pOther, v, 2);
   val.Translate_AbsoluteSystem(*pOther);
   return 0;
 };
@@ -658,68 +620,47 @@ static SQInteger GetDirectionVector(HSQUIRRELVM v, int, CPlacement3D &val) {
 };
 
 static SQInteger AbsoluteToRelative(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a placement value
-  CPlacement3D *pOther = InstanceValueOfType(v, 2, CPlacement3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected CPlacement3D value");
-
+  GetInstanceValueVerify(CPlacement3D, pOther, v, 2);
   val.AbsoluteToRelative(*pOther);
   return 0;
 };
 
 static SQInteger AbsoluteToRelativeSmooth(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a placement value
-  CPlacement3D *pOther = InstanceValueOfType(v, 2, CPlacement3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected CPlacement3D value");
-
+  GetInstanceValueVerify(CPlacement3D, pOther, v, 2);
   val.AbsoluteToRelativeSmooth(*pOther);
   return 0;
 };
 
 static SQInteger RelativeToAbsolute(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a placement value
-  CPlacement3D *pOther = InstanceValueOfType(v, 2, CPlacement3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected CPlacement3D value");
-
+  GetInstanceValueVerify(CPlacement3D, pOther, v, 2);
   val.RelativeToAbsolute(*pOther);
   return 0;
 };
 
 static SQInteger RelativeToAbsoluteSmooth(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get a placement value
-  CPlacement3D *pOther = InstanceValueOfType(v, 2, CPlacement3D);
-  if (pOther == NULL) return sq_throwerror(v, "expected CPlacement3D value");
-
+  GetInstanceValueVerify(CPlacement3D, pOther, v, 2);
   val.RelativeToAbsoluteSmooth(*pOther);
   return 0;
 };
 
 static SQInteger RelativeToRelative(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get two placement values
-  CPlacement3D *pOther1 = InstanceValueOfType(v, 2, CPlacement3D);
-  CPlacement3D *pOther2 = InstanceValueOfType(v, 3, CPlacement3D);
-  if (pOther1 == NULL || pOther2 == NULL) return sq_throwerror(v, "expected two CPlacement3D values");
-
+  GetInstanceValueVerify(CPlacement3D, pOther1, v, 2);
+  GetInstanceValueVerify(CPlacement3D, pOther2, v, 3);
   val.RelativeToRelative(*pOther1, *pOther2);
   return 0;
 };
 
 static SQInteger RelativeToRelativeSmooth(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Get two placement values
-  CPlacement3D *pOther1 = InstanceValueOfType(v, 2, CPlacement3D);
-  CPlacement3D *pOther2 = InstanceValueOfType(v, 3, CPlacement3D);
-  if (pOther1 == NULL || pOther2 == NULL) return sq_throwerror(v, "expected two CPlacement3D values");
-
+  GetInstanceValueVerify(CPlacement3D, pOther1, v, 2);
+  GetInstanceValueVerify(CPlacement3D, pOther2, v, 3);
   val.RelativeToRelativeSmooth(*pOther1, *pOther2);
   return 0;
 };
 
 static SQInteger Lerp(HSQUIRRELVM v, int, CPlacement3D &val) {
   // Get two placement values
-  CPlacement3D *pOther1 = InstanceValueOfType(v, 2, CPlacement3D);
-  if (pOther1 == NULL) return sq_throwerror(v, "expected CPlacement3D value");
-
-  CPlacement3D *pOther2 = InstanceValueOfType(v, 3, CPlacement3D);
-  if (pOther2 == NULL) return sq_throwerror(v, "expected CPlacement3D value");
+  GetInstanceValueVerify(CPlacement3D, pOther1, v, 2);
+  GetInstanceValueVerify(CPlacement3D, pOther2, v, 3);
 
   // Get a float value
   SQFloat fFactor;
@@ -752,7 +693,6 @@ namespace Math {
 static SQInteger NormFloatToByte(HSQUIRRELVM v) {
   SQFloat f;
   sq_getfloat(v, 2, &f);
-
   sq_pushinteger(v, ::NormFloatToByte(f));
   return 1;
 };
@@ -760,7 +700,6 @@ static SQInteger NormFloatToByte(HSQUIRRELVM v) {
 static SQInteger NormByteToFloat(HSQUIRRELVM v) {
   SQInteger i;
   sq_getinteger(v, 2, &i);
-
   sq_pushfloat(v, ::NormByteToFloat(i));
   return 1;
 };
@@ -768,7 +707,6 @@ static SQInteger NormByteToFloat(HSQUIRRELVM v) {
 static SQInteger WrapAngle(HSQUIRRELVM v) {
   SQFloat f;
   sq_getfloat(v, 2, &f);
-
   sq_pushfloat(v, ::WrapAngle(f));
   return 1;
 };
@@ -776,7 +714,6 @@ static SQInteger WrapAngle(HSQUIRRELVM v) {
 static SQInteger NormalizeAngle(HSQUIRRELVM v) {
   SQFloat f;
   sq_getfloat(v, 2, &f);
-
   sq_pushfloat(v, ::NormalizeAngle(f));
   return 1;
 };
@@ -784,7 +721,6 @@ static SQInteger NormalizeAngle(HSQUIRRELVM v) {
 static SQInteger RadToDeg(HSQUIRRELVM v) {
   SQFloat f;
   sq_getfloat(v, 2, &f);
-
   sq_pushfloat(v, ::AngleRad(f));
   return 1;
 };
@@ -792,15 +728,13 @@ static SQInteger RadToDeg(HSQUIRRELVM v) {
 static SQInteger DegToRad(HSQUIRRELVM v) {
   SQFloat f;
   sq_getfloat(v, 2, &f);
-
   sq_pushfloat(v, ::RadAngle(f));
   return 1;
 };
 
 static SQInteger MakeRotationMatrix(HSQUIRRELVM v) {
   // Get a vector value
-  FLOAT3D *pv = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
   // Create a matrix instance
   FLOATmatrix3D *pm;
@@ -812,8 +746,7 @@ static SQInteger MakeRotationMatrix(HSQUIRRELVM v) {
 
 static SQInteger MakeRotationMatrixFast(HSQUIRRELVM v) {
   // Get a vector value
-  FLOAT3D *pv = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
   // Create a matrix instance
   FLOATmatrix3D *pm;
@@ -825,8 +758,7 @@ static SQInteger MakeRotationMatrixFast(HSQUIRRELVM v) {
 
 static SQInteger MakeInverseRotationMatrix(HSQUIRRELVM v) {
   // Get a vector value
-  FLOAT3D *pv = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
   // Create a matrix instance
   FLOATmatrix3D *pm;
@@ -838,8 +770,7 @@ static SQInteger MakeInverseRotationMatrix(HSQUIRRELVM v) {
 
 static SQInteger MakeInverseRotationMatrixFast(HSQUIRRELVM v) {
   // Get a vector value
-  FLOAT3D *pv = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pv == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
   // Create a matrix instance
   FLOATmatrix3D *pm;
@@ -851,8 +782,7 @@ static SQInteger MakeInverseRotationMatrixFast(HSQUIRRELVM v) {
 
 static SQInteger DecomposeRotationMatrix(HSQUIRRELVM v) {
   // Get a matrix value
-  FLOATmatrix3D *pm = InstanceValueOfType(v, 2, FLOATmatrix3D);
-  if (pm == NULL) return sq_throwerror(v, "expected FLOATmatrix3D value");
+  GetInstanceValueVerify(FLOATmatrix3D, pm, v, 2);
 
   // Create a vector instance
   FLOAT3D *pv;
@@ -864,8 +794,7 @@ static SQInteger DecomposeRotationMatrix(HSQUIRRELVM v) {
 
 static SQInteger DecomposeRotationMatrixNoSnap(HSQUIRRELVM v) {
   // Get a matrix value
-  FLOATmatrix3D *pm = InstanceValueOfType(v, 2, FLOATmatrix3D);
-  if (pm == NULL) return sq_throwerror(v, "expected FLOATmatrix3D value");
+  GetInstanceValueVerify(FLOATmatrix3D, pm, v, 2);
 
   // Create a vector instance
   FLOAT3D *pv;
@@ -877,8 +806,7 @@ static SQInteger DecomposeRotationMatrixNoSnap(HSQUIRRELVM v) {
 
 static SQInteger AnglesToDirectionVector(HSQUIRRELVM v) {
   // Get a vector value
-  FLOAT3D *pvAngles = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pvAngles == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pvAngles, v, 2);
 
   // Create a vector instance
   FLOAT3D *pvDir;
@@ -890,8 +818,7 @@ static SQInteger AnglesToDirectionVector(HSQUIRRELVM v) {
 
 static SQInteger DirectionVectorToAngles(HSQUIRRELVM v) {
   // Get a vector value
-  FLOAT3D *pvDir = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pvDir == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
   // Create a vector instance
   FLOAT3D *pvAngles;
@@ -903,8 +830,7 @@ static SQInteger DirectionVectorToAngles(HSQUIRRELVM v) {
 
 static SQInteger DirectionVectorToAnglesNoSnap(HSQUIRRELVM v) {
   // Get a vector value
-  FLOAT3D *pvDir = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pvDir == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
   // Create a vector instance
   FLOAT3D *pvAngles;
@@ -916,8 +842,7 @@ static SQInteger DirectionVectorToAnglesNoSnap(HSQUIRRELVM v) {
 
 static SQInteger UpVectorToAngles(HSQUIRRELVM v) {
   // Get a vector value
-  FLOAT3D *pvDir = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pvDir == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
   // Create a vector instance
   FLOAT3D *pvAngles;

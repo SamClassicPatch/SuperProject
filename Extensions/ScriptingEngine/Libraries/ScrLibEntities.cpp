@@ -25,7 +25,7 @@ namespace SqEntity {
 
 static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
   if (ctArgs > 0) {
-    CEntityPointer *pOther = InstanceValueOfType(v, 2, CEntityPointer);
+    GetInstanceValueVerify(CEntityPointer, pOther, v, 2);
     if (pOther != NULL) val = *pOther;
   }
 
@@ -51,9 +51,7 @@ static SQInteger Equal(HSQUIRRELVM v, int, CEntityPointer &val) {
   }
 
   // Compare against another pointer
-  CEntityPointer *pOther = InstanceValueOfType(v, 2, CEntityPointer);
-  if (pOther == NULL) return sq_throwerror(v, "expected CEntityPointer or null value");
-
+  GetInstanceValueVerify(CEntityPointer, pOther, v, 2);
   sq_pushbool(v, val == *pOther);
   return 1;
 };
@@ -177,8 +175,7 @@ static SQInteger GetEntityPointRatio(HSQUIRRELVM v, int ctArgs, CEntityPointer &
   ASSERT_ENTITY;
 
   // Get point ratio
-  FLOAT3D *pvRatio = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pvRatio == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pvRatio, v, 2);
 
   // Get optional lerped flag
   SQBool bLerped = false;
@@ -196,8 +193,7 @@ static SQInteger GetEntityPointFixed(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
 
   // Get fixed point
-  FLOAT3D *pvFixed = InstanceValueOfType(v, 2, FLOAT3D);
-  if (pvFixed == NULL) return sq_throwerror(v, "expected FLOAT3D value");
+  GetInstanceValueVerify(FLOAT3D, pvFixed, v, 2);
 
   // Create a vector instance
   FLOAT3D *pv;
@@ -553,7 +549,7 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CEntityProperty *&val) {
   val = NULL;
 
   if (ctArgs > 0) {
-    CEntityProperty **pOther = InstanceValueOfType(v, 2, CEntityProperty *);
+    GetInstanceValueVerify(CEntityProperty *, pOther, v, 2);
     if (pOther != NULL) val = *pOther;
   }
 

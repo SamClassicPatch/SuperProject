@@ -27,7 +27,7 @@ InstanceAny *InstanceAny::Retrieve(HSQUIRRELVM v, SQInteger idx, const AbstractF
 
   // Incomplete script class derived from a native class
   if (pInstance == NULL) {
-    sq_throwerror(v, "missing base.constructor() call in the Squirrel class that extends a native class");
+    sq_throwerror(v, "missing 'base.constructor()' call in the Squirrel class that extends a native class");
     return NULL;
   }
 
