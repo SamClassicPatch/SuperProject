@@ -52,15 +52,16 @@ InstanceAny *InstanceAny::OfType(HSQUIRRELVM v, SQInteger idx, const SQChar *str
   AbstractFactory *pFoundFactory = NULL;
   sq_gettypetag(v, idx, (SQUserPointer *)&pFoundFactory);
 
-  if (pFoundFactory == NULL) {
-    // Otherwise try to find it among type tags of the entire class hierarchy
+  // If there's no factory or it's of a wrong type
+  if (pFoundFactory != pExistingFactory) {
+    // Try to find the right factory among type tags in the entire class hierarchy
     SQInteger iTop = sq_gettop(v);
     sq_getclass(v, idx);
 
-    while (pFoundFactory == NULL) {
+    do {
       sq_getbase(v, -1);
       sq_gettypetag(v, -1, (SQUserPointer *)&pFoundFactory);
-    }
+    } while (pFoundFactory != pExistingFactory);
 
     sq_settop(v, iTop);
   }

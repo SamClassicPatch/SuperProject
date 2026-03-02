@@ -338,6 +338,14 @@ class Class : public AbstractClassRegistrar {
     Class(const Class &other);
     void operator=(const Class &other);
 
+  protected:
+    // Base constructor for derived classes
+    Class(HSQUIRRELVM vmSet, const SQChar *strName, const AbstractClassRegistrar &sqcBase, FConstructor pSetConstructor) :
+      m_sqcCopy(vmSet, strName, false, &sqcBase.GetCopyClass(), pSetConstructor),
+      m_sqcPtr(vmSet, strName, true, &sqcBase.GetPointerClass(), pSetConstructor)
+    {
+    };
+
   public:
     // Construct a Squirrel class declaration that creates instances with own copies of values
     Class(HSQUIRRELVM vmSet, const SQChar *strName, FConstructor pSetConstructor) :
@@ -405,15 +413,13 @@ class DerivedClass : public Class<Type> {
   public:
     // Construct a Squirrel class declaration that creates instances with own copies of values
     DerivedClass(HSQUIRRELVM vmSet, const SQChar *strName, const AbstractClassRegistrar &sqcBase, FConstructor pSetConstructor) :
-      m_sqcCopy(vmSet, strName, false, sqcBase.GetCopyClass(), pSetConstructor),
-      m_sqcPtr(vmSet, strName, true, sqcBase.GetPointerClass(), pSetConstructor)
+      Class<Type>(vmSet, strName, sqcBase, pSetConstructor)
     {
     };
 
     // Construct a Squirrel class declaration that creates instances with a reference to some external value
     DerivedClass(HSQUIRRELVM vmSet, const SQChar *strName, const AbstractClassRegistrar &sqcBase, FConstructor pSetConstructor, Type &valSetReference) :
-      m_sqcCopy(vmSet, strName, false, sqcBase.GetCopyClass(), pSetConstructor, valSetReference),
-      m_sqcPtr(vmSet, strName, true, sqcBase.GetPointerClass(), pSetConstructor, valSetReference)
+      Class<Type>(vmSet, strName, sqcBase, pSetConstructor, valSetReference),
     {
     };
 };
