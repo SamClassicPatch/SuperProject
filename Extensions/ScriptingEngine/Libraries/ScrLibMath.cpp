@@ -187,6 +187,219 @@ static Method<FLOAT3D> _aMethods[] = {
 
 }; // namespace
 
+// FLOATplane3D class methods
+namespace SqPlane {
+
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, FLOATplane3D &val) {
+  if (ctArgs <= 0) {
+    val = FLOATplane3D(FLOAT3D(0, 1, 0), 0.0f);
+    return 0;
+  }
+
+  // Create a plane from three points
+  if (ctArgs == 3) {
+    GetInstanceValueVerify(FLOAT3D, pv0, v, 2);
+    GetInstanceValueVerify(FLOAT3D, pv1, v, 3);
+    GetInstanceValueVerify(FLOAT3D, pv2, v, 4);
+
+    val = FLOATplane3D(*pv0, *pv1, *pv2);
+    return 0;
+  }
+
+  // Try to get the normal as the first argument
+  GetInstanceValueVerify(FLOAT3D, pvNormal, v, 2);
+
+  GetInstanceValue(FLOAT3D, pvPoint, v, 3);
+  SQFloat fDist;
+
+  // Try creating a plane with a distance towards some point
+  if (pvPoint != NULL) {
+    val = FLOATplane3D(*pvNormal, *pvPoint);
+    return 0;
+
+  // Or a plane with a specific distance
+  } else if (SQ_SUCCEEDED(sq_getfloat(v, 3, &fDist))) {
+    val = FLOATplane3D(*pvNormal, fDist);
+    return 0;
+  }
+
+  return sq_throwerror(v, "expected FLOAT3D or number value in argument 2");
+};
+
+static SQInteger Clone(HSQUIRRELVM v, FLOATplane3D &val, FLOATplane3D &valOther) {
+  val = valOther;
+  return 0;
+};
+
+static SQInteger Add(HSQUIRRELVM v, FLOATplane3D &val, SQInteger idxOther) {
+  // Create a plane instance
+  FLOATplane3D *ppl;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
+
+  // Get a vector value
+  GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
+
+  *ppl = val + *pOther;
+  return 1;
+};
+
+static SQInteger Sub(HSQUIRRELVM v, FLOATplane3D &val, SQInteger idxOther) {
+  // Create a plane instance
+  FLOATplane3D *ppl;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
+
+  // Get a vector value
+  GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
+
+  *ppl = val - *pOther;
+  return 1;
+};
+
+static SQInteger Mul(HSQUIRRELVM v, FLOATplane3D &val, SQInteger idxOther) {
+  // Create a plane instance
+  FLOATplane3D *ppl;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
+
+  // Get a matrix value
+  GetInstanceValueVerify(FLOATmatrix3D, pOther, v, idxOther);
+
+  *ppl = val * *pOther;
+  return 1;
+};
+
+static SQInteger UnaryMinus(HSQUIRRELVM v, FLOATplane3D &val) {
+  // Create a plane instance
+  FLOATplane3D *ppl;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
+
+  *ppl = -val;
+  return 1;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, FLOATplane3D &val) {
+  CTString str(0, "pl[%g, %g, %g; %g]", val(1), val(2), val(3), val.Distance());
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+SQCLASS_GET_INSTANCE(GetVector, FLOATplane3D, FLOAT3D, (FLOAT3D &)val);
+SQCLASS_SET_INSTANCE(SetVector, FLOATplane3D, FLOAT3D, (FLOAT3D &)val);
+
+SQCLASS_GETSET_FLOAT(GetDist, SetDist, FLOATplane3D, val.Distance(), val.Distance());
+
+static SQInteger Offset(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+  val.Offset(f);
+  return 0;
+};
+
+static SQInteger GetMaxNormal(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  sq_pushinteger(v, val.GetMaxNormal());
+  return 1;
+};
+
+static SQInteger ReferencePoint(HSQUIRRELVM v, int ctArgs, FLOATplane3D &val) {
+  FLOAT3D *pvOrigin = NULL;
+
+  if (ctArgs > 0) {
+    GetInstanceValueVerify(FLOAT3D, pvOriginArg, v, 2);
+    pvOrigin = pvOriginArg;
+  }
+
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  if (pvOrigin != NULL) {
+    *pv = val.ReferencePoint(*pvOrigin);
+  } else {
+    *pv = val.ReferencePoint();
+  }
+  return 1;
+};
+
+static SQInteger PointDistance(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  GetInstanceValueVerify(FLOAT3D, pvPoint, v, 2);
+  sq_pushfloat(v, val.PointDistance(*pvPoint));
+  return 1;
+};
+
+static SQInteger PlaneDistance(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  GetInstanceValueVerify(FLOATplane3D, pplOther, v, 2);
+  sq_pushfloat(v, val.PlaneDistance(*pplOther));
+  return 1;
+};
+
+static SQInteger GetCoordinate(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  SQInteger iIndex;
+  sq_getinteger(v, 2, &iIndex);
+
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  val.GetCoordinate(iIndex, *pv);
+  return 1;
+};
+
+static SQInteger ProjectPoint(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  GetInstanceValueVerify(FLOAT3D, pvPoint, v, 2);
+
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = val.ProjectPoint(*pvPoint);
+  return 1;
+};
+
+static SQInteger ProjectDirection(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
+
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = val.ProjectDirection(*pvDir);
+  return 1;
+};
+
+static SQInteger DeprojectPoint(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  GetInstanceValueVerify(FLOATplane3D, pplOther, v, 2);
+  GetInstanceValueVerify(FLOAT3D, pvPoint, v, 3);
+
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = val.DeprojectPoint(*pplOther, *pvPoint);
+  return 1;
+};
+
+static SQInteger DeprojectDirection(HSQUIRRELVM v, int, FLOATplane3D &val) {
+  GetInstanceValueVerify(FLOATplane3D, pplOther, v, 2);
+  GetInstanceValueVerify(FLOAT3D, pvDir, v, 3);
+
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  *pv = val.DeprojectDirection(*pplOther, *pvDir);
+  return 1;
+};
+
+static Method<FLOATplane3D> _aMethods[] = {
+  { "Offset",         &Offset,          2, ".n" },
+  { "GetMaxNormal",   &GetMaxNormal,    1, "." },
+  { "ReferencePoint", &ReferencePoint, -1, ".x" },
+
+  { "PointDistance",  &PointDistance,   2, ".x" },
+  { "PlaneDistance",  &PlaneDistance,   2, ".x" },
+  { "GetCoordinate",  &GetCoordinate,   2, ".n" },
+
+  { "ProjectPoint",       &ProjectPoint,       2, ".x" },
+  { "ProjectDirection",   &ProjectDirection,   2, ".x" },
+  { "DeprojectPoint",     &DeprojectPoint,     3, ".xx" },
+  { "DeprojectDirection", &DeprojectDirection, 3, ".xx" },
+};
+
+}; // namespace
+
 // FLOATmatrix3D class methods
 namespace SqMatrix {
 
@@ -934,6 +1147,28 @@ void VM::RegisterMath(void) {
     sqcVector.RegisterVar(3, &SqVector::GetZ, &SqVector::SetZ);
 
     Root().AddClass(sqcVector);
+
+    // Derive the plane from the vector
+    DerivedClass<FLOATplane3D> sqcPlane(GetVM(), "FLOATplane3D", sqcVector, &SqPlane::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqPlane::_aMethods); i++) {
+      sqcPlane.RegisterMethod(SqPlane::_aMethods[i]);
+    }
+
+    // Metamethods
+    sqcPlane.RegisterMetamethod(E_MM_CLONED, &SqPlane::Clone);
+    sqcPlane.RegisterMetamethod(E_MM_ADD, &SqPlane::Add);
+    sqcPlane.RegisterMetamethod(E_MM_SUB, &SqPlane::Sub);
+    sqcPlane.RegisterMetamethod(E_MM_MUL, &SqPlane::Mul);
+    sqcPlane.RegisterMetamethod(E_MM_UNM, &SqPlane::UnaryMinus);
+    sqcPlane.RegisterMetamethod(E_MM_TOSTRING, &SqPlane::ToString);
+
+    // Plane fields
+    sqcPlane.RegisterVar("vec",  &SqPlane::GetVector, &SqPlane::SetVector);
+    sqcPlane.RegisterVar("dist", &SqPlane::GetDist,   &SqPlane::SetDist);
+
+    Root().AddClass(sqcPlane);
   }
   {
     Class<FLOATmatrix3D> sqcMatrix(GetVM(), "FLOATmatrix3D", &SqMatrix::Constructor);
