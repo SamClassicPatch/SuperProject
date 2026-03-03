@@ -31,6 +31,11 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, FLOAT3D &val) {
   return 0;
 };
 
+static SQInteger Clone(HSQUIRRELVM v, FLOAT3D &val, FLOAT3D &valOther) {
+  val = valOther;
+  return 0;
+};
+
 static SQInteger Add(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
   // Create a vector instance
   FLOAT3D *pv;
@@ -197,6 +202,11 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, FLOATmatrix3D &val) {
   return 0;
 };
 
+static SQInteger Clone(HSQUIRRELVM v, FLOATmatrix3D &val, FLOATmatrix3D &valOther) {
+  val = valOther;
+  return 0;
+};
+
 static SQInteger Add(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
   // Create a matrix instance
   FLOATmatrix3D *pm;
@@ -360,11 +370,16 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, FLOATaabbox3D &val) {
       return 0;
     }
 
-    return sq_throwerror(v, "expected FLOAT3D or number value");
+    return sq_throwerror(v, "expected FLOAT3D or number value in argument 2");
   }
 
   // Or just a simple point
   val = FLOATaabbox3D(*pPoint);
+  return 0;
+};
+
+static SQInteger Clone(HSQUIRRELVM v, FLOATaabbox3D &val, FLOATaabbox3D &valOther) {
+  val = valOther;
   return 0;
 };
 
@@ -564,6 +579,11 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CPlacement3D &val) {
     if (pRot != NULL) val.pl_OrientationAngle = *pRot;
   }
 
+  return 0;
+};
+
+static SQInteger Clone(HSQUIRRELVM v, CPlacement3D &val, CPlacement3D &valOther) {
+  val = valOther;
   return 0;
 };
 
@@ -889,6 +909,7 @@ void VM::RegisterMath(void) {
     }
 
     // Metamethods
+    sqcVector.RegisterMetamethod(E_MM_CLONED, &SqVector::Clone);
     sqcVector.RegisterMetamethod(E_MM_ADD, &SqVector::Add);
     sqcVector.RegisterMetamethod(E_MM_SUB, &SqVector::Sub);
     sqcVector.RegisterMetamethod(E_MM_MUL, &SqVector::Mul);
@@ -923,6 +944,7 @@ void VM::RegisterMath(void) {
     }
 
     // Metamethods
+    sqcMatrix.RegisterMetamethod(E_MM_CLONED, &SqMatrix::Clone);
     sqcMatrix.RegisterMetamethod(E_MM_ADD, &SqMatrix::Add);
     sqcMatrix.RegisterMetamethod(E_MM_SUB, &SqMatrix::Sub);
     sqcMatrix.RegisterMetamethod(E_MM_MUL, &SqMatrix::Mul);
@@ -954,6 +976,7 @@ void VM::RegisterMath(void) {
     }
 
     // Metamethods
+    sqcBox.RegisterMetamethod(E_MM_CLONED, &SqBox::Clone);
     sqcBox.RegisterMetamethod(E_MM_ADD, &SqBox::AddPos);
     sqcBox.RegisterMetamethod(E_MM_SUB, &SqBox::SubPos);
     sqcBox.RegisterMetamethod(E_MM_MUL, &SqBox::Union);
@@ -975,6 +998,7 @@ void VM::RegisterMath(void) {
     }
 
     // Metamethods
+    sqcPlacement.RegisterMetamethod(E_MM_CLONED, &SqPlacement::Clone);
     sqcPlacement.RegisterMetamethod(E_MM_TOSTRING, &SqPlacement::ToString);
 
     // Position and rotation

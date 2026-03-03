@@ -118,6 +118,9 @@ class InternalClass : public AbstractClass {
     // Metamethod for performing an operation between itself and another value
     typedef SQInteger (*FOther)(HSQUIRRELVM v, Type &val, SQInteger idxOther);
 
+    // Metamethod for cloning a value from another instance
+    typedef SQInteger (*FClone)(HSQUIRRELVM v, Type &val, Type &valOther);
+
     // Metamethod for performing an operation on itself
     typedef SQInteger (*FSelf)(HSQUIRRELVM v, Type &val);
 
@@ -139,6 +142,9 @@ class InternalClass : public AbstractClass {
       AbstractClass(vmSet, bPtrType ? SQCLASS_PTRNAME(strName) : strName), m_pConstructor(pSetConstructor), m_pValReference(NULL)
     {
       Init(bPtrType ? &ClassPtrConstructor : &ClassConstructor, &ClassSet, &ClassGet, pBaseToExtend);
+
+      // Register dummy cloning method for proper instance copying
+      RegisterMetamethod(E_MM_CLONED, (FClone)NULL);
     };
 
     // Construct a Squirrel class declaration that creates instances with a reference to some external value
@@ -146,6 +152,9 @@ class InternalClass : public AbstractClass {
       AbstractClass(vmSet, bPtrType ? SQCLASS_PTRNAME(strName) : strName), m_pConstructor(pSetConstructor), m_pValReference(&valSetReference)
     {
       Init(bPtrType ? &ClassPtrConstructor : &ClassConstructor, &ClassSet, &ClassGet, pBaseToExtend);
+
+      // Register dummy cloning method for proper instance copying
+      RegisterMetamethod(E_MM_CLONED, (FClone)NULL);
     };
 
     // Add getter and optional setter methods for working with some variable
@@ -166,7 +175,6 @@ class InternalClass : public AbstractClass {
         case E_MM_DIV:    strName = "_div"; break;
         case E_MM_MODULO: strName = "_modulo"; break;
         case E_MM_CMP:    strName = "_cmp"; break;
-        case E_MM_CLONED: strName = "_cloned"; break;
 
         default: {
           ASSERTALWAYS("Unknown metamethod type for FOther function!");
@@ -182,6 +190,35 @@ class InternalClass : public AbstractClass {
       sq_pushuserpointer(m_vm, pFunction); // Free var
       sq_newclosure(m_vm, &ClassMetaOther, 2);
       sq_setnativeclosurename(m_vm, -1, strName);
+      sq_newslot(m_vm, -3, SQFalse);
+
+      sq_poptop(m_vm); // Pop class
+    };
+
+    // Add a custom metamethod
+    inline void RegisterMetamethod(EMetamethod eType, FClone pFunction) {
+      if (eType != E_MM_CLONED) {
+        ASSERTALWAYS("Unknown metamethod type for FClone function!");
+        return;
+      }
+
+      ASSERT(strName != NULL);
+      sq_pushobject(m_vm, m_obj); // Push class
+
+      sq_pushstring(m_vm, "_cloned", -1);
+
+      // No cloning method
+      if (pFunction == NULL) {
+        sq_newclosure(m_vm, &ClassMetaNoCloning, 0);
+
+      // Custom cloning method
+      } else {
+        sq_pushstring(m_vm, GetFactoryType().raw_name(), -1); // Free var
+        sq_pushuserpointer(m_vm, pFunction); // Free var
+        sq_newclosure(m_vm, &ClassMetaClone, 2);
+      }
+
+      sq_setnativeclosurename(m_vm, -1, "_cloned");
       sq_newslot(m_vm, -3, SQFalse);
 
       sq_poptop(m_vm); // Pop class
@@ -269,8 +306,14 @@ class InternalClass : public AbstractClass {
 
     static SQInteger ClassMethod(HSQUIRRELVM v); // Method<Type>::FType
     static SQInteger ClassMetaOther(HSQUIRRELVM v); // FOther
+    static SQInteger ClassMetaClone(HSQUIRRELVM v); // FClone
     static SQInteger ClassMetaSelf(HSQUIRRELVM v); // FSelf
     static SQInteger ClassMetaNextIndex(HSQUIRRELVM v); // FNextIndex
+
+    // Dummy method for disallowing instance cloning by default
+    static SQInteger ClassMetaNoCloning(HSQUIRRELVM v) {
+      return sq_throwerror(v, "instance of this class cannot be cloned");
+    };
 };
 
 class AbstractClassRegistrar {
@@ -288,6 +331,7 @@ class Class : public AbstractClassRegistrar {
     typedef typename InternalClass<Type>::FGetter      FGetter;
 
     typedef typename InternalClass<Type>::FOther     FOther;
+    typedef typename InternalClass<Type>::FClone     FClone;
     typedef typename InternalClass<Type>::FSelf      FSelf;
     typedef typename InternalClass<Type>::FNextIndex FNextIndex;
 
@@ -370,6 +414,12 @@ class Class : public AbstractClassRegistrar {
 
     // Add a custom metamethod
     inline void RegisterMetamethod(EMetamethod eType, FOther pFunction) {
+      m_sqcCopy.RegisterMetamethod(eType, pFunction);
+      m_sqcPtr.RegisterMetamethod(eType, pFunction);
+    };
+
+    // Add a custom metamethod
+    inline void RegisterMetamethod(EMetamethod eType, FClone pFunction) {
       m_sqcCopy.RegisterMetamethod(eType, pFunction);
       m_sqcPtr.RegisterMetamethod(eType, pFunction);
     };
@@ -483,9 +533,9 @@ SQInteger InternalClass<Type>::ClassSet(HSQUIRRELVM v) {
   sq_getstring(v, -2, &strFactoryType);
 
   // Get current instance value
-  Type *pInstanceValue;
-  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
-  if (pInstanceValue == NULL) return SQ_ERROR;
+  Type *pSelf;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pSelf);
+  if (pSelf == NULL) return SQ_ERROR;
 
   // Retrieve setter method for the variable
   const SQChar *strVariable;
@@ -506,8 +556,7 @@ SQInteger InternalClass<Type>::ClassSet(HSQUIRRELVM v) {
 
   // Call setter method for the data
   FSetter pFunc = (FSetter)pPtrToFunc;
-
-  return pFunc(v, *pInstanceValue, 3);
+  return pFunc(v, *pSelf, 3);
 };
 
 template<class Type> inline
@@ -517,9 +566,9 @@ SQInteger InternalClass<Type>::ClassGet(HSQUIRRELVM v) {
   sq_getstring(v, -2, &strFactoryType);
 
   // Get current instance value
-  Type *pInstanceValue;
-  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
-  if (pInstanceValue == NULL) return SQ_ERROR;
+  Type *pSelf;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pSelf);
+  if (pSelf == NULL) return SQ_ERROR;
 
   // Retrieve getter method for the variable
   const SQChar *strVariable;
@@ -540,8 +589,7 @@ SQInteger InternalClass<Type>::ClassGet(HSQUIRRELVM v) {
 
   // Call getter method for the data
   FGetter pFunc = (FGetter)pPtrToFunc;
-
-  return pFunc(v, *pInstanceValue);
+  return pFunc(v, *pSelf);
 };
 
 template<class Type> inline
@@ -549,19 +597,19 @@ SQInteger InternalClass<Type>::ClassMethod(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
 
-  SQUserPointer pToStringFunc;
-  sq_getuserpointer(v, -2, &pToStringFunc);
+  SQUserPointer pPassedFunc;
+  sq_getuserpointer(v, -2, &pPassedFunc);
+  ASSERT(pPassedFunc != NULL);
 
   // Get current instance value
-  Type *pInstanceValue;
-  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
-  if (pInstanceValue == NULL) return SQ_ERROR;
+  Type *pSelf;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pSelf);
+  if (pSelf == NULL) return SQ_ERROR;
 
   // Call class method for the data
-  Method<Type>::FType pFunc = (Method<Type>::FType)pToStringFunc;
-
   // Amount of the arguments = stack top minus instance [1], factory type [-1], method function [-2]
-  return pFunc(v, sq_gettop(v) - 3, *pInstanceValue);
+  Method<Type>::FType pFunc = (Method<Type>::FType)pPassedFunc;
+  return pFunc(v, sq_gettop(v) - 3, *pSelf);
 };
 
 template<class Type> inline
@@ -569,19 +617,49 @@ SQInteger InternalClass<Type>::ClassMetaOther(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
 
-  SQUserPointer pToStringFunc;
-  sq_getuserpointer(v, -2, &pToStringFunc);
+  SQUserPointer pPassedFunc;
+  sq_getuserpointer(v, -2, &pPassedFunc);
+  ASSERT(pPassedFunc != NULL);
 
   // Get current instance value
-  Type *pInstanceValue;
-  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
-  if (pInstanceValue == NULL) return SQ_ERROR;
+  Type *pSelf;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pSelf);
+  if (pSelf == NULL) return SQ_ERROR;
+
+  // Call metamethod for the data; pass other value as an index in the stack
+  FOther pFunc = (FOther)pPassedFunc;
+  return pFunc(v, *pSelf, 2);
+};
+
+template<class Type> inline
+SQInteger InternalClass<Type>::ClassMetaClone(HSQUIRRELVM v) {
+  const SQChar *strFactoryType;
+  sq_getstring(v, -1, &strFactoryType);
+
+  SQUserPointer pPassedFunc;
+  sq_getuserpointer(v, -2, &pPassedFunc);
+  ASSERT(pPassedFunc != NULL);
+
+  // Create a new instance using a factory
+  AbstractFactory *pFactory = AbstractFactory::Find(v, strFactoryType);
+  if (pFactory == NULL) return sq_throwerror(v, "no instance factory");
+
+  // Create a new copy instance
+  InstanceAny *pInstance = pFactory->NewInstance(v, 1);
+  if (pInstance == NULL) return SQ_ERROR;
+
+  // Get current instance value
+  Type *pSelf = (Type *)pFactory->m_pValReference;
+  if (pSelf == NULL) pSelf = &((InstanceCopy<Type> *)pInstance)->val;
+
+  // Get other instance value
+  Type *pOther;
+  InstanceAny::RetrieveValue(v, 2, strFactoryType, &pOther);
+  if (pOther == NULL) return SQ_ERROR;
 
   // Call metamethod for the data
-  FOther pFunc = (FOther)pToStringFunc;
-
-  // Pass other value as an index in the stack
-  return pFunc(v, *pInstanceValue, 2);
+  FClone pFunc = (FClone)pPassedFunc;
+  return pFunc(v, *pSelf, *pOther);
 };
 
 template<class Type> inline
@@ -589,18 +667,18 @@ SQInteger InternalClass<Type>::ClassMetaSelf(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
 
-  SQUserPointer pToStringFunc;
-  sq_getuserpointer(v, -2, &pToStringFunc);
+  SQUserPointer pPassedFunc;
+  sq_getuserpointer(v, -2, &pPassedFunc);
+  ASSERT(pPassedFunc != NULL);
 
   // Get current instance value
-  Type *pInstanceValue;
-  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
-  if (pInstanceValue == NULL) return SQ_ERROR;
+  Type *pSelf;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pSelf);
+  if (pSelf == NULL) return SQ_ERROR;
 
   // Call metamethod for the data
-  FSelf pFunc = (FSelf)pToStringFunc;
-
-  return pFunc(v, *pInstanceValue);
+  FSelf pFunc = (FSelf)pPassedFunc;
+  return pFunc(v, *pSelf);
 };
 
 template<class Type> inline
@@ -608,13 +686,14 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
   const SQChar *strFactoryType;
   sq_getstring(v, -1, &strFactoryType);
 
-  SQUserPointer pToStringFunc;
-  sq_getuserpointer(v, -2, &pToStringFunc);
+  SQUserPointer pPassedFunc;
+  sq_getuserpointer(v, -2, &pPassedFunc);
+  ASSERT(pPassedFunc != NULL);
 
   // Get current instance value
-  Type *pInstanceValue;
-  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pInstanceValue);
-  if (pInstanceValue == NULL) return SQ_ERROR;
+  Type *pSelf;
+  InstanceAny::RetrieveValue(v, 1, strFactoryType, &pSelf);
+  if (pSelf == NULL) return SQ_ERROR;
 
   // Get previous index
   SQInteger iPrev;
@@ -624,11 +703,9 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
     bPrevIndex = SQ_SUCCEEDED(sq_getinteger(v, 2, &iPrev));
   }
 
-  // Call metamethod for the data
-  FNextIndex pFunc = (FNextIndex)pToStringFunc;
-
-  // Pass previous index only if it has been retrieved
-  return pFunc(v, *pInstanceValue, bPrevIndex ? &iPrev : NULL);
+  // Call metamethod for the data; pass previous index only if it has been retrieved
+  FNextIndex pFunc = (FNextIndex)pPassedFunc;
+  return pFunc(v, *pSelf, bPrevIndex ? &iPrev : NULL);
 };
 
 // Define getter and setter functions for an integer field of some native Squirrel class
