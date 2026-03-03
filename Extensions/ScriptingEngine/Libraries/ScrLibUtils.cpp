@@ -146,6 +146,43 @@ static SQInteger GetHitDistance(HSQUIRRELVM v, int, RayHolder &val) {
   return 1;
 };
 
+static SQInteger HitBrushPolygon(HSQUIRRELVM v, int, RayHolder &val) {
+  sq_pushbool(v, val.cr.cr_pbpoBrushPolygon != NULL);
+  return 1;
+};
+
+static SQInteger GetHitPolygonPlane(HSQUIRRELVM v, int, RayHolder &val) {
+  if (val.cr.cr_pbpoBrushPolygon == NULL) {
+    return sq_throwerror(v, "CCastRay did not hit any brush polygon");
+  }
+
+  FLOATplane3D *ppl;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
+
+  *ppl = val.cr.cr_pbpoBrushPolygon->bpo_pbplPlane->bpl_plAbsolute;
+  return 1;
+};
+
+static SQInteger GetHitPolygonSurface(HSQUIRRELVM v, int, RayHolder &val) {
+  if (val.cr.cr_pbpoBrushPolygon == NULL) {
+    return sq_throwerror(v, "CCastRay did not hit any brush polygon");
+  }
+
+  sq_pushinteger(v, val.cr.cr_pbpoBrushPolygon->bpo_bppProperties.bpp_ubSurfaceType);
+  return 1;
+};
+
+static SQInteger GetDistanceFromHitPolygonEdges(HSQUIRRELVM v, int, RayHolder &val) {
+  if (val.cr.cr_pbpoBrushPolygon == NULL) {
+    return sq_throwerror(v, "CCastRay did not hit any brush polygon");
+  }
+
+  GetInstanceValueVerify(FLOAT3D, pvPoint, v, 2);
+
+  sq_pushfloat(v, val.cr.cr_pbpoBrushPolygon->GetDistanceFromEdges(*pvPoint));
+  return 1;
+};
+
 // Safe guard against running world functions outside the game
 inline BOOL IsGameOn(void) {
   return GetGameAPI()->IsHooked() && GetGameAPI()->IsGameOn();
@@ -175,8 +212,13 @@ static Method<RayHolder> _aMethods[] = {
   { "GetHitPoint",    &GetHitPoint,    1, "." },
   { "GetHitDistance", &GetHitDistance, 1, "." },
 
-  { "Cast",           &Cast,           1, "." },
-  { "ContinueCast",   &ContinueCast,   1, "." },
+  { "HitBrushPolygon",                &HitBrushPolygon,                1, "." },
+  { "GetHitPolygonPlane",             &GetHitPolygonPlane,             1, "." },
+  { "GetHitPolygonSurface",           &GetHitPolygonSurface,           1, "." },
+  { "GetDistanceFromHitPolygonEdges", &GetDistanceFromHitPolygonEdges, 2, ".x" },
+
+  { "Cast",         &Cast,         1, "." },
+  { "ContinueCast", &ContinueCast, 1, "." },
 };
 
 }; // namespace
