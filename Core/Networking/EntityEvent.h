@@ -24,7 +24,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 class CORE_API EExtEntityEvent : public CEntityEvent {
   public:
     // Accommodate for multiple fields of varying data
-    ULONG aulFields[64];
+    ULONG ee_aulFields[64];
+
+    ULONG ee_ctFields; // Amount of used fields
 
   public:
     EExtEntityEvent() : CEntityEvent(EVENTCODE_EVoid) {
@@ -32,27 +34,41 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
     };
 
     CEntityEvent *MakeCopy(void) {
-      return new EExtEntityEvent(*this);
+      EExtEntityEvent *pCopy = new EExtEntityEvent;
+      pCopy->Copy(*this);
+      return pCopy;
     };
 
   public:
     // Reset event fields
     inline void Reset(void) {
       ee_slEvent = EVENTCODE_EVoid;
+      ee_ctFields = 0;
 
       // Fill fields with NULL, FALSE, 0, 0.0f etc.
-      memset(aulFields, 0, sizeof(aulFields));
+      memset(ee_aulFields, 0, sizeof(ee_aulFields));
     };
+
+    // Copy event bytes (iEventSize = sizeof(ee))
+    // If some event has CEntityPointer fields, they need to contain entity IDs as 4-byte integers instead
+    // of pointers to entities directly. When setting entity IDs for CEntityPointer fields, do it like this:
+    //   (ULONG &)ee.pen = iEntityID;
+    // DO NOT FORGET to do this at the end of the function to avoid crashes upon calling the pointer destructor:
+    //   (ULONG &)ee.pen = NULL;
+    void SetEvent(const CEntityEvent &ee, size_t iEventSize);
 
     // Copy event data from another event
     inline void Copy(const EExtEntityEvent &eeOther) {
       ee_slEvent = eeOther.ee_slEvent;
-      memcpy(aulFields, eeOther.aulFields, sizeof(aulFields));
+      ee_ctFields = eeOther.ee_ctFields;
+      memcpy(ee_aulFields, eeOther.ee_aulFields, sizeof(ee_aulFields));
     };
 
+  private:
     // Convert entity ID into a pointer
     inline ULONG EntityFromID(INDEX i) {
-      return (ULONG)IWorld::FindEntityByID(IWorld::GetWorld(), aulFields[i]);
+      CEntity *pen = IWorld::FindEntityByID(IWorld::GetWorld(), ee_aulFields[i]);
+      return reinterpret_cast<ULONG>(pen);
     };
 
     // Convert entity ID into a pointer, if possible
@@ -62,17 +78,18 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
       if (ulPtr != NULL) return ulPtr;
 
       // Return value as is
-      return aulFields[i];
+      return ee_aulFields[i];
     };
-
-    // Write event into a network packet
-    void Write(CNetworkMessage &nm, ULONG ctFields);
-
-    // Read event from a network packet
-    ULONG Read(CNetworkMessage &nm);
 
     // Convert fields according to the event type
     void ConvertTypes(void);
+
+  public:
+    // Write event into a network packet
+    void Write(CNetworkMessage &nm);
+
+    // Read event from a network packet
+    void Read(CNetworkMessage &nm);
 };
 
 #endif

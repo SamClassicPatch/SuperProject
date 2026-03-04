@@ -137,10 +137,9 @@ class CORE_API CExtEntityCopy : public CExtEntityPacket {
 class CORE_API CExtEntityEvent : public CExtEntityPacket {
   protected:
     EExtEntityEvent eEvent; // Data holder
-    ULONG ctFields; // Amount of used fields
 
   public:
-    CExtEntityEvent() : CExtEntityPacket(), ctFields(0)
+    CExtEntityEvent() : CExtEntityPacket()
     {
     };
 
@@ -150,12 +149,13 @@ class CORE_API CExtEntityEvent : public CExtEntityPacket {
     //   (ULONG &)ee.pen = iEntityID;
     // DO NOT FORGET to do this at the end of the function to avoid crashes upon calling the pointer destructor:
     //   (ULONG &)ee.pen = NULL;
-    void SetEvent(CEntityEvent &ee, size_t iEventSize);
+    inline void SetEvent(const CEntityEvent &ee, size_t iEventSize) {
+      eEvent.SetEvent(ee, iEventSize);
+    };
 
     // Copy event data from another event
-    inline void Copy(const EExtEntityEvent &eeOther, ULONG ctSetFields) {
+    inline void Copy(const EExtEntityEvent &eeOther) {
       eEvent.Copy(eeOther);
-      ctFields = ctSetFields;
     };
 
   public:

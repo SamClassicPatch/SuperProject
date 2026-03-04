@@ -20,25 +20,47 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define VANILLA_EVENTS_ENTITY_ID
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
+// Copy event bytes (iEventSize = sizeof(ee))
+void EExtEntityEvent::SetEvent(const CEntityEvent &ee, size_t iEventSize) {
+  ASSERT(iEventSize <= sizeof(CEntityEvent) + sizeof(ee_aulFields));
+  Reset();
+
+  // Copy event type
+  ee_slEvent = ee.ee_slEvent;
+
+  // Skip bytes before event data
+  const size_t iSkip = offsetof(CEntityEvent, ee_slEvent) + sizeof(ee.ee_slEvent);
+  iEventSize -= iSkip;
+
+  // No data to copy
+  if (iEventSize == 0) return;
+
+  // Count 4-byte fields
+  ee_ctFields = (iEventSize + 3) / 4;
+
+  const void *pEventData = ((const UBYTE *)&ee) + iSkip;
+  memcpy(ee_aulFields, pEventData, iEventSize);
+};
+
 // Write event into a network packet
-void EExtEntityEvent::Write(CNetworkMessage &nm, ULONG ctFields) {
+void EExtEntityEvent::Write(CNetworkMessage &nm) {
   nm << ee_slEvent;
 
   // Write data
-  UBYTE ubData = (ctFields != 0);
+  UBYTE ubData = (ee_ctFields != 0);
   nm.WriteBits(&ubData, 1);
 
   if (ubData) {
     // Fit 64 fields by writing the 0-63 range
-    ubData = UBYTE(ctFields - 1);
+    ubData = UBYTE(ee_ctFields - 1);
     nm.WriteBits(&ubData, 6);
 
-    nm.Write(&aulFields[0], ctFields * sizeof(ULONG));
+    nm.Write(&ee_aulFields[0], ee_ctFields * sizeof(ULONG));
   }
 };
 
 // Read event from a network packet
-ULONG EExtEntityEvent::Read(CNetworkMessage &nm) {
+void EExtEntityEvent::Read(CNetworkMessage &nm) {
   Reset();
   nm >> ee_slEvent;
 
@@ -47,17 +69,15 @@ ULONG EExtEntityEvent::Read(CNetworkMessage &nm) {
   nm.ReadBits(&ubData, 1);
 
   if (ubData) {
-    ULONG ctFields = 0;
-
     // Interpret read size as being in the 1-64 range
-    nm.ReadBits(&ctFields, 6);
-    ctFields++;
+    nm.ReadBits(&ee_ctFields, 6);
+    ee_ctFields++;
 
-    nm.Read(&aulFields[0], ctFields * sizeof(ULONG));
-    return ctFields;
+    nm.Read(&ee_aulFields[0], ee_ctFields * sizeof(ULONG));
+
+    // Convert fields of a specific event after reading them
+    ConvertTypes();
   }
-
-  return 0;
 };
 
 // Convert fields according to the event type

@@ -19,42 +19,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #if _PATCHCONFIG_EXT_PACKETS
 
-// Copy event bytes (iEventSize = sizeof(ee))
-void CExtEntityEvent::SetEvent(CEntityEvent &ee, size_t iEventSize) {
-  ASSERT(iEventSize <= sizeof(eEvent));
-  ctFields = 0;
-
-  // Copy event type
-  eEvent.ee_slEvent = ee.ee_slEvent;
-
-  // Skip bytes before event data
-  const size_t iSkip = offsetof(CEntityEvent, ee_slEvent) + sizeof(ee.ee_slEvent);
-  iEventSize -= iSkip;
-
-  // No data to copy
-  if (iEventSize == 0) return;
-
-  // Count 4-byte fields
-  ctFields = (iEventSize + 3) / 4;
-
-  void *pEventData = ((UBYTE *)&ee) + iSkip;
-  memcpy(eEvent.aulFields, pEventData, iEventSize);
-};
-
 bool CExtEntityEvent::Write(CNetworkMessage &nm) {
   WriteEntity(nm);
-  eEvent.Write(nm, ctFields);
+  eEvent.Write(nm);
   return true;
 };
 
 void CExtEntityEvent::Read(CNetworkMessage &nm) {
   ReadEntity(nm);
-  ctFields = eEvent.Read(nm);
-
-  // Convert fields of a specific event
-  if (ctFields > 0) {
-    eEvent.ConvertTypes();
-  }
+  eEvent.Read(nm);
 };
 
 void CExtEntityEvent::Process(void) {

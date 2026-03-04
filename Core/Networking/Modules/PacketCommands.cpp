@@ -27,7 +27,6 @@ namespace IPacketCommands {
 
 // Preconfigured event for packet commands
 static EExtEntityEvent _eePacketEvent;
-static ULONG _ctPacketEventFields = 0;
 
 // Begin event setup of a specific type
 void SetupEvent(SHELL_FUNC_ARGS) {
@@ -36,7 +35,6 @@ void SetupEvent(SHELL_FUNC_ARGS) {
 
   // Reset event
   _eePacketEvent.Reset();
-  _ctPacketEventFields = 0;
 
   // Set new type
   _eePacketEvent.ee_slEvent = iEventType;
@@ -52,8 +50,8 @@ void EventFieldIndex(SHELL_FUNC_ARGS) {
   iField = Clamp(iField, (INDEX)0, (INDEX)63);
 
   // Use as many fields as the set one
-  (INDEX &)_eePacketEvent.aulFields[iField] = iValue;
-  _ctPacketEventFields = Max(_ctPacketEventFields, ULONG(iField + 1));
+  (INDEX &)_eePacketEvent.ee_aulFields[iField] = iValue;
+  _eePacketEvent.ee_ctFields = Max(_eePacketEvent.ee_ctFields, ULONG(iField + 1));
 };
 
 // Set event field to a float
@@ -66,8 +64,8 @@ void EventFieldFloat(SHELL_FUNC_ARGS) {
   iField = Clamp(iField, (INDEX)0, (INDEX)63);
 
   // Use as many fields as the set one
-  (FLOAT &)_eePacketEvent.aulFields[iField] = fValue;
-  _ctPacketEventFields = Max(_ctPacketEventFields, ULONG(iField + 1));
+  (FLOAT &)_eePacketEvent.ee_aulFields[iField] = fValue;
+  _eePacketEvent.ee_ctFields = Max(_eePacketEvent.ee_ctFields, ULONG(iField + 1));
 };
 
 // Set three event fields to vector values
@@ -82,8 +80,8 @@ void EventFieldVector(SHELL_FUNC_ARGS) {
   iField = Clamp(iField, (INDEX)0, (INDEX)61);
 
   // Use as many fields as the set one
-  (FLOAT3D &)_eePacketEvent.aulFields[iField] = FLOAT3D(fX, fY, fZ);
-  _ctPacketEventFields = Max(_ctPacketEventFields, ULONG(iField + 1));
+  (FLOAT3D &)_eePacketEvent.ee_aulFields[iField] = FLOAT3D(fX, fY, fZ);
+  _eePacketEvent.ee_ctFields = Max(_eePacketEvent.ee_ctFields, ULONG(iField + 1));
 };
 
 // Create entity from the list
@@ -127,7 +125,7 @@ void EntityEvent(SHELL_FUNC_ARGS) {
 
   CExtEntityEvent pck;
   pck("ulEntity", (int)iEntity);
-  pck.Copy(_eePacketEvent, _ctPacketEventFields);
+  pck.Copy(_eePacketEvent);
   pck.SendToClients();
 };
 
@@ -138,7 +136,7 @@ void EntityItem(SHELL_FUNC_ARGS) {
 
   CExtEntityItem pck;
   pck("ulEntity", (int)iEntity);
-  pck.Copy(_eePacketEvent, _ctPacketEventFields);
+  pck.Copy(_eePacketEvent);
   pck.SendToClients();
 };
 
@@ -160,7 +158,7 @@ void EntityInitEvent(SHELL_FUNC_ARGS) {
 
   CExtEntityInit pck;
   pck("ulEntity", (int)iEntity);
-  pck.Copy(_eePacketEvent, _ctPacketEventFields);
+  pck.Copy(_eePacketEvent);
   pck.SendToClients();
 };
 
