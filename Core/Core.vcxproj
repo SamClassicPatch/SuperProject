@@ -65,6 +65,7 @@
     <ClInclude Include="Interfaces\ResourceFunctions.h" />
     <ClInclude Include="Modules\PluginModule.h" />
     <ClInclude Include="Modules\PluginStock.h" />
+    <ClInclude Include="Networking\EntityEvent.h" />
     <ClInclude Include="Networking\ExtPackets.h" />
     <ClInclude Include="Networking\HttpRequests.h" />
     <ClInclude Include="Networking\MessageCompression.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="Definitions\InlineDefinitions.cpp" />
     <ClCompile Include="Modules\PluginModule.cpp" />
     <ClCompile Include="Modules\PluginStock.cpp" />
+    <ClCompile Include="Networking\EntityEvent.cpp" />
     <ClCompile Include="Networking\ExtPackets.cpp" />
     <ClCompile Include="Networking\ExtPacketsSymbols.cpp" />
     <ClCompile Include="Networking\ExtPackets\ExtChangeWorld.cpp" />

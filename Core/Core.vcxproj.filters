@@ -270,6 +270,9 @@
     <ClInclude Include="Base\GlobalScreenshots.h">
       <Filter>Header Files\Base headers</Filter>
     </ClInclude>
+    <ClInclude Include="Networking\EntityEvent.h">
+      <Filter>Header Files\Networking headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdH.cpp">
@@ -490,6 +493,9 @@
     </ClCompile>
     <ClCompile Include="Base\GlobalScreenshots.cpp">
       <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\EntityEvent.cpp">
+      <Filter>Source Files\Networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
