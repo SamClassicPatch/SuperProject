@@ -77,6 +77,18 @@ void EventFieldVector(SHELL_FUNC_ARGS) {
   _eePacketEvent.SetVector(iField, FLOAT3D(fX, fY, fZ));
 };
 
+// Set event field to a string
+void EventFieldString(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  INDEX iField = NEXT_ARG(INDEX);
+  const CTString &strValue = *NEXT_ARG(CTString *);
+
+  ASSERT(iField >= 0 && iField < EXT_ENTITY_EVENT_FIELDS);
+  iField = Clamp(iField, (INDEX)0, (INDEX)(EXT_ENTITY_EVENT_FIELDS - 1));
+
+  _eePacketEvent.SetString(iField, strValue);
+};
+
 // Create entity from the list
 void EntityCreate(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;

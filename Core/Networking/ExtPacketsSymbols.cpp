@@ -15,7 +15,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#define VANILLA_EVENTS_ENTITY_ID
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
 // Declare various extra symbols for use with extension packets

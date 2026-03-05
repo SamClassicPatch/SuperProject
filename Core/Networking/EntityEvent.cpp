@@ -20,6 +20,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define VANILLA_EVENTS_ENTITY_ID
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
+inline void CopyStringIntoField(ULONG &ulField, const char *strValue) {
+  size_t ctLen = strlen(strValue);
+  char *strField = (char *)AllocMemory(ctLen + 1);
+  strcpy(strField, strValue);
+
+  ulField = reinterpret_cast<ULONG>(strField);
+};
+
 // Copy event bytes
 void EExtEntityEvent::SetEvent(const CEntityEvent &ee, const ExtEventFields &fields) {
   Reset();
@@ -46,6 +54,11 @@ void EExtEntityEvent::SetEvent(const CEntityEvent &ee, const ExtEventFields &fie
         SetEntity(i, pen);
       } break;
 
+      case EXTEF_STRING: {
+        const char *str = reinterpret_cast<const char *>(pEventData[i]);
+        SetString(i, str);
+      } break;
+
       default: SetInt(i, pEventData[i]); break;
     }
   }
@@ -60,12 +73,22 @@ void EExtEntityEvent::Copy(const EExtEntityEvent &eeOther) {
 
   for (INDEX i = 0; i < EXT_ENTITY_EVENT_FIELDS; i++) {
     ee_aeFieldType[i] = eeOther.ee_aeFieldType[i];
-    ee_aulFields[i] = eeOther.ee_aulFields[i];
+
+    // Copy strings
+    if (ee_aeFieldType[i] == EXTEF_STRING) {
+      const char *str = reinterpret_cast<const char *>(eeOther.ee_aulFields[i]);
+      CopyStringIntoField(ee_aulFields[i], str);
+
+    // Copy data as is
+    } else {
+      ee_aulFields[i] = eeOther.ee_aulFields[i];
+    }
   }
 };
 
 ULONG EExtEntityEvent::SetInt(INDEX i, ULONG iValue) {
   ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS);
+  FreeField(i);
 
   ee_aulFields[i] = iValue;
   ee_aeFieldType[i] = EXTEF_NUMERIC;
@@ -76,6 +99,7 @@ ULONG EExtEntityEvent::SetInt(INDEX i, ULONG iValue) {
 
 ULONG EExtEntityEvent::SetFloat(INDEX i, FLOAT fValue) {
   ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS);
+  FreeField(i);
 
   ee_aulFields[i] = reinterpret_cast<ULONG &>(fValue);
   ee_aeFieldType[i] = EXTEF_NUMERIC;
@@ -86,6 +110,9 @@ ULONG EExtEntityEvent::SetFloat(INDEX i, FLOAT fValue) {
 
 ULONG EExtEntityEvent::SetVector(INDEX i, const FLOAT3D &vValue) {
   ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS - 2);
+  FreeField(i + 0);
+  FreeField(i + 1);
+  FreeField(i + 2);
 
   FLOAT3D &vField = reinterpret_cast<FLOAT3D &>(ee_aulFields[i]);
   vField = vValue;
@@ -99,9 +126,21 @@ ULONG EExtEntityEvent::SetVector(INDEX i, const FLOAT3D &vValue) {
 
 ULONG EExtEntityEvent::SetEntity(INDEX i, CEntity *penValue) {
   ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS);
+  FreeField(i);
 
   ee_aulFields[i] = reinterpret_cast<ULONG>(penValue);
   ee_aeFieldType[i] = EXTEF_ENTITY;
+
+  ee_ctFields = Max(ee_ctFields, ULONG(i + 1));
+  return ee_ctFields;
+};
+
+ULONG EExtEntityEvent::SetString(INDEX i, const char *strValue) {
+  ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS);
+  FreeField(i);
+
+  CopyStringIntoField(ee_aulFields[i], strValue);
+  ee_aeFieldType[i] = EXTEF_STRING;
 
   ee_ctFields = Max(ee_ctFields, ULONG(i + 1));
   return ee_ctFields;
@@ -136,6 +175,12 @@ void EExtEntityEvent::Write(CNetworkMessage &nm) {
       case EXTEF_ENTITY: {
         CEntity *pen = reinterpret_cast<CEntity *>(ee_aulFields[i]);
         nm << ULONG(pen != NULL ? pen->en_ulID : 0);
+      } break;
+
+      // Write string
+      case EXTEF_STRING: {
+        char *str = reinterpret_cast<char *>(ee_aulFields[i]);
+        nm << CTString(str);
       } break;
 
       // Write as is
@@ -197,6 +242,13 @@ void EExtEntityEvent::Read(CNetworkMessage &nm) {
       case EXTEF_ENTITY: {
         nm >> ee_aulFields[i];
         ee_aulFields[i] = EntityFromID(i);
+      } break;
+
+      // Read string
+      case EXTEF_STRING: {
+        CTString str;
+        nm >> str;
+        CopyStringIntoField(ee_aulFields[i], str.str_String);
       } break;
 
       // Read as is

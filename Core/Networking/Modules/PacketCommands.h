@@ -30,6 +30,7 @@ void SetupEvent(SHELL_FUNC_ARGS);
 void EventFieldIndex(SHELL_FUNC_ARGS);
 void EventFieldFloat(SHELL_FUNC_ARGS);
 void EventFieldVector(SHELL_FUNC_ARGS);
+void EventFieldString(SHELL_FUNC_ARGS);
 
 // Entity instantiation
 void EntityCreate(SHELL_FUNC_ARGS);

@@ -147,6 +147,7 @@ class CORE_API CExtEntityEvent : public CExtEntityPacket {
     // aFields should contain types for each field within the event that need to be copied over:
     // - EXTEF_NUMERIC should be used for 4-byte integers, floats and numeric containers (e.g. FLOAT3D that needs three types in a row instead of just one)
     // - EXTEF_ENTITY should be used for entity pointers, i.e. only CEntityPointer or CEntity * (and NEVER entity IDs!!!)
+    // - EXTEF_STRING should be used for CTString fields. CTFileName are fine too but only if they're followed by E_NUMERIC (for an extra field inside the class)
     inline void SetEvent(const CEntityEvent &ee, const ExtEventFields &fields = ExtEventFields()) {
       eEvent.SetEvent(ee, fields);
     };

@@ -29,6 +29,7 @@ enum EExtEventFieldType {
 
   EXTEF_NUMERIC = 0, // 4-byte data as is: integers, floats, bools, vector axes etc.
   EXTEF_ENTITY  = 1, // Direct pointer to an entity in the world (serialized as entity ID)
+  EXTEF_STRING  = 2, // Pointer to a raw string of characters that needs to be manually freed on destruction
 };
 
 // Container of field types to pass into EExtEntityEvent::SetEvent()
@@ -95,6 +96,10 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
       }
     };
 
+    ~EExtEntityEvent() {
+      Free();
+    };
+
     CEntityEvent *MakeCopy(void) {
       EExtEntityEvent *pCopy = new EExtEntityEvent;
       pCopy->Copy(*this);
@@ -102,6 +107,22 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
     };
 
   private:
+    // Free internal memory used by a specific field
+    inline void FreeField(INDEX i) {
+      // Free string fields
+      if (ee_aeFieldType[i] == EXTEF_STRING) {
+        char *str = reinterpret_cast<char *>(ee_aulFields[i]);
+        FreeMemory(str);
+      }
+    };
+
+    // Free internal memory used by the event
+    inline void Free(void) {
+      for (INDEX i = 0; i < EXT_ENTITY_EVENT_FIELDS; i++) {
+        FreeField(i);
+      }
+    };
+
     // Convert entity ID into a pointer
     inline ULONG EntityFromID(INDEX i) {
       CEntity *pen = IWorld::FindEntityByID(IWorld::GetWorld(), ee_aulFields[i]);
@@ -124,6 +145,7 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
   public:
     // Reset event fields
     inline void Reset(void) {
+      Free(); // Free previous memory
       ee_slEvent = EVENTCODE_EVoid;
       ee_ctFields = 0;
 
@@ -138,6 +160,7 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
     // aFields should contain types for each field within the event that need to be copied over:
     // - EXTEF_NUMERIC should be used for 4-byte integers, floats and numeric containers (e.g. FLOAT3D that needs three types in a row instead of just one)
     // - EXTEF_ENTITY should be used for entity pointers, i.e. only CEntityPointer or CEntity * (and NEVER entity IDs!!!)
+    // - EXTEF_STRING should be used for CTString fields. CTFileName are fine too but only if they're followed by E_NUMERIC (for an extra field inside the class)
     void SetEvent(const CEntityEvent &ee, const ExtEventFields &fields = ExtEventFields());
 
     // Copy event data from another event
@@ -167,6 +190,10 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
     // Set entity field
     // Returns maximum amount of used event fields
     ULONG SetEntity(INDEX i, CEntity *penValue);
+
+    // Set string field
+    // Returns maximum amount of used event fields
+    ULONG SetString(INDEX i, const char *strValue);
 };
 
 #endif

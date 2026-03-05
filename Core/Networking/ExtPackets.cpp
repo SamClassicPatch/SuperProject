@@ -294,6 +294,7 @@ void CExtPacket::RegisterExtPackets(void)
   _pShell->DeclareSymbol("user void pck_EventFieldIndex(INDEX, INDEX);", &IPacketCommands::EventFieldIndex);
   _pShell->DeclareSymbol("user void pck_EventFieldFloat(INDEX, FLOAT);", &IPacketCommands::EventFieldFloat);
   _pShell->DeclareSymbol("user void pck_EventFieldVector(INDEX, FLOAT, FLOAT, FLOAT);", &IPacketCommands::EventFieldVector);
+  _pShell->DeclareSymbol("user void pck_EventFieldString(INDEX, CTString);", &IPacketCommands::EventFieldString);
 
   // Entity instantiation
   _pShell->DeclareSymbol("user void pck_EntityCreate(CTString);", &IPacketCommands::EntityCreate);
