@@ -20,7 +20,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "PacketCommands.h"
 #include "Networking/ExtPackets.h"
 
-#define VANILLA_EVENTS_ENTITY_ID
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
 namespace IPacketCommands {
@@ -46,12 +45,10 @@ void EventFieldIndex(SHELL_FUNC_ARGS) {
   INDEX iField = NEXT_ARG(INDEX);
   INDEX iValue = NEXT_ARG(INDEX);
 
-  ASSERT(iField >= 0 && iField < 64);
-  iField = Clamp(iField, (INDEX)0, (INDEX)63);
+  ASSERT(iField >= 0 && iField < EXT_ENTITY_EVENT_FIELDS);
+  iField = Clamp(iField, (INDEX)0, (INDEX)(EXT_ENTITY_EVENT_FIELDS - 1));
 
-  // Use as many fields as the set one
-  (INDEX &)_eePacketEvent.ee_aulFields[iField] = iValue;
-  _eePacketEvent.ee_ctFields = Max(_eePacketEvent.ee_ctFields, ULONG(iField + 1));
+  _eePacketEvent.SetInt(iField, iValue);
 };
 
 // Set event field to a float
@@ -60,12 +57,10 @@ void EventFieldFloat(SHELL_FUNC_ARGS) {
   INDEX iField = NEXT_ARG(INDEX);
   FLOAT fValue = NEXT_ARG(FLOAT);
 
-  ASSERT(iField >= 0 && iField < 64);
-  iField = Clamp(iField, (INDEX)0, (INDEX)63);
+  ASSERT(iField >= 0 && iField < EXT_ENTITY_EVENT_FIELDS);
+  iField = Clamp(iField, (INDEX)0, (INDEX)(EXT_ENTITY_EVENT_FIELDS - 1));
 
-  // Use as many fields as the set one
-  (FLOAT &)_eePacketEvent.ee_aulFields[iField] = fValue;
-  _eePacketEvent.ee_ctFields = Max(_eePacketEvent.ee_ctFields, ULONG(iField + 1));
+  _eePacketEvent.SetFloat(iField, fValue);
 };
 
 // Set three event fields to vector values
@@ -76,12 +71,10 @@ void EventFieldVector(SHELL_FUNC_ARGS) {
   FLOAT fY = NEXT_ARG(FLOAT);
   FLOAT fZ = NEXT_ARG(FLOAT);
 
-  ASSERT(iField >= 0 && iField < 62);
-  iField = Clamp(iField, (INDEX)0, (INDEX)61);
+  ASSERT(iField >= 0 && iField < EXT_ENTITY_EVENT_FIELDS - 2);
+  iField = Clamp(iField, (INDEX)0, (INDEX)(EXT_ENTITY_EVENT_FIELDS - 3));
 
-  // Use as many fields as the set one
-  (FLOAT3D &)_eePacketEvent.ee_aulFields[iField] = FLOAT3D(fX, fY, fZ);
-  _eePacketEvent.ee_ctFields = Max(_eePacketEvent.ee_ctFields, ULONG(iField + 1));
+  _eePacketEvent.SetVector(iField, FLOAT3D(fX, fY, fZ));
 };
 
 // Create entity from the list
@@ -147,7 +140,7 @@ void EntityInit(SHELL_FUNC_ARGS) {
 
   CExtEntityInit pck;
   pck("ulEntity", (int)iEntity);
-  pck.SetEvent(EVoid(), sizeof(EVoid));
+  pck.SetEvent(EVoid());
   pck.SendToClients();
 };
 

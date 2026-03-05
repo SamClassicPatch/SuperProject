@@ -56,7 +56,7 @@ static inline void ReinitEntity(CEntity *pen) {
   // Send packet to reinitialize the entity
   CExtEntityInit pck;
   pck("ulEntity", (int)pen->en_ulID);
-  pck.SetEvent(EVoid(), sizeof(EVoid));
+  pck.SetEvent(EVoid());
   pck.SendToClients();
 
 #else

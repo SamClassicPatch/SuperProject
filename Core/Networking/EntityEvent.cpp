@@ -20,55 +20,147 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define VANILLA_EVENTS_ENTITY_ID
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
-// Copy event bytes (iEventSize = sizeof(ee))
-void EExtEntityEvent::SetEvent(const CEntityEvent &ee, size_t iEventSize) {
-  ASSERT(iEventSize <= sizeof(CEntityEvent) + sizeof(ee_aulFields));
+// Copy event bytes
+void EExtEntityEvent::SetEvent(const CEntityEvent &ee, const ExtEventFields &fields) {
   Reset();
 
   // Copy event type
   ee_slEvent = ee.ee_slEvent;
 
+  // No data to copy
+  if (fields.aeTypes[0] == EXTEF_NONE) return;
+
   // Skip bytes before event data
   const size_t iSkip = offsetof(CEntityEvent, ee_slEvent) + sizeof(ee.ee_slEvent);
-  iEventSize -= iSkip;
 
-  // No data to copy
-  if (iEventSize == 0) return;
+  // Copy all event data as generic number fields
+  const ULONG *pEventData = reinterpret_cast<const ULONG *>(((const UBYTE *)&ee) + iSkip);
 
-  // Count 4-byte fields
-  ee_ctFields = (iEventSize + 3) / 4;
+  for (INDEX i = 0; i < EXT_ENTITY_EVENT_FIELDS; i++) {
+    // No more fields to copy
+    if (fields.aeTypes[i] == EXTEF_NONE) break;
 
-  const void *pEventData = ((const UBYTE *)&ee) + iSkip;
-  memcpy(ee_aulFields, pEventData, iEventSize);
+    switch (fields.aeTypes[i]) {
+      case EXTEF_ENTITY: {
+        CEntity *pen = reinterpret_cast<CEntity *>(pEventData[i]);
+        SetEntity(i, pen);
+      } break;
+
+      default: SetInt(i, pEventData[i]); break;
+    }
+  }
+};
+
+// Copy event data from another event
+void EExtEntityEvent::Copy(const EExtEntityEvent &eeOther) {
+  Reset();
+
+  ee_slEvent = eeOther.ee_slEvent;
+  ee_ctFields = eeOther.ee_ctFields;
+
+  for (INDEX i = 0; i < EXT_ENTITY_EVENT_FIELDS; i++) {
+    ee_aeFieldType[i] = eeOther.ee_aeFieldType[i];
+    ee_aulFields[i] = eeOther.ee_aulFields[i];
+  }
+};
+
+ULONG EExtEntityEvent::SetInt(INDEX i, ULONG iValue) {
+  ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS);
+
+  ee_aulFields[i] = iValue;
+  ee_aeFieldType[i] = EXTEF_NUMERIC;
+
+  ee_ctFields = Max(ee_ctFields, ULONG(i + 1));
+  return ee_ctFields;
+};
+
+ULONG EExtEntityEvent::SetFloat(INDEX i, FLOAT fValue) {
+  ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS);
+
+  ee_aulFields[i] = reinterpret_cast<ULONG &>(fValue);
+  ee_aeFieldType[i] = EXTEF_NUMERIC;
+
+  ee_ctFields = Max(ee_ctFields, ULONG(i + 1));
+  return ee_ctFields;
+};
+
+ULONG EExtEntityEvent::SetVector(INDEX i, const FLOAT3D &vValue) {
+  ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS - 2);
+
+  FLOAT3D &vField = reinterpret_cast<FLOAT3D &>(ee_aulFields[i]);
+  vField = vValue;
+  ee_aeFieldType[i + 0] = EXTEF_NUMERIC;
+  ee_aeFieldType[i + 1] = EXTEF_NUMERIC;
+  ee_aeFieldType[i + 2] = EXTEF_NUMERIC;
+
+  ee_ctFields = Max(ee_ctFields, ULONG(i + 3));
+  return ee_ctFields;
+};
+
+ULONG EExtEntityEvent::SetEntity(INDEX i, CEntity *penValue) {
+  ASSERT(i >= 0 && i < EXT_ENTITY_EVENT_FIELDS);
+
+  ee_aulFields[i] = reinterpret_cast<ULONG>(penValue);
+  ee_aeFieldType[i] = EXTEF_ENTITY;
+
+  ee_ctFields = Max(ee_ctFields, ULONG(i + 1));
+  return ee_ctFields;
 };
 
 // Write event into a network packet
 void EExtEntityEvent::Write(CNetworkMessage &nm) {
+  nm << SLONG(0xFFFFFFFF); // Magic number for new event data
   nm << ee_slEvent;
 
   // Write data
   UBYTE ubData = (ee_ctFields != 0);
   nm.WriteBits(&ubData, 1);
 
-  if (ubData) {
-    // Fit 64 fields by writing the 0-63 range
-    ubData = UBYTE(ee_ctFields - 1);
-    nm.WriteBits(&ubData, 6);
+  if (!ubData) return;
 
-    nm.Write(&ee_aulFields[0], ee_ctFields * sizeof(ULONG));
+  // Fit 64 fields by writing the 0-63 range
+  ubData = UBYTE(ee_ctFields - 1);
+  nm.WriteBits(&ubData, 6);
+
+  INDEX i;
+
+  // Write field types first for space optimization
+  for (i = 0; i < ee_ctFields; i++) {
+    nm.WriteBits(&ee_aeFieldType[i], 2);
+  }
+
+  // Then write data according to the types
+  for (i = 0; i < ee_ctFields; i++) {
+    switch (ee_aeFieldType[i]) {
+      // Write entity ID instead of a pointer
+      case EXTEF_ENTITY: {
+        CEntity *pen = reinterpret_cast<CEntity *>(ee_aulFields[i]);
+        nm << ULONG(pen != NULL ? pen->en_ulID : 0);
+      } break;
+
+      // Write as is
+      default: nm << ee_aulFields[i]; break;
+    }
   }
 };
 
 // Read event from a network packet
 void EExtEntityEvent::Read(CNetworkMessage &nm) {
   Reset();
-  nm >> ee_slEvent;
 
-  // Read data
+  SLONG slMagic;
+  nm >> slMagic;
+
   UBYTE ubData = 0;
-  nm.ReadBits(&ubData, 1);
 
-  if (ubData) {
+  // Legacy data
+  if (slMagic != 0xFFFFFFFF) {
+    ee_slEvent = slMagic;
+
+    // Read data
+    nm.ReadBits(&ubData, 1);
+    if (!ubData) return;
+
     // Interpret read size as being in the 1-64 range
     nm.ReadBits(&ee_ctFields, 6);
     ee_ctFields++;
@@ -77,6 +169,39 @@ void EExtEntityEvent::Read(CNetworkMessage &nm) {
 
     // Convert fields of a specific event after reading them
     ConvertTypes();
+    return;
+  }
+
+  // New data
+  nm >> ee_slEvent;
+
+  // Read data
+  nm.ReadBits(&ubData, 1);
+  if (!ubData) return;
+
+  // Interpret read size as being in the 1-64 range
+  nm.ReadBits(&ee_ctFields, 6);
+  ee_ctFields++;
+
+  INDEX i;
+
+  // Read field types first
+  for (i = 0; i < ee_ctFields; i++) {
+    nm.ReadBits(&ee_aeFieldType[i], 2);
+  }
+
+  // Then read data according to the types
+  for (i = 0; i < ee_ctFields; i++) {
+    switch (ee_aeFieldType[i]) {
+      // Read entity ID and convert it into a pointer
+      case EXTEF_ENTITY: {
+        nm >> ee_aulFields[i];
+        ee_aulFields[i] = EntityFromID(i);
+      } break;
+
+      // Read as is
+      default: nm >> ee_aulFields[i]; break;
+    }
   }
 };
 

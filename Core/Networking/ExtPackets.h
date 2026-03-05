@@ -143,14 +143,12 @@ class CORE_API CExtEntityEvent : public CExtEntityPacket {
     {
     };
 
-    // Copy event bytes (iEventSize = sizeof(ee))
-    // If some event has CEntityPointer fields, they need to contain entity IDs as 4-byte integers instead
-    // of pointers to entities directly. When setting entity IDs for CEntityPointer fields, do it like this:
-    //   (ULONG &)ee.pen = iEntityID;
-    // DO NOT FORGET to do this at the end of the function to avoid crashes upon calling the pointer destructor:
-    //   (ULONG &)ee.pen = NULL;
-    inline void SetEvent(const CEntityEvent &ee, size_t iEventSize) {
-      eEvent.SetEvent(ee, iEventSize);
+    // Copy event bytes
+    // aFields should contain types for each field within the event that need to be copied over:
+    // - EXTEF_NUMERIC should be used for 4-byte integers, floats and numeric containers (e.g. FLOAT3D that needs three types in a row instead of just one)
+    // - EXTEF_ENTITY should be used for entity pointers, i.e. only CEntityPointer or CEntity * (and NEVER entity IDs!!!)
+    inline void SetEvent(const CEntityEvent &ee, const ExtEventFields &fields = ExtEventFields()) {
+      eEvent.SetEvent(ee, fields);
     };
 
     // Copy event data from another event

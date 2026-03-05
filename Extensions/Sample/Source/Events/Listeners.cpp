@@ -15,7 +15,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#define VANILLA_EVENTS_ENTITY_ID
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
 // Define listener events for the plugin
@@ -40,7 +39,8 @@ void IListenerEvents_OnSendEvent(CEntity *pen, const CEntityEvent &ee)
       // Send packet to give item to an entity
       CExtEntityItem pck;
       pck("ulEntity", (int)pen->en_ulID);
-      pck.SetEvent(eeHealth, sizeof(eeHealth));
+      // Two numeric fields: fHealth, bOverTopHealth
+      pck.SetEvent(eeHealth, ExtEventFields(EXTEF_NUMERIC, EXTEF_NUMERIC));
       pck.SendToClients();
 
     #else

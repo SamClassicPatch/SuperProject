@@ -125,17 +125,14 @@ static void Trigger(void) {
 
     if (crRay.cr_penHit == NULL) continue;
 
-  #if _PATCHCONFIG_EXT_PACKETS
-    (ULONG &)eTrigger.penCaused = pen->en_ulID;
+    eTrigger.penCaused = pen;
 
+  #if _PATCHCONFIG_EXT_PACKETS
     CExtEntityEvent pck;
     pck("ulEntity", (int)crRay.cr_penHit->en_ulID);
-    pck.SetEvent(eTrigger, sizeof(eTrigger));
+    pck.SetEvent(eTrigger, ExtEventFields(EXTEF_ENTITY));
     pck.SendToClients();
-
-    (ULONG &)eTrigger.penCaused = NULL;
   #else
-    eTrigger.penCaused = pen;
     crRay.cr_penHit->SendEvent(eTrigger);
   #endif
   }
@@ -165,7 +162,7 @@ static void CreateItem(CEntity *penPlayer, const CTString &strClass,
   // Send packet to initialize the entity
   CExtEntityInit pckInit;
   pckInit("ulEntity", (int)0);
-  pckInit.SetEvent(EVoid(), sizeof(EVoid));
+  pckInit.SetEvent(EVoid());
   pckInit.SendToClients();
 
   // Report entity name with the type ID instead of the type name with an entity ID
