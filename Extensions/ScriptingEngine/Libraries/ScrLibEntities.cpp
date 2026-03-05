@@ -18,6 +18,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Core/Networking/ExtPackets.h>
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
+// Make sure the client is currently running a server
+#define ASSERT_SERVER { if (!_pNetwork->IsServer()) return sq_throwerror(v, "cannot send entity packets while not hosting servers"); }
+
 namespace sq {
 
 // CEntity class methods
@@ -753,7 +756,447 @@ static Method<EExtEntityEvent> _aMethods[] = {
 
 namespace Entities {
 
+static SQInteger Create(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  const SQChar *strClassFile;
+  sq_getstring(v, 2, &strClassFile);
+
+  // Get placement
+  GetInstanceValueVerify(CPlacement3D, pplPos, v, 3);
+
+  CExtEntityCreate pck;
+  pck("fnmClass", strClassFile);
+  pck("plPos", *pplPos);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger Delete(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  SQBool bSameClass;
+  sq_getbool(v, 3, &bSameClass);
+
+  CExtEntityDelete pck;
+  pck("ulEntity", (int)iEntity);
+  pck("bSameClass", !!bSameClass);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger Copy(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity, iCopies;
+  sq_getinteger(v, 2, &iEntity);
+  sq_getinteger(v, 3, &iCopies);
+
+  if (iCopies < 0 || iCopies > 31) {
+    return sq_throwerror(v, "amount of copies is outside the 0-31 range");
+  }
+
+  CExtEntityCopy pck;
+  pck("ulEntity", (int)iEntity);
+  pck("iCopies", (int)iCopies);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger SendEvent(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  // Get event
+  GetInstanceValueVerifyN(EExtEntityEvent, pEvent, v, 3, "CEntityEvent");
+
+  CExtEntityEvent pck;
+  pck("ulEntity", (int)iEntity);
+  pck.Copy(*pEvent);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger ReceiveItem(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  // Get event
+  GetInstanceValueVerifyN(EExtEntityEvent, pEvent, v, 3, "CEntityEvent");
+
+  CExtEntityItem pck;
+  pck("ulEntity", (int)iEntity);
+  pck.Copy(*pEvent);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger Initialize(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  // Get optional event
+  if (sq_gettop(v) > 2) {
+    GetInstanceValue(EExtEntityEvent, pEvent, v, 3);
+
+    CExtEntityInit pck;
+    pck("ulEntity", (int)iEntity);
+    pck.Copy(*pEvent);
+    pck.SendToClients();
+
+  } else {
+    CExtEntityInit pck;
+    pck("ulEntity", (int)iEntity);
+    pck.SetEvent(EVoid());
+    pck.SendToClients();
+  }
+  return 0;
+};
+
+static SQInteger SetPos(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  GetInstanceValueVerify(FLOAT3D, pvSet, v, 3);
+
+  SQBool bRelative;
+  sq_getbool(v, 4, &bRelative);
+
+  CExtEntityPosition pck;
+  pck("ulEntity", (int)iEntity);
+  pck("vSet", *pvSet);
+  pck("bRotation", false);
+  pck("bRelative", !!bRelative);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger SetRot(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  GetInstanceValueVerify(FLOAT3D, pvSet, v, 3);
+
+  SQBool bRelative;
+  sq_getbool(v, 4, &bRelative);
+
+  CExtEntityPosition pck;
+  pck("ulEntity", (int)iEntity);
+  pck("vSet", *pvSet);
+  pck("bRotation", true);
+  pck("bRelative", !!bRelative);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger Teleport(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  GetInstanceValueVerify(CPlacement3D, pplSet, v, 3);
+
+  SQBool bRelative;
+  sq_getbool(v, 4, &bRelative);
+
+  CExtEntityTeleport pck;
+  pck("ulEntity", (int)iEntity);
+  pck("plSet", *pplSet);
+  pck("bRelative", !!bRelative);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger Parent(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity, iParent;
+  sq_getinteger(v, 2, &iEntity);
+  sq_getinteger(v, 3, &iParent);
+
+  CExtEntityParent pck;
+  pck("ulEntity", (int)iEntity);
+  pck("ulParent", (int)iParent);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger SetProperty(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  const SQChar *strProp = NULL;
+  SQInteger iPropID = -1;
+
+  if (sq_gettype(v, 3) == OT_STRING) {
+    sq_getstring(v, 3, &strProp);
+
+  } else if (SQ_FAILED(sq_getinteger(v, 3, &iPropID))) {
+    return sq_throwerror(v, "expected property name or property ID in argument 2");
+  }
+
+  const SQChar *strValue = NULL;
+  SQFloat fValue = 0.0f;
+
+  if (sq_gettype(v, 4) == OT_STRING) {
+    sq_getstring(v, 4, &strValue);
+
+  } else if (sq_gettype(v, 4) == OT_BOOL) {
+    SQBool bValue;
+    sq_getbool(v, 4, &bValue);
+    fValue = (bValue ? 1.0f : 0.0f);
+
+  } else if (SQ_FAILED(sq_getfloat(v, 4, &fValue))) {
+    return sq_throwerror(v, "expected a string or a number for the property value in argument 3");
+  }
+
+  CExtEntityProp pck;
+  pck("ulEntity", (int)iEntity);
+
+  // Set property name or ID
+  if (strProp != NULL) {
+    pck.SetProperty(CTString(strProp));
+  } else {
+    pck.SetProperty((ULONG)iPropID);
+  }
+
+  // Set string or float value
+  if (strValue != NULL) {
+    pck.SetValue(CTString(strValue));
+  } else {
+    pck.SetValue((DOUBLE)fValue);
+  }
+
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger SetHealth(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  SQFloat fHealth;
+  sq_getfloat(v, 3, &fHealth);
+
+  CExtEntityHealth pck;
+  pck("ulEntity", (int)iEntity);
+  pck("fHealth", (FLOAT)fHealth);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger SetFlags(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity, iFlags;
+  sq_getinteger(v, 2, &iEntity);
+  sq_getinteger(v, 3, &iFlags);
+
+  SQBool bRemove;
+  sq_getbool(v, 4, &bRemove);
+
+  CExtEntityFlags pck;
+  pck("ulEntity", (int)iEntity);
+  pck.EntityFlags(iFlags, bRemove);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger SetPhysicsFlags(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity, iFlags;
+  sq_getinteger(v, 2, &iEntity);
+  sq_getinteger(v, 3, &iFlags);
+
+  SQBool bRemove;
+  sq_getbool(v, 4, &bRemove);
+
+  CExtEntityFlags pck;
+  pck("ulEntity", (int)iEntity);
+  pck.PhysicalFlags(iFlags, bRemove);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger SetCollisionFlags(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity, iFlags;
+  sq_getinteger(v, 2, &iEntity);
+  sq_getinteger(v, 3, &iFlags);
+
+  SQBool bRemove;
+  sq_getbool(v, 4, &bRemove);
+
+  CExtEntityFlags pck;
+  pck("ulEntity", (int)iEntity);
+  pck.CollisionFlags(iFlags, bRemove);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger Move(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  GetInstanceValueVerify(FLOAT3D, pvSpeed, v, 3);
+
+  CExtEntityMove pck;
+  pck("ulEntity", (int)iEntity);
+  pck("vSpeed", *pvSpeed);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger Rotate(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  GetInstanceValueVerify(FLOAT3D, pvSpeed, v, 3);
+
+  CExtEntityRotate pck;
+  pck("ulEntity", (int)iEntity);
+  pck("vSpeed", *pvSpeed);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger GiveImpulse(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity;
+  sq_getinteger(v, 2, &iEntity);
+
+  GetInstanceValueVerify(FLOAT3D, pvSpeed, v, 3);
+
+  CExtEntityImpulse pck;
+  pck("ulEntity", (int)iEntity);
+  pck("vSpeed", *pvSpeed);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger InflictDirectDamage(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity, iTarget, iDamageType;
+  sq_getinteger(v, 2, &iEntity);
+  sq_getinteger(v, 3, &iTarget);
+  sq_getinteger(v, 4, &iDamageType);
+
+  SQFloat fDamage;
+  sq_getfloat(v, 5, &fDamage);
+
+  GetInstanceValueVerify(FLOAT3D, pvHit, v, 6);
+  GetInstanceValueVerify(FLOAT3D, pvDir, v, 7);
+
+  CExtEntityDirectDamage pck;
+  pck("ulEntity", (int)iEntity);
+  pck("ulTarget", (int)iTarget);
+  pck("eDamageType", (int)iDamageType);
+  pck("fDamage", (FLOAT)fDamage);
+  pck("vHitPoint", *pvHit);
+  pck("vDirection", *pvDir);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger InflictRangeDamage(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity, iDamageType;
+  sq_getinteger(v, 2, &iEntity);
+  sq_getinteger(v, 3, &iDamageType);
+
+  SQFloat fDamage, fFallOff, fHotSpot;
+  sq_getfloat(v, 4, &fDamage);
+
+  GetInstanceValueVerify(FLOAT3D, pvCenter, v, 5);
+
+  sq_getfloat(v, 6, &fFallOff);
+  sq_getfloat(v, 7, &fHotSpot);
+
+  CExtEntityRangeDamage pck;
+  pck("ulEntity", (int)iEntity);
+  pck("eDamageType", (int)iDamageType);
+  pck("fDamage", (FLOAT)fDamage);
+  pck("vCenter", *pvCenter);
+  pck("fFallOff", (FLOAT)fFallOff);
+  pck("fHotSpot", (FLOAT)fHotSpot);
+  pck.SendToClients();
+  return 0;
+};
+
+static SQInteger InflictBoxDamage(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  SQInteger iEntity, iDamageType;
+  sq_getinteger(v, 2, &iEntity);
+  sq_getinteger(v, 3, &iDamageType);
+
+  SQFloat fDamage;
+  sq_getfloat(v, 4, &fDamage);
+
+  GetInstanceValueVerify(FLOATaabbox3D, pboxArea, v, 5);
+
+  CExtEntityBoxDamage pck;
+  pck("ulEntity", (int)iEntity);
+  pck("eDamageType", (int)iDamageType);
+  pck("fDamage", (FLOAT)fDamage);
+  pck("boxArea", *pboxArea);
+  pck.SendToClients();
+  return 0;
+};
+
 }; // namespace
+
+// "Entities" namespace functions
+static SQRegFunction _aEntitiesFuncs[] = {
+  { "Create",              &Entities::Create,              3, ".sx" },
+  { "Delete",              &Entities::Delete,              3, ".nn" },
+  { "Copy",                &Entities::Copy,                3, ".nn" },
+  { "SendEvent",           &Entities::SendEvent,           3, ".nx" },
+  { "ReceiveItem",         &Entities::ReceiveItem,         3, ".nx" },
+  { "Initialize",          &Entities::Initialize,         -2, ".nx" },
+  { "SetPos",              &Entities::SetPos,              4, ".nxb" },
+  { "SetRot",              &Entities::SetRot,              4, ".nxb" },
+  { "Teleport",            &Entities::Teleport,            4, ".nxb" },
+  { "Parent",              &Entities::Parent,              3, ".nn" },
+  { "SetProperty",         &Entities::SetProperty,         4, ".ns|ns|n|b" },
+  { "SetHealth",           &Entities::SetHealth,           3, ".nn" },
+  { "SetFlags",            &Entities::SetFlags,            4, ".nnb" },
+  { "SetPhysicsFlags",     &Entities::SetPhysicsFlags,     4, ".nnb" },
+  { "SetCollisionFlags",   &Entities::SetCollisionFlags,   4, ".nnb" },
+  { "Move",                &Entities::Move,                3, ".nx" },
+  { "Rotate",              &Entities::Rotate,              3, ".nx" },
+  { "GiveImpulse",         &Entities::GiveImpulse,         3, ".nx" },
+  { "InflictDirectDamage", &Entities::InflictDirectDamage, 7, ".nnnnxx" },
+  { "InflictRangeDamage",  &Entities::InflictRangeDamage,  7, ".nnnxnn" },
+  { "InflictBoxDamage",    &Entities::InflictBoxDamage,    5, ".nnnx" },
+};
 
 void VM::RegisterEntities(void) {
   // [Cecil] NOTE: Everything entity-related should be read-only!!!
@@ -802,6 +1245,11 @@ void VM::RegisterEntities(void) {
     }
 
     Root().AddClass(sqcEvent);
+  }
+
+  // Register functions
+  for (i = 0; i < ARRAYCOUNT(_aEntitiesFuncs); i++) {
+    sqtEntities.RegisterFunc(_aEntitiesFuncs[i]);
   }
 
   // Render types
@@ -1031,6 +1479,33 @@ void VM::RegisterEntities(void) {
 #undef ADD_EVENT
 
   Const().AddEnum("EVENTCODE", enEventCodes);
+
+  // Damage types
+  Enumeration enDamageTypes(GetVM());
+
+#define ADD_DMT(_DamageTypeName) enDamageTypes.RegisterValue(#_DamageTypeName, (SQInteger)DMT_##_DamageTypeName)
+  ADD_DMT(EXPLOSION);
+  ADD_DMT(PROJECTILE);
+  ADD_DMT(CLOSERANGE);
+  ADD_DMT(BULLET);
+  ADD_DMT(DROWNING);
+  ADD_DMT(IMPACT);
+  ADD_DMT(BRUSH);
+  ADD_DMT(BURNING);
+  ADD_DMT(ACID);
+  ADD_DMT(TELEPORT);
+  ADD_DMT(FREEZING);
+  ADD_DMT(CANNONBALL);
+  ADD_DMT(CANNONBALL_EXPLOSION);
+  ADD_DMT(SPIKESTAB);
+  ADD_DMT(ABYSS);
+  ADD_DMT(HEAT);
+  ADD_DMT(DAMAGER);
+  ADD_DMT(CHAINSAW);
+  ADD_DMT(NONE);
+#undef ADD_DMT
+
+  Const().AddEnum("DMT", enDamageTypes);
 };
 
 }; // namespace
