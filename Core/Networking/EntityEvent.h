@@ -144,9 +144,10 @@ class CORE_API EExtEntityEvent : public CEntityEvent {
 
   public:
     // Reset event fields
-    inline void Reset(void) {
+    inline void Reset(BOOL bResetEventType = TRUE) {
       Free(); // Free previous memory
-      ee_slEvent = EVENTCODE_EVoid;
+
+      if (bResetEventType) ee_slEvent = EVENTCODE_EVoid;
       ee_ctFields = 0;
 
       // Fill fields with NULL, FALSE, 0, 0.0f etc.

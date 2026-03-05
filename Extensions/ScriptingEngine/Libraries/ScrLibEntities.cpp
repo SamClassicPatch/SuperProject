@@ -15,6 +15,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include <Core/Networking/ExtPackets.h>
+#include <Extras/XGizmo/Vanilla/EntityEvents.h>
+
 namespace sq {
 
 // CEntity class methods
@@ -633,6 +636,121 @@ static Method<CEntityProperty *> _aMethods[] = {
 
 }; // namespace
 
+// Event class methods
+namespace SqEvent {
+
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, EExtEntityEvent &val) {
+  if (ctArgs <= 0) return 0;
+
+  // Try copying from another event
+  GetInstanceValue(EExtEntityEvent, pOther, v, 2);
+
+  if (pOther != NULL) {
+    val.Copy(*pOther);
+    return 0;
+  }
+
+  // Otherwise try setting up the event with an event code
+  SQInteger iEventCode;
+
+  if (SQ_SUCCEEDED(sq_getinteger(v, 2, &iEventCode))) {
+    val.ee_slEvent = iEventCode;
+    return 0;
+  }
+
+  return sq_throwerror(v, "expected CEntityEvent or an event code");
+};
+
+static SQInteger SetArgs(HSQUIRRELVM v, int ctArgs, EExtEntityEvent &val) {
+  if (ctArgs >= EXT_ENTITY_EVENT_FIELDS) return sq_throwerror(v, "too many arguments for the event");
+
+  // Separate counter for used fields inside the event
+  ULONG iField = 0;
+  val.Reset(FALSE);
+
+  for (INDEX i = 0; i < ctArgs; i++) {
+    // Make sure the vector doesn't exceed the field count
+    if (iField >= EXT_ENTITY_EVENT_FIELDS) {
+      SQChar strError[256];
+      scsprintf(strError, 256, "event argument %d exceeds the event size", i + 1);
+      return sq_throwerror(v, strError);
+    }
+
+    switch (sq_gettype(v, 2 + i)) {
+      case OT_NULL: {
+        iField = val.SetInt(iField, 0);
+      } break;
+
+      case OT_INTEGER: {
+        SQInteger iArg;
+        sq_getinteger(v, 2 + i, &iArg);
+        iField = val.SetInt(iField, iArg);
+      } break;
+
+      case OT_FLOAT: {
+        SQFloat fArg;
+        sq_getfloat(v, 2 + i, &fArg);
+        iField = val.SetFloat(iField, fArg);
+      } break;
+
+      case OT_BOOL: {
+        SQBool bArg;
+        sq_getbool(v, 2 + i, &bArg);
+        iField = val.SetInt(iField, bArg);
+      } break;
+
+      case OT_STRING: {
+        const SQChar *strArg;
+        sq_getstring(v, 2 + i, &strArg);
+        iField = val.SetString(iField, strArg);
+      } break;
+
+      case OT_INSTANCE: {
+        // Try vector
+        GetInstanceValue(FLOAT3D, pvArg, v, 2 + i);
+
+        if (pvArg != NULL) {
+          // Make sure the vector doesn't exceed the field count
+          if (iField + 2 >= EXT_ENTITY_EVENT_FIELDS) {
+            SQChar strError[256];
+            scsprintf(strError, 256, "event argument %d exceeds the event size", i + 1);
+            return sq_throwerror(v, strError);
+          }
+
+          iField = val.SetVector(iField, *pvArg);
+          break;
+        }
+
+        // Try entity
+        GetInstanceValue(CEntityPointer, ppenArg, v, 2 + i);
+
+        if (ppenArg != NULL) {
+          if (*ppenArg != NULL) {
+            iField = val.SetEntity(iField, *ppenArg);
+          } else {
+            iField = val.SetEntity(iField, NULL);
+          }
+          break;
+        }
+      }
+
+      default: {
+        SQChar strError[256];
+        scsprintf(strError, 256, "unsupported argument type for the event argument %d", i + 1);
+        return sq_throwerror(v, strError);
+      }
+    }
+  }
+
+  return 0;
+};
+
+static Method<EExtEntityEvent> _aMethods[] = {
+  { "SetArgs", &SetArgs, -1, "." },
+};
+
+}; // namespace
+
 namespace Entities {
 
 }; // namespace
@@ -674,6 +792,16 @@ void VM::RegisterEntities(void) {
     sqcProp.RegisterVar("color",    &SqProp::GetPropColor,    NULL);
 
     sqtEntities.AddClass(sqcProp);
+  }
+  {
+    Class<EExtEntityEvent> sqcEvent(GetVM(), "CEntityEvent", &SqEvent::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqEvent::_aMethods); i++) {
+      sqcEvent.RegisterMethod(SqEvent::_aMethods[i]);
+    }
+
+    Root().AddClass(sqcEvent);
   }
 
   // Render types
@@ -824,6 +952,85 @@ void VM::RegisterEntities(void) {
 #undef ADD_EPT
 
   Const().AddEnum("EPT", enPropTypes);
+
+  // Entity events
+  Enumeration enEventCodes(GetVM());
+
+#define ADD_EVENT(_EventName) enEventCodes.RegisterValue(#_EventName, (SQInteger)EVENTCODE_VNL_##_EventName)
+  ADD_EVENT(EStop);
+  ADD_EVENT(EStart);
+  ADD_EVENT(EActivate);
+  ADD_EVENT(EDeactivate);
+  ADD_EVENT(EEnvironmentStart);
+  ADD_EVENT(EEnvironmentStop);
+  ADD_EVENT(EEnd);
+  ADD_EVENT(ETrigger);
+  ADD_EVENT(ETeleportMovingBrush);
+  ADD_EVENT(EReminder);
+  ADD_EVENT(EStartAttack);
+  ADD_EVENT(EStopAttack);
+  ADD_EVENT(EStopBlindness);
+  ADD_EVENT(EStopDeafness);
+  ADD_EVENT(EReceiveScore);
+  ADD_EVENT(EKilledEnemy);
+  ADD_EVENT(ESecretFound);
+
+  ADD_EVENT(ESound);
+  ADD_EVENT(EScroll);
+  ADD_EVENT(ETextFX);
+  ADD_EVENT(EHudPicFX);
+  ADD_EVENT(ECredits);
+  ADD_EVENT(ECenterMessage);
+  ADD_EVENT(EComputerMessage);
+  ADD_EVENT(EVoiceMessage);
+  ADD_EVENT(EHitBySpaceShipBeam);
+
+  ADD_EVENT(EAmmoItem);
+  ADD_EVENT(EAmmoPackItem);
+  ADD_EVENT(EArmor);
+  ADD_EVENT(EHealth);
+  ADD_EVENT(EKey);
+  ADD_EVENT(EMessageItem);
+  ADD_EVENT(EPowerUp);
+  ADD_EVENT(EWeaponItem);
+
+  ADD_EVENT(ERestartAttack);
+  ADD_EVENT(EReconsiderBehavior);
+  ADD_EVENT(EForceWound);
+  ADD_EVENT(ESelectWeapon);
+  ADD_EVENT(EBoringWeapon);
+  ADD_EVENT(EFireWeapon);
+  ADD_EVENT(EReleaseWeapon);
+  ADD_EVENT(EReloadWeapon);
+  ADD_EVENT(EWeaponChanged);
+
+  ADD_EVENT(EAirShockwave);
+  ADD_EVENT(EAirWave);
+  ADD_EVENT(ESpawnEffect);
+  ADD_EVENT(ESpawnSpray);
+  ADD_EVENT(EBulletInit);
+  ADD_EVENT(ELaunchCannonBall);
+  ADD_EVENT(ECyborgBike);
+  ADD_EVENT(ESpawnDebris);
+  ADD_EVENT(EDevilProjectile);
+  ADD_EVENT(ESpawnEffector);
+  ADD_EVENT(EFlame);
+  ADD_EVENT(ELaunchLarvaOffspring);
+  ADD_EVENT(EAnimatorInit);
+  ADD_EVENT(EViewInit);
+  ADD_EVENT(EWeaponsInit);
+  ADD_EVENT(EWeaponEffectInit);
+  ADD_EVENT(ELaunchProjectile);
+  ADD_EVENT(EReminderInit);
+  ADD_EVENT(ESeriousBomb);
+  ADD_EVENT(ESpawnerProjectile);
+  ADD_EVENT(ESpinnerInit);
+  ADD_EVENT(ETwister);
+  ADD_EVENT(EWatcherInit);
+  ADD_EVENT(EWater);
+#undef ADD_EVENT
+
+  Const().AddEnum("EVENTCODE", enEventCodes);
 };
 
 }; // namespace

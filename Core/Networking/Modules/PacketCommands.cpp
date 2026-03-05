@@ -32,10 +32,8 @@ void SetupEvent(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;
   INDEX iEventType = NEXT_ARG(INDEX);
 
-  // Reset event
+  // Reset event and set new type
   _eePacketEvent.Reset();
-
-  // Set new type
   _eePacketEvent.ee_slEvent = iEventType;
 };
 

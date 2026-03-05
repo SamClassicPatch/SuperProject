@@ -202,7 +202,6 @@ class InternalClass : public AbstractClass {
         return;
       }
 
-      ASSERT(strName != NULL);
       sq_pushobject(m_vm, m_obj); // Push class
 
       sq_pushstring(m_vm, "_cloned", -1);
