@@ -756,6 +756,8 @@ static Method<EExtEntityEvent> _aMethods[] = {
 
 namespace Entities {
 
+#if _PATCHCONFIG_EXT_PACKETS
+
 static SQInteger Create(HSQUIRRELVM v) {
   ASSERT_SERVER;
 
@@ -1171,6 +1173,37 @@ static SQInteger InflictBoxDamage(HSQUIRRELVM v) {
   return 0;
 };
 
+#else
+
+#define DISABLE_EXT_PACKET_FUNC(_FuncName) \
+  static SQInteger _FuncName(HSQUIRRELVM v) { \
+    return sq_throwerror(v, "functions that utilize extension packets have been disabled in this build"); \
+  };
+
+DISABLE_EXT_PACKET_FUNC(Create);
+DISABLE_EXT_PACKET_FUNC(Delete);
+DISABLE_EXT_PACKET_FUNC(Copy);
+DISABLE_EXT_PACKET_FUNC(SendEvent);
+DISABLE_EXT_PACKET_FUNC(ReceiveItem);
+DISABLE_EXT_PACKET_FUNC(Initialize);
+DISABLE_EXT_PACKET_FUNC(SetPos);
+DISABLE_EXT_PACKET_FUNC(SetRot);
+DISABLE_EXT_PACKET_FUNC(Teleport);
+DISABLE_EXT_PACKET_FUNC(Parent);
+DISABLE_EXT_PACKET_FUNC(SetProperty);
+DISABLE_EXT_PACKET_FUNC(SetHealth);
+DISABLE_EXT_PACKET_FUNC(SetFlags);
+DISABLE_EXT_PACKET_FUNC(SetPhysicsFlags);
+DISABLE_EXT_PACKET_FUNC(SetCollisionFlags);
+DISABLE_EXT_PACKET_FUNC(Move);
+DISABLE_EXT_PACKET_FUNC(Rotate);
+DISABLE_EXT_PACKET_FUNC(GiveImpulse);
+DISABLE_EXT_PACKET_FUNC(InflictDirectDamage);
+DISABLE_EXT_PACKET_FUNC(InflictRangeDamage);
+DISABLE_EXT_PACKET_FUNC(InflictBoxDamage);
+
+#endif // _PATCHCONFIG_EXT_PACKETS
+
 }; // namespace
 
 // "Entities" namespace functions
@@ -1396,7 +1429,9 @@ void VM::RegisterEntities(void) {
   ADD_EPT(FLOATQUAT3D);
   ADD_EPT(FLOATMATRIX3D);
   ADD_EPT(FLAGS);
+#if SE1_VER >= SE1_107
   ADD_EPT(MODELINSTANCE);
+#endif
 #undef ADD_EPT
 
   Const().AddEnum("EPT", enPropTypes);
@@ -1422,8 +1457,8 @@ void VM::RegisterEntities(void) {
   ADD_EVENT(EReceiveScore);
   ADD_EVENT(EKilledEnemy);
   ADD_EVENT(ESecretFound);
-
   ADD_EVENT(ESound);
+
   ADD_EVENT(EScroll);
   ADD_EVENT(ETextFX);
   ADD_EVENT(EHudPicFX);

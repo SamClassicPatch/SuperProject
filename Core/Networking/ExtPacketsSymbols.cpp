@@ -41,8 +41,8 @@ void DeclareExtraSymbolsForExtPackets(void)
   DECLARE_SYMBOL("EVENTCODE_EReceiveScore",         EVENTCODE_VNL_EReceiveScore);
   DECLARE_SYMBOL("EVENTCODE_EKilledEnemy",          EVENTCODE_VNL_EKilledEnemy);
   DECLARE_SYMBOL("EVENTCODE_ESecretFound",          EVENTCODE_VNL_ESecretFound);
-
   DECLARE_SYMBOL("EVENTCODE_ESound",                EVENTCODE_VNL_ESound);
+
   DECLARE_SYMBOL("EVENTCODE_EScroll",               EVENTCODE_VNL_EScroll);
   DECLARE_SYMBOL("EVENTCODE_ETextFX",               EVENTCODE_VNL_ETextFX);
   DECLARE_SYMBOL("EVENTCODE_EHudPicFX",             EVENTCODE_VNL_EHudPicFX);

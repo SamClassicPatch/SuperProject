@@ -277,7 +277,7 @@ static SQInteger UnaryMinus(HSQUIRRELVM v, FLOATplane3D &val) {
 };
 
 static SQInteger ToString(HSQUIRRELVM v, FLOATplane3D &val) {
-  CTString str(0, "pl[%g, %g, %g; %g]", val(1), val(2), val(3), val.Distance());
+  CTString str(0, "[%g, %g, %g; %g]", val(1), val(2), val(3), val.Distance());
   sq_pushstring(v, str.str_String, -1);
   return 1;
 };

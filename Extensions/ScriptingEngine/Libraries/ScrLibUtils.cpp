@@ -75,8 +75,10 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, RayHolder &val) {
 SQCLASS_GETSET_BOOL(GetFlagPortals,      SetFlagPortals,      RayHolder, val.cr.cr_bHitPortals, val.cr.cr_bHitPortals);
 SQCLASS_GETSET_BOOL(GetFlagTransPortals, SetFlagTransPortals, RayHolder, val.cr.cr_bHitTranslucentPortals, val.cr.cr_bHitTranslucentPortals);
 SQCLASS_GETSET_BOOL(GetFlagFields,       SetFlagFields,       RayHolder, val.cr.cr_bHitFields, val.cr.cr_bHitFields);
+#if SE1_VER >= SE1_107
 SQCLASS_GETSET_BOOL(GetFlagBrushes,      SetFlagBrushes,      RayHolder, val.cr.cr_bHitBrushes, val.cr.cr_bHitBrushes);
 SQCLASS_GETSET_BOOL(GetFlagInvisTris,    SetFlagInvisTris,    RayHolder, val.cr.cr_bHitTerrainInvisibleTris, val.cr.cr_bHitTerrainInvisibleTris);
+#endif
 SQCLASS_GETSET_BOOL(GetFlagPhysical,     SetFlagPhysical,     RayHolder, val.cr.cr_bPhysical, val.cr.cr_bPhysical);
 SQCLASS_GETSET_FLOAT(GetTestR, SetTestR, RayHolder, val.cr.cr_fTestR, val.cr.cr_fTestR);
 
@@ -288,8 +290,10 @@ void VM::RegisterUtils(void) {
     sqcCastRay.RegisterVar("cr_bHitTranslucentPortals",   &SqCastRay::GetFlagTransPortals, &SqCastRay::SetFlagTransPortals);
     sqcCastRay.RegisterVar("cr_ttHitModels",              &SqCastRay::GetTestType,         &SqCastRay::SetTestType);
     sqcCastRay.RegisterVar("cr_bHitFields",               &SqCastRay::GetFlagFields,       &SqCastRay::SetFlagFields);
+  #if SE1_VER >= SE1_107
     sqcCastRay.RegisterVar("cr_bHitBrushes",              &SqCastRay::GetFlagBrushes,      &SqCastRay::SetFlagBrushes);
     sqcCastRay.RegisterVar("cr_bHitTerrainInvisibleTris", &SqCastRay::GetFlagInvisTris,    &SqCastRay::SetFlagInvisTris);
+  #endif
     sqcCastRay.RegisterVar("cr_bPhysical",                &SqCastRay::GetFlagPhysical,     &SqCastRay::SetFlagPhysical);
     sqcCastRay.RegisterVar("cr_fTestR",                   &SqCastRay::GetTestR,            &SqCastRay::SetTestR);
 
