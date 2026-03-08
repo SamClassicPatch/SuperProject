@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
 // Make sure the client is currently running a server
-#define ASSERT_SERVER { if (!_pNetwork->IsServer()) return sq_throwerror(v, "cannot send entity packets while not hosting servers"); }
+#define ASSERT_SERVER { if (!_pNetwork->IsServer()) return sq_throwerror(v, "cannot send entity packets while not hosting a game"); }
 
 namespace sq {
 
@@ -331,6 +331,438 @@ static SQInteger GetClassificationBoxStretch(HSQUIRRELVM v, int, CEntityPointer 
   return 1;
 };
 
+static SQInteger GetHealth(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+  if (!::IsLiveEntity(val)) return sq_throwerror(v, "CEntityPointer does not contain a live entity");
+
+  CLiveEntity *penLive = (CLiveEntity *)(CEntity *)val;
+  sq_pushfloat(v, penLive->GetHealth());
+  return 1;
+};
+
+// Make sure the entity in the pointer is derived from CMovableEntity
+#define ASSERT_MOVABLE { if (!::IsDerivedFromID(val, CMovableEntity_ClassID)) return sq_throwerror(v, "CEntityPointer does not contain a movable entity"); }
+
+static SQInteger GetDesiredTranslationRelative(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *pv = penMovable->en_vDesiredTranslationRelative;
+  return 1;
+};
+
+static SQInteger GetDesiredRotationRelative(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *pv = penMovable->en_aDesiredRotationRelative;
+  return 1;
+};
+
+static SQInteger GetCurrentTranslationAbsolute(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *pv = penMovable->en_vCurrentTranslationAbsolute;
+  return 1;
+};
+
+static SQInteger GetCurrentRotationAbsolute(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *pv = penMovable->en_aCurrentRotationAbsolute;
+  return 1;
+};
+
+static SQInteger GetReference(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create an entity instance
+  CEntityPointer *ppen;
+  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *ppen = penMovable->en_penReference;
+  return 1;
+};
+
+static SQInteger GetReferencePlane(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *pv = penMovable->en_vReferencePlane;
+  return 1;
+};
+
+static SQInteger GetReferenceSurface(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushinteger(v, penMovable->en_iReferenceSurface);
+  return 1;
+};
+
+static SQInteger GetLastValidReference(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create an entity instance
+  CEntityPointer *ppen;
+  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *ppen = penMovable->en_penLastValidReference;
+  return 1;
+};
+
+static SQInteger GetLastSignificantVerticalMovement(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_tmLastSignificantVerticalMovement);
+  return 1;
+};
+
+static SQInteger GetLastBreathed(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_tmLastBreathed);
+  return 1;
+};
+
+static SQInteger GetMaxHoldBreath(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_tmMaxHoldBreath);
+  return 1;
+};
+
+static SQInteger GetDensity(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fDensity);
+  return 1;
+};
+
+static SQInteger GetLastSwimDamage(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_tmLastSwimDamage);
+  return 1;
+};
+
+static SQInteger GetUpContent(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushinteger(v, penMovable->en_iUpContent);
+  return 1;
+};
+
+static SQInteger GetDnContent(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushinteger(v, penMovable->en_iDnContent);
+  return 1;
+};
+
+static SQInteger GetImmersionFactor(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fImmersionFactor);
+  return 1;
+};
+
+static SQInteger GetGravityDir(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *pv = penMovable->en_vGravityDir;
+  return 1;
+};
+
+static SQInteger GetGravityA(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fGravityA);
+  return 1;
+};
+
+static SQInteger GetGravityV(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fGravityV);
+  return 1;
+};
+
+static SQInteger GetForceDir(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a vector instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *pv = penMovable->en_vForceDir;
+  return 1;
+};
+
+static SQInteger GetForceA(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fForceA);
+  return 1;
+};
+
+static SQInteger GetForceV(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fForceV);
+  return 1;
+};
+
+static SQInteger GetJumped(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_tmJumped);
+  return 1;
+};
+
+static SQInteger GetMaxJumpControl(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_tmMaxJumpControl);
+  return 1;
+};
+
+static SQInteger GetJumpControlMultiplier(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fJumpControlMultiplier);
+  return 1;
+};
+
+static SQInteger GetAcceleration(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fAcceleration);
+  return 1;
+};
+
+static SQInteger GetDeceleration(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fDeceleration);
+  return 1;
+};
+
+static SQInteger GetStepUpHeight(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fStepUpHeight);
+  return 1;
+};
+
+static SQInteger GetStepDnHeight(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fStepDnHeight);
+  return 1;
+};
+
+static SQInteger GetBounceDampParallel(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fBounceDampParallel);
+  return 1;
+};
+
+static SQInteger GetBounceDampNormal(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fBounceDampNormal);
+  return 1;
+};
+
+static SQInteger GetCollisionSpeedLimit(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fCollisionSpeedLimit);
+  return 1;
+};
+
+static SQInteger GetCollisionDamageFactor(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->en_fCollisionDamageFactor);
+  return 1;
+};
+
+static SQInteger GetLastPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a placement instance
+  CPlacement3D *ppl;
+  if (!GetVMClass(v).Root().CreateInstanceOf("CPlacement3D", &ppl)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *ppl = penMovable->en_plLastPlacement;
+  return 1;
+};
+
+static SQInteger GetPolygonUnderneath(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create a polygon instance
+  CBrushPolygon **pbpol;
+  if (!GetVMClass(v).Root().CreateInstanceOf("CBrushPolygon", &pbpol)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *pbpol = penMovable->en_pbpoStandOn;
+  return 1;
+};
+
+static SQInteger GetRelativeHeading(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->GetRelativeHeading(*pvDir));
+  return 1;
+};
+
+static SQInteger GetRelativePitch(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushfloat(v, penMovable->GetRelativePitch(*pvDir));
+  return 1;
+};
+
+static SQInteger GetReferenceHeadingDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  GetInstanceValueVerify(FLOAT3D, pvRef, v, 2);
+
+  SQFloat fH;
+  sq_getfloat(v, 3, &fH);
+
+  // Create a placement instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  penMovable->GetReferenceHeadingDirection(*pvRef, fH, *pv);
+  return 1;
+};
+
+static SQInteger GetHeadingDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  SQFloat fH;
+  sq_getfloat(v, 2, &fH);
+
+  // Create a placement instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  penMovable->GetHeadingDirection(fH, *pv);
+  return 1;
+};
+
+static SQInteger GetPitchDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  SQFloat fH;
+  sq_getfloat(v, 2, &fH);
+
+  // Create a placement instance
+  FLOAT3D *pv;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  penMovable->GetPitchDirection(fH, *pv);
+  return 1;
+};
+
+static SQInteger MiscDamageInflictor(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  // Create an entity instance
+  CEntityPointer *ppen;
+  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  *ppen = penMovable->MiscDamageInflictor();
+  return 1;
+};
+
+static SQInteger IsStandingOnPolygon(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  GetInstanceValueVerifyN(CBrushPolygon *, pbpol, v, 2, "CBrushPolygon");
+
+  // No polygon
+  if (*pbpol == NULL) {
+    sq_pushbool(v, false);
+    return 1;
+  }
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushbool(v, penMovable->IsStandingOnPolygon(*pbpol));
+  return 1;
+};
+
+static SQInteger IsPolygonBelowPoint(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+
+  GetInstanceValueVerifyN(CBrushPolygon *, pbpol, v, 2, "CBrushPolygon");
+  GetInstanceValueVerify(FLOAT3D, pvPoint, v, 3);
+
+  SQFloat fMaxDist;
+  sq_getfloat(v, 4, &fMaxDist);
+
+  // No polygon
+  if (*pbpol == NULL) {
+    sq_pushbool(v, false);
+    return 1;
+  }
+
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushbool(v, penMovable->IsPolygonBelowPoint(*pbpol, *pvPoint, fMaxDist));
+  return 1;
+};
+
+static SQInteger WouldFallInNextPosition(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY; ASSERT_MOVABLE;
+  CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+  sq_pushbool(v, penMovable->WouldFallInNextPosition());
+  return 1;
+};
+
 static SQInteger GetClassFile(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
   sq_pushstring(v, val->GetClass()->GetName().str_String, -1);
@@ -531,6 +963,21 @@ static Method<CEntityPointer> _aMethods[] = {
   { "GetDescription", &GetDescription, 1, "." },
   { "GetTarget",      &GetTarget,      1, "." },
   { "GetClassificationBoxStretch", &GetClassificationBoxStretch, 1, "." },
+
+  // Base class methods
+  { "GetHealth",            &GetHealth,            1, "." },
+  { "GetLastPlacement",     &GetLastPlacement,     1, "." },
+  { "GetPolygonUnderneath", &GetPolygonUnderneath, 1, "." },
+
+  { "GetRelativeHeading",           &GetRelativeHeading,           2, ".x" },
+  { "GetRelativePitch",             &GetRelativePitch,             2, ".x" },
+  { "GetReferenceHeadingDirection", &GetReferenceHeadingDirection, 3, ".xn" },
+  { "GetHeadingDirection",          &GetHeadingDirection,          2, ".n" },
+  { "GetPitchDirection",            &GetPitchDirection,            2, ".n" },
+  { "MiscDamageInflictor",          &MiscDamageInflictor,          1, "." },
+  { "IsStandingOnPolygon",          &IsStandingOnPolygon,          2, ".x" },
+  { "IsPolygonBelowPoint",          &IsPolygonBelowPoint,          4, ".xxn" },
+  { "WouldFallInNextPosition",      &WouldFallInNextPosition,      1, "." },
 
   // Entity class data
   { "GetClassFile", &GetClassFile, 1, "." },
@@ -1248,6 +1695,47 @@ void VM::RegisterEntities(void) {
 
     // Metamethods
     sqcEntity.RegisterMetamethod(E_MM_TOSTRING, &SqEntity::ToString);
+
+    // CMovableEntity properties
+    sqcEntity.RegisterVar("en_vDesiredTranslationRelative", &SqEntity::GetDesiredTranslationRelative, NULL);
+    sqcEntity.RegisterVar("en_aDesiredRotationRelative",    &SqEntity::GetDesiredRotationRelative, NULL);
+    sqcEntity.RegisterVar("en_vCurrentTranslationAbsolute", &SqEntity::GetCurrentTranslationAbsolute, NULL);
+    sqcEntity.RegisterVar("en_aCurrentRotationAbsolute",    &SqEntity::GetCurrentRotationAbsolute, NULL);
+
+    sqcEntity.RegisterVar("en_penReference",      &SqEntity::GetReference, NULL);
+    sqcEntity.RegisterVar("en_vReferencePlane",   &SqEntity::GetReferencePlane, NULL);
+    sqcEntity.RegisterVar("en_iReferenceSurface", &SqEntity::GetReferenceSurface, NULL);
+
+    sqcEntity.RegisterVar("en_penLastValidReference",             &SqEntity::GetLastValidReference, NULL);
+    sqcEntity.RegisterVar("en_tmLastSignificantVerticalMovement", &SqEntity::GetLastSignificantVerticalMovement, NULL);
+
+    sqcEntity.RegisterVar("en_tmLastBreathed",   &SqEntity::GetLastBreathed, NULL);
+    sqcEntity.RegisterVar("en_tmMaxHoldBreath",  &SqEntity::GetMaxHoldBreath, NULL);
+    sqcEntity.RegisterVar("en_fDensity",         &SqEntity::GetDensity, NULL);
+    sqcEntity.RegisterVar("en_tmLastSwimDamage", &SqEntity::GetLastSwimDamage, NULL);
+    sqcEntity.RegisterVar("en_iUpContent",       &SqEntity::GetUpContent, NULL);
+    sqcEntity.RegisterVar("en_iDnContent",       &SqEntity::GetDnContent, NULL);
+    sqcEntity.RegisterVar("en_fImmersionFactor", &SqEntity::GetImmersionFactor, NULL);
+
+    sqcEntity.RegisterVar("en_vGravityDir", &SqEntity::GetGravityDir, NULL);
+    sqcEntity.RegisterVar("en_fGravityA",   &SqEntity::GetGravityA, NULL);
+    sqcEntity.RegisterVar("en_fGravityV",   &SqEntity::GetGravityV, NULL);
+    sqcEntity.RegisterVar("en_vForceDir",   &SqEntity::GetForceDir, NULL);
+    sqcEntity.RegisterVar("en_fForceA",     &SqEntity::GetForceA, NULL);
+    sqcEntity.RegisterVar("en_fForceV",     &SqEntity::GetForceV, NULL);
+
+    sqcEntity.RegisterVar("en_tmJumped",               &SqEntity::GetJumped, NULL);
+    sqcEntity.RegisterVar("en_tmMaxJumpControl",       &SqEntity::GetMaxJumpControl, NULL);
+    sqcEntity.RegisterVar("en_fJumpControlMultiplier", &SqEntity::GetJumpControlMultiplier, NULL);
+
+    sqcEntity.RegisterVar("en_fAcceleration",          &SqEntity::GetAcceleration, NULL);
+    sqcEntity.RegisterVar("en_fDeceleration",          &SqEntity::GetDeceleration, NULL);
+    sqcEntity.RegisterVar("en_fStepUpHeight",          &SqEntity::GetStepUpHeight, NULL);
+    sqcEntity.RegisterVar("en_fStepDnHeight",          &SqEntity::GetStepDnHeight, NULL);
+    sqcEntity.RegisterVar("en_fBounceDampParallel",    &SqEntity::GetBounceDampParallel, NULL);
+    sqcEntity.RegisterVar("en_fBounceDampNormal",      &SqEntity::GetBounceDampNormal, NULL);
+    sqcEntity.RegisterVar("en_fCollisionSpeedLimit",   &SqEntity::GetCollisionSpeedLimit, NULL);
+    sqcEntity.RegisterVar("en_fCollisionDamageFactor", &SqEntity::GetCollisionDamageFactor, NULL);
 
     Root().AddClass(sqcEntity);
   }
