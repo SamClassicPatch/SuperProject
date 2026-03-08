@@ -17,6 +17,68 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
+// CBrushPolygon class methods
+namespace SqBrushPolygon {
+
+// Make sure the polygon in the pointer exists
+#define ASSERT_POLYGON { if (val == NULL) return sq_throwerror(v, "CBrushPolygon is NULL"); }
+
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CBrushPolygon *&val) {
+  val = NULL;
+
+  if (ctArgs > 0) {
+    GetInstanceValueVerify(CBrushPolygon *, pOther, v, 2);
+    if (pOther != NULL) val = *pOther;
+  }
+
+  return 0;
+};
+
+static SQInteger Equal(HSQUIRRELVM v, int, CBrushPolygon *&val) {
+  // Compare against null
+  if (sq_gettype(v, 2) == OT_NULL) {
+    sq_pushbool(v, val == NULL);
+    return 1;
+  }
+
+  // Compare against another pointer
+  GetInstanceValueVerifyN(CBrushPolygon *, pOther, v, 2, "CBrushPolygon");
+  sq_pushbool(v, val == *pOther);
+  return 1;
+};
+
+static SQInteger GetPlane(HSQUIRRELVM v, int, CBrushPolygon *&val) {
+  ASSERT_POLYGON;
+
+  FLOATplane3D *ppl;
+  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
+
+  *ppl = val->bpo_pbplPlane->bpl_plAbsolute;
+  return 1;
+};
+
+static SQInteger GetSurface(HSQUIRRELVM v, int, CBrushPolygon *&val) {
+  ASSERT_POLYGON;
+  sq_pushinteger(v, val->bpo_bppProperties.bpp_ubSurfaceType);
+  return 1;
+};
+
+static SQInteger GetDistanceFromEdges(HSQUIRRELVM v, int, CBrushPolygon *&val) {
+  ASSERT_POLYGON;
+  GetInstanceValueVerify(FLOAT3D, pvPoint, v, 2);
+  sq_pushfloat(v, val->GetDistanceFromEdges(*pvPoint));
+  return 1;
+};
+
+static Method<CBrushPolygon *> _aMethods[] = {
+  { "Equal",                &Equal,                2, ".x|o" },
+  { "GetPlane",             &GetPlane,             1, "." },
+  { "GetSurface",           &GetSurface,           1, "." },
+  { "GetDistanceFromEdges", &GetDistanceFromEdges, 2, ".x" },
+};
+
+}; // namespace
+
 // CCastRay class methods
 namespace SqCastRay {
 
@@ -148,40 +210,11 @@ static SQInteger GetHitDistance(HSQUIRRELVM v, int, RayHolder &val) {
   return 1;
 };
 
-static SQInteger HitBrushPolygon(HSQUIRRELVM v, int, RayHolder &val) {
-  sq_pushbool(v, val.cr.cr_pbpoBrushPolygon != NULL);
-  return 1;
-};
+static SQInteger GetHitPolygon(HSQUIRRELVM v, int, RayHolder &val) {
+  CBrushPolygon **pbpol;
+  if (!GetVMClass(v).Root().CreateInstanceOf("CBrushPolygon", &pbpol)) return SQ_ERROR;
 
-static SQInteger GetHitPolygonPlane(HSQUIRRELVM v, int, RayHolder &val) {
-  if (val.cr.cr_pbpoBrushPolygon == NULL) {
-    return sq_throwerror(v, "CCastRay did not hit any brush polygon");
-  }
-
-  FLOATplane3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
-
-  *ppl = val.cr.cr_pbpoBrushPolygon->bpo_pbplPlane->bpl_plAbsolute;
-  return 1;
-};
-
-static SQInteger GetHitPolygonSurface(HSQUIRRELVM v, int, RayHolder &val) {
-  if (val.cr.cr_pbpoBrushPolygon == NULL) {
-    return sq_throwerror(v, "CCastRay did not hit any brush polygon");
-  }
-
-  sq_pushinteger(v, val.cr.cr_pbpoBrushPolygon->bpo_bppProperties.bpp_ubSurfaceType);
-  return 1;
-};
-
-static SQInteger GetDistanceFromHitPolygonEdges(HSQUIRRELVM v, int, RayHolder &val) {
-  if (val.cr.cr_pbpoBrushPolygon == NULL) {
-    return sq_throwerror(v, "CCastRay did not hit any brush polygon");
-  }
-
-  GetInstanceValueVerify(FLOAT3D, pvPoint, v, 2);
-
-  sq_pushfloat(v, val.cr.cr_pbpoBrushPolygon->GetDistanceFromEdges(*pvPoint));
+  *pbpol = val.cr.cr_pbpoBrushPolygon;
   return 1;
 };
 
@@ -213,11 +246,7 @@ static Method<RayHolder> _aMethods[] = {
   { "GetHitEntity",   &GetHitEntity,   1, "." },
   { "GetHitPoint",    &GetHitPoint,    1, "." },
   { "GetHitDistance", &GetHitDistance, 1, "." },
-
-  { "HitBrushPolygon",                &HitBrushPolygon,                1, "." },
-  { "GetHitPolygonPlane",             &GetHitPolygonPlane,             1, "." },
-  { "GetHitPolygonSurface",           &GetHitPolygonSurface,           1, "." },
-  { "GetDistanceFromHitPolygonEdges", &GetDistanceFromHitPolygonEdges, 2, ".x" },
+  { "GetHitPolygon",  &GetHitPolygon,  1, "." },
 
   { "Cast",         &Cast,         1, "." },
   { "ContinueCast", &ContinueCast, 1, "." },
@@ -277,6 +306,16 @@ void VM::RegisterUtils(void) {
   INDEX i;
 
   // Register classes
+  {
+    Class<CBrushPolygon *> sqcPolygon(GetVM(), "CBrushPolygon", &SqBrushPolygon::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqBrushPolygon::_aMethods); i++) {
+      sqcPolygon.RegisterMethod(SqBrushPolygon::_aMethods[i]);
+    }
+
+    Root().AddClass(sqcPolygon);
+  }
   {
     Class<SqCastRay::RayHolder> sqcCastRay(GetVM(), "CCastRay", &SqCastRay::Constructor);
 
