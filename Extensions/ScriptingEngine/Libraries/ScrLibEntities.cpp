@@ -781,6 +781,54 @@ static SQInteger GetClassID(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
+static SQInteger IsOfClass(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  const SQChar *strClass;
+  sq_getstring(v, 2, &strClass);
+  sq_pushbool(v, ::IsOfClass(val, strClass));
+  return 1;
+};
+
+static SQInteger IsDerivedFromClass(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  const SQChar *strClass;
+  sq_getstring(v, 2, &strClass);
+  sq_pushbool(v, ::IsDerivedFromClass(val, strClass));
+  return 1;
+};
+
+static SQInteger IsOfClassID(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  SQInteger iClassID;
+  sq_getinteger(v, 2, &iClassID);
+  sq_pushbool(v, ::IsOfClassID(val, iClassID));
+  return 1;
+};
+
+static SQInteger IsDerivedFromID(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  SQInteger iClassID;
+  sq_getinteger(v, 2, &iClassID);
+  sq_pushbool(v, ::IsDerivedFromID(val, iClassID));
+  return 1;
+};
+
+static SQInteger IsLiveEntity(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+  sq_pushbool(v, ::IsLiveEntity(val));
+  return 1;
+};
+
+static SQInteger IsRationalEntity(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+  sq_pushbool(v, ::IsRationalEntity(val));
+  return 1;
+};
+
 static SQInteger GetPropertyForId(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
 
@@ -983,6 +1031,13 @@ static Method<CEntityPointer> _aMethods[] = {
   { "GetClassFile", &GetClassFile, 1, "." },
   { "GetClassName", &GetClassName, 1, "." },
   { "GetClassID",   &GetClassID,   1, "." },
+
+  { "IsOfClass",          &IsOfClass,          2, ".s" },
+  { "IsDerivedFromClass", &IsDerivedFromClass, 2, ".s" },
+  { "IsOfClassID",        &IsOfClassID,        2, ".n" },
+  { "IsDerivedFromID",    &IsDerivedFromID,    2, ".n" },
+  { "IsLiveEntity",       &IsLiveEntity,       1, "." },
+  { "IsRationalEntity",   &IsRationalEntity,   1, "." },
 
   // Property lookup
   { "GetPropertyForId",         &GetPropertyForId,         2, ".n" },
