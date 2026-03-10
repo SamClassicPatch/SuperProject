@@ -593,13 +593,10 @@ static SQInteger GetGameTime(HSQUIRRELVM v) {
 };
 
 static SQInteger GetPlayerEntityByName(HSQUIRRELVM v) {
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
   const SQChar *strName;
   sq_getstring(v, 2, &strName);
 
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = _pNetwork->GetPlayerEntityByName(strName);
   return 1;
 };
@@ -612,16 +609,13 @@ static SQInteger CountEntitiesWithName(HSQUIRRELVM v) {
 };
 
 static SQInteger GetEntityWithName(HSQUIRRELVM v) {
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
   const SQChar *strName;
   sq_getstring(v, 2, &strName);
 
   SQInteger iEntity;
   sq_getinteger(v, 3, &iEntity);
 
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = _pNetwork->GetEntityWithName(strName, iEntity);
   return 1;
 };
@@ -915,8 +909,7 @@ static SQInteger GetSound(HSQUIRRELVM v) {
   iChannel = Clamp(iChannel, (SQInteger)0, (SQInteger)31);
 
   // Create a sound instance
-  SqSound::SoundSetup *psnd;
-  if (!sqtNetwork.CreateInstanceOf("Sound", &psnd)) return SQ_ERROR;
+  PushNewInstance(SqSound::SoundSetup, psnd, sqtNetwork, "Sound");
 
   // Copy channel data
   CSoundObject *pso = CExtPlaySound::GetChannel(iChannel);

@@ -37,33 +37,25 @@ static SQInteger Clone(HSQUIRRELVM v, FLOAT3D &val, FLOAT3D &valOther) {
 };
 
 static SQInteger Add(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val + *pOther;
   return 1;
 };
 
 static SQInteger Sub(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val - *pOther;
   return 1;
 };
 
 static SQInteger Mul(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   // Get a matrix value
   GetInstanceValue(FLOATmatrix3D, pOtherMat, v, idxOther);
@@ -90,14 +82,11 @@ static SQInteger Mul(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
 };
 
 static SQInteger Div(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
   // Get a float value
   SQFloat f;
   if (SQ_FAILED(sq_getfloat(v, idxOther, &f))) return sq_throwerror(v, "expected float value");
 
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val / f;
   return 1;
 };
@@ -109,10 +98,7 @@ static SQInteger Mod(HSQUIRRELVM v, FLOAT3D &val, SQInteger idxOther) {
 };
 
 static SQInteger UnaryMinus(HSQUIRRELVM v, FLOAT3D &val) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = -val;
   return 1;
 };
@@ -149,28 +135,19 @@ static SQInteger MaxNorm(HSQUIRRELVM v, int, FLOAT3D &val) {
 };
 
 static SQInteger Normalize(HSQUIRRELVM v, int, FLOAT3D &val) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.Normalize();
   return 1;
 };
 
 static SQInteger SafeNormalize(HSQUIRRELVM v, int, FLOAT3D &val) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.SafeNormalize();
   return 1;
 };
 
 static SQInteger Flip(HSQUIRRELVM v, int, FLOAT3D &val) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.Flip();
   return 1;
 };
@@ -232,46 +209,34 @@ static SQInteger Clone(HSQUIRRELVM v, FLOATplane3D &val, FLOATplane3D &valOther)
 };
 
 static SQInteger Add(HSQUIRRELVM v, FLOATplane3D &val, SQInteger idxOther) {
-  // Create a plane instance
-  FLOATplane3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
-
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
+  PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
   *ppl = val + *pOther;
   return 1;
 };
 
 static SQInteger Sub(HSQUIRRELVM v, FLOATplane3D &val, SQInteger idxOther) {
-  // Create a plane instance
-  FLOATplane3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
-
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
+  PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
   *ppl = val - *pOther;
   return 1;
 };
 
 static SQInteger Mul(HSQUIRRELVM v, FLOATplane3D &val, SQInteger idxOther) {
-  // Create a plane instance
-  FLOATplane3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
-
   // Get a matrix value
   GetInstanceValueVerify(FLOATmatrix3D, pOther, v, idxOther);
 
+  PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
   *ppl = val * *pOther;
   return 1;
 };
 
 static SQInteger UnaryMinus(HSQUIRRELVM v, FLOATplane3D &val) {
-  // Create a plane instance
-  FLOATplane3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
-
+  PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
   *ppl = -val;
   return 1;
 };
@@ -307,8 +272,7 @@ static SQInteger ReferencePoint(HSQUIRRELVM v, int ctArgs, FLOATplane3D &val) {
     pvOrigin = pvOriginArg;
   }
 
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   if (pvOrigin != NULL) {
     *pv = val.ReferencePoint(*pvOrigin);
@@ -334,9 +298,7 @@ static SQInteger GetCoordinate(HSQUIRRELVM v, int, FLOATplane3D &val) {
   SQInteger iIndex;
   sq_getinteger(v, 2, &iIndex);
 
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   val.GetCoordinate(iIndex, *pv);
   return 1;
 };
@@ -344,9 +306,7 @@ static SQInteger GetCoordinate(HSQUIRRELVM v, int, FLOATplane3D &val) {
 static SQInteger ProjectPoint(HSQUIRRELVM v, int, FLOATplane3D &val) {
   GetInstanceValueVerify(FLOAT3D, pvPoint, v, 2);
 
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.ProjectPoint(*pvPoint);
   return 1;
 };
@@ -354,9 +314,7 @@ static SQInteger ProjectPoint(HSQUIRRELVM v, int, FLOATplane3D &val) {
 static SQInteger ProjectDirection(HSQUIRRELVM v, int, FLOATplane3D &val) {
   GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.ProjectDirection(*pvDir);
   return 1;
 };
@@ -365,9 +323,7 @@ static SQInteger DeprojectPoint(HSQUIRRELVM v, int, FLOATplane3D &val) {
   GetInstanceValueVerify(FLOATplane3D, pplOther, v, 2);
   GetInstanceValueVerify(FLOAT3D, pvPoint, v, 3);
 
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.DeprojectPoint(*pplOther, *pvPoint);
   return 1;
 };
@@ -376,9 +332,7 @@ static SQInteger DeprojectDirection(HSQUIRRELVM v, int, FLOATplane3D &val) {
   GetInstanceValueVerify(FLOATplane3D, pplOther, v, 2);
   GetInstanceValueVerify(FLOAT3D, pvDir, v, 3);
 
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.DeprojectDirection(*pplOther, *pvDir);
   return 1;
 };
@@ -421,33 +375,25 @@ static SQInteger Clone(HSQUIRRELVM v, FLOATmatrix3D &val, FLOATmatrix3D &valOthe
 };
 
 static SQInteger Add(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
   // Get a matrix value
   GetInstanceValueVerify(FLOATmatrix3D, pOther, v, idxOther);
 
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   *pm = val + *pOther;
   return 1;
 };
 
 static SQInteger Sub(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
   // Get a matrix value
   GetInstanceValueVerify(FLOATmatrix3D, pOther, v, idxOther);
 
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   *pm = val - *pOther;
   return 1;
 };
 
 static SQInteger Mul(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
 
   // Get a matrix value
   GetInstanceValue(FLOATmatrix3D, pOtherMat, v, idxOther);
@@ -466,23 +412,17 @@ static SQInteger Mul(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
 };
 
 static SQInteger Div(HSQUIRRELVM v, FLOATmatrix3D &val, SQInteger idxOther) {
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
   // Get a float value
   SQFloat f;
   if (SQ_FAILED(sq_getfloat(v, idxOther, &f))) return sq_throwerror(v, "expected float value");
 
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   *pm = val / f;
   return 1;
 };
 
 static SQInteger UnaryMinus(HSQUIRRELVM v, FLOATmatrix3D &val) {
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   *pm = !val;
   return 1;
 };
@@ -530,10 +470,7 @@ static SQInteger GetRow(HSQUIRRELVM v, int, FLOATmatrix3D &val) {
   SQInteger i;
   if (SQ_FAILED(sq_getinteger(v, 2, &i))) return sq_throwerror(v, "expected number value");
 
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.GetRow(i);
   return 1;
 };
@@ -543,10 +480,7 @@ static SQInteger GetColumn(HSQUIRRELVM v, int, FLOATmatrix3D &val) {
   SQInteger i;
   if (SQ_FAILED(sq_getinteger(v, 2, &i))) return sq_throwerror(v, "expected number value");
 
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.GetColumn(i);
   return 1;
 };
@@ -599,10 +533,7 @@ static SQInteger Clone(HSQUIRRELVM v, FLOATaabbox3D &val, FLOATaabbox3D &valOthe
 static SQInteger AddPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
   GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
-  // Create a box instance
-  FLOATaabbox3D *pbox;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
-
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   *pbox = val;
   *pbox += *pOther;
   return 1;
@@ -611,10 +542,7 @@ static SQInteger AddPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
 static SQInteger SubPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
   GetInstanceValueVerify(FLOAT3D, pOther, v, idxOther);
 
-  // Create a box instance
-  FLOATaabbox3D *pbox;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
-
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   *pbox = val;
   *pbox -= *pOther;
   return 1;
@@ -623,10 +551,7 @@ static SQInteger SubPos(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
 static SQInteger Union(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
   GetInstanceValueVerify(FLOATaabbox3D, pOther, v, idxOther);
 
-  // Create a box instance
-  FLOATaabbox3D *pbox;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
-
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   *pbox = val;
   *pbox |= *pOther;
   return 1;
@@ -635,10 +560,7 @@ static SQInteger Union(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
 static SQInteger Intersection(HSQUIRRELVM v, FLOATaabbox3D &val, SQInteger idxOther) {
   GetInstanceValueVerify(FLOATaabbox3D, pOther, v, idxOther);
 
-  // Create a box instance
-  FLOATaabbox3D *pbox;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
-
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   *pbox = val;
   *pbox &= *pOther;
   return 1;
@@ -670,19 +592,13 @@ static SQInteger SetToNormalizedEmpty(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
 };
 
 static SQInteger Size(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.Size();
   return 1;
 };
 
 static SQInteger Center(HSQUIRRELVM v, int, FLOATaabbox3D &val) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.Center();
   return 1;
 };
@@ -844,10 +760,7 @@ static SQInteger Translate_AbsoluteSystem(HSQUIRRELVM v, int, CPlacement3D &val)
 };
 
 static SQInteger GetDirectionVector(HSQUIRRELVM v, int, CPlacement3D &val) {
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   val.GetDirectionVector(*pv);
   return 1;
 };
@@ -969,10 +882,7 @@ static SQInteger MakeRotationMatrix(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   ::MakeRotationMatrix(*pm, *pv);
   return 1;
 };
@@ -981,10 +891,7 @@ static SQInteger MakeRotationMatrixFast(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   ::MakeRotationMatrixFast(*pm, *pv);
   return 1;
 };
@@ -993,10 +900,7 @@ static SQInteger MakeInverseRotationMatrix(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   ::MakeInverseRotationMatrix(*pm, *pv);
   return 1;
 };
@@ -1005,10 +909,7 @@ static SQInteger MakeInverseRotationMatrixFast(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   ::MakeInverseRotationMatrixFast(*pm, *pv);
   return 1;
 };
@@ -1017,10 +918,7 @@ static SQInteger DecomposeRotationMatrix(HSQUIRRELVM v) {
   // Get a matrix value
   GetInstanceValueVerify(FLOATmatrix3D, pm, v, 2);
 
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   ::DecomposeRotationMatrix(*pv, *pm);
   return 1;
 };
@@ -1029,10 +927,7 @@ static SQInteger DecomposeRotationMatrixNoSnap(HSQUIRRELVM v) {
   // Get a matrix value
   GetInstanceValueVerify(FLOATmatrix3D, pm, v, 2);
 
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   ::DecomposeRotationMatrixNoSnap(*pv, *pm);
   return 1;
 };
@@ -1041,10 +936,7 @@ static SQInteger AnglesToDirectionVector(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pvAngles, v, 2);
 
-  // Create a vector instance
-  FLOAT3D *pvDir;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pvDir)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pvDir, GetVMClass(v).Root(), "FLOAT3D");
   ::AnglesToDirectionVector(*pvAngles, *pvDir);
   return 1;
 };
@@ -1053,10 +945,7 @@ static SQInteger DirectionVectorToAngles(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
-  // Create a vector instance
-  FLOAT3D *pvAngles;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pvAngles)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pvAngles, GetVMClass(v).Root(), "FLOAT3D");
   ::DirectionVectorToAngles(*pvDir, *pvAngles);
   return 1;
 };
@@ -1065,10 +954,7 @@ static SQInteger DirectionVectorToAnglesNoSnap(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
-  // Create a vector instance
-  FLOAT3D *pvAngles;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pvAngles)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pvAngles, GetVMClass(v).Root(), "FLOAT3D");
   ::DirectionVectorToAnglesNoSnap(*pvDir, *pvAngles);
   return 1;
 };
@@ -1077,10 +963,7 @@ static SQInteger UpVectorToAngles(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
-  // Create a vector instance
-  FLOAT3D *pvAngles;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pvAngles)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pvAngles, GetVMClass(v).Root(), "FLOAT3D");
   ::UpVectorToAngles(*pvDir, *pvAngles);
   return 1;
 };

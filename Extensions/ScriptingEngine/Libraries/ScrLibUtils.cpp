@@ -49,10 +49,7 @@ static SQInteger Equal(HSQUIRRELVM v, int, CBrushPolygon *&val) {
 
 static SQInteger GetPlane(HSQUIRRELVM v, int, CBrushPolygon *&val) {
   ASSERT_POLYGON;
-
-  FLOATplane3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
-
+  PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
   *ppl = val->bpo_pbplPlane->bpl_plAbsolute;
   return 1;
 };
@@ -158,49 +155,37 @@ static SQInteger SetTestType(HSQUIRRELVM v, RayHolder &val, SQInteger idxValue) 
 }
 
 static SQInteger GetPlacement(HSQUIRRELVM v, int, RayHolder &val) {
-  CPlacement3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CPlacement3D", &ppl)) return SQ_ERROR;
-
+  PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = val.cr.cl_plRay;
   return 1;
 };
 
 static SQInteger GetEntity(HSQUIRRELVM v, int, RayHolder &val) {
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val.cr.cr_penOrigin;
   return 1;
 };
 
 static SQInteger GetOrigin(HSQUIRRELVM v, int, RayHolder &val) {
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.cr.cr_vOrigin;
   return 1;
 };
 
 static SQInteger GetTarget(HSQUIRRELVM v, int, RayHolder &val) {
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.cr.cr_vTarget;
   return 1;
 };
 
 static SQInteger GetHitEntity(HSQUIRRELVM v, int, RayHolder &val) {
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val.cr.cr_penHit;
   return 1;
 };
 
 static SQInteger GetHitPoint(HSQUIRRELVM v, int, RayHolder &val) {
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.cr.cr_vHit;
   return 1;
 };
@@ -211,9 +196,7 @@ static SQInteger GetHitDistance(HSQUIRRELVM v, int, RayHolder &val) {
 };
 
 static SQInteger GetHitPolygon(HSQUIRRELVM v, int, RayHolder &val) {
-  CBrushPolygon **pbpol;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CBrushPolygon", &pbpol)) return SQ_ERROR;
-
+  PushNewInstance(CBrushPolygon *, pbpol, GetVMClass(v).Root(), "CBrushPolygon");
   *pbpol = val.cr.cr_pbpoBrushPolygon;
   return 1;
 };

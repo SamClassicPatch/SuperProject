@@ -75,12 +75,7 @@ static SQInteger GetLerpFactor2(HSQUIRRELVM v) {
 
 static SQInteger GetHighPrecisionTimer(HSQUIRRELVM v) {
   Table sqtTimer(v, 1);
-
-  // Create a timer value instance
-  CTimerValue *ptv;
-  if (!sqtTimer.CreateInstanceOf("Value", &ptv)) return SQ_ERROR;
-
-  // And set its value
+  PushNewInstance(CTimerValue, ptv, sqtTimer, "Value");
   *ptv = _pTimer->GetHighPrecisionTimer();
   return 1;
 };

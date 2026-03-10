@@ -110,6 +110,15 @@ class TableBase : public Object {
       if (ppInstance != NULL) *ppInstance = pInstance;
       return true;
     };
+
+    // Shortcut for creating a new instance, pushing it on top of the stack and retrieving a pointer to its value
+    #define PushNewInstance(_PointerType, _PointerVariable, _Table, _ClassName) \
+      _PointerType *_PointerVariable; \
+      { if (!(_Table).CreateInstanceOf(_ClassName, &_PointerVariable)) return SQ_ERROR; }
+
+    // Shortcut for creating a new pointer instance with some data and pushing it on top of the stack
+    #define PushNewPointer(_Table, _ClassName, _Data) \
+      { if (!(_Table).CreatePointerInstanceOf(_ClassName, &(_Data))) return SQ_ERROR; }
 };
 
 // Class that represents or references a Squirrel table

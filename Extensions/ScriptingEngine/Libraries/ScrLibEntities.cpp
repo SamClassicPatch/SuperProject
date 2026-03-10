@@ -118,22 +118,14 @@ static SQInteger IsPredictable(HSQUIRRELVM v, int, CEntityPointer &val) {
 
 static SQInteger GetPredictor(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetPredictor();
   return 1;
 };
 
 static SQInteger GetPredicted(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetPredicted();
   return 1;
 };
@@ -146,33 +138,21 @@ static SQInteger GetSpatialClassificationRadius(HSQUIRRELVM v, int, CEntityPoint
 
 static SQInteger GetSpatialClassificationBox(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create a box instance
-  FLOATaabbox3D *pbox;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
-
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   *pbox = val->en_boxSpatialClassification;
   return 1;
 };
 
 static SQInteger GetBoundingBox(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create a box instance
-  FLOATaabbox3D *pbox;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
-
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   val->GetBoundingBox(*pbox);
   return 1;
 };
 
 static SQInteger GetSize(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create a box instance
-  FLOATaabbox3D *pbox;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
-
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   val->GetSize(*pbox);
   return 1;
 };
@@ -187,10 +167,7 @@ static SQInteger GetEntityPointRatio(HSQUIRRELVM v, int ctArgs, CEntityPointer &
   SQBool bLerped = false;
   if (ctArgs > 1) sq_getbool(v, 3, &bLerped);
 
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   val->GetEntityPointRatio(*pvRatio, *pv, bLerped);
   return 1;
 };
@@ -201,43 +178,28 @@ static SQInteger GetEntityPointFixed(HSQUIRRELVM v, int, CEntityPointer &val) {
   // Get fixed point
   GetInstanceValueVerify(FLOAT3D, pvFixed, v, 2);
 
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   val->GetEntityPointFixed(*pvFixed, *pv);
   return 1;
 };
 
 static SQInteger GetPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create a placement instance
-  CPlacement3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CPlacement3D", &ppl)) return SQ_ERROR;
-
+  PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = val->GetPlacement();
   return 1;
 };
 
 static SQInteger GetLerpedPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create a placement instance
-  CPlacement3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CPlacement3D", &ppl)) return SQ_ERROR;
-
+  PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = val->GetLerpedPlacement();
   return 1;
 };
 
 static SQInteger GetRotationMatrix(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create a matrix instance
-  FLOATmatrix3D *pm;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
-
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   *pm = val->GetRotationMatrix();
   return 1;
 };
@@ -253,32 +215,21 @@ static SQInteger GetViewpoint(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
   SQBool bLerped = false;
   if (ctArgs > 0) sq_getbool(v, 2, &bLerped);
 
-  // Create a placement instance
-  CPlacement3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CPlacement3D", &ppl)) return SQ_ERROR;
-
+  PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = IWorld::GetViewpoint(penPlayer, bLerped);
   return 1;
 };
 
 static SQInteger GetPlacementRelativeToParent(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create a placement instance
-  CPlacement3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CPlacement3D", &ppl)) return SQ_ERROR;
-
+  PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = val->en_plRelativeToParent;
   return 1;
 };
 
 static SQInteger GetParent(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetParent();
   return 1;
 };
@@ -289,10 +240,7 @@ static SQInteger GetChildOfClass(HSQUIRRELVM v, int, CEntityPointer &val) {
   const SQChar *str;
   sq_getstring(v, 2, &str);
 
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetChildOfClass(str);
   return 1;
 };
@@ -311,22 +259,14 @@ static SQInteger GetDescription(HSQUIRRELVM v, int, CEntityPointer &val) {
 
 static SQInteger GetTarget(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
-
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetTarget();
   return 1;
 };
 
 static SQInteger GetClassificationBoxStretch(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
-
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val->GetClassificationBoxStretch();
   return 1;
 };
@@ -345,10 +285,7 @@ static SQInteger GetHealth(HSQUIRRELVM v, int, CEntityPointer &val) {
 
 static SQInteger GetDesiredTranslationRelative(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *pv = penMovable->en_vDesiredTranslationRelative;
@@ -357,10 +294,7 @@ static SQInteger GetDesiredTranslationRelative(HSQUIRRELVM v, CEntityPointer &va
 
 static SQInteger GetDesiredRotationRelative(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *pv = penMovable->en_aDesiredRotationRelative;
@@ -369,10 +303,7 @@ static SQInteger GetDesiredRotationRelative(HSQUIRRELVM v, CEntityPointer &val) 
 
 static SQInteger GetCurrentTranslationAbsolute(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *pv = penMovable->en_vCurrentTranslationAbsolute;
@@ -381,10 +312,7 @@ static SQInteger GetCurrentTranslationAbsolute(HSQUIRRELVM v, CEntityPointer &va
 
 static SQInteger GetCurrentRotationAbsolute(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *pv = penMovable->en_aCurrentRotationAbsolute;
@@ -393,10 +321,7 @@ static SQInteger GetCurrentRotationAbsolute(HSQUIRRELVM v, CEntityPointer &val) 
 
 static SQInteger GetReference(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *ppen = penMovable->en_penReference;
@@ -405,10 +330,7 @@ static SQInteger GetReference(HSQUIRRELVM v, CEntityPointer &val) {
 
 static SQInteger GetReferencePlane(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *pv = penMovable->en_vReferencePlane;
@@ -424,10 +346,7 @@ static SQInteger GetReferenceSurface(HSQUIRRELVM v, CEntityPointer &val) {
 
 static SQInteger GetLastValidReference(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *ppen = penMovable->en_penLastValidReference;
@@ -492,10 +411,7 @@ static SQInteger GetImmersionFactor(HSQUIRRELVM v, CEntityPointer &val) {
 
 static SQInteger GetGravityDir(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *pv = penMovable->en_vGravityDir;
@@ -518,10 +434,7 @@ static SQInteger GetGravityV(HSQUIRRELVM v, CEntityPointer &val) {
 
 static SQInteger GetForceDir(HSQUIRRELVM v, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a vector instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *pv = penMovable->en_vForceDir;
@@ -621,10 +534,7 @@ static SQInteger GetCollisionDamageFactor(HSQUIRRELVM v, CEntityPointer &val) {
 
 static SQInteger GetLastPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a placement instance
-  CPlacement3D *ppl;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CPlacement3D", &ppl)) return SQ_ERROR;
+  PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *ppl = penMovable->en_plLastPlacement;
@@ -633,10 +543,7 @@ static SQInteger GetLastPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
 
 static SQInteger GetPolygonUnderneath(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create a polygon instance
-  CBrushPolygon **pbpol;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CBrushPolygon", &pbpol)) return SQ_ERROR;
+  PushNewInstance(CBrushPolygon *, pbpol, GetVMClass(v).Root(), "CBrushPolygon");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *pbpol = penMovable->en_pbpoStandOn;
@@ -669,9 +576,7 @@ static SQInteger GetReferenceHeadingDirection(HSQUIRRELVM v, int, CEntityPointer
   SQFloat fH;
   sq_getfloat(v, 3, &fH);
 
-  // Create a placement instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   penMovable->GetReferenceHeadingDirection(*pvRef, fH, *pv);
@@ -684,9 +589,7 @@ static SQInteger GetHeadingDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
   SQFloat fH;
   sq_getfloat(v, 2, &fH);
 
-  // Create a placement instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   penMovable->GetHeadingDirection(fH, *pv);
@@ -699,9 +602,7 @@ static SQInteger GetPitchDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
   SQFloat fH;
   sq_getfloat(v, 2, &fH);
 
-  // Create a placement instance
-  FLOAT3D *pv;
-  if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   penMovable->GetPitchDirection(fH, *pv);
@@ -710,10 +611,7 @@ static SQInteger GetPitchDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
 
 static SQInteger MiscDamageInflictor(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-
-  // Create an entity instance
-  CEntityPointer *ppen;
-  if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *ppen = penMovable->MiscDamageInflictor();
@@ -841,10 +739,8 @@ static SQInteger GetPropertyForId(HSQUIRRELVM v, int, CEntityPointer &val) {
   if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
 
   // Create a property instance
-  CEntityProperty **ppep;
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  if (!sqtEntities.CreateInstanceOf("Property", &ppep)) return SQ_ERROR;
-
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
   *ppep = pepCheck;
   return 1;
 };
@@ -861,10 +757,8 @@ static SQInteger GetPropertyForHash(HSQUIRRELVM v, int, CEntityPointer &val) {
   if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
 
   // Create a property instance
-  CEntityProperty **ppep;
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  if (!sqtEntities.CreateInstanceOf("Property", &ppep)) return SQ_ERROR;
-
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
   *ppep = pepCheck;
   return 1;
 };
@@ -883,10 +777,8 @@ static SQInteger GetPropertyForIdOrOffset(HSQUIRRELVM v, int, CEntityPointer &va
   if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
 
   // Create a property instance
-  CEntityProperty **ppep;
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  if (!sqtEntities.CreateInstanceOf("Property", &ppep)) return SQ_ERROR;
-
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
   *ppep = pepCheck;
   return 1;
 };
@@ -905,10 +797,8 @@ static SQInteger GetPropertyForName(HSQUIRRELVM v, int, CEntityPointer &val) {
   if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
 
   // Create a property instance
-  CEntityProperty **ppep;
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  if (!sqtEntities.CreateInstanceOf("Property", &ppep)) return SQ_ERROR;
-
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
   *ppep = pepCheck;
   return 1;
 };
@@ -928,10 +818,8 @@ static SQInteger GetPropertyForNameOrId(HSQUIRRELVM v, int, CEntityPointer &val)
   if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
 
   // Create a property instance
-  CEntityProperty **ppep;
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  if (!sqtEntities.CreateInstanceOf("Property", &ppep)) return SQ_ERROR;
-
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
   *ppep = pepCheck;
   return 1;
 };
@@ -962,10 +850,8 @@ static SQInteger GetPropertyForVariable(HSQUIRRELVM v, int, CEntityPointer &val)
   if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
 
   // Create a property instance
-  CEntityProperty **ppep;
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  if (!sqtEntities.CreateInstanceOf("Property", &ppep)) return SQ_ERROR;
-
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
   *ppep = pepCheck;
   return 1;
 };
@@ -1008,39 +894,33 @@ static SQInteger GetPropValue(HSQUIRRELVM v, int, CEntityPointer &val) {
     } break;
 
     case CEntityProperty::EPT_ENTITYPTR: {
-      CEntityPointer *ppen;
-      if (!GetVMClass(v).Root().CreateInstanceOf("CEntityPointer", &ppen)) return SQ_ERROR;
+      PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
       *ppen = ENTITYPROPERTY(pen, ep.ep_slOffset, CEntityPointer);
     } break;
 
     case CEntityProperty::EPT_FLOATAABBOX3D: {
-      FLOATaabbox3D *pbox;
-      if (!GetVMClass(v).Root().CreateInstanceOf("FLOATaabbox3D", &pbox)) return SQ_ERROR;
+      PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
       *pbox = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATaabbox3D);
     } break;
 
     case CEntityProperty::EPT_FLOAT3D:
     case CEntityProperty::EPT_ANGLE3D: {
-      FLOAT3D *pv;
-      if (!GetVMClass(v).Root().CreateInstanceOf("FLOAT3D", &pv)) return SQ_ERROR;
+      PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
       *pv = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOAT3D);
     } break;
 
     case CEntityProperty::EPT_FLOATplane3D: {
-      FLOATplane3D *ppl;
-      if (!GetVMClass(v).Root().CreateInstanceOf("FLOATplane3D", &ppl)) return SQ_ERROR;
+      PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
       *ppl = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATplane3D);
     } break;
 
     case CEntityProperty::EPT_PLACEMENT3D: {
-      CPlacement3D *ppl;
-      if (!GetVMClass(v).Root().CreateInstanceOf("CPlacement3D", &ppl)) return SQ_ERROR;
+      PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
       *ppl = ENTITYPROPERTY(pen, ep.ep_slOffset, CPlacement3D);
     } break;
 
     case CEntityProperty::EPT_FLOATMATRIX3D: {
-      FLOATmatrix3D *pm;
-      if (!GetVMClass(v).Root().CreateInstanceOf("FLOATmatrix3D", &pm)) return SQ_ERROR;
+      PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
       *pm = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATmatrix3D);
     } break;
 
