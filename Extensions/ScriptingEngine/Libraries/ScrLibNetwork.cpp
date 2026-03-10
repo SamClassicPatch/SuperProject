@@ -19,6 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Core/Networking/ExtPackets.h>
 #include <Core/Networking/NetworkFunctions.h>
 
+#include <Extras/XGizmo/Interfaces/Sounds.h>
+
 // Make sure the client is currently running a server
 #define ASSERT_SERVER { if (!_pNetwork->IsServer()) return sq_throwerror(v, "cannot call this function while not hosting a game"); }
 
@@ -441,40 +443,79 @@ static SQInteger IsPaused(HSQUIRRELVM v, int, SoundSetup &val) {
   return 1;
 };
 
-static SQInteger Play(HSQUIRRELVM v, int, SoundSetup &val) {
-  ASSERT_SERVER;
+static SQInteger Play(HSQUIRRELVM v, int ctArgs, SoundSetup &val) {
+  SQBool bLocal = SQFalse;
+  if (ctArgs > 0) sq_getbool(v, 2, &bLocal);
 
-  CExtPlaySound pck;
-  pck("strFile", val.strFile);
-  pck("iChannel", (int)val.iChannel);
-  pck("ulFlags", (int)val.ulFlags);
-  pck("fDelay", val.fDelay);
-  pck("fOffset", val.fOffset);
+  // Play the sound locally
+  if (bLocal) {
+    CSoundObject &so = *CExtPlaySound::GetChannel(val.iChannel);
 
-  pck("fVolumeL", val.fVolumeL);
-  pck("fVolumeR", val.fVolumeR);
-  pck("fFilterL", val.fFilterL);
-  pck("fFilterR", val.fFilterR);
-  pck("fPitch", val.fPitch);
-  pck.SendToClients();
+    // Set sound parameters for a specific channel
+    so.SetDelay(val.fDelay);
+    so.SetVolume(val.fVolumeL, val.fVolumeR);
+    so.SetFilter(val.fFilterL, val.fFilterR);
+    so.SetPitch(val.fPitch);
+
+    // Play a new sound
+    if (val.strFile != "") {
+      try {
+        so.Play_t(val.strFile, val.ulFlags);
+      } catch (char *strError) {
+        CPrintF(TRANS("Cannot play '%s' sound: %s\n"), val.strFile.str_String, strError);
+      }
+    }
+
+    // Set offset after playing the sound
+    ISounds::SetOffset(so, val.fOffset, val.fOffset);
+
+  // Send packet to all clients to play the sound
+  } else {
+    ASSERT_SERVER;
+
+    CExtPlaySound pck;
+    pck("strFile", val.strFile);
+    pck("iChannel", (int)val.iChannel);
+    pck("ulFlags", (int)val.ulFlags);
+    pck("fDelay", val.fDelay);
+    pck("fOffset", val.fOffset);
+
+    pck("fVolumeL", val.fVolumeL);
+    pck("fVolumeR", val.fVolumeR);
+    pck("fFilterL", val.fFilterL);
+    pck("fFilterR", val.fFilterR);
+    pck("fPitch", val.fPitch);
+    pck.SendToClients();
+  }
   return 0;
 };
 
-static SQInteger Stop(HSQUIRRELVM v, int, SoundSetup &val) {
-  ASSERT_SERVER;
+static SQInteger Stop(HSQUIRRELVM v, int ctArgs, SoundSetup &val) {
+  SQBool bLocal = SQFalse;
+  if (ctArgs > 0) sq_getbool(v, 2, &bLocal);
 
-  CExtPlaySound pck;
-  pck("strFile", "/stop/");
-  pck("iChannel", (int)val.iChannel);
-  pck.SendToClients();
+  // Stop the sound locally
+  if (bLocal) {
+    CSoundObject *pso = CExtPlaySound::GetChannel(val.iChannel);
+    pso->Stop();
+
+  // Send packet to all clients to stop the sound
+  } else {
+    ASSERT_SERVER;
+
+    CExtPlaySound pck;
+    pck("strFile", "/stop/");
+    pck("iChannel", (int)val.iChannel);
+    pck.SendToClients();
+  }
   return 0;
 };
 
 static Method<SoundSetup> _aMethods[] = {
   { "IsPlaying", &IsPlaying, 1, "." },
   { "IsPaused",  &IsPaused,  1, "." },
-  { "Play",      &Play,      1, "." },
-  { "Stop",      &Stop,      1, "." },
+  { "Play",      &Play,     -1, ".b" },
+  { "Stop",      &Stop,     -1, ".b" },
 };
 
 }; // namespace
