@@ -198,6 +198,14 @@ __forceinline VM &GetVMClass(HSQUIRRELVM v) {
   return *(VM *)pVM;
 };
 
+// Macro for marking specific Squirrel functions as restricted for clients that are currently playing on a server
+// i.e. not a host, playing online and with any local players that can be controlled (instead of observing others)
+#define SQ_RESTRICT(_SqVM) { \
+  if (!_pNetwork->IsServer() && _pNetwork->IsNetworkEnabled() && IWorld::AnyLocalPlayers()) { \
+    return sq_throwerror((_SqVM), "the usage of this function is restricted for server players"); \
+  } \
+}
+
 }; // namespace
 
 #endif

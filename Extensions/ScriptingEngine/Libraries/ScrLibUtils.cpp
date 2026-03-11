@@ -95,6 +95,8 @@ inline FLOAT3D CalculateRayTarget(const CPlacement3D &plRay, FLOAT fDistance) {
 };
 
 static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, RayHolder &val) {
+  SQ_RESTRICT(v);
+
   if (ctArgs < 2 || ctArgs > 3) {
     return sq_throwerror(v, "expected 2 or 3 arguments in the CCastRay constructor");
   }
@@ -155,47 +157,55 @@ static SQInteger SetTestType(HSQUIRRELVM v, RayHolder &val, SQInteger idxValue) 
 }
 
 static SQInteger GetPlacement(HSQUIRRELVM v, int, RayHolder &val) {
+  SQ_RESTRICT(v);
   PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = val.cr.cl_plRay;
   return 1;
 };
 
 static SQInteger GetEntity(HSQUIRRELVM v, int, RayHolder &val) {
+  SQ_RESTRICT(v);
   PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val.cr.cr_penOrigin;
   return 1;
 };
 
 static SQInteger GetOrigin(HSQUIRRELVM v, int, RayHolder &val) {
+  SQ_RESTRICT(v);
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.cr.cr_vOrigin;
   return 1;
 };
 
 static SQInteger GetTarget(HSQUIRRELVM v, int, RayHolder &val) {
+  SQ_RESTRICT(v);
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.cr.cr_vTarget;
   return 1;
 };
 
 static SQInteger GetHitEntity(HSQUIRRELVM v, int, RayHolder &val) {
+  SQ_RESTRICT(v);
   PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val.cr.cr_penHit;
   return 1;
 };
 
 static SQInteger GetHitPoint(HSQUIRRELVM v, int, RayHolder &val) {
+  SQ_RESTRICT(v);
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val.cr.cr_vHit;
   return 1;
 };
 
 static SQInteger GetHitDistance(HSQUIRRELVM v, int, RayHolder &val) {
+  SQ_RESTRICT(v);
   sq_pushfloat(v, val.cr.cr_fHitDistance);
   return 1;
 };
 
 static SQInteger GetHitPolygon(HSQUIRRELVM v, int, RayHolder &val) {
+  SQ_RESTRICT(v);
   PushNewInstance(CBrushPolygon *, pbpol, GetVMClass(v).Root(), "CBrushPolygon");
   *pbpol = val.cr.cr_pbpoBrushPolygon;
   return 1;
@@ -208,6 +218,7 @@ inline BOOL IsGameOn(void) {
 
 static SQInteger Cast(HSQUIRRELVM v, int, RayHolder &val) {
   if (!IsGameOn()) return sq_throwerror(v, "cannot cast rays within worlds while no game is running");
+  SQ_RESTRICT(v);
 
   val.cr.Cast(IWorld::GetWorld());
   return 0;
@@ -215,6 +226,7 @@ static SQInteger Cast(HSQUIRRELVM v, int, RayHolder &val) {
 
 static SQInteger ContinueCast(HSQUIRRELVM v, int, RayHolder &val) {
   if (!IsGameOn()) return sq_throwerror(v, "cannot cast rays within worlds while no game is running");
+  SQ_RESTRICT(v);
 
   val.cr.ContinueCast(IWorld::GetWorld());
   return 0;

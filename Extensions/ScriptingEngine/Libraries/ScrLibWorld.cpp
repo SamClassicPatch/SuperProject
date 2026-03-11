@@ -72,6 +72,7 @@ static SQInteger GetSpawnFlags(HSQUIRRELVM v) {
 
 static SQInteger GetEntities(HSQUIRRELVM v) {
   ASSERT_WORLD;
+  SQ_RESTRICT(v);
 
   SQBool bPredictors;
   sq_getbool(v, 2, &bPredictors);
@@ -98,6 +99,7 @@ static SQInteger GetEntities(HSQUIRRELVM v) {
 
 static SQInteger FindEntityByID(HSQUIRRELVM v) {
   ASSERT_WORLD;
+  SQ_RESTRICT(v);
 
   SQInteger iEntityID;
   sq_getinteger(v, 2, &iEntityID);
@@ -109,6 +111,7 @@ static SQInteger FindEntityByID(HSQUIRRELVM v) {
 
 static SQInteger FindClasses(HSQUIRRELVM v) {
   ASSERT_WORLD;
+  SQ_RESTRICT(v);
 
   const SQChar *strClass;
   sq_getstring(v, 2, &strClass);
@@ -132,6 +135,7 @@ static SQInteger FindClasses(HSQUIRRELVM v) {
 
 static SQInteger FindClassesByID(HSQUIRRELVM v) {
   ASSERT_WORLD;
+  SQ_RESTRICT(v);
 
   SQInteger iClassID;
   sq_getinteger(v, 2, &iClassID);

@@ -634,6 +634,8 @@ static SQInteger GetGameTime(HSQUIRRELVM v) {
 };
 
 static SQInteger GetPlayerEntityByName(HSQUIRRELVM v) {
+  SQ_RESTRICT(v);
+
   const SQChar *strName;
   sq_getstring(v, 2, &strName);
 
@@ -643,6 +645,8 @@ static SQInteger GetPlayerEntityByName(HSQUIRRELVM v) {
 };
 
 static SQInteger CountEntitiesWithName(HSQUIRRELVM v) {
+  SQ_RESTRICT(v);
+
   const SQChar *strName;
   sq_getstring(v, 2, &strName);
   sq_pushinteger(v, _pNetwork->GetNumberOfEntitiesWithName(strName));
@@ -650,6 +654,8 @@ static SQInteger CountEntitiesWithName(HSQUIRRELVM v) {
 };
 
 static SQInteger GetEntityWithName(HSQUIRRELVM v) {
+  SQ_RESTRICT(v);
+
   const SQChar *strName;
   sq_getstring(v, 2, &strName);
 
