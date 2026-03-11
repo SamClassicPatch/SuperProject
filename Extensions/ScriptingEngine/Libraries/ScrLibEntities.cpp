@@ -1722,7 +1722,7 @@ static SQRegFunction _aEntitiesFuncs[] = {
 };
 
 void VM::RegisterEntities(void) {
-  // [Cecil] NOTE: Everything entity-related should be read-only!!!
+  // Everything entity-related should be read-only!!!
   // Creation and modification should be handled exclusively through extension packets for proper synchronization!
   Table sqtEntities = Root().RegisterTable("Entities");
   INDEX i;

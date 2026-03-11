@@ -203,8 +203,7 @@ static SQRegFunction _aWorldFuncs[] = {
 };
 
 void VM::RegisterWorld(void) {
-  // [Cecil] NOTE: Everything world-related should be read-only!!! Entity creation and stuff is under Entities library!
-  // Also raycasting (CCastRay) should be added as a separate class in the Utils library!
+  // Everything world-related should be read-only!!!
   Table sqtWorld = Root().RegisterTable("World");
   INDEX i;
 

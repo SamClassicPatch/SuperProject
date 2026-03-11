@@ -25,30 +25,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
-// Flag for initializing specific APIs for a VM
-enum InitFlagsVM {
-  VMLIB_NONE      = 0,
-
-  // Squirrel STL
-  VMLIB_STDBLOB   = (1 << 0), // Blob library
-  VMLIB_STDIO     = (1 << 1), // IO library
-  VMLIB_STDSYSTEM = (1 << 2), // System library
-  VMLIB_STDMATH   = (1 << 3), // Math library
-  VMLIB_STDSTRING = (1 << 4), // String library
-
-  // Serious Engine API
-  VMLIB_ENTITIES   = (1 << 10),
-  VMLIB_FILESYSTEM = (1 << 11),
-  VMLIB_INPUT      = (1 << 12),
-  VMLIB_MATH       = (1 << 13),
-  VMLIB_MESSAGE    = (1 << 14),
-  VMLIB_NETWORK    = (1 << 15),
-  VMLIB_SHELL      = (1 << 16),
-  VMLIB_TIMER      = (1 << 17),
-  VMLIB_UTILS      = (1 << 18),
-  VMLIB_WORLD      = (1 << 19),
-};
-
 class VM {
   public:
     // Callback for handling return values at the end of the execution
@@ -64,7 +40,7 @@ class VM {
     INDEX m_iScriptDepth; // Included scripts depth
 
   public:
-    VM(ULONG ulInitFlags = VMLIB_NONE);
+    VM(bool bRegisterEngineInterfaces);
     ~VM();
 
     // Toggle debug output
@@ -188,7 +164,7 @@ class VM {
     // Display current contents of the stack in console
     void PrintCurrentStack(bool bOnlyCount = false, const char *strLabel = "Current stack");
 
-  // Serious Engine libraries
+  // Built-in interfaces
   private:
 
     void RegisterEntities(void);

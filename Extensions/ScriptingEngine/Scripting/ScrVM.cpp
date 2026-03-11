@@ -16,9 +16,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "StdH.h"
 
 // Squirrel standard library
-#include <Extras/squirrel3/include/sqstdblob.h>
-#include <Extras/squirrel3/include/sqstdsystem.h>
-#include <Extras/squirrel3/include/sqstdio.h>
 #include <Extras/squirrel3/include/sqstdmath.h>
 #include <Extras/squirrel3/include/sqstdstring.h>
 #include <Extras/squirrel3/include/sqstdaux.h>
@@ -167,42 +164,38 @@ SQInteger VM::HandlerRuntimeError(HSQUIRRELVM v) {
   return SQ_OK;
 };
 
-VM::VM(ULONG ulInitFlags) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDepth(0)
+VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDepth(0)
 {
   // Create a new VM and bind this wrapper class to it
   m_vm = sq_open(1024);
   sq_setsharedforeignptr(m_vm, this);
 
-  // Register things in the root table
+  // Register standard libraries in the root table and set handler functions
   sq_pushroottable(m_vm);
-  {
-    // Register standard libraries
-    if (ulInitFlags & VMLIB_STDBLOB)   sqstd_register_bloblib(m_vm);
-    if (ulInitFlags & VMLIB_STDIO)     sqstd_register_iolib(m_vm);
-    if (ulInitFlags & VMLIB_STDSYSTEM) sqstd_register_systemlib(m_vm);
-    if (ulInitFlags & VMLIB_STDMATH)   sqstd_register_mathlib(m_vm);
-    if (ulInitFlags & VMLIB_STDSTRING) sqstd_register_stringlib(m_vm);
 
-    // Register engine libraries
-    if (ulInitFlags & VMLIB_ENTITIES)   RegisterEntities();
-    if (ulInitFlags & VMLIB_FILESYSTEM) RegisterFileSystem();
-    if (ulInitFlags & VMLIB_INPUT)      RegisterInput();
-    if (ulInitFlags & VMLIB_MATH)       RegisterMath();
-    if (ulInitFlags & VMLIB_MESSAGE)    RegisterMessage();
-    if (ulInitFlags & VMLIB_NETWORK)    RegisterNetwork();
-    if (ulInitFlags & VMLIB_SHELL)      RegisterShell();
-    if (ulInitFlags & VMLIB_TIMER)      RegisterTimer();
-    if (ulInitFlags & VMLIB_UTILS)      RegisterUtils();
-    if (ulInitFlags & VMLIB_WORLD)      RegisterWorld();
+  sqstd_register_mathlib(m_vm);
+  sqstd_register_stringlib(m_vm);
 
-    // Set handler functions
-    sq_setprintfunc(m_vm, &HandlerPrintF, &HandlerErrorF);
-    sq_setcompilererrorhandler(m_vm, &HandlerCompilerError);
+  sq_setprintfunc(m_vm, &HandlerPrintF, &HandlerErrorF);
+  sq_setcompilererrorhandler(m_vm, &HandlerCompilerError);
+  sq_newclosure(m_vm, &HandlerRuntimeError, 0);
+  sq_seterrorhandler(m_vm);
 
-    sq_newclosure(m_vm, &HandlerRuntimeError, 0);
-    sq_seterrorhandler(m_vm);
-  }
   sq_poptop(m_vm);
+
+  // Register built-in libraries
+  if (bRegisterEngineInterfaces) {
+    RegisterEntities();
+    RegisterFileSystem();
+    RegisterInput();
+    RegisterMath();
+    RegisterMessage();
+    RegisterNetwork();
+    RegisterShell();
+    RegisterTimer();
+    RegisterUtils();
+    RegisterWorld();
+  }
 };
 
 VM::~VM() {

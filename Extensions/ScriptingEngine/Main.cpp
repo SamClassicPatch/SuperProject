@@ -114,7 +114,7 @@ int SignalExecuteScript(void *pScript) {
 
   // Create a new VM
   SignalReset(NULL);
-  _pSignalVM = new sq::VM(0xFFFFFFFF);
+  _pSignalVM = new sq::VM(true);
 
   const CTString &strScript = *(const CTString *)pScript;
   return ExecuteSquirrelScript(_pSignalVM, strScript, FALSE, "ScriptingEngine::ExecuteScript", &SignalReturnCallback);
@@ -156,7 +156,7 @@ static CTString ShellExecuteString(SHELL_FUNC_ARGS) {
 
   // Create a new VM
   ShellResetVM();
-  _pCommandVM = new sq::VM(0xFFFFFFFF);
+  _pCommandVM = new sq::VM(true);
 
   _strLastCommandResult = "";
   ExecuteSquirrelScript(_pCommandVM, strScript, FALSE, "scr_ExecuteString", &CommandReturnCallback);
@@ -171,7 +171,7 @@ static CTString ShellExecuteFile(SHELL_FUNC_ARGS) {
 
   // Create a new VM
   ShellResetVM();
-  _pCommandVM = new sq::VM(0xFFFFFFFF);
+  _pCommandVM = new sq::VM(true);
 
   _strLastCommandResult = "";
   ExecuteSquirrelScript(_pCommandVM, strScript, TRUE, "scr_ExecuteFile", &CommandReturnCallback);
