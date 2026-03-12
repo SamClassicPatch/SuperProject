@@ -143,6 +143,34 @@ static SQInteger GetSpatialClassificationBox(HSQUIRRELVM v, int, CEntityPointer 
   return 1;
 };
 
+static SQInteger GetCollisionBoxIndex(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+  sq_pushinteger(v, val->GetCollisionBoxIndex());
+  return 1;
+};
+
+static SQInteger GetCollisionBoxParameters(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  SQInteger iBox;
+  sq_getinteger(v, 2, &iBox);
+
+  FLOATaabbox3D box;
+  INDEX iEquality;
+  val->GetCollisionBoxParameters(iBox, box, iEquality);
+
+  // Create an array with two return values
+  sq_newarray(v, 0);
+
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
+  *pbox = box;
+  sq_arrayappend(v, -2);
+
+  sq_pushinteger(v, iEquality);
+  sq_arrayappend(v, -2);
+  return 1;
+};
+
 static SQInteger GetBoundingBox(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
   PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
@@ -154,6 +182,34 @@ static SQInteger GetSize(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
   PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   val->GetSize(*pbox);
+  return 1;
+};
+
+static SQInteger GetNearestPolygon(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  FLOAT3D vPointReturn;
+  FLOATplane3D plPlaneReturn;
+  FLOAT fDistReturn;
+  CBrushPolygon *pbpolReturn = val->GetNearestPolygon(vPointReturn, plPlaneReturn, fDistReturn);
+
+  // Return an array with 4 values: nearest polygon, a point on it, its plane and the distance to the point
+  sq_newarray(v, 0);
+
+  PushNewInstance(CBrushPolygon *, pbpol, GetVMClass(v).Root(), "CBrushPolygon");
+  *pbpol = pbpolReturn;
+  sq_arrayappend(v, -2);
+
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
+  *pv = vPointReturn;
+  sq_arrayappend(v, -2);
+
+  PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
+  *ppl = plPlaneReturn;
+  sq_arrayappend(v, -2);
+
+  sq_pushfloat(v, fDistReturn);
+  sq_arrayappend(v, -2);
   return 1;
 };
 
@@ -180,6 +236,32 @@ static SQInteger GetEntityPointFixed(HSQUIRRELVM v, int, CEntityPointer &val) {
 
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   val->GetEntityPointFixed(*pvFixed, *pv);
+  return 1;
+};
+
+static SQInteger FindEntitiesInRange(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+  SQ_RESTRICT(v);
+
+  GetInstanceValueVerify(FLOATaabbox3D, pboxRange, v, 2);
+
+  SQBool bCollidingOnly;
+  sq_getbool(v, 3, &bCollidingOnly);
+
+  CEntities cOutput;
+  val->FindEntitiesInRange(*pboxRange, cOutput, bCollidingOnly);
+
+  // Create an array that will act as a return value
+  sq_newarray(v, 0);
+
+  // Create an entity instance for each entity in the container and append it to the array
+  FOREACHINDYNAMICCONTAINER(cOutput, CEntity, iten) {
+    PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+    *ppen = iten;
+
+    sq_arrayappend(v, -2);
+  }
+
   return 1;
 };
 
@@ -532,6 +614,15 @@ static SQInteger GetCollisionDamageFactor(HSQUIRRELVM v, CEntityPointer &val) {
   return 1;
 };
 
+static SQInteger GetPing(HSQUIRRELVM v, CEntityPointer &val) {
+  ASSERT_ENTITY;
+  if (!::IsDerivedFromID(val, CPlayerEntity_ClassID)) return sq_throwerror(v, "CEntityPointer does not contain a player entity");
+
+  CPlayerEntity *penPlayer = (CPlayerEntity *)(CEntity *)val;
+  sq_pushfloat(v, penPlayer->en_tmPing);
+  return 1;
+};
+
 static SQInteger GetLastPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
@@ -630,7 +721,13 @@ static SQInteger IsStandingOnPolygon(HSQUIRRELVM v, int, CEntityPointer &val) {
   }
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
+
+  // Workaround for a bug that checks for a polygon inside the property instead of the one passed as the argument
+  CBrushPolygon *pbpoStandOnOld = penMovable->en_pbpoStandOn;
+
+  penMovable->en_pbpoStandOn = *pbpol;
   sq_pushbool(v, penMovable->IsStandingOnPolygon(*pbpol));
+  penMovable->en_pbpoStandOn = pbpoStandOnOld;
   return 1;
 };
 
@@ -960,14 +1057,19 @@ static Method<CEntityPointer> _aMethods[] = {
   { "GetPredictor",  &GetPredictor,  1, "." },
   { "GetPredicted",  &GetPredicted,  1, "." },
 
-  // Placement
+  // Area around the entity
   { "GetSpatialClassificationRadius", &GetSpatialClassificationRadius, 1, "." },
   { "GetSpatialClassificationBox",    &GetSpatialClassificationBox,    1, "." },
+  { "GetCollisionBoxIndex",           &GetCollisionBoxIndex,           1, "." },
+  { "GetCollisionBoxParameters",      &GetCollisionBoxParameters,      2, ".n" },
   { "GetBoundingBox",      &GetBoundingBox,       1, "." },
   { "GetSize",             &GetSize,              1, "." },
+  { "GetNearestPolygon",   &GetNearestPolygon,    1, "." },
   { "GetEntityPointRatio", &GetEntityPointRatio, -2, ".xb" },
   { "GetEntityPointFixed", &GetEntityPointFixed,  2, ".x" },
+  { "FindEntitiesInRange", &FindEntitiesInRange,  3, ".xb" },
 
+  // Placement
   { "GetPlacement",        &GetPlacement,       1, "." },
   { "GetLerpedPlacement",  &GetLerpedPlacement, 1, "." },
   { "GetRotationMatrix",   &GetRotationMatrix,  1, "." },
@@ -1779,6 +1881,9 @@ void VM::RegisterEntities(void) {
     sqcEntity.RegisterVar("en_fBounceDampNormal",      &SqEntity::GetBounceDampNormal, NULL);
     sqcEntity.RegisterVar("en_fCollisionSpeedLimit",   &SqEntity::GetCollisionSpeedLimit, NULL);
     sqcEntity.RegisterVar("en_fCollisionDamageFactor", &SqEntity::GetCollisionDamageFactor, NULL);
+
+    // CPlayerEntity properties
+    sqcEntity.RegisterVar("en_tmPing", &SqEntity::GetPing, NULL);
 
     Root().AddClass(sqcEntity);
   }
