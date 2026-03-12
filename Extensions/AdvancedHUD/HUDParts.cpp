@@ -478,8 +478,8 @@ void CHud::RenderGameModeInfo(void) {
     CDynamicContainer<CPlayer> cenSorted;
     SetAllPlayersStats(cenSorted, eKey);
 
-    // Show ping next to player names
-    const INDEX iShowPing = _psShowPlayerPing.GetIndex();
+    // Show ping next to player names (except for demos, where it's irrelevant)
+    const INDEX iShowPing = (_pNetwork->IsPlayingDemo() ? 0 : _psShowPlayerPing.GetIndex());
 
     // Go through all players
     INDEX iPlayer = 0;
