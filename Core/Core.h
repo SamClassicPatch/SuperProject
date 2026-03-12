@@ -29,6 +29,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   static CTFileName _fnmMod = CTString("");
 #endif
 
+// For XGizmo/Vanilla/EntityEvents.h
+#define VANILLA_ENTITY_EVENTS_FOR_TSE (SE1_GAME != SS_TFE)
+
 // Extras
 #include <Extras/XGizmo/Base/IniConfig.h>
 #include <Extras/XGizmo/Interfaces/Data.h>

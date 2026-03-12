@@ -2095,10 +2095,12 @@ void VM::RegisterEntities(void) {
   ADD_EVENT(ESecretFound);
   ADD_EVENT(ESound);
 
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
   ADD_EVENT(EScroll);
   ADD_EVENT(ETextFX);
   ADD_EVENT(EHudPicFX);
   ADD_EVENT(ECredits);
+#endif
   ADD_EVENT(ECenterMessage);
   ADD_EVENT(EComputerMessage);
   ADD_EVENT(EVoiceMessage);
@@ -2110,7 +2112,9 @@ void VM::RegisterEntities(void) {
   ADD_EVENT(EHealth);
   ADD_EVENT(EKey);
   ADD_EVENT(EMessageItem);
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
   ADD_EVENT(EPowerUp);
+#endif
   ADD_EVENT(EWeaponItem);
 
   ADD_EVENT(ERestartAttack);
@@ -2121,9 +2125,15 @@ void VM::RegisterEntities(void) {
   ADD_EVENT(EFireWeapon);
   ADD_EVENT(EReleaseWeapon);
   ADD_EVENT(EReloadWeapon);
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
   ADD_EVENT(EWeaponChanged);
+#endif
 
+#if !VANILLA_ENTITY_EVENTS_FOR_TSE
+  ADD_EVENT(EAcid);
+#else
   ADD_EVENT(EAirShockwave);
+#endif
   ADD_EVENT(EAirWave);
   ADD_EVENT(ESpawnEffect);
   ADD_EVENT(ESpawnSpray);
@@ -2134,16 +2144,21 @@ void VM::RegisterEntities(void) {
   ADD_EVENT(EDevilProjectile);
   ADD_EVENT(ESpawnEffector);
   ADD_EVENT(EFlame);
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
+  ADD_EVENT(EStopFlaming);
   ADD_EVENT(ELaunchLarvaOffspring);
+#endif
   ADD_EVENT(EAnimatorInit);
   ADD_EVENT(EViewInit);
   ADD_EVENT(EWeaponsInit);
   ADD_EVENT(EWeaponEffectInit);
   ADD_EVENT(ELaunchProjectile);
   ADD_EVENT(EReminderInit);
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
   ADD_EVENT(ESeriousBomb);
   ADD_EVENT(ESpawnerProjectile);
   ADD_EVENT(ESpinnerInit);
+#endif
   ADD_EVENT(ETwister);
   ADD_EVENT(EWatcherInit);
   ADD_EVENT(EWater);

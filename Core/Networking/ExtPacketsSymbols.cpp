@@ -43,10 +43,12 @@ void DeclareExtraSymbolsForExtPackets(void)
   DECLARE_SYMBOL("EVENTCODE_ESecretFound",          EVENTCODE_VNL_ESecretFound);
   DECLARE_SYMBOL("EVENTCODE_ESound",                EVENTCODE_VNL_ESound);
 
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
   DECLARE_SYMBOL("EVENTCODE_EScroll",               EVENTCODE_VNL_EScroll);
   DECLARE_SYMBOL("EVENTCODE_ETextFX",               EVENTCODE_VNL_ETextFX);
   DECLARE_SYMBOL("EVENTCODE_EHudPicFX",             EVENTCODE_VNL_EHudPicFX);
   DECLARE_SYMBOL("EVENTCODE_ECredits",              EVENTCODE_VNL_ECredits);
+#endif
   DECLARE_SYMBOL("EVENTCODE_ECenterMessage",        EVENTCODE_VNL_ECenterMessage);
   DECLARE_SYMBOL("EVENTCODE_EComputerMessage",      EVENTCODE_VNL_EComputerMessage);
   DECLARE_SYMBOL("EVENTCODE_EVoiceMessage",         EVENTCODE_VNL_EVoiceMessage);
@@ -58,7 +60,9 @@ void DeclareExtraSymbolsForExtPackets(void)
   DECLARE_SYMBOL("EVENTCODE_EHealth",               EVENTCODE_VNL_EHealth);
   DECLARE_SYMBOL("EVENTCODE_EKey",                  EVENTCODE_VNL_EKey);
   DECLARE_SYMBOL("EVENTCODE_EMessageItem",          EVENTCODE_VNL_EMessageItem);
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
   DECLARE_SYMBOL("EVENTCODE_EPowerUp",              EVENTCODE_VNL_EPowerUp);
+#endif
   DECLARE_SYMBOL("EVENTCODE_EWeaponItem",           EVENTCODE_VNL_EWeaponItem);
 
   DECLARE_SYMBOL("EVENTCODE_ERestartAttack",        EVENTCODE_VNL_ERestartAttack);
@@ -69,9 +73,15 @@ void DeclareExtraSymbolsForExtPackets(void)
   DECLARE_SYMBOL("EVENTCODE_EFireWeapon",           EVENTCODE_VNL_EFireWeapon);
   DECLARE_SYMBOL("EVENTCODE_EReleaseWeapon",        EVENTCODE_VNL_EReleaseWeapon);
   DECLARE_SYMBOL("EVENTCODE_EReloadWeapon",         EVENTCODE_VNL_EReloadWeapon);
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
   DECLARE_SYMBOL("EVENTCODE_EWeaponChanged",        EVENTCODE_VNL_EWeaponChanged);
+#endif
 
+#if !VANILLA_ENTITY_EVENTS_FOR_TSE
+  DECLARE_SYMBOL("EVENTCODE_EAcid",                 EVENTCODE_VNL_EAcid);
+#else
   DECLARE_SYMBOL("EVENTCODE_EAirShockwave",         EVENTCODE_VNL_EAirShockwave);
+#endif
   DECLARE_SYMBOL("EVENTCODE_EAirWave",              EVENTCODE_VNL_EAirWave);
   DECLARE_SYMBOL("EVENTCODE_ESpawnEffect",          EVENTCODE_VNL_ESpawnEffect);
   DECLARE_SYMBOL("EVENTCODE_ESpawnSpray",           EVENTCODE_VNL_ESpawnSpray);
@@ -82,16 +92,21 @@ void DeclareExtraSymbolsForExtPackets(void)
   DECLARE_SYMBOL("EVENTCODE_EDevilProjectile",      EVENTCODE_VNL_EDevilProjectile);
   DECLARE_SYMBOL("EVENTCODE_ESpawnEffector",        EVENTCODE_VNL_ESpawnEffector);
   DECLARE_SYMBOL("EVENTCODE_EFlame",                EVENTCODE_VNL_EFlame);
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
+  DECLARE_SYMBOL("EVENTCODE_EStopFlaming",          EVENTCODE_VNL_EStopFlaming);
   DECLARE_SYMBOL("EVENTCODE_ELaunchLarvaOffspring", EVENTCODE_VNL_ELaunchLarvaOffspring);
+#endif
   DECLARE_SYMBOL("EVENTCODE_EAnimatorInit",         EVENTCODE_VNL_EAnimatorInit);
   DECLARE_SYMBOL("EVENTCODE_EViewInit",             EVENTCODE_VNL_EViewInit);
   DECLARE_SYMBOL("EVENTCODE_EWeaponsInit",          EVENTCODE_VNL_EWeaponsInit);
   DECLARE_SYMBOL("EVENTCODE_EWeaponEffectInit",     EVENTCODE_VNL_EWeaponEffectInit);
   DECLARE_SYMBOL("EVENTCODE_ELaunchProjectile",     EVENTCODE_VNL_ELaunchProjectile);
   DECLARE_SYMBOL("EVENTCODE_EReminderInit",         EVENTCODE_VNL_EReminderInit);
+#if VANILLA_ENTITY_EVENTS_FOR_TSE
   DECLARE_SYMBOL("EVENTCODE_ESeriousBomb",          EVENTCODE_VNL_ESeriousBomb);
   DECLARE_SYMBOL("EVENTCODE_ESpawnerProjectile",    EVENTCODE_VNL_ESpawnerProjectile);
   DECLARE_SYMBOL("EVENTCODE_ESpinnerInit",          EVENTCODE_VNL_ESpinnerInit);
+#endif
   DECLARE_SYMBOL("EVENTCODE_ETwister",              EVENTCODE_VNL_ETwister);
   DECLARE_SYMBOL("EVENTCODE_EWatcherInit",          EVENTCODE_VNL_EWatcherInit);
   DECLARE_SYMBOL("EVENTCODE_EWater",                EVENTCODE_VNL_EWater);

@@ -263,19 +263,21 @@ void EExtEntityEvent::ConvertTypes(void)
   // Convert entity IDs into pointers
   switch (ee_slEvent) {
     // First field is an entity
+  #if VANILLA_ENTITY_EVENTS_FOR_TSE
+    case EVENTCODE_VNL_EAirShockwave:
+    case EVENTCODE_VNL_ELaunchLarvaOffspring:
+    case EVENTCODE_VNL_ESeriousBomb:
+  #endif
     case EVENTCODE_VNL_EStart:
     case EVENTCODE_VNL_ETrigger:
-    case EVENTCODE_VNL_EAirShockwave:
     case EVENTCODE_VNL_EAirWave:
     case EVENTCODE_VNL_EBulletInit:
     case EVENTCODE_VNL_ELaunchCannonBall:
-    case EVENTCODE_VNL_ELaunchLarvaOffspring:
     case EVENTCODE_VNL_EAnimatorInit:
     case EVENTCODE_VNL_EWeaponsInit:
     case EVENTCODE_VNL_EWeaponEffectInit:
     case EVENTCODE_VNL_ELaunchProjectile:
     case EVENTCODE_VNL_EReminderInit:
-    case EVENTCODE_VNL_ESeriousBomb:
     case EVENTCODE_VNL_EWatcherInit:
     case EVENTCODE_VNL_EWater: {
       VNL_EStart &ee = (VNL_EStart &)*this;
@@ -283,31 +285,45 @@ void EExtEntityEvent::ConvertTypes(void)
     } break;
 
     // Second field is an entity
-    case EVENTCODE_VNL_ESound:
+  #if VANILLA_ENTITY_EVENTS_FOR_TSE
     case EVENTCODE_VNL_EScroll:
     case EVENTCODE_VNL_ETextFX:
     case EVENTCODE_VNL_EHudPicFX:
-    case EVENTCODE_VNL_ECredits: {
+    case EVENTCODE_VNL_ECredits:
+  #endif
+    case EVENTCODE_VNL_ESound: {
       VNL_ESound &ee = (VNL_ESound &)*this;
       ee.penTarget = EntityFromID(1);
     } break;
 
     // Two first fields are entities
+  #if !VANILLA_ENTITY_EVENTS_FOR_TSE
+    case EVENTCODE_VNL_EAcid:
+  #else
+    case EVENTCODE_VNL_ESpinnerInit:
+  #endif
     case EVENTCODE_VNL_EDevilProjectile:
     case EVENTCODE_VNL_EFlame:
-    case EVENTCODE_VNL_EViewInit:
-    case EVENTCODE_VNL_ESpinnerInit: {
+    case EVENTCODE_VNL_EViewInit: {
       VNL_EFlame &ee = (VNL_EFlame &)*this;
       ee.penOwner = EntityFromID(0);
       ee.penAttach = EntityFromID(1);
     } break;
-
+    
+  #if VANILLA_ENTITY_EVENTS_FOR_TSE
     // Same ID as ETwister
     case EVENTCODE_VNL_ESpawnerProjectile: {
       VNL_ESpawnerProjectile &ee = (VNL_ESpawnerProjectile &)*this;
       ee.penOwner = EntityFromID(0);
       ee.penTemplate = MaybeEntity(1); // Preserves 'ETwister::fSize'
     } break;
+
+  #else
+    case EVENTCODE_VNL_ETwister: {
+      VNL_ETwister &ee = (VNL_ETwister &)*this;
+      ee.penOwner = EntityFromID(0);
+    } break;
+  #endif
 
     // Skips: sptType, fDamagePower, fSizeMultiplier, vDirection
     case EVENTCODE_VNL_ESpawnSpray: {
@@ -317,6 +333,8 @@ void EExtEntityEvent::ConvertTypes(void)
 
     case EVENTCODE_VNL_ESpawnDebris: {
       VNL_ESpawnDebris &ee = (VNL_ESpawnDebris &)*this;
+
+    #if VANILLA_ENTITY_EVENTS_FOR_TSE
       ee.penFallFXPapa = EntityFromID(22);
 
       if (ee.penFallFXPapa != NULL) {
@@ -328,6 +346,14 @@ void EExtEntityEvent::ConvertTypes(void)
         ee.ptdSpec = (CTextureData *)pen->GetModelObject()->mo_toSpecular.GetData(); // 5
         ee.ptdBump = (CTextureData *)pen->GetModelObject()->mo_toBump.GetData(); // 6
       }
+    #else
+      // [Cecil] FIXME: This is probably not good but I don't know where to get the model from in TFE
+      ee.pmd = NULL; // 1
+      ee.ptd = NULL; // 3
+      ee.ptdRefl = NULL; // 4
+      ee.ptdSpec = NULL; // 5
+      ee.ptdBump = NULL; // 6
+    #endif
     } break;
 
     // Skips: eetType, vDamageDir, vDestination, tmLifeTime, fSize, ctCount
