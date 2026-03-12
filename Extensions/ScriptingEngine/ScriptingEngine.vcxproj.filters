@@ -22,6 +22,9 @@
     <Filter Include="Source Files\Libraries">
       <UniqueIdentifier>{d2e98055-c5c3-44e0-b651-859fefad26e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Events">
+      <UniqueIdentifier>{a64a7c29-589c-42e6-b71e-c981b1e3666b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdH.h">
@@ -100,6 +103,33 @@
     </ClCompile>
     <ClCompile Include="Libraries\ScrLibMath.cpp">
       <Filter>Source Files\Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\Networking.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\Packets.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\Processing.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\Rendering.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\TimerEvents.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\WorldEvents.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\DemoEvents.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\GameEvents.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\Listeners.cpp">
+      <Filter>Source Files\Events</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

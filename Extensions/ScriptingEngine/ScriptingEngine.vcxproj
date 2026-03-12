@@ -37,6 +37,15 @@
     <ClInclude Include="StdH.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Events\DemoEvents.cpp" />
+    <ClCompile Include="Events\GameEvents.cpp" />
+    <ClCompile Include="Events\Listeners.cpp" />
+    <ClCompile Include="Events\Networking.cpp" />
+    <ClCompile Include="Events\Packets.cpp" />
+    <ClCompile Include="Events\Processing.cpp" />
+    <ClCompile Include="Events\Rendering.cpp" />
+    <ClCompile Include="Events\TimerEvents.cpp" />
+    <ClCompile Include="Events\WorldEvents.cpp" />
     <ClCompile Include="Libraries\ScrLibEntities.cpp" />
     <ClCompile Include="Libraries\ScrLibFileSystem.cpp" />
     <ClCompile Include="Libraries\ScrLibInput.cpp" />

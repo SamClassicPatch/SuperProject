@@ -182,6 +182,43 @@ static CTString ShellExecuteFile(SHELL_FUNC_ARGS) {
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
+  // Register plugin events
+  events.m_processing->OnStep  = &IProcessingEvents_OnStep;
+  events.m_processing->OnFrame = &IProcessingEvents_OnFrame;
+
+  events.m_rendering->OnPreDraw    = &IRenderingEvents_OnPreDraw;
+  events.m_rendering->OnPostDraw   = &IRenderingEvents_OnPostDraw;
+  events.m_rendering->OnRenderView = &IRenderingEvents_OnRenderView;
+
+  events.m_network->OnServerPacket = &INetworkEvents_OnServerPacket;
+  events.m_network->OnClientPacket = &INetworkEvents_OnClientPacket;
+  events.m_network->OnAddPlayer    = &INetworkEvents_OnAddPlayer;
+  events.m_network->OnRemovePlayer = &INetworkEvents_OnRemovePlayer;
+
+  events.m_packet->OnCharacterConnect = &IPacketEvents_OnCharacterConnect;
+  events.m_packet->OnCharacterChange  = &IPacketEvents_OnCharacterChange;
+  events.m_packet->OnPlayerAction     = &IPacketEvents_OnPlayerAction;
+  events.m_packet->OnChatMessage      = &IPacketEvents_OnChatMessage;
+
+  events.m_game->OnGameStart   = &IGameEvents_OnGameStart;
+  events.m_game->OnChangeLevel = &IGameEvents_OnChangeLevel;
+  events.m_game->OnGameStop    = &IGameEvents_OnGameStop;
+  events.m_game->OnGameSave    = &IGameEvents_OnGameSave;
+  events.m_game->OnGameLoad    = &IGameEvents_OnGameLoad;
+
+  events.m_demo->OnDemoPlay  = &IDemoEvents_OnDemoPlay;
+  events.m_demo->OnDemoStart = &IDemoEvents_OnDemoStart;
+  events.m_demo->OnDemoStop  = &IDemoEvents_OnDemoStop;
+
+  events.m_world->OnWorldLoad = &IWorldEvents_OnWorldLoad;
+
+  events.m_listener->OnSendEvent     = &IListenerEvents_OnSendEvent;
+  events.m_listener->OnReceiveItem   = &IListenerEvents_OnReceiveItem;
+  events.m_listener->OnCallProcedure = &IListenerEvents_OnCallProcedure;
+
+  events.m_timer->OnTick   = &ITimerEvents_OnTick;
+  events.m_timer->OnSecond = &ITimerEvents_OnSecond;
+
   // Custom symbols
   GetPluginAPI()->RegisterMethod(TRUE, "INDEX",    "scr_IsSuspended",   "void",     &ShellIsSuspended);
   GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResumeVM",      "void",     &ShellResumeVM);
