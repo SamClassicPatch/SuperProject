@@ -164,7 +164,7 @@ SQInteger VM::HandlerRuntimeError(HSQUIRRELVM v) {
   return SQ_OK;
 };
 
-VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDepth(0)
+VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDepth(0), m_ctExecutionArgs(0)
 {
   // Create a new VM and bind this wrapper class to it
   m_vm = sq_open(1024);
@@ -282,12 +282,12 @@ struct UnreachablePrint {
 };
 
 // Check whether a closure on top of the stack can be executed
-bool VM::CanBeExecuted(void) {
+bool VM::CanBeExecuted(SQInteger idx) {
   // Nothing in the stack
   if (sq_gettop(m_vm) <= 0) return false;
 
   // Needs a closure on top
-  SQObjectType eType = sq_gettype(m_vm, -1);
+  SQObjectType eType = sq_gettype(m_vm, idx);
   return (eType == OT_CLOSURE || eType == OT_NATIVECLOSURE);
 };
 
@@ -298,8 +298,14 @@ bool VM::AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback
     return true;
   }
 
-  // The initial table must be popped here because sq_call() doesn't pop its arguments after being suspended
-  if (bWasSuspended) sq_remove(m_vm, -2); // Pop initial root table argument
+  // The initial arguments must be popped here because sq_call() doesn't pop its arguments after being suspended
+  if (bWasSuspended) {
+    for (int iPop = 0; iPop < m_ctExecutionArgs; iPop++) {
+      sq_remove(m_vm, -2);
+    }
+  }
+
+  m_ctExecutionArgs = 0;
   sq_remove(m_vm, -2); // Pop executed script closure
 
   // Handle the return value
@@ -330,8 +336,8 @@ bool VM::AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback
   return true;
 };
 
-// Execute a function on top of the stack
-bool VM::Execute(FReturnValueCallback pReturnCallback) {
+// Execute a closure on top of the stack with optional extra arguments
+bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
   UnreachablePrint unreachable(m_vm, m_bDebug);
 
   // Clear runtime error
@@ -343,16 +349,26 @@ bool VM::Execute(FReturnValueCallback pReturnCallback) {
   if (IsSuspended()) {
     SetError("trying to call a new closure during suspended execution");
     sq_throwerror(m_vm, GetError());
+    if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
+
+  } else if (!CanBeExecuted(-1 - ctExtraArgs)) {
+    SetError("no closure in the stack that needs to be called");
+    sq_throwerror(m_vm, GetError());
+    if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
 
   // Execute a compiled closure
-  } else if (CanBeExecuted()) {
-    // Push root table as 'this' for the script
-    sq_pushroottable(m_vm);
+  } else {
+    m_ctExecutionArgs = 0;
 
     // Call the script closure without removing it from the stack
     // Push the return value on top (or 'null' if doesn't return anything)
-    SQRESULT r = sq_call(m_vm, 1, SQTrue, SQTrue);
+    SQRESULT r = sq_call(m_vm, ctExtraArgs, SQTrue, SQTrue);
     bError = SQ_FAILED(r);
+
+    // Remember amount of extra arguments after suspension
+    if (!bError && IsSuspended()) {
+      m_ctExecutionArgs = ctExtraArgs;
+    }
   }
 
   PrintCurrentStack(false, "After execute"); // Print the stack
@@ -410,7 +426,10 @@ bool VM::ExecuteFile(const CTString &strSourceFile, FReturnValueCallback pReturn
   bool bExecuted = true;
   m_iScriptDepth++;
 
-  if (!Execute(pReturnCallback)) {
+  // Push root table as 'this' for the script
+  sq_pushroottable(m_vm);
+
+  if (!Execute(pReturnCallback, 1)) {
     // Pass the error from the included script
     sq_throwerror(m_vm, GetError());
     bExecuted = false;
@@ -435,7 +454,10 @@ bool VM::ExecuteString(const CTString &strScript, const SQChar *strSourceName, F
   bool bExecuted = true;
   m_iScriptDepth++;
 
-  if (!Execute(pReturnCallback)) {
+  // Push root table as 'this' for the script
+  sq_pushroottable(m_vm);
+
+  if (!Execute(pReturnCallback, 1)) {
     // Pass the error from the included script
     sq_throwerror(m_vm, GetError());
     bExecuted = false;

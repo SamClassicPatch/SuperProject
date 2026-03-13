@@ -38,6 +38,7 @@ class VM {
     CTString m_strErrors; // Error message buffer
     bool m_bRuntimeError; // Signifies that there has been at least one runtime error
     INDEX m_iScriptDepth; // Included scripts depth
+    int m_ctExecutionArgs; // Amount of arguments passed into Execute() that need to be popped after finishing a suspended execution
 
   public:
     VM(bool bRegisterEngineInterfaces);
@@ -139,12 +140,13 @@ class VM {
     // Pushes null instead the compilation fails (use GetError() for more info)
     void CompileFromString(const CTString &strScript, const SQChar *strSourceName);
 
-    // Check whether a closure on top of the stack can be executed
-    bool CanBeExecuted(void);
+    // Check whether a closure in the stack can be executed
+    bool CanBeExecuted(SQInteger idx);
 
-    // Execute a closure on top of the stack
+    // Execute a closure on top of the stack with optional extra arguments
+    // The first argument must either be the root table or an instance the function is for
     // Returns false if a runtime error occurs (use GetError() for more info)
-    bool Execute(FReturnValueCallback pReturnCallback);
+    bool Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs);
 
     // Resume a suspended execution
     // Returns false if a runtime error occurs (use GetError() for more info)

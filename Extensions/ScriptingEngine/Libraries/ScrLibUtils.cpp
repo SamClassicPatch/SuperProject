@@ -279,7 +279,7 @@ static SQInteger CompileScript(HSQUIRRELVM v) {
   VM &vm = GetVMClass(v);
   vm.CompileFromFile(strFile);
 
-  if (!vm.CanBeExecuted()) {
+  if (!vm.CanBeExecuted(-1)) {
     // Pass compilation error
     return sq_throwerror(v, vm.GetError());
   }
