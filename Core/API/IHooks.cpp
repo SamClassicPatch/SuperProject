@@ -43,7 +43,7 @@ void UpdateShadows(void)
 };
 
 // Called every simulation tick
-void IHooks::OnTick(void)
+void IHooks::OnStep(void)
 {
   // Call step function for each plugin
   FOREACHPLUGIN(itPlugin) {

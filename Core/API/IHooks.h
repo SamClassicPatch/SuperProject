@@ -26,7 +26,7 @@ class CORE_API IHooks {
   public:
 
     // Called every simulation tick
-    static void OnTick(void);
+    static void OnStep(void);
 
     // Called every render frame
     static void OnFrame(CDrawPort *pdp);

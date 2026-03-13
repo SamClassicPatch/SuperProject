@@ -401,9 +401,6 @@ void CSessionStatePatch::P_ProcessGameStreamBlock(CNetworkMessage &nmMessage) {
   // Copy the tick to process into tick used for all tasks
   _pTimer->SetCurrentTick(ses_tmLastProcessedTick);
 
-  // Call API every simulation tick
-  IHooks::OnTick();
-
   // Quit if don't need to process standard packets
   if (!INetwork::ClientHandle(this, nmMessage)) {
     return;
@@ -564,6 +561,9 @@ void CSessionStatePatch::P_ProcessGameStreamBlock(CNetworkMessage &nmMessage) {
 
       // Process the tick
       ProcessGameTick(nmMessage, tmPacket);
+
+      // [Cecil] Call API every simulation tick
+      IHooks::OnStep();
     } break;
 
     // Pause message
