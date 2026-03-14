@@ -292,6 +292,25 @@ bool VM::CanBeExecuted(SQInteger idx) {
 };
 
 bool VM::AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback) {
+  // Apply cached functions after any VM execution
+  if (m_bStopDemoRec) {
+    _pNetwork->StopDemoRec();
+  }
+
+  if (m_strStartDemoRec != "") {
+    // Stop last recording before a new one, if it's still going
+    _pNetwork->StopDemoRec();
+
+    try {
+      _pNetwork->StartDemoRec_t(m_strStartDemoRec);
+    } catch (char *strError) {
+      // Don't throw script error
+      CPrintF(LOCALIZE("Cannot start recording: %s\n"), strError);
+    }
+  }
+
+  ClearCache();
+
   // Quit if the VM hasn't finished its execution
   if (IsSuspended()) {
     DebugOut(DEBUGOUT_INFO("VM is suspended"));
@@ -339,6 +358,7 @@ bool VM::AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback
 // Execute a closure on top of the stack with optional extra arguments
 bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
   UnreachablePrint unreachable(m_vm, m_bDebug);
+  ClearCache();
 
   // Clear runtime error
   m_bRuntimeError = false;
@@ -385,6 +405,7 @@ bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
 // Resume a suspended execution
 bool VM::Resume(FReturnValueCallback pReturnCallback) {
   UnreachablePrint unreachable(m_vm, m_bDebug);
+  ClearCache();
 
   // Not executed by default
   bool bError = true;
@@ -517,6 +538,24 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
     int iFromBtm = i;
     CPrintF("[SQ] [%d : %d] " DEBUGOUT_TYPE("%s") " = %s\n", iFromTop, iFromBtm, sq_gettypename(eType), strObj);
   }
+};
+
+// Clear cached variables to prevent them from executing
+void VM::ClearCache(void) {
+  m_strStartDemoRec = "";
+  m_bStopDemoRec = false;
+};
+
+// Start recording a new demo after executing a script
+void VM::StartDemoRec(const CTString &strDemoFile) {
+  m_strStartDemoRec = strDemoFile;
+  m_bStopDemoRec = false;
+};
+
+// Stop recording a demo after executing a script
+void VM::StopDemoRec(void) {
+  m_strStartDemoRec = "";
+  m_bStopDemoRec = true;
 };
 
 }; // namespace

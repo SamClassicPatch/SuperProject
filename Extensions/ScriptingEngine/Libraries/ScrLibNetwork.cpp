@@ -594,19 +594,12 @@ static SQInteger GetMaxPlayers(HSQUIRRELVM v) {
 static SQInteger StartDemoRec(HSQUIRRELVM v) {
   const SQChar *strPath;
   sq_getstring(v, 2, &strPath);
-
-  try {
-    _pNetwork->StartDemoRec_t(CTString(strPath));
-  } catch (char *strError) {
-    // Don't throw script error
-    CPrintF(LOCALIZE("Cannot start recording: %s\n"), strError);
-  }
-
+  GetVMClass(v).StartDemoRec(strPath);
   return 0;
 };
 
 static SQInteger StopDemoRec(HSQUIRRELVM v) {
-  _pNetwork->StopDemoRec();
+  GetVMClass(v).StopDemoRec();
   return 0;
 };
 

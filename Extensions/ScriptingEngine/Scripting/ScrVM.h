@@ -41,6 +41,10 @@ class VM {
     INDEX m_iScriptDepth; // Included scripts depth
     int m_ctExecutionArgs; // Amount of arguments passed into Execute() that need to be popped after finishing a suspended execution
 
+    // Cache for certain functions that need to be executed after the VM finishes running
+    CTString m_strStartDemoRec; // Demo file for starting the recording or empty string to ignore
+    bool m_bStopDemoRec; // Whether to stop recording a demo
+
   public:
     VM(bool bRegisterEngineInterfaces);
     ~VM();
@@ -166,6 +170,18 @@ class VM {
 
     // Display current contents of the stack in console
     void PrintCurrentStack(bool bOnlyCount = false, const char *strLabel = "Current stack");
+
+  // Caching
+  public:
+
+    // Clear cached variables to prevent them from executing
+    void ClearCache(void);
+
+    // Start recording a new demo after executing a script
+    void StartDemoRec(const CTString &strDemoFile);
+
+    // Stop recording a demo after executing a script
+    void StopDemoRec(void);
 
   // Built-in interfaces
   private:
