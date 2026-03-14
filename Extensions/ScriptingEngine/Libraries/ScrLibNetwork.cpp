@@ -26,6 +26,43 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
+// CPlayerAction methods
+namespace SqPlayerAction {
+
+SQCLASS_GET_INSTANCE(GetTranslation, CPlayerAction, FLOAT3D, val.pa_vTranslation);
+SQCLASS_SET_INSTANCE(SetTranslation, CPlayerAction, FLOAT3D, val.pa_vTranslation);
+
+SQCLASS_GET_INSTANCE(GetRotation, CPlayerAction, FLOAT3D, val.pa_aRotation);
+SQCLASS_SET_INSTANCE(SetRotation, CPlayerAction, FLOAT3D, val.pa_aRotation);
+
+SQCLASS_GET_INSTANCE(GetViewRotation, CPlayerAction, FLOAT3D, val.pa_aViewRotation);
+SQCLASS_SET_INSTANCE(SetViewRotation, CPlayerAction, FLOAT3D, val.pa_aViewRotation);
+
+SQCLASS_GETSET_INT(GetButtons, SetButtons, CPlayerAction, val.pa_ulButtons, val.pa_ulButtons);
+
+static SQInteger Clear(HSQUIRRELVM v, int, CPlayerAction &val) {
+  val.Clear();
+  return 0;
+};
+
+static SQInteger Lerp(HSQUIRRELVM v, int, CPlayerAction &val) {
+  GetInstanceValueVerify(CPlayerAction, ppa0, v, 2);
+  GetInstanceValueVerify(CPlayerAction, ppa1, v, 3);
+
+  SQFloat fFactor;
+  sq_getfloat(v, 4, &fFactor);
+
+  val.Lerp(*ppa0, *ppa1, fFactor);
+  return 0;
+};
+
+static Method<CPlayerAction> _aMethods[] = {
+  { "Clear", &Clear, 1, "." },
+  { "Lerp",  &Lerp,  4, ".xxn" },
+};
+
+}; // namespace
+
 #if _PATCHCONFIG_EXT_PACKETS
 
 // Session properties class methods
@@ -1122,6 +1159,21 @@ void VM::RegisterNetwork(void) {
   INDEX i;
 
   // Register classes
+  {
+    Class<CPlayerAction> sqcAction(GetVM(), "CPlayerAction", NULL);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqPlayerAction::_aMethods); i++) {
+      sqcAction.RegisterMethod(SqPlayerAction::_aMethods[i]);
+    }
+
+    sqcAction.RegisterVar("aTranslation",  &SqPlayerAction::GetTranslation,  &SqPlayerAction::SetTranslation);
+    sqcAction.RegisterVar("aRotation",     &SqPlayerAction::GetRotation,     &SqPlayerAction::SetRotation);
+    sqcAction.RegisterVar("aViewRotation", &SqPlayerAction::GetViewRotation, &SqPlayerAction::SetViewRotation);
+    sqcAction.RegisterVar("ulButtons",     &SqPlayerAction::GetButtons,      &SqPlayerAction::SetButtons);
+
+    Root().AddClass(sqcAction);
+  }
 #if _PATCHCONFIG_EXT_PACKETS
   {
     Class<SqProps::SesPropsHolder> sqcProps(GetVM(), "SessionProperties", &SqProps::Constructor);
