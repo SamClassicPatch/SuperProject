@@ -670,6 +670,25 @@ static SQInteger GetGameTime(HSQUIRRELVM v) {
   return 1;
 };
 
+static SQInteger GetPlayerEntity(HSQUIRRELVM v) {
+  SQ_RESTRICT(v);
+
+  SQInteger iPlayer;
+  sq_getinteger(v, 2, &iPlayer);
+
+  CPlayerTarget &plt = _pNetwork->ga_sesSessionState.ses_apltPlayers[iPlayer];
+
+  if (!plt.IsActive()) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "player %d is inactive", iPlayer);
+    return sq_throwerror(v, strError);
+  }
+
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  *ppen = plt.plt_penPlayerEntity;
+  return 1;
+};
+
 static SQInteger GetPlayerEntityByName(HSQUIRRELVM v) {
   SQ_RESTRICT(v);
 
@@ -1112,6 +1131,7 @@ static SQRegFunction _aNetworkFuncs[] = {
   { "GetGameTime",           &Network::GetGameTime,       1, "." },
 
   // Entities
+  { "GetPlayerEntity",       &Network::GetPlayerEntity,       2, ".n" },
   { "GetPlayerEntityByName", &Network::GetPlayerEntityByName, 2, ".s" },
   { "CountEntitiesWithName", &Network::CountEntitiesWithName, 2, ".s" },
   { "GetEntityWithName",     &Network::GetEntityWithName,     3, ".sn" },
