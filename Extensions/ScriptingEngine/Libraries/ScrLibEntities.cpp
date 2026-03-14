@@ -23,6 +23,87 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
+// Common function for pushing a value of some entity property
+static SQInteger PushPropValue(HSQUIRRELVM v, const CEntityProperty &ep, const CEntity *pen) {
+  switch (ep.ep_eptType) {
+    case CEntityProperty::EPT_ENUM:
+    case CEntityProperty::EPT_COLOR:
+    case CEntityProperty::EPT_INDEX:
+    case CEntityProperty::EPT_ANIMATION:
+    case CEntityProperty::EPT_ILLUMINATIONTYPE:
+    case CEntityProperty::EPT_FLAGS: {
+      sq_pushinteger(v, ENTITYPROPERTY(pen, ep.ep_slOffset, INDEX));
+    } break;
+
+    case CEntityProperty::EPT_BOOL: {
+      sq_pushbool(v, ENTITYPROPERTY(pen, ep.ep_slOffset, BOOL));
+    } break;
+
+    case CEntityProperty::EPT_FLOAT:
+    case CEntityProperty::EPT_RANGE:
+    case CEntityProperty::EPT_ANGLE: {
+      sq_pushfloat(v, ENTITYPROPERTY(pen, ep.ep_slOffset, FLOAT));
+    } break;
+
+    case CEntityProperty::EPT_STRING:
+    case CEntityProperty::EPT_FILENAMENODEP:
+    case CEntityProperty::EPT_STRINGTRANS: {
+      sq_pushstring(v, ENTITYPROPERTY(pen, ep.ep_slOffset, CTString).str_String, -1);
+    } break;
+
+    case CEntityProperty::EPT_FILENAME: {
+      sq_pushstring(v, ENTITYPROPERTY(pen, ep.ep_slOffset, CTFileName).str_String, -1);
+    } break;
+
+    case CEntityProperty::EPT_ENTITYPTR: {
+      PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+      *ppen = ENTITYPROPERTY(pen, ep.ep_slOffset, CEntityPointer);
+    } break;
+
+    case CEntityProperty::EPT_FLOATAABBOX3D: {
+      PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
+      *pbox = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATaabbox3D);
+    } break;
+
+    case CEntityProperty::EPT_FLOAT3D:
+    case CEntityProperty::EPT_ANGLE3D: {
+      PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
+      *pv = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOAT3D);
+    } break;
+
+    case CEntityProperty::EPT_FLOATplane3D: {
+      PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
+      *ppl = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATplane3D);
+    } break;
+
+    case CEntityProperty::EPT_PLACEMENT3D: {
+      PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
+      *ppl = ENTITYPROPERTY(pen, ep.ep_slOffset, CPlacement3D);
+    } break;
+
+    case CEntityProperty::EPT_FLOATMATRIX3D: {
+      PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
+      *pm = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATmatrix3D);
+    } break;
+
+    // Unsupported types
+    case CEntityProperty::EPT_MODELOBJECT:
+    case CEntityProperty::EPT_ANIMOBJECT:
+    case CEntityProperty::EPT_SOUNDOBJECT:
+    case CEntityProperty::EPT_FLOATQUAT3D:
+  #if SE1_VER >= SE1_107
+    case CEntityProperty::EPT_MODELINSTANCE:
+  #endif
+    default: {
+      SQChar strError[256];
+      scsprintf(strError, 256, "cannot retrieve value from the unknown/unsupported property type %d", ep.ep_eptType);
+      return sq_throwerror(v, strError);
+    }
+  }
+
+  return 1;
+};
+
 // CEntity class methods
 namespace SqEntity {
 
@@ -824,50 +905,16 @@ static SQInteger IsRationalEntity(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetPropertyForId(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPropInfoByID(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
   ASSERT_ENTITY;
 
-  // Get property ID
-  SQInteger iID;
-  sq_getinteger(v, 2, &iID);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = IWorld::PropertyForId(val, iID);
-  if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
-
-  // Create a property instance
-  Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
-  *ppep = pepCheck;
-  return 1;
-};
-
-static SQInteger GetPropertyForHash(HSQUIRRELVM v, int, CEntityPointer &val) {
-  ASSERT_ENTITY;
-
-  // Get property hash
-  SQInteger iHash;
-  sq_getinteger(v, 2, &iHash);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = IWorld::PropertyForHash(val, iHash);
-  if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
-
-  // Create a property instance
-  Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
-  *ppep = pepCheck;
-  return 1;
-};
-
-static SQInteger GetPropertyForIdOrOffset(HSQUIRRELVM v, int, CEntityPointer &val) {
-  ASSERT_ENTITY;
-
-  // Get property type, ID and offset
-  SQInteger iType, iID, iOffset;
+  // Get property type, ID and optional offset
+  SQInteger iType, iID;
   sq_getinteger(v, 2, &iType);
   sq_getinteger(v, 3, &iID);
-  sq_getinteger(v, 4, &iOffset);
+
+  SQInteger iOffset = -1;
+  if (ctArgs > 2) sq_getinteger(v, 4, &iOffset);
 
   // Make sure the property exists
   CEntityProperty *pepCheck = IWorld::PropertyForIdOrOffset(val, iType, iID, iOffset);
@@ -880,7 +927,7 @@ static SQInteger GetPropertyForIdOrOffset(HSQUIRRELVM v, int, CEntityPointer &va
   return 1;
 };
 
-static SQInteger GetPropertyForName(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPropInfoByName(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
 
   // Get property type and name
@@ -900,28 +947,7 @@ static SQInteger GetPropertyForName(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetPropertyForNameOrId(HSQUIRRELVM v, int, CEntityPointer &val) {
-  ASSERT_ENTITY;
-
-  // Get property type, name and ID
-  SQInteger iType, iID;
-  sq_getinteger(v, 2, &iType);
-  const SQChar *strName;
-  sq_getstring(v, 3, &strName);
-  sq_getinteger(v, 4, &iID);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = IWorld::PropertyForNameOrId(val, iType, strName, iID);
-  if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
-
-  // Create a property instance
-  Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
-  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
-  *ppep = pepCheck;
-  return 1;
-};
-
-static SQInteger GetPropertyForVariable(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPropInfoByVariable(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
 
   // Get class and variable names
@@ -956,87 +982,7 @@ static SQInteger GetPropertyForVariable(HSQUIRRELVM v, int, CEntityPointer &val)
 static SQInteger GetPropValue(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
   GetInstanceValueVerifyN(CEntityProperty *, ppep, v, 2, "Entities.Property");
-
-  const CEntityProperty &ep = **ppep;
-  CEntity *pen = val;
-
-  switch (ep.ep_eptType) {
-    case CEntityProperty::EPT_ENUM:
-    case CEntityProperty::EPT_COLOR:
-    case CEntityProperty::EPT_INDEX:
-    case CEntityProperty::EPT_ANIMATION:
-    case CEntityProperty::EPT_ILLUMINATIONTYPE:
-    case CEntityProperty::EPT_FLAGS: {
-      sq_pushinteger(v, ENTITYPROPERTY(pen, ep.ep_slOffset, INDEX));
-    } break;
-
-    case CEntityProperty::EPT_BOOL: {
-      sq_pushbool(v, ENTITYPROPERTY(pen, ep.ep_slOffset, BOOL));
-    } break;
-
-    case CEntityProperty::EPT_FLOAT:
-    case CEntityProperty::EPT_RANGE:
-    case CEntityProperty::EPT_ANGLE: {
-      sq_pushfloat(v, ENTITYPROPERTY(pen, ep.ep_slOffset, FLOAT));
-    } break;
-
-    case CEntityProperty::EPT_STRING:
-    case CEntityProperty::EPT_FILENAMENODEP:
-    case CEntityProperty::EPT_STRINGTRANS: {
-      sq_pushstring(v, ENTITYPROPERTY(pen, ep.ep_slOffset, CTString).str_String, -1);
-    } break;
-
-    case CEntityProperty::EPT_FILENAME: {
-      sq_pushstring(v, ENTITYPROPERTY(pen, ep.ep_slOffset, CTFileName).str_String, -1);
-    } break;
-
-    case CEntityProperty::EPT_ENTITYPTR: {
-      PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
-      *ppen = ENTITYPROPERTY(pen, ep.ep_slOffset, CEntityPointer);
-    } break;
-
-    case CEntityProperty::EPT_FLOATAABBOX3D: {
-      PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
-      *pbox = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATaabbox3D);
-    } break;
-
-    case CEntityProperty::EPT_FLOAT3D:
-    case CEntityProperty::EPT_ANGLE3D: {
-      PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
-      *pv = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOAT3D);
-    } break;
-
-    case CEntityProperty::EPT_FLOATplane3D: {
-      PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
-      *ppl = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATplane3D);
-    } break;
-
-    case CEntityProperty::EPT_PLACEMENT3D: {
-      PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
-      *ppl = ENTITYPROPERTY(pen, ep.ep_slOffset, CPlacement3D);
-    } break;
-
-    case CEntityProperty::EPT_FLOATMATRIX3D: {
-      PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
-      *pm = ENTITYPROPERTY(pen, ep.ep_slOffset, FLOATmatrix3D);
-    } break;
-
-    // Unsupported types
-    case CEntityProperty::EPT_MODELOBJECT:
-    case CEntityProperty::EPT_ANIMOBJECT:
-    case CEntityProperty::EPT_SOUNDOBJECT:
-    case CEntityProperty::EPT_FLOATQUAT3D:
-  #if SE1_VER >= SE1_107
-    case CEntityProperty::EPT_MODELINSTANCE:
-  #endif
-    default: {
-      SQChar strError[256];
-      scsprintf(strError, 256, "cannot retrieve value from the unknown/unsupported property type %d", ep.ep_eptType);
-      return sq_throwerror(v, strError);
-    }
-  }
-
-  return 1;
+  return PushPropValue(v, **ppep, val);
 };
 
 static Method<CEntityPointer> _aMethods[] = {
@@ -1114,12 +1060,9 @@ static Method<CEntityPointer> _aMethods[] = {
   { "IsRationalEntity",   &IsRationalEntity,   1, "." },
 
   // Property lookup
-  { "GetPropertyForId",         &GetPropertyForId,         2, ".n" },
-  { "GetPropertyForHash",       &GetPropertyForHash,       2, ".n" },
-  { "GetPropertyForIdOrOffset", &GetPropertyForIdOrOffset, 4, ".nnn" },
-  { "GetPropertyForName",       &GetPropertyForName,       3, ".ns" },
-  { "GetPropertyForNameOrId",   &GetPropertyForNameOrId,   4, ".nsn" },
-  { "GetPropertyForVariable",   &GetPropertyForVariable,   3, ".ss" },
+  { "GetPropInfoByID",       &GetPropInfoByID,      -3, ".nnn" },
+  { "GetPropInfoByName",     &GetPropInfoByName,     3, ".ns" },
+  { "GetPropInfoByVariable", &GetPropInfoByVariable, 3, ".ss" },
 
   { "GetPropValue", &GetPropValue, 2, ".x" },
 };
@@ -1223,10 +1166,17 @@ static SQInteger GetEnumValues(HSQUIRRELVM v, int, CEntityProperty *&val) {
   return 1;
 };
 
+static SQInteger GetValue(HSQUIRRELVM v, int, CEntityProperty *&val) {
+  GetInstanceValueVerify(CEntityPointer, ppen, v, 2);
+  if (*ppen == NULL) return sq_throwerror(v, "CEntityPointer is NULL in argument 2");
+  return PushPropValue(v, *val, *ppen);
+};
+
 static Method<CEntityProperty *> _aMethods[] = {
   { "Equal",             &Equal,             2, ".x|o" },
   { "GetEnumValueCount", &GetEnumValueCount, 1, "." },
   { "GetEnumValues",     &GetEnumValues,     1, "." },
+  { "GetValue",          &GetValue,          2, ".x" },
 };
 
 }; // namespace
