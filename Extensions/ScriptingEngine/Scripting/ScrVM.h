@@ -33,6 +33,7 @@ class VM {
 
   private:
     HSQUIRRELVM m_vm; // Squirrel VM itself
+    CTString m_strName; // Display name of the environment for identification purposes
     bool m_bDebug; // Outputs debug information in console
 
     CTString m_strErrors; // Error message buffer
@@ -44,20 +45,20 @@ class VM {
     VM(bool bRegisterEngineInterfaces);
     ~VM();
 
+    // Set VM environment name
+    __forceinline void SetName(const CTString &strName) { m_strName = strName; };
+
+    // Get VM environment name
+    __forceinline const CTString &GetName(void) const { return m_strName; };
+
     // Toggle debug output
-    __forceinline void SetDebug(bool bState) {
-      m_bDebug = bState;
-    };
+    __forceinline void SetDebug(bool bState) { m_bDebug = bState; };
 
     // Retrieve handler to a raw Squirrel VM
-    __forceinline HSQUIRRELVM GetVM(void) const {
-      return m_vm;
-    };
+    __forceinline HSQUIRRELVM GetVM(void) const { return m_vm; };
 
     // Cast to a raw Squirrel VM
-    __forceinline operator HSQUIRRELVM() const {
-      return m_vm;
-    };
+    __forceinline operator HSQUIRRELVM() const { return m_vm; };
 
     // Get last VM error
     __forceinline const char *GetError(void) const {
