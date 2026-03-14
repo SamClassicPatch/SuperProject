@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Main.h" />
     <ClInclude Include="Scripting\ScrClass.h" />
     <ClInclude Include="Scripting\ScrConstants.h" />
     <ClInclude Include="Scripting\ScrInstances.h" />

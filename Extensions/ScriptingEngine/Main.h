@@ -13,11 +13,12 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-// Utilize Core
-#include <Core/Core.h>
+#include "Scripting/ScrClass.h"
+#include "Scripting/ScrConstants.h"
+#include "Scripting/ScrInstances.h"
+#include "Scripting/ScrObject.h"
+#include "Scripting/ScrTable.h"
+#include "Scripting/ScrValue.h"
+#include "Scripting/ScrVM.h"
 
-// Include Squirrel
-#define SQUIRREL_API
-#include <Extras/squirrel3/include/squirrel.h>
-
-#include "Main.h"
+extern CDynamicContainer<sq::VM> _cCustomScripts;

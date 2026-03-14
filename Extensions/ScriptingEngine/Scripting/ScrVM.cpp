@@ -372,8 +372,7 @@ bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
     if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
 
   } else if (!CanBeExecuted(-1 - ctExtraArgs)) {
-    SetError("no closure in the stack that needs to be called");
-    sq_throwerror(m_vm, GetError());
+    // Don't set any custom error here (the compilation might've failed and set its own error already)
     if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
 
   // Execute a compiled closure

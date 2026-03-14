@@ -51,6 +51,9 @@
     <ClInclude Include="Scripting\ScrClass.h">
       <Filter>Header Files\Scripting headers</Filter>
     </ClInclude>
+    <ClInclude Include="Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdH.cpp">
