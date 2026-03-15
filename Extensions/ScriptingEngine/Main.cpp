@@ -186,16 +186,15 @@ static CTString ShellExecuteFile(SHELL_FUNC_ARGS) {
 // Create a new VM for custom scripts
 inline sq::VM *NewScriptVM(const CTString &strFile) {
   sq::VM *pVM = new sq::VM(true);
-  bool bExecuted = pVM->ExecuteFile(strFile, NULL);
+  pVM->SetName(strFile);
 
   // Error during the initial execution
-  if (!bExecuted) {
+  if (!pVM->ExecuteFile(strFile, NULL)) {
     CPrintF("^cff0000Could not load custom script (%s):\n%s\n", strFile.str_String, pVM->GetError());
     delete pVM;
     return NULL;
   }
 
-  pVM->SetName(strFile);
   return pVM;
 };
 
@@ -248,6 +247,22 @@ static void LoadCustomScript(SHELL_FUNC_ARGS) {
 
   // Add a new script
   _cCustomScripts.Add(pVM);
+};
+
+// Run a specific function for all loaded custom scripts
+void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, sq::VM::FReturnValueCallback pReturnCallback) {
+  FOREACHINDYNAMICCONTAINER(_cCustomScripts, sq::VM, itvm) {
+    sq::VM &vm = *itvm;
+
+    // Skip if no such function in the script
+    if (!vm.Root().PushObject(strFunc)) continue;
+
+    if (!vm.Execute(pPushArgs, pReturnCallback)) {
+      // Pass execution error
+      sq_throwerror(vm, vm.GetError());
+      CPrintF("^cff0000%s (%s):\n%s\n", strFunc, vm.GetName().str_String, vm.GetError());
+    }
+  }
 };
 
 // Module entry point

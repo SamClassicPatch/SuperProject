@@ -27,6 +27,9 @@ namespace sq {
 
 class VM {
   public:
+    // Callback for pushing necessary arguments for closures before executing them
+    typedef void (*FPushArguments)(VM &vm);
+
     // Callback for handling return values at the end of the execution
     // Should return true if the return value isn't needed anymore and can be popped from the stack
     typedef bool (*FReturnValueCallback)(VM &vm);
@@ -165,10 +168,10 @@ class VM {
     // Check whether a closure in the stack can be executed
     bool CanBeExecuted(SQInteger idx);
 
-    // Execute a closure on top of the stack with optional extra arguments
-    // The first argument must either be the root table or an instance the function is for
+    // Execute a closure on top of the stack with optional arguments pushed by the specified callback
+    // If the callback for pushing arguments is unspecified (NULL), it pushes the root table as the sole argument ('this') by default
     // Returns false if a runtime error occurs (use GetError() for more info)
-    bool Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs);
+    bool Execute(FPushArguments pPushArgs, FReturnValueCallback pReturnCallback);
 
     // Resume a suspended execution
     // Returns false if a runtime error occurs (use GetError() for more info)

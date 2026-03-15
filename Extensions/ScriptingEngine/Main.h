@@ -22,3 +22,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "Scripting/ScrVM.h"
 
 extern CDynamicContainer<sq::VM> _cCustomScripts;
+
+// Run a specific function for all loaded custom scripts
+void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, sq::VM::FReturnValueCallback pReturnCallback = NULL);

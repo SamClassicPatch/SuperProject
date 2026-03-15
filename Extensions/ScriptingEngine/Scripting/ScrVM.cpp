@@ -349,8 +349,8 @@ bool VM::AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback
   return true;
 };
 
-// Execute a closure on top of the stack with optional extra arguments
-bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
+// Execute a closure on top of the stack with optional arguments pushed by the specified callback
+bool VM::Execute(FPushArguments pPushArgs, FReturnValueCallback pReturnCallback) {
   UnreachablePrint unreachable(this, m_bDebug);
   ClearCache();
 
@@ -362,24 +362,34 @@ bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
 
   if (IsSuspended()) {
     SetError("trying to call a new closure during suspended execution");
-    if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
 
-  } else if (!CanBeExecuted(-1 - ctExtraArgs)) {
+  } else if (!CanBeExecuted(-1)) {
     SetError("no closure in the stack that can be called");
-    if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
 
   // Execute a compiled closure
   } else {
+    // Push arguments for the closure
     m_ctExecutionArgs = 0;
+    const SQInteger iTop = sq_gettop(m_vm);
+
+    if (pPushArgs != NULL) {
+      pPushArgs(*this);
+    } else {
+      // Push root table as 'this' for the script
+      sq_pushroottable(m_vm);
+    }
+
+    // Get amount of arguments
+    const SQInteger ctArgs = sq_gettop(m_vm) - iTop;
 
     // Call the script closure without removing it from the stack
     // Push the return value on top (or 'null' if doesn't return anything)
-    SQRESULT r = sq_call(m_vm, ctExtraArgs, SQTrue, SQTrue);
+    SQRESULT r = sq_call(m_vm, ctArgs, SQTrue, SQTrue);
     bError = SQ_FAILED(r);
 
     // Remember amount of extra arguments after suspension
     if (!bError && IsSuspended()) {
-      m_ctExecutionArgs = ctExtraArgs;
+      m_ctExecutionArgs = ctArgs;
     }
   }
 
@@ -437,10 +447,7 @@ bool VM::ExecuteFile(const CTString &strSourceFile, FReturnValueCallback pReturn
   bool bExecuted = true;
   m_iScriptDepth++;
 
-  // Push root table as 'this' for the script
-  sq_pushroottable(m_vm);
-
-  if (!Execute(pReturnCallback, 1)) {
+  if (!Execute(NULL, pReturnCallback)) {
     // Pass the error from the included script
     sq_throwerror(m_vm, GetError());
     bExecuted = false;
@@ -464,10 +471,7 @@ bool VM::ExecuteString(const CTString &strScript, const SQChar *strSourceName, F
   bool bExecuted = true;
   m_iScriptDepth++;
 
-  // Push root table as 'this' for the script
-  sq_pushroottable(m_vm);
-
-  if (!Execute(pReturnCallback, 1)) {
+  if (!Execute(NULL, pReturnCallback)) {
     // Pass the error from the included script
     sq_throwerror(m_vm, GetError());
     bExecuted = false;
