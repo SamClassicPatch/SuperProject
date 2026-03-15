@@ -28,7 +28,7 @@ namespace sq {
 class VM {
   public:
     // Callback for pushing necessary arguments for closures before executing them
-    typedef void (*FPushArguments)(VM &vm);
+    typedef SQRESULT (*FPushArguments)(VM &vm);
 
     // Callback for handling return values at the end of the execution
     // Should return true if the return value isn't needed anymore and can be popped from the stack

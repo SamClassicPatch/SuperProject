@@ -357,49 +357,53 @@ bool VM::Execute(FPushArguments pPushArgs, FReturnValueCallback pReturnCallback)
   // Clear runtime error
   m_bRuntimeError = false;
 
-  // Not executed by default
-  bool bError = true;
-
   if (IsSuspended()) {
     SetError("trying to call a new closure during suspended execution");
+    sq_poptop(m_vm); // Pop whatever was supposed to be executed
+    return false;
 
   } else if (!CanBeExecuted(-1)) {
     SetError("no closure in the stack that can be called");
+    sq_poptop(m_vm); // Pop whatever was supposed to be executed
+    return false;
+  }
 
   // Execute a compiled closure
+  m_ctExecutionArgs = 0;
+  const SQInteger iTop = sq_gettop(m_vm);
+
+  // Push arguments for the closure
+  if (pPushArgs != NULL) {
+    // If couldn't push some arguments
+    if (SQ_FAILED(pPushArgs(*this))) {
+      // Pop whatever arguments have been pushed
+      const SQInteger ctPushed = sq_gettop(m_vm) - iTop;
+      sq_pop(m_vm, ctPushed + 1); // +1 for the script closure
+      return false;
+    }
+
   } else {
-    // Push arguments for the closure
-    m_ctExecutionArgs = 0;
-    const SQInteger iTop = sq_gettop(m_vm);
-
-    if (pPushArgs != NULL) {
-      pPushArgs(*this);
-    } else {
-      // Push root table as 'this' for the script
-      sq_pushroottable(m_vm);
-    }
-
-    // Get amount of arguments
-    const SQInteger ctArgs = sq_gettop(m_vm) - iTop;
-
-    // Call the script closure without removing it from the stack
-    // Push the return value on top (or 'null' if doesn't return anything)
-    SQRESULT r = sq_call(m_vm, ctArgs, SQTrue, SQTrue);
-    bError = SQ_FAILED(r);
-
-    // Remember amount of extra arguments after suspension
-    if (!bError && IsSuspended()) {
-      m_ctExecutionArgs = ctArgs;
-    }
+    // Push root table as 'this' for the script
+    sq_pushroottable(m_vm);
   }
+
+  // Get amount of pushed arguments
+  const SQInteger ctArgs = sq_gettop(m_vm) - iTop;
+
+  // Call the script closure without removing it from the stack
+  // Push the return value on top (or 'null' if doesn't return anything)
+  SQRESULT r = sq_call(m_vm, ctArgs, SQTrue, SQTrue);
+  bool bError = SQ_FAILED(r);
 
   PrintCurrentStack(false, "After execute"); // Print the stack
 
-  // Pop executed script closure and leave on error
   if (bError) {
-    sq_poptop(m_vm);
+    sq_poptop(m_vm); // Pop executed script closure
     return false;
   }
+
+  // Remember amount of extra arguments after suspension
+  if (IsSuspended()) m_ctExecutionArgs = ctArgs;
 
   return AfterExecution(false, pReturnCallback);
 };
