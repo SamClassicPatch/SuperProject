@@ -2417,16 +2417,19 @@ void CGame::GameRedrawView( CDrawPort *pdpDrawPort, ULONG ulFlags)
     // [Cecil] Only now drawports can be split after determining the amount of non-local players
     MakeSplitDrawports(gm_CurrentSplitScreenCfg, ctObservers, (ctNonLocals != 0), pdpDrawPort);
 
-    const INDEX ctViewers = Min(cenViewers.Count(), _adpDrawPorts.Count());
+    INDEX ctViewers = Min(cenViewers.Count(), _adpDrawPorts.Count());
 
-    // [Cecil] Disable observer camera by default
+    // [Cecil] Observer camera can only be used in PvE modes
     CObserverCamera &ocam = GetGameAPI()->GetCamera();
-    ocam.cam_bExternalUsage = FALSE;
+    ocam.cam_bExternalUsage = (GetSP()->sp_bCooperative || GetSP()->sp_bSinglePlayer);
+
+    // [Cecil] Force only one viewer when the camera is active to prevent rendering it for each player view
+    if (ocam.IsActive()) ctViewers = 1;
 
     // Render each view
     for (INDEX iViewer = 0; iViewer < ctViewers; iViewer++) {
-      CDrawPort *pdp = &_adpDrawPorts[iViewer];
-
+      // [Cecil] Force the full drawport for a single viewer
+      CDrawPort *pdp = (ctViewers == 1 ? pdpDrawPort : &_adpDrawPorts[iViewer]);
       if (!pdp->Lock()) continue;
 
       // [Cecil] Adjust aspect ratio for the HUD
@@ -2440,9 +2443,6 @@ void CGame::GameRedrawView( CDrawPort *pdpDrawPort, ULONG ulFlags)
       if (penViewer->IsPredicted()) {
         penViewer = penViewer->GetPredictor();
       }
-
-      // [Cecil] Camera can only be used in PvE modes
-      ocam.cam_bExternalUsage = (GetSP()->sp_bCooperative || GetSP()->sp_bSinglePlayer);
 
       // [Cecil] Camera is updated via CPlayer::RenderGameView() patch now
       //if (!ocam.Update(penViewer, pdp))
