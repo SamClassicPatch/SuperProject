@@ -117,8 +117,8 @@ void VM::HandlerErrorF(HSQUIRRELVM v, const char *str, ...) {
 void VM::HandlerCompilerError(HSQUIRRELVM v,
   const SQChar *strError, const SQChar *strSource, SQInteger iLn, SQInteger iCh)
 {
-  // Clear the last error
-  GetVMClass(v).SetError("");
+  // Clear the last error to allow new ones to be pushed
+  GetVMClass(v).ClearError();
 
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
@@ -129,9 +129,9 @@ void VM::HandlerCompilerError(HSQUIRRELVM v,
 
 // Runtime error output
 SQInteger VM::HandlerRuntimeError(HSQUIRRELVM v) {
-  // Clear the last error
+  // Clear the last error to allow new ones to be pushed
   VM &vm = GetVMClass(v);
-  vm.SetError("");
+  vm.ClearError();
 
   SQPRINTFUNCTION pCallback = sq_geterrorfunc(v);
 
@@ -202,6 +202,37 @@ VM::~VM() {
   sq_close(m_vm);
 };
 
+VM::UnreachablePrint::~UnreachablePrint() {
+  if (!bDebug) return;
+
+  // Check amount of unreachable objects
+  SQInteger ctRefs = -1;
+
+  // Push array of unreachable objects or null if there are none
+  if (SQ_FAILED(sq_resurrectunreachable(vm))) {
+    vm.DebugOut(DEBUGOUT_INFO("sq_resurrectunreachable()") " error");
+    return;
+  }
+
+  // If it pushed an array
+  if (sq_gettype(vm, -1) == OT_ARRAY) {
+    // Get closure
+    sq_pushstring(vm, "len", -1);
+    sq_get(vm, -2);
+
+    // Push array as the argument and call it
+    sq_push(vm, -2);
+    sq_call(vm, 1, SQTrue, SQTrue);
+    sq_getinteger(vm, -1, &ctRefs);
+
+    // Pop return value and closure
+    sq_pop(vm, 2);
+  }
+
+  sq_poptop(vm); // Pop array or null
+  vm.DebugOut(DEBUGOUT_INFO("sq_resurrectunreachable()") " = %d (stack: %d)", (int)ctRefs, (int)sq_gettop(vm));
+};
+
 // Print debug information in console
 void VM::DebugOut(const char *strFormat, ...) {
   if (!m_bDebug) return;
@@ -211,7 +242,12 @@ void VM::DebugOut(const char *strFormat, ...) {
 
   CTString strPrint;
   strPrint.VPrintF(strFormat, arg);
-  CPutString("[SQ] " + strPrint + "\n");
+
+  if (GetName() != "") {
+    CPutString("[" + GetName() + "] " + strPrint + "\n");
+  } else {
+    CPutString("[SQ] " + strPrint + "\n");
+  }
 
   va_end(arg);
 };
@@ -240,45 +276,6 @@ void VM::CompileFromString(const CTString &strScript, const SQChar *strSourceNam
   }
 
   Compile_internal(strScript, strSourceName);
-};
-
-// Temporary struct for printing out unreachable objects upon returning from a function
-struct UnreachablePrint {
-  HSQUIRRELVM vm;
-  bool bDebug;
-
-  UnreachablePrint(HSQUIRRELVM vmSet, bool bSetDebug) : vm(vmSet), bDebug(bSetDebug) {};
-
-  ~UnreachablePrint() {
-    if (!bDebug) return;
-
-    // Check amount of unreachable objects
-    SQInteger ctRefs = -1;
-
-    // Push array of unreachable objects or null if there are none
-    if (SQ_FAILED(sq_resurrectunreachable(vm))) {
-      CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " error\n");
-      return;
-    }
-
-    // If it pushed an array
-    if (sq_gettype(vm, -1) == OT_ARRAY) {
-      // Get closure
-      sq_pushstring(vm, "len", -1);
-      sq_get(vm, -2);
-
-      // Push array as the argument and call it
-      sq_push(vm, -2);
-      sq_call(vm, 1, SQTrue, SQTrue);
-      sq_getinteger(vm, -1, &ctRefs);
-
-      // Pop return value and closure
-      sq_pop(vm, 2);
-    }
-
-    sq_poptop(vm); // Pop array or null
-    CPrintF("[SQ] " DEBUGOUT_INFO("sq_resurrectunreachable()") " = %d (stack: %d)\n", (int)ctRefs, (int)sq_gettop(vm));
-  };
 };
 
 // Check whether a closure on top of the stack can be executed
@@ -335,9 +332,9 @@ bool VM::AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback
     CTString strReturn;
 
     if (GetString(-1, strReturn)) {
-      CPrintF("[SQ] " DEBUGOUT_TYPE("Return value") " = '%s'\n", strReturn.str_String);
+      DebugOut(DEBUGOUT_TYPE("Return value") " = '%s'", strReturn.str_String);
     } else {
-      CPrintF("[SQ] Cannot retrieve the return value\n");
+      DebugOut("Cannot retrieve the return value");
     }
   }
 
@@ -357,7 +354,7 @@ bool VM::AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback
 
 // Execute a closure on top of the stack with optional extra arguments
 bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
-  UnreachablePrint unreachable(m_vm, m_bDebug);
+  UnreachablePrint unreachable(this, m_bDebug);
   ClearCache();
 
   // Clear runtime error
@@ -368,7 +365,6 @@ bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
 
   if (IsSuspended()) {
     SetError("trying to call a new closure during suspended execution");
-    sq_throwerror(m_vm, GetError());
     if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
 
   } else if (!CanBeExecuted(-1 - ctExtraArgs)) {
@@ -403,7 +399,7 @@ bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
 
 // Resume a suspended execution
 bool VM::Resume(FReturnValueCallback pReturnCallback) {
-  UnreachablePrint unreachable(m_vm, m_bDebug);
+  UnreachablePrint unreachable(this, m_bDebug);
   ClearCache();
 
   // Not executed by default
@@ -411,7 +407,6 @@ bool VM::Resume(FReturnValueCallback pReturnCallback) {
 
   if (!IsSuspended()) {
     SetError("trying to resume execution that isn't suspended");
-    sq_throwerror(m_vm, GetError());
 
   // Resume a suspended VM
   } else {
@@ -436,7 +431,6 @@ bool VM::ExecuteFile(const CTString &strSourceFile, FReturnValueCallback pReturn
   // Nested too deep
   if (m_iScriptDepth > 16) {
     SetError("too many nested scripts");
-    sq_throwerror(m_vm, GetError());
     return false;
   }
 
@@ -464,7 +458,6 @@ bool VM::ExecuteString(const CTString &strScript, const SQChar *strSourceName, F
   // Nested too deep
   if (m_iScriptDepth > 16) {
     SetError("too many nested scripts");
-    sq_throwerror(m_vm, GetError());
     return false;
   }
 
@@ -510,20 +503,19 @@ bool VM::GetString(SQInteger idx, CTString &strValue) {
 void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
   if (!m_bDebug) return;
 
-  CPrintF("[SQ] " DEBUGOUT_INFO("[%s]:"), strLabel);
   SQInteger ct = sq_gettop(m_vm);
 
   if (bOnlyCount) {
-    CPrintF(" %d\n", (int)ct);
+    DebugOut(DEBUGOUT_INFO("[%s]:") " %d", strLabel, (int)ct);
     return;
   }
 
   if (ct <= 0) {
-    CPutString(" Nothing\n");
+    DebugOut(DEBUGOUT_INFO("[%s]:") " Nothing", strLabel);
     return;
   }
 
-  CPutString("\n");
+  DebugOut(DEBUGOUT_INFO("[%s]:"), strLabel);
 
   for (SQInteger i = ct; i > 0; i--) {
     SQObjectType eType = sq_gettype(m_vm, i);
@@ -535,7 +527,7 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
 
     int iFromTop = i - ct - 1;
     int iFromBtm = i;
-    CPrintF("[SQ] [%d : %d] " DEBUGOUT_TYPE("%s") " = %s\n", iFromTop, iFromBtm, sq_gettypename(eType), strObj);
+    DebugOut("[%d : %d] " DEBUGOUT_TYPE("%s") " = %s", iFromTop, iFromBtm, sq_gettypename(eType), strObj);
   }
 };
 

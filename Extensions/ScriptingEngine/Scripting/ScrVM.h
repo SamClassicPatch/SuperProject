@@ -83,6 +83,12 @@ class VM {
     // Set the VM error
     __forceinline void SetError(const CTString &strError) {
       m_strErrors = strError;
+      sq_throwerror(m_vm, GetError()); // Pass the error into the VM
+    };
+
+    // Clear the VM error
+    __forceinline void ClearError(void) {
+      m_strErrors = "";
     };
 
     // Message output
@@ -122,6 +128,17 @@ class VM {
     };
 
   private:
+    // Temporary struct for printing out unreachable objects upon returning from a function
+    struct UnreachablePrint {
+      VM &vm;
+      bool bDebug;
+
+      UnreachablePrint(VM *pvmSet, bool bSetDebug) : vm(*pvmSet), bDebug(bSetDebug) {};
+      ~UnreachablePrint();
+    };
+
+    friend UnreachablePrint;
+
     // Print debug information in console
     void DebugOut(const char *strFormat, ...);
 
