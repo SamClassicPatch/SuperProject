@@ -44,49 +44,45 @@ static SQInteger SqLexerFeed(SQUserPointer pData)
 };
 
 // Compile script from a source file within the game folder
-void VM::SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
+bool VM::SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile) {
   VM &vm = GetVMClass(v);
 
   // Open the source file using an engine stream
   CTFileStream strm;
-  bool bError = false;
 
   try {
-    strm.Open_t(strSourceFile);
-
     // Compile the script by reading characters from the stream
+    strm.Open_t(strSourceFile);
     SQRESULT r = sq_compile(v, SqLexerFeed, &strm, strSourceFile.str_String, SQTrue);
-    bError = SQ_FAILED(r);
-
     strm.Close();
+
+    // Pass compilation error
+    if (SQ_FAILED(r)) {
+      sq_throwerror(v, vm.GetError());
+      return false;
+    }
 
   } catch (char *strError) {
     vm.SetError(strError);
-    bError = true;
+    return false;
   }
 
-  // Push a null instead of a closure on error
-  if (bError) {
-    sq_pushnull(v);
-
-    // Pass compilation error
-    sq_throwerror(v, vm.GetError());
-  }
+  return true;
 };
 
 // Compile script from a character buffer with a given function name
-void VM::SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName) {
+bool VM::SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName) {
   VM &vm = GetVMClass(v);
 
   SQRESULT r = sq_compilebuffer(v, strScript, strScript.Length(), strSourceName, SQTrue);
 
-  // Push a null instead of a closure on error
+  // Pass compilation error
   if (SQ_FAILED(r)) {
-    sq_pushnull(v);
-
-    // Pass compilation error
     sq_throwerror(v, vm.GetError());
+    return false;
   }
+
+  return true;
 };
 
 // Message output
@@ -252,30 +248,31 @@ void VM::DebugOut(const char *strFormat, ...) {
   va_end(arg);
 };
 
-void VM::Compile_internal(const CTString &strSource, const SQChar *strSourceName) {
+bool VM::Compile_internal(const CTString &strSource, const SQChar *strSourceName) {
   // Compile new script (pushes the entire script as a closure on top of the stack)
   if (strSourceName != NULL) {
-    SqCompileBuffer(m_vm, strSource, strSourceName);
+    if (!SqCompileBuffer(m_vm, strSource, strSourceName)) return false;
   } else {
-    SqCompileSource(m_vm, strSource);
+    if (!SqCompileSource(m_vm, strSource)) return false;
   }
 
   PrintCurrentStack(false, "After compile"); // Print the stack
+  return true;
 };
 
 // Compile script from a source file and push it as a closure on top of the stack
-void VM::CompileFromFile(const CTString &strSourceFile) {
-  Compile_internal(strSourceFile, NULL);
+bool VM::CompileFromFile(const CTString &strSourceFile) {
+  return Compile_internal(strSourceFile, NULL);
 };
 
 // Compile script from a string and push it as a closure on top of the stack
-void VM::CompileFromString(const CTString &strScript, const SQChar *strSourceName) {
+bool VM::CompileFromString(const CTString &strScript, const SQChar *strSourceName) {
   if (strSourceName == NULL) {
     ASSERTALWAYS("Compiling Squirrel script from a string but the source name is NULL");
     strSourceName = "";
   }
 
-  Compile_internal(strScript, strSourceName);
+  return Compile_internal(strScript, strSourceName);
 };
 
 // Check whether a closure on top of the stack can be executed
@@ -368,7 +365,7 @@ bool VM::Execute(FReturnValueCallback pReturnCallback, int ctExtraArgs) {
     if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
 
   } else if (!CanBeExecuted(-1 - ctExtraArgs)) {
-    // Don't set any custom error here (the compilation might've failed and set its own error already)
+    SetError("no closure in the stack that can be called");
     if (ctExtraArgs > 0) sq_pop(m_vm, ctExtraArgs); // Pop extra arguments on error
 
   // Execute a compiled closure
@@ -435,7 +432,7 @@ bool VM::ExecuteFile(const CTString &strSourceFile, FReturnValueCallback pReturn
   }
 
   // Compile a script from a file and execute it in place
-  CompileFromFile(strSourceFile);
+  if (!CompileFromFile(strSourceFile)) return false;
 
   bool bExecuted = true;
   m_iScriptDepth++;
@@ -462,7 +459,7 @@ bool VM::ExecuteString(const CTString &strScript, const SQChar *strSourceName, F
   }
 
   // Compile a script from a string and execute it in place
-  CompileFromString(strScript, strSourceName);
+  if (!CompileFromString(strScript, strSourceName)) return false;
 
   bool bExecuted = true;
   m_iScriptDepth++;

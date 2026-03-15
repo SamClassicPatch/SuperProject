@@ -143,24 +143,24 @@ class VM {
     void DebugOut(const char *strFormat, ...);
 
     // Compile script from a source file within the game folder
-    static void SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile);
+    static bool SqCompileSource(HSQUIRRELVM v, const CTString &strSourceFile);
 
     // Compile script from a character buffer with a given function name
-    static void SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName);
+    static bool SqCompileBuffer(HSQUIRRELVM v, const CTString &strScript, const SQChar *strSourceName);
 
-    __forceinline void Compile_internal(const CTString &strSource, const char *strSourceName);
+    __forceinline bool Compile_internal(const CTString &strSource, const char *strSourceName);
     __forceinline bool AfterExecution(bool bWasSuspended, FReturnValueCallback pReturnCallback);
 
   // Running
   public:
 
     // Compile script from a source file and push it as a closure on top of the stack
-    // Pushes null instead if the compilation fails (use GetError() for more info)
-    void CompileFromFile(const CTString &strSourceFile);
+    // Returns false if the compilation fails (use GetError() for more info)
+    bool CompileFromFile(const CTString &strSourceFile);
 
     // Compile script from a string and push it as a closure on top of the stack
-    // Pushes null instead the compilation fails (use GetError() for more info)
-    void CompileFromString(const CTString &strScript, const SQChar *strSourceName);
+    // Returns false if the compilation fails (use GetError() for more info)
+    bool CompileFromString(const CTString &strScript, const SQChar *strSourceName);
 
     // Check whether a closure in the stack can be executed
     bool CanBeExecuted(SQInteger idx);
