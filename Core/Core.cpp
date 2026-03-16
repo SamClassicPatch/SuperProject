@@ -96,7 +96,9 @@ static void SetVanillaBinDirectory(void) {
   }
 };
 
-void ClassicsPatch_Setup(EClassicsPatchAppType eApplicationType) {
+static void BuildCheck(void) {
+  if (IFiles::IsReadable((IDir::AppPath() + "BypassBuildCheck").str_String)) return;
+
   // Make sure the right patch build has been installed
   BOOL bWrongBuild = (_ulEngineBuildMajor != _SE_BUILD_MAJOR || _ulEngineBuildMinor != _SE_BUILD_MINOR);
   BOOL bDetectedTSE = CHOOSE_FOR_GAME(FALSE, TRUE, TRUE);
@@ -104,12 +106,17 @@ void ClassicsPatch_Setup(EClassicsPatchAppType eApplicationType) {
   // Check for TSE entities in case engine versions match
   {
     // Load any valid Entities library
-    CTString fnmDLL = IDir::AppPath() + IDir::FullLibPath("Entities");
-    HMODULE hDLL = LoadLibraryA(fnmDLL.str_String);
+    CTString fnmDLL;
+    HMODULE hDLL = NULL;
+
+    // Load the most likely library for the game first
+    fnmDLL = IDir::FullLibPath(CHOOSE_FOR_GAME("Entities", "EntitiesMP", "EntitiesMP"));
+    if (fnmDLL != "") hDLL = LoadLibraryA((IDir::AppPath() + fnmDLL).str_String);
 
     if (hDLL == NULL) {
-      fnmDLL = IDir::AppPath() + IDir::FullLibPath("EntitiesMP");
-      hDLL = LoadLibraryA(fnmDLL.str_String);
+      // Then try an alternative one
+      fnmDLL = IDir::FullLibPath(CHOOSE_FOR_GAME("EntitiesMP", "Entities", "Entities"));
+      if (fnmDLL != "") hDLL = LoadLibraryA((IDir::AppPath() + fnmDLL).str_String);
     }
 
     if (hDLL != NULL) {
@@ -130,23 +137,22 @@ void ClassicsPatch_Setup(EClassicsPatchAppType eApplicationType) {
     bWrongBuild |= CHOOSE_FOR_GAME(bDetectedTSE, !bDetectedTSE, !bDetectedTSE);
   }
 
-  if (bWrongBuild && !IFiles::IsReadable((IDir::AppPath() + "BypassBuildCheck").str_String)) {
+  if (bWrongBuild) {
     FatalError("You seem to have installed the wrong build of Classics Patch for your game!\n"
-      "Expected Serious Engine version: %u.%u (%s)\n"
-      "Detected Serious Engine version: %u.%u (%s)\n\n"
+      "Expected Serious Engine version (game): %u.%u (%s)\n"
+      "Detected Serious Engine version (game): %u.%u (%s)\n\n"
       "Make sure that you have downloaded and installed the correct build for the game and the engine version!",
       _SE_BUILD_MAJOR, _SE_BUILD_MINOR, CHOOSE_FOR_GAME("TFE", "TSE", "TSE"),
       _ulEngineBuildMajor, _ulEngineBuildMinor, bDetectedTSE ? "TSE" : "TFE");
   }
+};
 
-  // Set application type
-  _eAppType = eApplicationType;
+void ClassicsPatch_Setup(EClassicsPatchAppType eApplicationType) {
+  BuildCheck(); // Verify installed patch build
 
-  // Specify extra DLL directory
-  SetVanillaBinDirectory();
-
-  // Load configuration properties
-  IConfig::global.Load();
+  _eAppType = eApplicationType; // Set application type
+  SetVanillaBinDirectory(); // Specify extra DLL directory
+  IConfig::global.Load(); // Load configuration properties
 
   // Enable debug output for patcher actions
   bool bDebugPatcher = IConfig::global[k_EConfigProps_DebugPatcher].IsTrue();
