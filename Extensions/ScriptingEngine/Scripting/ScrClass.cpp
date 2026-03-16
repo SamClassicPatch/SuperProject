@@ -82,6 +82,24 @@ void AbstractClass::Init(SQFUNCTION pConstructorMethod, SQFUNCTION pSetMethod, S
   sq_poptop(m_vm); // Pop class
 };
 
+void AbstractClass::Reference(const TableBase &objTable) {
+  // Push class declaraction from some table and store a reference to it
+  if (objTable.PushObject(m_strClassName)) {
+    sq_getstackobj(m_vm, -1, &m_obj);
+    sq_addref(m_vm, &m_obj);
+
+    // Retrieve static tables of setter & getter methods
+    m_sqtSetters = GetValue(SQCLASS_SETTER_TABLE);
+    m_sqtGetters = GetValue(SQCLASS_GETTER_TABLE);
+
+    sq_poptop(m_vm); // Pop class
+
+  } else {
+    ASSERTALWAYS("Cannot find class declaration in the table");
+    FatalError("Cannot find '%s' class declaration in the table!", m_strClassName.str_String);
+  }
+};
+
 AbstractFactory *AbstractClass::GetFactory(void) {
   // Try to retrieve factory table from the registry
   sq_pushregistrytable(m_vm);

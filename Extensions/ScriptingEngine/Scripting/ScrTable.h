@@ -82,7 +82,7 @@ class TableBase : public Object {
   public:
 
     // Find some object inside the table by name and push it on top of the stack
-    bool PushObject(const SQChar *strName);
+    bool PushObject(const SQChar *strName) const;
 
     // Create an instance of some class defined in the table and push it on top of the stack
     bool CreateInstance(const SQChar *strClassName, InstanceAny **ppInstance = NULL);

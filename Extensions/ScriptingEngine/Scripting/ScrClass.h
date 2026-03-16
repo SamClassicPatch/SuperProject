@@ -64,6 +64,7 @@ class AbstractClass : public TableBase {
     Table m_sqtSetters; // Table of setter methods per field
     Table m_sqtGetters; // Table of getter methods per field
 
+  protected:
     // Construct a new Squirrel class declaration and take ownership of it
     AbstractClass(HSQUIRRELVM vmSet, const SQChar *strName) : TableBase(vmSet), m_strClassName(strName)
     {
@@ -71,6 +72,9 @@ class AbstractClass : public TableBase {
 
     // Initialize a specific native class on creation
     void Init(SQFUNCTION pConstructorMethod, SQFUNCTION pSetMethod, SQFUNCTION pGetMethod, const AbstractClass *pBaseToExtend);
+
+    // Reference an existing native class on creation
+    void Reference(const TableBase &objTable);
 
     // Create new factory of a specific type
     virtual AbstractFactory *NewFactory(void) = 0;
@@ -155,6 +159,25 @@ class InternalClass : public AbstractClass {
 
       // Register dummy cloning method for proper instance copying
       RegisterMetamethod(E_MM_CLONED, (FClone)NULL);
+    };
+
+    // Reconstruct a Squirrel class declaration from a class object
+    InternalClass(const TableBase &objTable, const SQChar *strName, bool bPtrType) :
+      AbstractClass(objTable.GetVM(), bPtrType ? SQCLASS_PTRNAME(strName) : strName), m_pConstructor(NULL), m_pValReference(NULL)
+    {
+      Reference(objTable);
+
+      // Retrieve constructor and value reference from the factory of this class (must exist)
+      AbstractFactory *pFactory = AbstractFactory::Find(m_vm, GetFactoryType().raw_name());
+
+      if (pFactory == NULL) {
+        ASSERTALWAYS("Cannot find a factory for referencing a class");
+        FatalError("Cannot find '%s' factory for referencing '%s' class!", GetFactoryType().raw_name(), strName);
+        return;
+      }
+
+      m_pConstructor = (FConstructor)pFactory->m_pConstructorFunc;
+      m_pValReference = (Type *)pFactory->m_pValReference;
     };
 
     // Add getter and optional setter methods for working with some variable
@@ -401,6 +424,13 @@ class Class : public AbstractClassRegistrar {
     Class(HSQUIRRELVM vmSet, const SQChar *strName, FConstructor pSetConstructor, Type &valSetReference) :
       m_sqcCopy(vmSet, strName, false, NULL, pSetConstructor, valSetReference),
       m_sqcPtr(vmSet, strName, true, NULL, pSetConstructor, valSetReference)
+    {
+    };
+
+    // Reconstruct a Squirrel class declaration from a class object (for using as a reference for new derived classes)
+    Class(const TableBase &objTable, const SQChar *strName) :
+      m_sqcCopy(objTable, strName, false),
+      m_sqcPtr(objTable, strName, true)
     {
     };
 

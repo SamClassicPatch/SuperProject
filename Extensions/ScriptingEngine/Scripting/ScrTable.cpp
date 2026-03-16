@@ -75,7 +75,7 @@ Table TableBase::CloneTable(const SQChar *strName, const TableBase &objOther, bo
   return table;
 };
 
-bool TableBase::PushObject(const SQChar *strName) {
+bool TableBase::PushObject(const SQChar *strName) const {
   sq_pushobject(m_vm, m_obj); // Push table
   sq_pushstring(m_vm, strName, -1);
 
