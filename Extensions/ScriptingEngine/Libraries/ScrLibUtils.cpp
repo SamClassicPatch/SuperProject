@@ -15,7 +15,185 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "RawDataBuffer.h"
+
 namespace sq {
+
+// Buffer class methods
+namespace SqBuffer {
+
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CRawDataBuffer &val) {
+  SQInteger iBytes;
+
+  if (ctArgs != 1 || SQ_FAILED(sq_getinteger(v, 2, &iBytes))) {
+    return sq_throwerror(v, "expected amount of bytes in argument 1");
+  }
+
+  if (iBytes < 0) return sq_throwerror(v, "less than 0 bytes specified in argument 1");
+
+  val.New(iBytes);
+  return 0;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, CRawDataBuffer &val) {
+  const INDEX ct = val.aData.Count();
+  CTString strData = "[";
+
+  for (INDEX i = 0; i < ct; i++) {
+    if (i == 0) {
+      strData += CTString(0, "%02X", val.aData[i]);
+    } else {
+      strData += CTString(0, " %02X", val.aData[i]);
+    }
+  }
+
+  strData += "]";
+  sq_pushstring(v, strData.str_String, -1);
+  return 1;
+};
+
+static SQInteger Equal(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  GetInstanceValueVerify(CRawDataBuffer, pOther, v, 2);
+  sq_pushbool(v, val == *pOther);
+  return 1;
+};
+
+static SQInteger Size(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  sq_pushinteger(v, val.aData.Count());
+  return 1;
+};
+
+static SQInteger Reset(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  val.Reset();
+  return 0;
+};
+
+static SQInteger SetByte(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset, iByte;
+  sq_getinteger(v, 2, &iOffset);
+  sq_getinteger(v, 3, &iByte);
+
+  if (!val.SetByte(iOffset, iByte)) return sq_throwerror(v, "offset is out of bounds");
+  return 0;
+};
+
+static SQInteger SetBool(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset;
+  sq_getinteger(v, 2, &iOffset);
+  SQBool b;
+  sq_getbool(v, 3, &b);
+
+  if (!val.SetBool(iOffset, b)) return sq_throwerror(v, "offset is out of bounds");
+  return 0;
+};
+
+static SQInteger SetIndex(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset, i;
+  sq_getinteger(v, 2, &iOffset);
+  sq_getinteger(v, 3, &i);
+
+  if (!val.SetIndex(iOffset, i)) return sq_throwerror(v, "offset is out of bounds");
+  return 0;
+};
+
+static SQInteger SetFloat(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset;
+  sq_getinteger(v, 2, &iOffset);
+  SQFloat f;
+  sq_getfloat(v, 3, &f);
+
+  if (!val.SetFloat(iOffset, f)) return sq_throwerror(v, "offset is out of bounds");
+  return 0;
+};
+
+static SQInteger SetString(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset;
+  sq_getinteger(v, 2, &iOffset);
+  const SQChar *str;
+  sq_getstring(v, 3, &str);
+
+  if (!val.SetString(iOffset, str)) return sq_throwerror(v, "offset is out of bounds");
+  return 0;
+};
+
+static SQInteger GetByte(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset;
+  sq_getinteger(v, 2, &iOffset);
+
+  UBYTE ub;
+  if (!val.GetByte(iOffset, ub)) return sq_throwerror(v, "offset is out of bounds");
+
+  sq_pushinteger(v, ub);
+  return 1;
+};
+
+static SQInteger GetBool(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset;
+  sq_getinteger(v, 2, &iOffset);
+
+  BOOL b;
+  if (!val.GetBool(iOffset, b)) return sq_throwerror(v, "offset is out of bounds");
+
+  sq_pushbool(v, b);
+  return 1;
+};
+
+static SQInteger GetIndex(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset;
+  sq_getinteger(v, 2, &iOffset);
+
+  INDEX i;
+  if (!val.GetIndex(iOffset, i)) return sq_throwerror(v, "offset is out of bounds");
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger GetFloat(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset;
+  sq_getinteger(v, 2, &iOffset);
+
+  FLOAT f;
+  if (!val.GetFloat(iOffset, f)) return sq_throwerror(v, "offset is out of bounds");
+
+  sq_pushfloat(v, f);
+  return 1;
+};
+
+static SQInteger GetString(HSQUIRRELVM v, int, CRawDataBuffer &val) {
+  SQInteger iOffset, iMaxChars;
+  sq_getinteger(v, 2, &iOffset);
+  sq_getinteger(v, 3, &iMaxChars);
+
+  if (iMaxChars < 0) return sq_throwerror(v, "invalid maximum amount of characters (non-positive integer)");
+
+  CTString str;
+  if (!val.GetString(iOffset, str, iMaxChars)) return sq_throwerror(v, "offset is out of bounds");
+
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static Method<CRawDataBuffer> _aMethods[] = {
+  { "Equal", &Equal, 2, ".x" },
+
+  { "Size",  &Size,  1, "." },
+  { "Reset", &Reset, 1, "." },
+
+  { "SetByte",   &SetByte,   3, ".nn" },
+  { "SetBool",   &SetBool,   3, ".nb" },
+  { "SetIndex",  &SetIndex,  3, ".nn" },
+  { "SetFloat",  &SetFloat,  3, ".nn" },
+  { "SetString", &SetString, 3, ".ns" },
+
+  { "GetByte",   &GetByte,   2, ".n" },
+  { "GetBool",   &GetBool,   2, ".n" },
+  { "GetIndex",  &GetIndex,  2, ".n" },
+  { "GetFloat",  &GetFloat,  2, ".n" },
+  { "GetString", &GetString, 3, ".nn" },
+};
+
+}; // namespace
 
 // CBrushPolygon class methods
 namespace SqBrushPolygon {
@@ -296,6 +474,19 @@ void VM::RegisterUtils(void) {
   INDEX i;
 
   // Register classes
+  {
+    Class<CRawDataBuffer> sqcBuffer(GetVM(), "CRawDataBuffer", &SqBuffer::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqBuffer::_aMethods); i++) {
+      sqcBuffer.RegisterMethod(SqBuffer::_aMethods[i]);
+    }
+
+    // Metamethods
+    sqcBuffer.RegisterMetamethod(E_MM_TOSTRING, &SqBuffer::ToString);
+
+    Root().AddClass(sqcBuffer);
+  }
   {
     Class<CBrushPolygon *> sqcPolygon(GetVM(), "CBrushPolygon", &SqBrushPolygon::Constructor);
 
