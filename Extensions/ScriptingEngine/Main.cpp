@@ -36,6 +36,8 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
   { "Reset",         &SignalReset },
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
+static CTCriticalSection _csScripts;
+
 // Permanent script VMs
 static sq::VM *_pSignalVM = NULL;
 static sq::VM *_pCommandVM = NULL;
@@ -67,12 +69,16 @@ static bool CommandReturnCallback(sq::VM &vm) {
 
 // Check if the current script execution is suspended
 static INDEX ShellIsSuspended(void) {
+  CTSingleLock sl(&_csScripts, TRUE);
+
   if (_pCommandVM == NULL) return FALSE;
   return _pCommandVM->IsSuspended();
 };
 
 // Resume a previously suspended script execution
 static void ShellResumeVM(void) {
+  CTSingleLock sl(&_csScripts, TRUE);
+
   // No VM or it's not suspended
   if (_pCommandVM == NULL || !_pCommandVM->IsSuspended()) return;
 
@@ -86,6 +92,8 @@ static void ShellResumeVM(void) {
 
 // Forcefully reset the global VM, in case it's stuck in a loop etc.
 static void ShellResetVM(void) {
+  CTSingleLock sl(&_csScripts, TRUE);
+
   if (_pCommandVM != NULL) {
     delete _pCommandVM;
     _pCommandVM = NULL;
@@ -116,6 +124,8 @@ static BOOL ExecuteSquirrelScript(sq::VM *pVM, const CTString &strScript, BOOL b
 int SignalExecuteScript(void *pScript) {
   if (pScript == NULL) return FALSE;
 
+  CTSingleLock sl(&_csScripts, TRUE);
+
   // Create a new VM
   SignalReset(NULL);
   _pSignalVM = new sq::VM(true);
@@ -125,11 +135,15 @@ int SignalExecuteScript(void *pScript) {
 };
 
 int SignalIsSuspended(void *) {
+  CTSingleLock sl(&_csScripts, TRUE);
+
   if (_pSignalVM == NULL) return FALSE;
   return _pSignalVM->IsSuspended();
 };
 
 int SignalResume(void *) {
+  CTSingleLock sl(&_csScripts, TRUE);
+
   // No VM or it's not suspended
   if (_pSignalVM == NULL || !_pSignalVM->IsSuspended()) return TRUE;
 
@@ -145,6 +159,8 @@ int SignalResume(void *) {
 };
 
 int SignalReset(void *) {
+  CTSingleLock sl(&_csScripts, TRUE);
+
   if (_pSignalVM != NULL) {
     delete _pSignalVM;
     _pSignalVM = NULL;
@@ -157,6 +173,8 @@ int SignalReset(void *) {
 static CTString ShellExecuteString(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;
   const CTString &strScript = *NEXT_ARG(CTString *);
+
+  CTSingleLock sl(&_csScripts, TRUE);
 
   // Create a new VM
   ShellResetVM();
@@ -172,6 +190,8 @@ static CTString ShellExecuteString(SHELL_FUNC_ARGS) {
 static CTString ShellExecuteFile(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;
   const CTString &strScript = *NEXT_ARG(CTString *);
+
+  CTSingleLock sl(&_csScripts, TRUE);
 
   // Create a new VM
   ShellResetVM();
@@ -200,6 +220,8 @@ inline sq::VM *NewScriptVM(const CTString &strFile) {
 
 // Prepare Squirrel VMs for every custom script in some directory
 static void LoadCustomScripts(void) {
+  CTSingleLock sl(&_csScripts, TRUE);
+
   CFileList aScripts;
   ListGameFiles(aScripts, "Scripts\\Squirrel\\", "*.nut", 0);
 
@@ -215,6 +237,8 @@ static void LoadCustomScripts(void) {
 
 // Free all loaded custom scripts
 static void ClearCustomScripts(void) {
+  CTSingleLock sl(&_csScripts, TRUE);
+
   FOREACHINDYNAMICCONTAINER(_cCustomScripts, sq::VM, itvm) {
     delete &itvm.Current();
   }
@@ -232,6 +256,8 @@ static void ReloadCustomScripts(void) {
 static void LoadCustomScript(SHELL_FUNC_ARGS) {
   BEGIN_SHELL_FUNC;
   const CTString &strScript = *NEXT_ARG(CTString *);
+
+  CTSingleLock sl(&_csScripts, TRUE);
 
   // Load a new script first (in case it errors out and the old one needs to be preserved)
   sq::VM *pVM = NewScriptVM(strScript);
@@ -251,6 +277,9 @@ static void LoadCustomScript(SHELL_FUNC_ARGS) {
 
 // Run a specific function for all loaded custom scripts
 void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, sq::VM::FReturnValueCallback pReturnCallback) {
+  // Sync all threads that might be running the scripts from the same VMs
+  CTSingleLock sl(&_csScripts, TRUE);
+
   FOREACHINDYNAMICCONTAINER(_cCustomScripts, sq::VM, itvm) {
     sq::VM &vm = *itvm;
 
@@ -268,6 +297,8 @@ void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, s
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
+  _csScripts.cs_iIndex = -1;
+
   // Register plugin events
   events.m_processing->OnStep  = &IProcessingEvents_OnStep;
   events.m_processing->OnFrame = &IProcessingEvents_OnFrame;

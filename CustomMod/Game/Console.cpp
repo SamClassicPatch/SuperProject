@@ -485,7 +485,7 @@ static void Key_Return(void)
   strInputHistory += strEditingLine +"\r\n";
   iHistoryLine = 0;
 
-  // [Cecil] TEMP: Run Squirrel script from the console
+  // [Cecil] Run Squirrel script from the console
   if (strEditingLine.RemovePrefix("sq>")) {
     strEditingLine.TrimSpacesLeft();
     CPrintF("sq> %s\n", strEditingLine);
