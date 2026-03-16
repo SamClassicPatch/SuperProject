@@ -371,7 +371,7 @@ static SQInteger GetViewpoint(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
   ASSERT_ENTITY;
 
   // Make sure it's a player entity
-  if (!IsDerivedFromID(val, CPlayerEntity_ClassID)) return sq_throwerror(v, "cannot retrieve a viewpoint from a non-player entity");
+  if (!::IsDerivedFromID(val, CPlayerEntity_ClassID)) return sq_throwerror(v, "cannot retrieve a viewpoint from a non-player entity");
   CPlayerEntity *penPlayer = (CPlayerEntity *)(CEntity *)val;
 
   // Get optional lerped flag

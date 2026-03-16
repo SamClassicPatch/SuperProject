@@ -76,18 +76,22 @@ static INDEX ShellIsSuspended(void) {
 };
 
 // Resume a previously suspended script execution
-static void ShellResumeVM(void) {
+static CTString ShellResumeVM(void) {
   CTSingleLock sl(&_csScripts, TRUE);
 
   // No VM or it's not suspended
-  if (_pCommandVM == NULL || !_pCommandVM->IsSuspended()) return;
+  if (_pCommandVM == NULL || !_pCommandVM->IsSuspended()) return "";
 
+  _strLastCommandResult = "";
   bool bExecuted = _pCommandVM->Resume(&CommandReturnCallback);
 
   // Error during the execution
   if (!bExecuted) {
     CPrintF("^cff0000Execution error:\n%s\n", _pCommandVM->GetError());
+    return "";
   }
+
+  return _strLastCommandResult;
 };
 
 // Forcefully reset the global VM, in case it's stuck in a loop etc.
@@ -338,7 +342,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 
   // Custom symbols
   GetPluginAPI()->RegisterMethod(TRUE, "INDEX",    "scr_IsSuspended",   "void",     &ShellIsSuspended);
-  GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResumeVM",      "void",     &ShellResumeVM);
+  GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ResumeVM",      "void",     &ShellResumeVM);
   GetPluginAPI()->RegisterMethod(TRUE, "void",     "scr_ResetVM",       "void",     &ShellResetVM);
   GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteString", "CTString", &ShellExecuteString);
   GetPluginAPI()->RegisterMethod(TRUE, "CTString", "scr_ExecuteFile",   "CTString", &ShellExecuteFile);
