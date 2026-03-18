@@ -586,7 +586,20 @@ const char *GetHelpForSymbol(const CTString &strSymbol) {
   return strNoDesc;
 };
 
-static void Key_Tab( BOOL bShift)
+// [Cecil] Convert a string to lowercase
+inline CTString ToLower(const CTString &str) {
+  CTString strCopy = str;
+  INDEX i = strCopy.Length();
+
+  while (--i >= 0) {
+    strCopy.str_String[i] = tolower(static_cast<UBYTE>(strCopy[i]));
+  }
+
+  return strCopy;
+};
+
+// [Cecil] Pass state of the Ctrl key
+static void Key_Tab(BOOL bCtrl, BOOL bShift)
 {
   // clear editing line from whitespaces
   strEditingLine.TrimSpacesLeft();
@@ -623,8 +636,21 @@ static void Key_Tab( BOOL bShift)
       // get completion name if current symbol is for user
       if( !(itss->ss_ulFlags&SSF_USER)) continue;
       strSymbol = itss->GetCompletionString();
+
+      // [Cecil] Check for a substring within the symbol name using Ctrl+Tab shortcut instead of the beginning
+      BOOL bCanBeExpanded;
+
+      if (bCtrl) {
+        CTString strSymbolLower = ToLower(strSymbol);
+        CTString strExpandLower = ToLower(strExpandStart);
+        bCanBeExpanded = (strstr(strSymbolLower, strExpandLower) != NULL);
+
+      } else {
+        bCanBeExpanded = (strnicmp(strSymbol, strExpandStart, Min(strSymbol.Length(), strExpandStart.Length())) == 0);
+      }
+
       // if this symbol can be expanded
-      if( strnicmp( strSymbol, strExpandStart, Min(strlen(strSymbol),strlen(strExpandStart))) == 0) {
+      if (bCanBeExpanded) {
         // can we print last found symbol ?
         if( strLastMatched!="") {
           if( !bFirstFound) CPrintF( "  -\n");
@@ -669,8 +695,20 @@ static void Key_Tab( BOOL bShift)
     // get completion name for that symbol
     strSymbol = itss->GetCompletionString();
 
+    // [Cecil] Check for a substring within the symbol name using Ctrl+Tab shortcut instead of the beginning
+    BOOL bCanBeExpanded;
+
+    if (bCtrl) {
+      CTString strSymbolLower = ToLower(strSymbol);
+      CTString strExpandLower = ToLower(strExpandStart);
+      bCanBeExpanded = (strstr(strSymbolLower, strExpandLower) != NULL);
+
+    } else {
+      bCanBeExpanded = (strnicmp(strSymbol, strExpandStart, Min(strSymbol.Length(), strExpandStart.Length())) == 0);
+    }
+
     // if this symbol can be expanded
-    if( strnicmp( strSymbol, strExpandStart, Min(strlen(strSymbol),strlen(strExpandStart))) == 0)
+    if (bCanBeExpanded)
     {
       // at least one symbol is found, so tab will work
       bTabSymbolFound = TRUE;
@@ -738,12 +776,13 @@ void CGame::ConsoleKeyDown( MSG msg)
     // do nothing
     return;
   }
+  BOOL bCtrl = GetKeyState(VK_CONTROL) & 0x8000; // [Cecil]
   BOOL bShift = GetKeyState(VK_SHIFT) & 0x8000;
   switch( msg.wParam) {
   case VK_RETURN:  Key_Return();      break;
   case VK_UP:      Key_ArrowUp();     break;
   case VK_DOWN:    Key_ArrowDown();   break;
-  case VK_TAB:     Key_Tab(bShift);   break;
+  case VK_TAB:     Key_Tab(bCtrl, bShift);   break;
   case VK_PRIOR:   Key_PgUp(bShift);  break;
   case VK_NEXT:    Key_PgDn(bShift);  break;
   case VK_BACK:    Key_Backspace(bShift, FALSE);  break;
