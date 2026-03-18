@@ -174,9 +174,13 @@ functions:
     FLOAT fPower=ClampUp(m_fDamageStep-MIN_DAMAGE_QUANTUM, MAX_DAMAGE_QUANTUM)/MAX_DAMAGE_QUANTUM;
     if( penParent!= NULL)
     {
-      if( (penParent->en_RenderType==CEntity::RT_MODEL || penParent->en_RenderType==CEntity::RT_EDITORMODEL ||
-           penParent->en_RenderType==CEntity::RT_SKAMODEL || penParent->en_RenderType==CEntity::RT_SKAEDITORMODEL) &&
-          (Particle_GetViewer()!=penParent) )
+      const RenderType eRender = penParent->GetRenderType();
+      const BOOL bModel = (eRender == RT_MODEL || eRender == RT_EDITORMODEL || eRender == RT_SKAMODEL || eRender == RT_SKAEDITORMODEL);
+
+      // [Cecil] Prevent burning particles from rendering on the original entity while viewing through its predicted copy
+      const BOOL bNotPredicted = (!penParent->IsPredicted() || Particle_GetViewer() != penParent->GetPredictor());
+
+      if (bModel && Particle_GetViewer() != penParent && bNotPredicted)
       {
         Particles_Burning(penParent, fPower, fTimeFactor*fDeathFactor);
       }
