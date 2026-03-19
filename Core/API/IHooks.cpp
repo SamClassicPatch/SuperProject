@@ -131,7 +131,9 @@ void IHooks::OnChangeLevel(void)
 void IHooks::OnGameStop(void)
 {
   // Reset CAM for the next start
-  GetGameAPI()->GetCamera().Reset();
+  CObserverCamera &ocam = GetGameAPI()->GetCamera();
+  ocam.GetState() = FALSE;
+  ocam.Reset();
 
   // Call game stop function for each plugin
   FOREACHPLUGIN(itPlugin) {
