@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Core/Networking/ExtPackets.h>
 #include <Core/Networking/NetworkFunctions.h>
 
+#include <Game/PlayerSettings.h>
 #include <Extras/XGizmo/Interfaces/Sounds.h>
 
 // Make sure the client is currently running a server
@@ -61,6 +62,134 @@ static SQInteger Lerp(HSQUIRRELVM v, int, CPlayerAction &val) {
 static Method<CPlayerAction> _aMethods[] = {
   { "Clear", &Clear, 1, "." },
   { "Lerp",  &Lerp,  4, ".xxn" },
+};
+
+}; // namespace
+
+// CPlayerCharacter class methods
+namespace SqPlayerCharacter {
+
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CPlayerCharacter &val) {
+  if (ctArgs > 0) {
+    GetInstanceValueVerify(CRawDataBuffer, pbuf, v, 2);
+
+    if (pbuf->aData.Count() < PLAYERGUIDSIZE) {
+      return sq_throwerror(v, "expected a CRawDataBuffer with at least " CLASSICSPATCH_STRINGIFY(PLAYERGUIDSIZE) " bytes");
+    }
+
+    memcpy(val.pc_aubGUID, pbuf->aData.sa_Array, PLAYERGUIDSIZE);
+  }
+  return 0;
+};
+
+static SQInteger Clone(HSQUIRRELVM v, CPlayerCharacter &val, CPlayerCharacter &valOther) {
+  val = valOther;
+  return 0;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, CPlayerCharacter &val) {
+  sq_pushstring(v, val.GetNameForPrinting(), -1);
+  return 1;
+};
+
+static SQInteger GetName(HSQUIRRELVM v, CPlayerCharacter &val) {
+  sq_pushstring(v, val.GetName().str_String, -1);
+  return 1;
+};
+
+static SQInteger SetName(HSQUIRRELVM v, CPlayerCharacter &val, SQInteger idxValue) {
+  const SQChar *str;
+  if (SQ_FAILED(sq_getstring(v, idxValue, &str))) return sq_throwerror(v, "expected a string value");
+  val.SetName(str);
+  return 0;
+};
+
+static SQInteger GetTeam(HSQUIRRELVM v, CPlayerCharacter &val) {
+  sq_pushstring(v, val.GetTeam().str_String, -1);
+  return 1;
+};
+
+static SQInteger SetTeam(HSQUIRRELVM v, CPlayerCharacter &val, SQInteger idxValue) {
+  const SQChar *str;
+  if (SQ_FAILED(sq_getstring(v, idxValue, &str))) return sq_throwerror(v, "expected a string value");
+  val.SetTeam(str);
+  return 0;
+};
+
+static SQInteger GetSkin(HSQUIRRELVM v, CPlayerCharacter &val) {
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  sq_pushstring(v, pps->ps_achModelFile, -1);
+  return 1;
+};
+
+static SQInteger SetSkin(HSQUIRRELVM v, CPlayerCharacter &val, SQInteger idxValue) {
+  const SQChar *str;
+  if (SQ_FAILED(sq_getstring(v, idxValue, &str))) return sq_throwerror(v, "expected a string value");
+
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  size_t ctMax = sizeof(pps->ps_achModelFile);
+  memset(pps->ps_achModelFile, 0, ctMax);
+  memcpy(pps->ps_achModelFile, str, Min(ctMax, strlen(str)));
+  return 0;
+};
+
+static SQInteger GetWeaponAutoSelect(HSQUIRRELVM v, CPlayerCharacter &val) {
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  sq_pushinteger(v, pps->ps_iWeaponAutoSelect);
+  return 1;
+};
+
+static SQInteger SetWeaponAutoSelect(HSQUIRRELVM v, CPlayerCharacter &val, SQInteger idxValue) {
+  SQInteger i;
+  if (SQ_FAILED(sq_getinteger(v, idxValue, &i))) return sq_throwerror(v, "expected a number value");
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  pps->ps_iWeaponAutoSelect = (i & 0xFF);
+  return 0;
+};
+
+static SQInteger GetCrosshair(HSQUIRRELVM v, CPlayerCharacter &val) {
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  sq_pushinteger(v, pps->ps_iCrossHairType);
+  return 1;
+};
+
+static SQInteger SetCrosshair(HSQUIRRELVM v, CPlayerCharacter &val, SQInteger idxValue) {
+  SQInteger i;
+  if (SQ_FAILED(sq_getinteger(v, idxValue, &i))) return sq_throwerror(v, "expected a number value");
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  pps->ps_iCrossHairType = (i & 0xFF);
+  return 0;
+};
+
+static SQInteger GetFlags(HSQUIRRELVM v, CPlayerCharacter &val) {
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  sq_pushinteger(v, pps->ps_ulFlags);
+  return 1;
+};
+
+static SQInteger SetFlags(HSQUIRRELVM v, CPlayerCharacter &val, SQInteger idxValue) {
+  SQInteger i;
+  if (SQ_FAILED(sq_getinteger(v, idxValue, &i))) return sq_throwerror(v, "expected a number value");
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  pps->ps_ulFlags = i;
+  return 0;
+};
+
+static SQInteger Equal(HSQUIRRELVM v, int, CPlayerCharacter &val) {
+  GetInstanceValueVerify(CPlayerCharacter, pOther, v, 2);
+  sq_pushbool(v, val == *pOther);
+  return 1;
+};
+
+static SQInteger GetModelFilename(HSQUIRRELVM v, int, CPlayerCharacter &val) {
+  CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
+  sq_pushstring(v, pps->GetModelFilename().str_String, -1);
+  return 1;
+};
+
+static Method<CPlayerCharacter> _aMethods[] = {
+  { "Equal", &Equal, 2, ".x" },
+  { "GetModelFilename", &GetModelFilename, 1, "." },
 };
 
 }; // namespace
@@ -233,7 +362,7 @@ static SQInteger GetFile(HSQUIRRELVM v, SoundSetup &val) {
 
 static SQInteger SetFile(HSQUIRRELVM v, SoundSetup &val, SQInteger idxValue) {
   const SQChar *str;
-  if (SQ_FAILED(sq_getstring(v, idxValue, &str))) return sq_throwerror(v, "expected a number value");
+  if (SQ_FAILED(sq_getstring(v, idxValue, &str))) return sq_throwerror(v, "expected a string value");
   val.strFile = str;
   return 0;
 };
@@ -1079,6 +1208,27 @@ void VM::RegisterNetwork(void) {
 
     Root().AddClass(sqcAction);
   }
+  {
+    Class<CPlayerCharacter> sqcCharacter(GetVM(), "CPlayerCharacter", &SqPlayerCharacter::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqPlayerCharacter::_aMethods); i++) {
+      sqcCharacter.RegisterMethod(SqPlayerCharacter::_aMethods[i]);
+    }
+
+    // Metamethods
+    sqcCharacter.RegisterMetamethod(E_MM_CLONED, &SqPlayerCharacter::Clone);
+    sqcCharacter.RegisterMetamethod(E_MM_TOSTRING, &SqPlayerCharacter::ToString);
+
+    sqcCharacter.RegisterVar("strName",           &SqPlayerCharacter::GetName,             &SqPlayerCharacter::SetName);
+    sqcCharacter.RegisterVar("strTeam",           &SqPlayerCharacter::GetTeam,             &SqPlayerCharacter::SetTeam);
+    sqcCharacter.RegisterVar("strSkin",           &SqPlayerCharacter::GetSkin,             &SqPlayerCharacter::SetSkin);
+    sqcCharacter.RegisterVar("iWeaponAutoSelect", &SqPlayerCharacter::GetWeaponAutoSelect, &SqPlayerCharacter::SetWeaponAutoSelect);
+    sqcCharacter.RegisterVar("iCrosshairType",    &SqPlayerCharacter::GetCrosshair,        &SqPlayerCharacter::SetCrosshair);
+    sqcCharacter.RegisterVar("ulFlags",           &SqPlayerCharacter::GetFlags,            &SqPlayerCharacter::SetFlags);
+
+    Root().AddClass(sqcCharacter);
+  }
 #if _PATCHCONFIG_EXT_PACKETS
   {
     Class<CRawDataBuffer> sqcBuffer(Root(), "CRawDataBuffer");
@@ -1120,6 +1270,33 @@ void VM::RegisterNetwork(void) {
   for (i = 0; i < ARRAYCOUNT(_aNetworkFuncs); i++) {
     sqtNetwork.RegisterFunc(_aNetworkFuncs[i]);
   }
+
+  // Weapon select type
+  Enumeration enWeaponSelect(GetVM());
+
+#define ADD_PS(_FlagName) enWeaponSelect.RegisterValue(#_FlagName, (SQInteger)PS_##_FlagName)
+  ADD_PS(WAS_ONLYNEW);
+  ADD_PS(WAS_NONE);
+  ADD_PS(WAS_ALL);
+  ADD_PS(WAS_BETTER);
+#undef ADD_PS
+
+  Const().AddEnum("PS", enWeaponSelect);
+
+  // Player settings flags
+  Enumeration enPlayerSettingsFlags(GetVM());
+
+#define ADD_PSF(_FlagName) enPlayerSettingsFlags.RegisterValue(#_FlagName, (SQInteger)PSF_##_FlagName)
+  ADD_PSF(HIDEWEAPON);
+  ADD_PSF(PREFER3RDPERSON);
+  ADD_PSF(NOQUOTES);
+  ADD_PSF(AUTOSAVE);
+  ADD_PSF(COMPSINGLECLICK);
+  ADD_PSF(SHARPTURNING);
+  ADD_PSF(NOBOBBING);
+#undef ADD_PSF
+
+  Const().AddEnum("PSF", enPlayerSettingsFlags);
 
   // Sound flags
   Enumeration enSoundFlags(GetVM());

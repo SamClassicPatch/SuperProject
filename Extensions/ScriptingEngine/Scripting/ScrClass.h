@@ -752,7 +752,7 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
       return sq_throwerror(v, "expected an integer value"); \
     } \
     (_ValueSet) = i; \
-    return 1; \
+    return 0; \
   }
 
 // Define getter and setter functions for a float field of some native Squirrel class
@@ -770,7 +770,7 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
       return sq_throwerror(v, "expected a number value"); \
     } \
     (_ValueSet) = f; \
-    return 1; \
+    return 0; \
   }
 
 // Define getter and setter functions for a boolean field of some native Squirrel class
@@ -788,7 +788,7 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
       return sq_throwerror(v, "expected a boolean value"); \
     } \
     (_ValueSet) = b; \
-    return 1; \
+    return 0; \
   }
 
 // Define getter and setter functions for a string field of some native Squirrel class
@@ -806,7 +806,7 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
       return sq_throwerror(v, "expected a string value"); \
     } \
     (_ValueSet) = str; \
-    return 1; \
+    return 0; \
   }
 
 // Define getter function for a field of some native Squirrel class that contains a value of another class
@@ -829,7 +829,7 @@ SQInteger InternalClass<Type>::ClassMetaNextIndex(HSQUIRRELVM v) {
   static SQInteger _SetFuncName(HSQUIRRELVM v, _ClassType &val, SQInteger idxValue) { \
     GetInstanceValueVerify(_ValueType, pOther, v, idxValue); \
     (_ValueGet) = *pOther; \
-    return 1; \
+    return 0; \
   }
 
 }; // namespace
