@@ -139,6 +139,11 @@ static void ToggleOCAM(void) {
     }
   }
 
+  // Notify about the photo mode being unavailable if it has been enabled but still isn't active
+  if (bToggle && !GetGameAPI()->GetCamera().IsActive()) {
+    CPutString(TRANS("^cff0000Photo mode is unavailable during this game! Try recording a demo or joining the server as an observer.\n"));
+  }
+
   StopMenus();
 };
 
