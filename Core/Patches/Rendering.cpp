@@ -21,8 +21,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #if _PATCHCONFIG_FIX_RENDERING
 
-// Original function pointer
+// Original function pointers
 void (*pRenderView)(CWorld &, CEntity &, CAnyProjection3D &, CDrawPort &) = NULL;
+CEntity *(*pParticleGetViewer)(void) = NULL;
 
 // Patched function
 void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDrawPort &dp)
@@ -118,6 +119,17 @@ void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDr
 
   // Call API method after rendering the world
   IHooks::OnRenderView(woWorld, &enViewer, apr, &dp);
+};
+
+// Patched function
+CEntity *P_Particle_GetViewer(void) {
+  // Return the current OCAM viewer for rendering particles through Particles_ViewerLocal()
+  if (GetGameAPI()->GetCamera().IsActive()) {
+    return GetGameAPI()->GetCamera().cam_penViewer;
+  }
+
+  // Proceed to the original function
+  return (*pParticleGetViewer)();
 };
 
 // Prepare the perspective projection

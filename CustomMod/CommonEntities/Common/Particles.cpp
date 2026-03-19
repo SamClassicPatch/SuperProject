@@ -2598,7 +2598,17 @@ BOOL UpdateGrowthCache(CEntity *pen, CTextureData *ptdGrowthMap, FLOATaabbox3D &
   FLOAT GROWTH_RENDERING_STEP = eph->m_fGrowthRenderingStep;  
 
   // viewer absolute position
-  FLOAT3D vPos = prPlayerProjection->pr_vViewerPosition;
+  FLOAT3D vPos;
+
+  // [Cecil] Use observer camera position
+  CObserverCamera &ocam = GetGameAPI()->GetCamera();
+
+  if (ocam.IsActive()) {
+    vPos = ocam.cam_cpView.Pos();
+  } else {
+    vPos = prPlayerProjection->pr_vViewerPosition;
+  }
+
   // snap viewer to grid
   FLOAT3D vSnapped = vPos;
   SnapFloat(vSnapped(1), GROWTH_RENDERING_STEP);
@@ -2811,7 +2821,20 @@ void Particles_Growth(CEntity *pen, CTextureData *ptdGrowthMap, FLOATaabbox3D &b
   }
   
   // calculate viewer position
-  FLOAT3D vPos = prPlayerProjection->pr_vViewerPosition;
+  FLOAT3D vPos;
+  FLOATmatrix3D mViewer;
+
+  // [Cecil] Use observer camera position
+  CObserverCamera &ocam = GetGameAPI()->GetCamera();
+
+  if (ocam.IsActive()) {
+    vPos = ocam.cam_cpView.Pos();
+    MakeInverseRotationMatrixFast(mViewer, ocam.cam_cpView.Rot()); // pr_ViewerRotationMatrix is calculated like that
+
+  } else {
+    vPos = prPlayerProjection->pr_vViewerPosition;
+    mViewer = prPlayerProjection->pr_ViewerRotationMatrix;
+  }
 
   FLOAT fRangeMod = Clamp(gfx_fEnvParticlesRange, 0.1f, 10.0f); // [Cecil] 2 -> 10
   FLOAT GROWTH_RENDERING_RADIUS_FADE = eph->m_fGrowthRenderingRadius*fRangeMod;
@@ -2831,7 +2854,7 @@ void Particles_Growth(CEntity *pen, CTextureData *ptdGrowthMap, FLOATaabbox3D &b
       CGrowth *cgParticle = &cgc->acgParticles[i];
 
       // calculate distance to viewer by projecting the particle vector onto the viewers z
-      cgParticle->fDistanceToViewer = (vPos - cgParticle->vRender)%(prPlayerProjection->pr_ViewerRotationMatrix.GetRow(3));
+      cgParticle->fDistanceToViewer = (vPos - cgParticle->vRender) % mViewer.GetRow(3);
               
       // continue only with particles that are in front of the player
       if (cgParticle->fDistanceToViewer>0.0f) {
@@ -3102,7 +3125,16 @@ void Particles_Growth(CEntity *pen, CTextureData *ptdGrowthMap, FLOATaabbox3D &b
 void Particles_Rain(CEntity *pen, FLOAT fGridSize, INDEX ctGrids, FLOAT fFactor,
                     CTextureData *ptdRainMap, FLOATaabbox3D &boxRainMap)
 {
-  FLOAT3D vPos = pen->GetLerpedPlacement().pl_PositionVector;
+  FLOAT3D vPos;
+
+  // [Cecil] Use observer camera position
+  CObserverCamera &ocam = GetGameAPI()->GetCamera();
+
+  if (ocam.IsActive()) {
+    vPos = ocam.cam_cpView.Pos();
+  } else {
+    vPos = pen->GetLerpedPlacement().pl_PositionVector;
+  }
 
   vPos(1) -= fGridSize*ctGrids/2;
   vPos(3) -= fGridSize*ctGrids/2;
@@ -3192,7 +3224,16 @@ void Particles_Rain(CEntity *pen, FLOAT fGridSize, INDEX ctGrids, FLOAT fFactor,
 
 void Particles_Snow( CEntity *pen, FLOAT fGridSize, INDEX ctGrids)
 {
-  FLOAT3D vPos = pen->GetLerpedPlacement().pl_PositionVector;
+  FLOAT3D vPos;
+
+  // [Cecil] Use observer camera position
+  CObserverCamera &ocam = GetGameAPI()->GetCamera();
+
+  if (ocam.IsActive()) {
+    vPos = ocam.cam_cpView.Pos();
+  } else {
+    vPos = pen->GetLerpedPlacement().pl_PositionVector;
+  }
 
   vPos(1) -= fGridSize*ctGrids/2;
   vPos(3) -= fGridSize*ctGrids/2;
@@ -3244,7 +3285,16 @@ void Particles_Snow( CEntity *pen, FLOAT fGridSize, INDEX ctGrids)
 void Particles_Snow(CEntity *pen, FLOAT fGridSize, INDEX ctGrids, FLOAT fFactor,
                     CTextureData *ptdSnowMap, FLOATaabbox3D &boxSnowMap, FLOAT fSnowStart)
 {
-  FLOAT3D vPos = pen->GetLerpedPlacement().pl_PositionVector;
+  FLOAT3D vPos;
+
+  // [Cecil] Use observer camera position
+  CObserverCamera &ocam = GetGameAPI()->GetCamera();
+
+  if (ocam.IsActive()) {
+    vPos = ocam.cam_cpView.Pos();
+  } else {
+    vPos = pen->GetLerpedPlacement().pl_PositionVector;
+  }
 
   vPos(1) -= fGridSize*ctGrids/2;
   vPos(3) -= fGridSize*ctGrids/2;

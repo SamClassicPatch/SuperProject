@@ -297,6 +297,10 @@ void ICorePatches::Rendering(void) {
   pRenderView = &RenderView;
   CreatePatch(pRenderView, &P_RenderView, "::RenderView(...)");
 
+  extern CEntity *(*pParticleGetViewer)(void);
+  pParticleGetViewer = &Particle_GetViewer;
+  CreatePatch(pParticleGetViewer, &P_Particle_GetViewer, "::Particle_GetViewer()");
+
   // Pointer to CPerspectiveProjection3D::Prepare()
   void *pPrepare = ClassicsCore_GetEngineSymbol("?Prepare@CPerspectiveProjection3D@@UAEXXZ");
   CreatePatch(pPrepare, &CProjectionPatch::P_Prepare, "CPerspectiveProjection3D::Prepare()");

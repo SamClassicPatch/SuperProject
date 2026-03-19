@@ -87,18 +87,19 @@ class CORE_API CObserverCamera {
     struct CameraPos {
       TIME tmTick;
       FLOAT fSpeed;
-      FLOAT3D vPos;
-      ANGLE3D aRot;
+      CPlacement3D plPos;
       FLOAT fFOV;
       BOOL bLast; // Internal flag
 
-      CameraPos() : vPos(0, 0, 0), aRot(0, 0, 0), fFOV(90), fSpeed(1), tmTick(0), bLast(FALSE)
+      CameraPos() : plPos(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0)), fFOV(90), fSpeed(1), tmTick(0), bLast(FALSE)
       {
       };
 
-      inline CPlacement3D GetPlacement(void) const {
-        return CPlacement3D(vPos, aRot);
-      };
+      inline FLOAT3D &Pos(void) { return plPos.pl_PositionVector; };
+      inline FLOAT3D &Rot(void) { return plPos.pl_OrientationAngle; };
+
+      inline const FLOAT3D &Pos(void) const { return plPos.pl_PositionVector; };
+      inline const FLOAT3D &Rot(void) const { return plPos.pl_OrientationAngle; };
     };
 
   public:
@@ -121,6 +122,7 @@ class CORE_API CObserverCamera {
     FLOAT3D cam_vMovement;
     ANGLE3D cam_aRotation;
 
+    CEntity *cam_penViewer; // Which entity the world is currently being viewed from
     CSoundListener cam_sliWorld; // Listener for world sounds
     BOOL cam_bExternalUsage; // Check whether or not the camera is usable from the outside
 

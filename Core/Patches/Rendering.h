@@ -25,6 +25,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Patched function
 void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDrawPort &dp);
 
+// Patched function
+CEntity *P_Particle_GetViewer(void);
+
 class CProjectionPatch : public CPerspectiveProjection3D {
   public:
     // Prepare the perspective projection

@@ -315,11 +315,17 @@ BOOL CEntityPatch::P_ReceiveItem(const CEntityEvent &ee)
 
 // Render game view from the player's perspective
 void CEntityPatch::P_RenderGameView(CDrawPort *pdp, void *pvUserData) {
-  // Prioritize camera, unless it can't be used at the moment
-  if (GetGameAPI()->GetCamera().Update(this, pdp)) return;
+  // If playing with a custom mod
+  if (ClassicsCore_IsCustomModActive()) {
+    // Prioritize camera, unless it can't be used at the moment
+    if (GetGameAPI()->GetCamera().Update(this, pdp)) return;
+    (this->*pRenderGameView)(pdp, pvUserData);
 
-  // Proceed to the original function
-  (this->*pRenderGameView)(pdp, pvUserData);
+  } else {
+    // Otherwise render the camera on top in order to execute any necessary modded/vanilla rendering code
+    (this->*pRenderGameView)(pdp, pvUserData);
+    GetGameAPI()->GetCamera().Update(this, pdp);
+  }
 };
 
 // Multiply gravity acceleration of specific mod-independent brush entities

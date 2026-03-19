@@ -5698,11 +5698,14 @@ functions:
     // render empty shells
     Particles_EmptyShells( this, m_asldData);
 
-    if (Particle_GetViewer()==this) {
+    const BOOL bThisViewer = (Particle_GetViewer() == this);
+
+    if (bThisViewer) {
       Particles_ViewerLocal(this);
     }
-    else
-    {
+
+    // [Cecil] Always render third person particles in photo mode
+    if (!bThisViewer || GetGameAPI()->GetCamera().IsActive()) {
       // if is not first person
       RenderChainsawParticles(TRUE);
       // glowing powerups

@@ -76,9 +76,11 @@ void CObserverCamera::ReadPos(CameraPos &cp) {
     CTString strLine;
     cam_strmScript.GetLine_t(strLine);
 
-    strLine.ScanF("%g: %g: %g %g %g:%g %g %g:%g",
-      &cp.tmTick, &cp.fSpeed, &cp.vPos(1), &cp.vPos(2), &cp.vPos(3),
-      &cp.aRot(1), &cp.aRot(2), &cp.aRot(3), &cp.fFOV);
+    FLOAT3D &vPos = cp.Pos();
+    ANGLE3D &aRot = cp.Rot();
+
+    strLine.ScanF("%g: %g: %g %g %g:%g %g %g:%g", &cp.tmTick, &cp.fSpeed,
+      &vPos(1), &vPos(2), &vPos(3), &aRot(1), &aRot(2), &aRot(3), &cp.fFOV);
 
   } catch (char *strError) {
     CPrintF(TRANS("OCAM Error: %s\n"), strError);
@@ -87,9 +89,12 @@ void CObserverCamera::ReadPos(CameraPos &cp) {
 
 void CObserverCamera::WritePos(CameraPos &cp) {
   try {
+    const FLOAT3D &vPos = cp.Pos();
+    const ANGLE3D &aRot = cp.Rot();
+
     CTString strLine(0, "%g: %g: %g %g %g:%g %g %g:%g",
       _pTimer->GetLerpedCurrentTick() - cam_tmStartTime, 1.0f,
-      cp.vPos(1), cp.vPos(2), cp.vPos(3), cp.aRot(1), cp.aRot(2), cp.aRot(3), cp.fFOV);
+      vPos(1), vPos(2), vPos(3), aRot(1), aRot(2), aRot(3), cp.fFOV);
 
     cam_strmScript.PutLine_t(strLine);
 
@@ -115,7 +120,7 @@ void CObserverCamera::SetSpeed(FLOAT fSpeed) {
 // Reset camera FOV and the banking angle
 void CObserverCamera::ResetCameraAngles(void) {
   cam_ctl.fFOV = 90.0f;
-  cam_cpCurrent.aRot(3) = 0.0f;
+  cam_cpCurrent.Rot()(3) = 0.0f;
   cam_aRotation(3) = 0.0f;
 };
 
@@ -302,6 +307,7 @@ void CObserverCamera::Reset(BOOL bPlayback) {
 
   cam_vMovement = FLOAT3D(0, 0, 0);
   cam_aRotation = ANGLE3D(0, 0, 0);
+  cam_penViewer = NULL;
 
   SetSpeed(1.0f);
 };
@@ -539,11 +545,11 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
     if (bFollowing) {
       // Direction towards the player
       CPlacement3D plView = IWorld::GetViewpoint(penObserving, TRUE);
-      const FLOAT3D vDir = (plView.pl_PositionVector - cp.vPos).SafeNormalize();
+      const FLOAT3D vDir = (plView.pl_PositionVector - cp.Pos()).SafeNormalize();
 
       // Relative angle towards the player
       DirectionVectorToAnglesNoSnap(vDir, aRotate);
-      aRotate -= cp.aRot;
+      aRotate -= cp.Rot();
 
       aRotate(1) = NormalizeAngle(aRotate(1));
       aRotate(2) = NormalizeAngle(aRotate(2));
@@ -586,11 +592,11 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
       }
     }
 
-    cp.aRot += cam_aRotation;
+    cp.Rot() += cam_aRotation;
 
     // Snap banking angle on sharp movement
     if (bInstantRotation && Abs(cam_aRotation(3)) > 0.0f) {
-      Snap(cp.aRot(3), cam_props.fTiltAngleMul * 10.0f);
+      Snap(cp.Rot()(3), cam_props.fTiltAngleMul * 10.0f);
     }
   }
 
@@ -602,7 +608,7 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
     // Follow the player and always stay close enough
     if (cam_props.fFollowDist >= 0.0f && penObserving != NULL) {
       CPlacement3D plView = IWorld::GetViewpoint(penObserving, TRUE);
-      FLOAT3D vToPlayer = (plView.pl_PositionVector - cp.vPos);
+      FLOAT3D vToPlayer = (plView.pl_PositionVector - cp.Pos());
 
       if (vToPlayer.Length() > cam_props.fFollowDist) {
         vMoveDir = vToPlayer.SafeNormalize() * cam_props.fSpeed;
@@ -615,7 +621,7 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
 
     if (fInputLength > 0.01f) {
       FLOATmatrix3D mRot;
-      MakeRotationMatrixFast(mRot, ANGLE3D(cp.aRot(1), 0, 0)); // Only heading direction
+      MakeRotationMatrixFast(mRot, ANGLE3D(cp.Rot()(1), 0, 0)); // Only heading direction
 
       // Normalize vector, apply current rotation and speed
       vMoveDir += (vInputDir / fInputLength) * mRot * cam_props.fSpeed;
@@ -632,7 +638,7 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
       cam_vMovement += (vMoveDir - cam_vMovement) * dTimeMul * fSpeedMul;
     }
 
-    cp.vPos += cam_vMovement * dTimeMul;
+    cp.Pos() += cam_vMovement * dTimeMul;
   }
 
   const FLOAT fFOVDirSpeed = (cam_ctl.bZoomOut - cam_ctl.bZoomIn) * dTimeMul * cam_props.fFOVChangeMul;
@@ -640,11 +646,8 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
   cp.fFOV = cam_ctl.fFOV;
 
   // Snap back to view of the current player
-  if (cam_ctl.bResetToPlayer && penObserving != NULL)
-  {
-    CPlacement3D plView = IWorld::GetViewpoint(penObserving, TRUE);
-    cp.vPos = plView.pl_PositionVector;
-    cp.aRot = plView.pl_OrientationAngle;
+  if (cam_ctl.bResetToPlayer && penObserving != NULL) {
+    cp.plPos = IWorld::GetViewpoint(penObserving, TRUE);
   }
 
   // Take position snapshot for a demo
@@ -693,17 +696,18 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
       CPlayerEntity *penPlayer = (CPlayerEntity *)pen;
 
       if (penPlayer->en_fDensity != 5000.0f) {
-        CPlacement3D plView = IWorld::GetViewpoint(penPlayer, FALSE);
-
-        cam_cpCurrent.vPos = plView.pl_PositionVector;
-        cam_cpCurrent.aRot = plView.pl_OrientationAngle;
+        cam_cpCurrent.plPos = IWorld::GetViewpoint(penPlayer, FALSE);
       }
     }
 
     cam_vMovement = FLOAT3D(0, 0, 0);
     cam_aRotation = ANGLE3D(0, 0, 0);
+    cam_penViewer = NULL;
     return FALSE;
   }
+
+  // Remember viewer entity
+  cam_penViewer = pen;
 
   // Determine camera position for this frame
   CameraPos &cp = cam_cpView;
@@ -737,15 +741,15 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     // Move through a curve between two points
     if (cam_props.bSmoothPlayback) {
       cam_props.fSmoothTension = Clamp(cam_props.fSmoothTension, 0.0f, 1.0f);
-      cp.vPos = CatmullRom(acp[0].vPos, acp[1].vPos, acp[2].vPos, acp[3].vPos, fRatio, cam_props.fSmoothTension);
-      cp.aRot = CatmullRom(acp[0].aRot, acp[1].aRot, acp[2].aRot, acp[3].aRot, fRatio, cam_props.fSmoothTension);
-      cp.fFOV = CatmullRom(acp[0].fFOV, acp[1].fFOV, acp[2].fFOV, acp[3].fFOV, fRatio, cam_props.fSmoothTension);
+      cp.Pos() = CatmullRom(acp[0].Pos(), acp[1].Pos(), acp[2].Pos(), acp[3].Pos(), fRatio, cam_props.fSmoothTension);
+      cp.Rot() = CatmullRom(acp[0].Rot(), acp[1].Rot(), acp[2].Rot(), acp[3].Rot(), fRatio, cam_props.fSmoothTension);
+      cp.fFOV  = CatmullRom(acp[0].fFOV,  acp[1].fFOV,  acp[2].fFOV,  acp[3].fFOV,  fRatio, cam_props.fSmoothTension);
 
     // Linear movement from one point to another
     } else {
-      cp.vPos = Lerp(acp[1].vPos, acp[2].vPos, fRatio);
-      cp.aRot = Lerp(acp[1].aRot, acp[2].aRot, fRatio);
-      cp.fFOV = Lerp(acp[1].fFOV, acp[2].fFOV, fRatio);
+      cp.Pos() = Lerp(acp[1].Pos(), acp[2].Pos(), fRatio);
+      cp.Rot() = Lerp(acp[1].Rot(), acp[2].Rot(), fRatio);
+      cp.fFOV  = Lerp(acp[1].fFOV,  acp[2].fFOV,  fRatio);
     }
 
   // Free fly movement
@@ -769,7 +773,7 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
   // Render view from the camera
   CAnyProjection3D apr;
   apr = prProjection;
-  apr->ViewerPlacementL() = cp.GetPlacement();
+  apr->ViewerPlacementL() = cp.plPos;
 
   CWorld &wo = _pNetwork->ga_World;
   RenderView(wo, *(CEntity *)NULL, apr, *pdp);
@@ -777,8 +781,8 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
   PrintCameraInfo(pdp);
 
   // Listen to world sounds
-  cam_sliWorld.sli_vPosition = cp.vPos;
-  MakeRotationMatrixFast(cam_sliWorld.sli_mRotation, cp.aRot);
+  cam_sliWorld.sli_vPosition = cp.Pos();
+  MakeRotationMatrixFast(cam_sliWorld.sli_mRotation, cp.Rot());
   cam_sliWorld.sli_fVolume = 1.0f;
   cam_sliWorld.sli_vSpeed = cam_vMovement;
   cam_sliWorld.sli_penEntity = NULL;
@@ -817,10 +821,10 @@ BOOL CObserverCamera::TakeScreenshot(CImageInfo &iiScreenshot) {
     // Render view from the camera
     CAnyProjection3D apr;
     apr = prProjection;
-    apr->ViewerPlacementL() = cam_cpView.GetPlacement();
+    apr->ViewerPlacementL() = cam_cpView.plPos;
 
     CWorld &wo = _pNetwork->ga_World;
-    RenderView(wo, *(CEntity *)NULL, apr, *pdpScreenshot);
+    RenderView(wo, *(CEntity *)NULL, apr, *pdpScreenshot); // NULL viewer to make the player entity visible
 
     // Take screenshot
     pdpScreenshot->GrabScreen(iiScreenshot, 0);
