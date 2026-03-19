@@ -124,9 +124,74 @@ void ExitConfirm(void) {
   CConfirmMenu::ChangeTo(LOCALIZE("ARE YOU SERIOUS?"), &ExitGame, NULL, TRUE);
 };
 
+static CStringStack _astrTOTD;
+static BOOL _bForceTOTD = FALSE;
+
+static void DisplayTOTD(void);
+
+// [Cecil] Shuffle between tips of the day
+static void NextTOTD(void) {
+  // No tips
+  if (_astrTOTD.Count() == 0) return;
+
+  // Get next tip
+  sam_iCurrentTOTD = (sam_iCurrentTOTD + 1) % _astrTOTD.Count();
+
+  // Display a new tip again when returning to the main menu
+  _bForceTOTD = TRUE;
+};
+
+// [Cecil] Display the tip of the day on screen
+void DisplayTOTD(void) {
+  static const CTString strNoTip = "No tip of the day available :(";
+  const CTString *pstrTip = &strNoTip;
+
+  if (_astrTOTD.Count() != 0) {
+    // Select a new random tip based on the current day
+    if (sam_iCurrentTOTD == -1) {
+      time_t tmNow = time(NULL);
+      sam_iCurrentTOTD = (tmNow / 86400) % _astrTOTD.Count();
+    }
+
+    INDEX iTip = Clamp(sam_iCurrentTOTD, (INDEX)0, INDEX(_astrTOTD.Count() - 1));
+    pstrTip = &_astrTOTD[iTip];
+  }
+
+  CConfirmMenu::ChangeTo(TRANS("Did you know?") + CTString("\n\n") + *pstrTip, &NextTOTD, NULL, FALSE, TRANS("NEXT TIP"), TRANS("SERIOUSLY AWESOME!"), 0.4f);
+};
+
 void CMainMenu::Initialize_t(void) {
   gm_strName = "Main";
   gm_pmgSelectedByDefault = &gm_mgSingle;
+
+  // [Cecil] Load the list of tips of the day and pick one at random based on the current day
+  CTString strTip;
+  char strLine[1024];
+  _astrTOTD.PopAll();
+
+  try {
+    CTFileStream strm;
+    strm.Open_t(CTString("Data\\ClassicsPatch\\TOTD.txt"));
+
+    while (!strm.AtEOF()) {
+      IData::GetLineFromStream_t(strm, strLine, 1024);
+
+      strTip = strLine;
+      strTip.TrimSpacesLeft();
+      strTip.TrimSpacesRight();
+
+      // Skip empty lines
+      if (strTip == "") continue;
+
+      // Simple substitution for inline line breaks
+      while (strTip.ReplaceSubstr("\\n", "\n"));
+
+      _astrTOTD.Add(strTip);
+    }
+
+  } catch (char *strError) {
+    (void)strError;
+  }
 
   // intialize main menu
   gm_mgVersionLabel.SetText(sam_strVersion);
@@ -216,6 +281,18 @@ void CMainMenu::Initialize_t(void) {
   gm_mgQuit.mg_pmgUp = &gm_mgOptions;
   gm_mgQuit.mg_pmgDown = &gm_mgSingle;
   gm_mgQuit.mg_pActivatedFunction = &ExitConfirm;
+
+  // [Cecil] Tip of the day
+  gm_mgTOTD.SetText(TRANS("Tip of the day!"));
+  gm_mgTOTD.mg_strTip = TRANS("display a randomized tip or a fun fact of today about classics patch");
+  gm_mgTOTD.mg_bfsFontSize = BFS_MEDIUM;
+  gm_mgTOTD.mg_boxOnScreen = BoxLeftColumn(14.0f);
+  gm_mgTOTD.mg_iCenterI = -1;
+
+  gm_mgTOTD.mg_pmgRight = &gm_mgQuit;
+  gm_mgTOTD.mg_pActivatedFunction = &DisplayTOTD;
+
+  AddChild(&gm_mgTOTD);
 }
 
 void CMainMenu::StartMenu(void) {
@@ -227,8 +304,37 @@ void CMainMenu::StartMenu(void) {
   // [Cecil] Update extras button
   UpdateExtras();
 
+  // [Cecil] Update tip of the day button
+  CMenuGadget *pmgTOTD = NULL;
+
+  if (sam_bTipOfTheDay) {
+    pmgTOTD = &gm_mgTOTD;
+    AddChild(&gm_mgTOTD);
+
+  } else {
+    gm_mgTOTD.Expunge();
+  }
+
+  gm_mgSingle.mg_pmgLeft =
+  gm_mgNetwork.mg_pmgLeft =
+  gm_mgSplitScreen.mg_pmgLeft =
+  gm_mgDemo.mg_pmgLeft =
+  gm_mgExtras.mg_pmgLeft =
+  gm_mgHighScore.mg_pmgLeft =
+  gm_mgOptions.mg_pmgLeft =
+  gm_mgQuit.mg_pmgLeft = pmgTOTD;
+
   CGameMenu::StartMenu();
 }
+
+// [Cecil] Menu update
+void CMainMenu::Think(void) {
+  // Show another tip, if needed
+  if (_bForceTOTD) {
+    _bForceTOTD = FALSE;
+    DisplayTOTD();
+  }
+};
 
 // [Cecil] Change to the menu
 void CMainMenu::ChangeTo(void) {

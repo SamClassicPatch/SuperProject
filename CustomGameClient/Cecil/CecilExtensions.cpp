@@ -27,12 +27,14 @@ INDEX sam_bModernScrollbars = TRUE;
 INDEX sam_bLevelCategories = TRUE;
 INDEX sam_bLevelFiltering = TRUE;
 INDEX sam_bExtrasMenu = TRUE;
+INDEX sam_bTipOfTheDay = TRUE;
 INDEX sam_bDecoratedServerNames = TRUE;
 
 INDEX sam_iUpdateReminder = 0;
 CTString sam_strLastVersionCheck = "";
 
 INDEX sam_iLastSeasonCheck = k_EClassicsPatchSeason_None;
+INDEX sam_iCurrentTOTD = -1;
 
 // Level filtering
 INDEX sam_iShowLevelFormat = -1; // Show all
@@ -118,12 +120,14 @@ void ClassicsPatch_InitExt(void) {
   _pShell->DeclareSymbol("persistent user INDEX sam_bLevelCategories;",      &sam_bLevelCategories);
   _pShell->DeclareSymbol("persistent user INDEX sam_bLevelFiltering;",       &sam_bLevelFiltering);
   _pShell->DeclareSymbol("persistent user INDEX sam_bExtrasMenu;",           &sam_bExtrasMenu);
+  _pShell->DeclareSymbol("persistent user INDEX sam_bTipOfTheDay;",          &sam_bTipOfTheDay);
   _pShell->DeclareSymbol("persistent user INDEX sam_bDecoratedServerNames;", &sam_bDecoratedServerNames);
 
   _pShell->DeclareSymbol("persistent INDEX sam_iUpdateReminder;", &sam_iUpdateReminder);
   _pShell->DeclareSymbol("persistent CTString sam_strLastVersionCheck;", &sam_strLastVersionCheck);
 
   _pShell->DeclareSymbol("persistent INDEX sam_iLastSeasonCheck;", &sam_iLastSeasonCheck);
+  _pShell->DeclareSymbol("INDEX sam_iCurrentTOTD;", &sam_iCurrentTOTD);
 
   _pShell->DeclareSymbol("user void Restart(void);", &RestartGame);
   _pShell->DeclareSymbol("user void ListLevels(CTString);", &ListLevels);

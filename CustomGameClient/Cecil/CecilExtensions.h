@@ -29,12 +29,14 @@ extern INDEX sam_bModernScrollbars;
 extern INDEX sam_bLevelCategories;
 extern INDEX sam_bLevelFiltering;
 extern INDEX sam_bExtrasMenu;
+extern INDEX sam_bTipOfTheDay;
 extern INDEX sam_bDecoratedServerNames;
 
 extern INDEX sam_iUpdateReminder;
 extern CTString sam_strLastVersionCheck;
 
 extern INDEX sam_iLastSeasonCheck;
+extern INDEX sam_iCurrentTOTD;
 
 // Level filtering
 extern INDEX sam_iShowLevelFormat;

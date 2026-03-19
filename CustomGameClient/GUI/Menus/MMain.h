@@ -35,11 +35,16 @@ class CMainMenu : public CGameMenu {
     CMGButton gm_mgOptions;
     CMGButton gm_mgQuit;
 
+    CMGButton gm_mgTOTD; // [Cecil] Tip of the day
+
     // [Cecil] Update extras button
     void UpdateExtras(void);
 
     void Initialize_t(void);
     void StartMenu(void);
+
+    // [Cecil] Menu update
+    virtual void Think(void);
 
     // [Cecil] Change to the menu
     static void ChangeTo(void);
