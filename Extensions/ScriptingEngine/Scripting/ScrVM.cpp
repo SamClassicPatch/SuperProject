@@ -181,6 +181,7 @@ VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false)
 
   // Register built-in libraries
   if (bRegisterEngineInterfaces) {
+    RegisterUtils(); // Goes first for all the base classes
     RegisterEntities();
     RegisterFileSystem();
     RegisterInput();
@@ -189,7 +190,6 @@ VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false)
     RegisterNetwork();
     RegisterShell();
     RegisterTimer();
-    RegisterUtils();
     RegisterWorld();
   }
 };

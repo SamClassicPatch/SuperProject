@@ -15,6 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "RawDataBuffer.h"
+
 #include <Core/Definitions/NetworkDefs.inl>
 #include <Core/Networking/ExtPackets.h>
 #include <Core/Networking/NetworkFunctions.h>
@@ -68,178 +70,75 @@ static Method<CPlayerAction> _aMethods[] = {
 // Session properties class methods
 namespace SqProps {
 
-// Simple holder of data bytes at a specific offset
+// One chunk of session properties that need to be copied
 struct SesProp {
-  INDEX iOffset;
-  UBYTE *pData;
-  size_t iLength;
-
-  SesProp() : iOffset(0), pData(NULL), iLength(0) {};
-
-  ~SesProp() {
-    if (pData != NULL) FreeMemory(pData);
-  };
-
-  inline SesProp &operator=(const SesProp &other) {
-    SetData(other.iOffset, other.pData, other.iLength);
-    return *this;
-  };
-
-  inline void SetData(INDEX iSetOffset, const void *pSetData, size_t iSetLength) {
-    if (pData != NULL) FreeMemory(pData);
-
-    iOffset = iSetOffset;
-    pData = (UBYTE *)AllocMemory(iSetLength);
-    iLength = iSetLength;
-
-    memcpy(pData, pSetData, iSetLength);
-  };
+  INDEX iOffset, iSize;
+  SesProp() : iOffset(0), iSize(0) {};
+  SesProp(INDEX iSetOffset, INDEX iSetSize) : iOffset(iSetOffset), iSize(iSetSize) {};
 };
 
 // Holder of a chunk of session properties to apply
-struct SesPropsHolder {
-  INDEX iBegin, iEnd;
-  CStaticStackArray<SesProp> aProps;
+class SesPropsHolder : public CRawDataBuffer {
+  public:
+    INDEX iBegin, iEnd;
+    CStaticStackArray<SesProp> aProps;
 
-  SesPropsHolder() : iBegin(-1), iEnd(-1) {};
+  public:
+    SesPropsHolder() : iBegin(-1), iEnd(-1) {
+      New(NET_MAXSESSIONPROPERTIES);
+    };
 
-  inline BOOL IsValid(void) {
-    return (iBegin != -1 && iEnd != -1);
-  };
+    inline bool IsValid(void) {
+      return (iBegin != -1 && iEnd != -1);
+    };
 
-  inline void Clear(void) {
-    iBegin = iEnd = -1;
-    aProps.PopAll();
-  };
+    virtual void Reset(void) {
+      CRawDataBuffer::Reset();
 
-  inline void SetLimits(INDEX iSetBegin, INDEX iSetEnd) {
-    if (iBegin == -1) {
-      iBegin = iSetBegin;
-    } else {
-      iBegin = Min(iBegin, iSetBegin);
-    }
+      iBegin = iEnd = -1;
+      aProps.PopAll();
+    };
 
-    if (iEnd == -1) {
-      iEnd = iSetEnd;
-    } else {
-      iEnd = Max(iEnd, iSetEnd);
-    }
-  };
+  public:
+    virtual bool AfterGet(INDEX iOffset, INDEX iSize) const {
+      return true;
+    };
+
+    virtual bool AfterSet(INDEX iOffset, INDEX iSize) {
+      // Add reference to the chunk
+      aProps.Add(SesProp(iOffset, iSize));
+
+      // Set limits
+      if (iBegin == -1) {
+        iBegin = iOffset;
+      } else {
+        iBegin = Min(iBegin, iOffset);
+      }
+
+      if (iEnd == -1) {
+        iEnd = iOffset + iSize;
+      } else {
+        iEnd = Max(iEnd, iOffset + iSize);
+      }
+      return true;
+    };
 };
 
 static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, SesPropsHolder &val) {
-  if (ctArgs > 0) {
+  // Copy current properties
+  if (ctArgs == 0) {
+    memcpy(val.aData.sa_Array, _pNetwork->GetSessionProperties(), NET_MAXSESSIONPROPERTIES);
+
+  // Copy from other properties
+  } else {
     GetInstanceValueVerifyN(SesPropsHolder, pOther, v, 2, "Network.SessionProperties");
 
+    val.aData.CopyArray(pOther->aData);
     val.iBegin = pOther->iBegin;
     val.iEnd = pOther->iEnd;
     val.aProps.CopyArray(pOther->aProps);
   }
 
-  return 0;
-};
-
-static SQInteger SetIndex(HSQUIRRELVM v, int, SesPropsHolder &val) {
-  SQInteger iOffset;
-  sq_getinteger(v, 2, &iOffset);
-
-  if (iOffset < 0 || iOffset > sizeof(CSesPropsContainer) - sizeof(INDEX)) {
-    return sq_throwerror(v, "offset is out of bounds");
-  }
-
-  SQInteger i;
-  sq_getinteger(v, 3, &i);
-
-  SesProp &prop = val.aProps.Push();
-
-  INDEX iSet = i;
-  prop.SetData(iOffset, &iSet, sizeof(iSet));
-
-  val.SetLimits(iOffset, iOffset + sizeof(iSet));
-  return 0;
-};
-
-static SQInteger SetFloat(HSQUIRRELVM v, int, SesPropsHolder &val) {
-  SQInteger iOffset;
-  sq_getinteger(v, 2, &iOffset);
-
-  if (iOffset < 0 || iOffset > sizeof(CSesPropsContainer) - sizeof(FLOAT)) {
-    return sq_throwerror(v, "offset is out of bounds");
-  }
-
-  SQFloat f;
-  sq_getfloat(v, 3, &f);
-
-  SesProp &prop = val.aProps.Push();
-
-  FLOAT fSet = f;
-  prop.SetData(iOffset, &fSet, sizeof(fSet));
-
-  val.SetLimits(iOffset, iOffset + sizeof(fSet));
-  return 0;
-};
-
-static SQInteger SetBool(HSQUIRRELVM v, int, SesPropsHolder &val) {
-  SQInteger iOffset;
-  sq_getinteger(v, 2, &iOffset);
-
-  if (iOffset < 0 || iOffset > sizeof(CSesPropsContainer) - sizeof(BOOL)) {
-    return sq_throwerror(v, "offset is out of bounds");
-  }
-
-  SQBool b;
-  sq_getbool(v, 3, &b);
-
-  SesProp &prop = val.aProps.Push();
-
-  BOOL bSet = b;
-  prop.SetData(iOffset, &bSet, sizeof(bSet));
-
-  val.SetLimits(iOffset, iOffset + sizeof(bSet));
-  return 0;
-};
-
-static SQInteger SetString(HSQUIRRELVM v, int, SesPropsHolder &val) {
-  SQInteger iOffset;
-  sq_getinteger(v, 2, &iOffset);
-
-  const SQChar *str;
-  sq_getstring(v, 3, &str);
-  const size_t ctLen = strlen(str);
-
-  if (iOffset < 0 || iOffset > sizeof(CSesPropsContainer) - ctLen) {
-    return sq_throwerror(v, "offset is out of bounds");
-  }
-
-  SesProp &prop = val.aProps.Push();
-  prop.SetData(iOffset, str, ctLen);
-
-  val.SetLimits(iOffset, iOffset + ctLen);
-  return 0;
-};
-
-static SQInteger SetByte(HSQUIRRELVM v, int, SesPropsHolder &val) {
-  SQInteger iOffset;
-  sq_getinteger(v, 2, &iOffset);
-
-  if (iOffset < 0 || iOffset > sizeof(CSesPropsContainer) - sizeof(UBYTE)) {
-    return sq_throwerror(v, "offset is out of bounds");
-  }
-
-  SQInteger i;
-  sq_getinteger(v, 3, &i);
-
-  SesProp &prop = val.aProps.Push();
-
-  UBYTE iSet = i & 0xFF;
-  prop.SetData(iOffset, &iSet, sizeof(iSet));
-
-  val.SetLimits(iOffset, iOffset + sizeof(iSet));
-  return 0;
-};
-
-static SQInteger Reset(HSQUIRRELVM v, int, SesPropsHolder &val) {
-  val.Clear();
   return 0;
 };
 
@@ -265,7 +164,7 @@ static SQInteger Apply(HSQUIRRELVM v, int, SesPropsHolder &val) {
 
   for (INDEX i = 0; i < ctProps; i++) {
     const SesProp &prop = val.aProps[i];
-    memcpy(pck.sp + prop.iOffset - iOffset, prop.pData, prop.iLength);
+    memcpy(pck.sp + prop.iOffset - iOffset, val.aData.sa_Array + prop.iOffset, prop.iSize);
   }
 
   pck.SendToClients();
@@ -273,13 +172,6 @@ static SQInteger Apply(HSQUIRRELVM v, int, SesPropsHolder &val) {
 };
 
 static Method<SesPropsHolder> _aMethods[] = {
-  { "SetIndex",  &SetIndex,  3, ".nn" },
-  { "SetFloat",  &SetFloat,  3, ".nn" },
-  { "SetBool",   &SetBool,   3, ".nb" },
-  { "SetString", &SetString, 3, ".ns" },
-  { "SetByte",   &SetByte,   3, ".nn" },
-
-  { "Reset", &Reset, 1, "." },
   { "Apply", &Apply, 1, "." },
 };
 
@@ -1189,7 +1081,8 @@ void VM::RegisterNetwork(void) {
   }
 #if _PATCHCONFIG_EXT_PACKETS
   {
-    Class<SqProps::SesPropsHolder> sqcProps(GetVM(), "SessionProperties", &SqProps::Constructor);
+    Class<CRawDataBuffer> sqcBuffer(Root(), "CRawDataBuffer");
+    DerivedClass<SqProps::SesPropsHolder> sqcProps(GetVM(), "SessionProperties", sqcBuffer, &SqProps::Constructor);
 
     // Methods
     for (i = 0; i < ARRAYCOUNT(SqProps::_aMethods); i++) {
