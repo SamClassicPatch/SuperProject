@@ -429,6 +429,67 @@ static Method<RayHolder> _aMethods[] = {
 
 namespace Core {
 
+static SQInteger GetVersion(HSQUIRRELVM v) {
+  UBYTE ubRelease, ubUpdate, ubPatch;
+  GetVersionNumbers(ClassicsCore_GetVersion(), ubRelease, ubUpdate, ubPatch);
+
+  sq_newarray(v, 0);
+  sq_pushinteger(v, ubRelease);
+  sq_arrayappend(v, -2);
+  sq_pushinteger(v, ubUpdate);
+  sq_arrayappend(v, -2);
+  sq_pushinteger(v, ubPatch);
+  sq_arrayappend(v, -2);
+  return 1;
+};
+
+static SQInteger GetVersionName(HSQUIRRELVM v) {
+  sq_pushstring(v, ClassicsCore_GetVersionName(), -1);
+  return 1;
+};
+
+static SQInteger GetInitTime(HSQUIRRELVM v) {
+  Table sqtTimer(GetVMClass(v).Root().GetValue("Timer"));
+  PushNewInstance(CTimerValue, ptv, sqtTimer, "Value");
+  *ptv = CTimerValue(ClassicsCore_GetInitTime());
+  return 1;
+};
+
+static SQInteger IsGame(HSQUIRRELVM v) {
+  sq_pushbool(v, ClassicsCore_IsGameApp());
+  return 1;
+};
+
+static SQInteger IsServer(HSQUIRRELVM v) {
+  sq_pushbool(v, ClassicsCore_IsServerApp());
+  return 1;
+};
+
+static SQInteger IsEditor(HSQUIRRELVM v) {
+  sq_pushbool(v, ClassicsCore_IsEditorApp());
+  return 1;
+};
+
+static SQInteger IsModeler(HSQUIRRELVM v) {
+  sq_pushbool(v, ClassicsCore_IsModelerApp());
+  return 1;
+};
+
+static SQInteger GetSeason(HSQUIRRELVM v) {
+  sq_pushinteger(v, ClassicsCore_GetSeason());
+  return 1;
+};
+
+static SQInteger IsCustomModActive(HSQUIRRELVM v) {
+  sq_pushbool(v, ClassicsCore_IsCustomModActive());
+  return 1;
+};
+
+static SQInteger IsEntitiesModded(HSQUIRRELVM v) {
+  sq_pushbool(v, ClassicsCore_IsEntitiesModded());
+  return 1;
+};
+
 static bool IncludeReturnCallback(sq::VM &) {
   return false; // Leave return value in the stack
 };
@@ -462,6 +523,20 @@ static SQInteger CompileScript(HSQUIRRELVM v) {
 };
 
 }; // namespace
+
+// "Core" namespace functions
+static SQRegFunction _aCoreFuncs[] = {
+  { "GetVersion",        &Core::GetVersion,        1, "." },
+  { "GetVersionName",    &Core::GetVersionName,    1, "." },
+  { "GetInitTime",       &Core::GetInitTime,       1, "." },
+  { "IsGame",            &Core::IsGame,            1, "." },
+  { "IsServer",          &Core::IsServer,          1, "." },
+  { "IsEditor",          &Core::IsEditor,          1, "." },
+  { "IsModeler",         &Core::IsModeler,         1, "." },
+  { "GetSeason",         &Core::GetSeason,         1, "." },
+  { "IsCustomModActive", &Core::IsCustomModActive, 1, "." },
+  { "IsEntitiesModded",  &Core::IsEntitiesModded,  1, "." },
+};
 
 // Global functions
 static SQRegFunction _aGlobalFuncs[] = {
@@ -521,9 +596,28 @@ void VM::RegisterCore(void) {
   }
 
   // Register functions
+  for (i = 0; i < ARRAYCOUNT(_aCoreFuncs); i++) {
+    sqtCore.RegisterFunc(_aCoreFuncs[i]);
+  }
+
   for (i = 0; i < ARRAYCOUNT(_aGlobalFuncs); i++) {
     Root().RegisterFunc(_aGlobalFuncs[i]);
   }
+
+  // Classics Patch seasons
+  Enumeration enSeasons(GetVM());
+
+#define ADD_SEASON(_SeasonType) enSeasons.RegisterValue(#_SeasonType, (SQInteger)k_EClassicsPatchSeason_##_SeasonType)
+  ADD_SEASON(None);
+  ADD_SEASON(Valentine);
+  ADD_SEASON(Birthday);
+  ADD_SEASON(Halloween);
+  ADD_SEASON(Christmas);
+  ADD_SEASON(Anniversary);
+  ADD_SEASON(Max);
+#undef ADD_SEASON
+
+  Const().AddEnum("Season", enSeasons);
 
   // Ray test types
   Enumeration enRayTestTypes(GetVM());
