@@ -351,6 +351,9 @@ void CHud::RenderPlayerTags(CPlayer *penThis, CPerspectiveProjection3D &prProjec
     // Skip this player (or a prediction of it)
     if (pen == penThis->GetPredictionTail()) continue;
 
+    // Make tags correctly follow player predictions
+    if (pen->IsPredicted()) pen = (CPlayer *)pen->GetPredictor();
+
     const BOOL bAlive = (pen->GetFlags() & ENF_ALIVE);
     const FLOAT3D vPlayer = pen->GetLerpedPlacement().pl_PositionVector;
 
