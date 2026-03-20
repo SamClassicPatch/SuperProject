@@ -21,7 +21,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Core/Networking/ExtPackets.h>
 #include <Core/Networking/NetworkFunctions.h>
 
-#include <Game/PlayerSettings.h>
 #include <Extras/XGizmo/Interfaces/Sounds.h>
 
 // Make sure the client is currently running a server
@@ -104,6 +103,8 @@ static SQInteger SetName(HSQUIRRELVM v, CPlayerCharacter &val, SQInteger idxValu
   return 0;
 };
 
+#if SE1_GAME != SS_REV
+
 static SQInteger GetTeam(HSQUIRRELVM v, CPlayerCharacter &val) {
   sq_pushstring(v, val.GetTeam().str_String, -1);
   return 1;
@@ -115,6 +116,8 @@ static SQInteger SetTeam(HSQUIRRELVM v, CPlayerCharacter &val, SQInteger idxValu
   val.SetTeam(str);
   return 0;
 };
+
+#endif
 
 static SQInteger GetSkin(HSQUIRRELVM v, CPlayerCharacter &val) {
   CPlayerSettings *pps = (CPlayerSettings *)val.pc_aubAppearance;
@@ -1221,7 +1224,9 @@ void VM::RegisterNetwork(void) {
     sqcCharacter.RegisterMetamethod(E_MM_TOSTRING, &SqPlayerCharacter::ToString);
 
     sqcCharacter.RegisterVar("strName",           &SqPlayerCharacter::GetName,             &SqPlayerCharacter::SetName);
+  #if SE1_GAME != SS_REV
     sqcCharacter.RegisterVar("strTeam",           &SqPlayerCharacter::GetTeam,             &SqPlayerCharacter::SetTeam);
+  #endif
     sqcCharacter.RegisterVar("strSkin",           &SqPlayerCharacter::GetSkin,             &SqPlayerCharacter::SetSkin);
     sqcCharacter.RegisterVar("iWeaponAutoSelect", &SqPlayerCharacter::GetWeaponAutoSelect, &SqPlayerCharacter::SetWeaponAutoSelect);
     sqcCharacter.RegisterVar("iCrosshairType",    &SqPlayerCharacter::GetCrosshair,        &SqPlayerCharacter::SetCrosshair);
