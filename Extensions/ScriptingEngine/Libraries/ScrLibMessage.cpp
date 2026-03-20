@@ -69,9 +69,10 @@ static SQRegFunction _aMessageFuncs[] = {
 
 void VM::RegisterMessage(void) {
   Table sqtMessage = Root().RegisterTable("Message");
+  INDEX i;
 
   // Register functions
-  for (INDEX i = 0; i < ARRAYCOUNT(_aMessageFuncs); i++) {
+  for (i = 0; i < ARRAYCOUNT(_aMessageFuncs); i++) {
     sqtMessage.RegisterFunc(_aMessageFuncs[i]);
   }
 };

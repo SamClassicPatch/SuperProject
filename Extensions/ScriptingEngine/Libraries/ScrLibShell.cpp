@@ -111,9 +111,10 @@ static SQRegFunction _aShellFuncs[] = {
 
 void VM::RegisterShell(void) {
   Table sqtShell = Root().RegisterTable("Shell");
+  INDEX i;
 
   // Register functions
-  for (INDEX i = 0; i < ARRAYCOUNT(_aShellFuncs); i++) {
+  for (i = 0; i < ARRAYCOUNT(_aShellFuncs); i++) {
     sqtShell.RegisterFunc(_aShellFuncs[i]);
   }
 };

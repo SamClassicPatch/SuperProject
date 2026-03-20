@@ -34,6 +34,35 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CTimerValue &tv) {
   return 0;
 };
 
+static SQInteger Clone(HSQUIRRELVM v, CTimerValue &val, CTimerValue &valOther) {
+  val = valOther;
+  return 0;
+};
+
+static SQInteger Add(HSQUIRRELVM v, CTimerValue &val, SQInteger idxOther) {
+  GetInstanceValueVerifyN(CTimerValue, pOther, v, idxOther, "Timer.Value");
+
+  Table sqtTimer(GetVMClass(v).Root().GetValue("Timer"));
+  PushNewInstance(CTimerValue, ptv, sqtTimer, "Value");
+  *ptv = val + *pOther;
+  return 1;
+};
+
+static SQInteger Sub(HSQUIRRELVM v, CTimerValue &val, SQInteger idxOther) {
+  GetInstanceValueVerifyN(CTimerValue, pOther, v, idxOther, "Timer.Value");
+
+  Table sqtTimer(GetVMClass(v).Root().GetValue("Timer"));
+  PushNewInstance(CTimerValue, ptv, sqtTimer, "Value");
+  *ptv = val - *pOther;
+  return 1;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, CTimerValue &val) {
+  CTString str(0, "%gs", val.GetSeconds());
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
 static SQInteger Sec(HSQUIRRELVM v, CTimerValue &tv) {
   sq_pushfloat(v, tv.GetSeconds());
   return 1;
@@ -94,15 +123,26 @@ static SQRegFunction _aTimerFuncs[] = {
 
 void VM::RegisterTimer(void) {
   Table sqtTimer = Root().RegisterTable("Timer");
+  INDEX i;
 
   // Register classes
-  Class<CTimerValue> sqcTimerValue(GetVM(), "Value", &SqTimerValue::Constructor);
-  sqcTimerValue.RegisterVar("sec",  &SqTimerValue::Sec, NULL);
-  sqcTimerValue.RegisterVar("msec", &SqTimerValue::MSec, NULL);
-  sqtTimer.AddClass(sqcTimerValue);
+  {
+    Class<CTimerValue> sqcTimerValue(GetVM(), "Value", &SqTimerValue::Constructor);
+
+    // Metamethods
+    sqcTimerValue.RegisterMetamethod(E_MM_CLONED, &SqTimerValue::Clone);
+    sqcTimerValue.RegisterMetamethod(E_MM_ADD, &SqTimerValue::Add);
+    sqcTimerValue.RegisterMetamethod(E_MM_SUB, &SqTimerValue::Sub);
+    sqcTimerValue.RegisterMetamethod(E_MM_TOSTRING, &SqTimerValue::ToString);
+
+    sqcTimerValue.RegisterVar("sec",  &SqTimerValue::Sec, NULL);
+    sqcTimerValue.RegisterVar("msec", &SqTimerValue::MSec, NULL);
+
+    sqtTimer.AddClass(sqcTimerValue);
+  }
 
   // Register functions
-  for (INDEX i = 0; i < ARRAYCOUNT(_aTimerFuncs); i++) {
+  for (i = 0; i < ARRAYCOUNT(_aTimerFuncs); i++) {
     sqtTimer.RegisterFunc(_aTimerFuncs[i]);
   }
 

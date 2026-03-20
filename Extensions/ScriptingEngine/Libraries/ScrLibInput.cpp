@@ -125,9 +125,10 @@ static SQRegFunction _aInputFuncs[] = {
 
 void VM::RegisterInput(void) {
   Table sqtInput = Root().RegisterTable("Input");
+  INDEX i;
 
   // Register functions
-  for (INDEX i = 0; i < ARRAYCOUNT(_aInputFuncs); i++) {
+  for (i = 0; i < ARRAYCOUNT(_aInputFuncs); i++) {
     sqtInput.RegisterFunc(_aInputFuncs[i]);
   }
 
