@@ -230,6 +230,7 @@ const char *ClassicsCore_GetEntitiesPath(void) {
 };
 
 bool ClassicsCore_IsEntitiesModded(void) {
+  if (_fnmMod == "") return false;
   return !!GetEntitiesPath().HasPrefix(_fnmMod);
 };
 

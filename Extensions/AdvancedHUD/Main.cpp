@@ -78,7 +78,7 @@ CPluginSymbol _psColorLow(SSF_PERSISTENT | SSF_USER, INDEX(0xFF0000));
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   // Check if standard entities are modified
-  if (_fnmMod != "" && ClassicsCore_IsEntitiesModded())
+  if (ClassicsCore_IsEntitiesModded())
   {
     // Enabling "SameHook" means that it's safe to replace mod's HUD, so it counts as non-modified entities
     _bModdedEntities = !props->GetBoolValue("", "SameHook", false);
