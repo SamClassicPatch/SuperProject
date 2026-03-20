@@ -247,6 +247,8 @@ void NotifyAboutCurrentSeason(void) {
     default: return;
   }
 
+  strText += "\n\n" + CTString(TRANS("(This event locally affects certain gameplay elements, such as blood color, "
+                                     "the behavior of which can be toggled in the Classics Patch options)"));
   strText += "\n\n" + CTString(0, TRANS("^cffffffEvent period: %s - %s"), strStartDate, strEndDate);
-  CConfirmMenu::ChangeTo(strText, NULL, NULL, FALSE, TRANS("SERIOUSLY AWESOME!"), TRANS("SERIOUSLY LAME..."), 0.4f);
+  CConfirmMenu::ChangeTo(strText, NULL, NULL, FALSE, TRANS("SERIOUSLY AWESOME!"), TRANS("SERIOUSLY LAME..."), 0.55f);
 };
