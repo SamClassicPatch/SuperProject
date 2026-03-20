@@ -427,7 +427,7 @@ static Method<RayHolder> _aMethods[] = {
 
 }; // namespace
 
-namespace Utils {
+namespace Core {
 
 static bool IncludeReturnCallback(sq::VM &) {
   return false; // Leave return value in the stack
@@ -465,12 +465,12 @@ static SQInteger CompileScript(HSQUIRRELVM v) {
 
 // Global functions
 static SQRegFunction _aGlobalFuncs[] = {
-  { "IncludeScript", &Utils::IncludeScript, 2, ".s" },
-  { "CompileScript", &Utils::CompileScript, 2, ".s" },
+  { "IncludeScript", &Core::IncludeScript, 2, ".s" },
+  { "CompileScript", &Core::CompileScript, 2, ".s" },
 };
 
-void VM::RegisterUtils(void) {
-  Table sqtUtils = Root().RegisterTable("Utils");
+void VM::RegisterCore(void) {
+  Table sqtCore = Root().RegisterTable("Core");
   INDEX i;
 
   // Register classes

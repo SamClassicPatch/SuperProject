@@ -206,6 +206,7 @@ class VM {
   // Built-in interfaces
   private:
 
+    void RegisterCore(void);
     void RegisterEntities(void);
     void RegisterFileSystem(void);
     void RegisterInput(void);
@@ -214,7 +215,6 @@ class VM {
     void RegisterNetwork(void);
     void RegisterShell(void);
     void RegisterTimer(void);
-    void RegisterUtils(void);
     void RegisterWorld(void);
 
   // VM interactions

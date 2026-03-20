@@ -104,7 +104,7 @@
     <ClCompile Include="Scripting\ScrInstances.cpp">
       <Filter>Source Files\Scripting</Filter>
     </ClCompile>
-    <ClCompile Include="Libraries\ScrLibUtils.cpp">
+    <ClCompile Include="Libraries\ScrLibCore.cpp">
       <Filter>Source Files\Libraries</Filter>
     </ClCompile>
     <ClCompile Include="Libraries\ScrLibMath.cpp">
