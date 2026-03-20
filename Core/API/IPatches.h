@@ -37,6 +37,9 @@ class CORE_API ICorePatches {
     // Sound library
     BOOL _bNoListening; // Don't listen to in-game sounds
 
+    // Strings
+    BOOL _bLogTimestamps;
+
     // Unpage streams
     INDEX _bUsePlaceholderResources; // Automatically replace missing resources with placeholders
 

@@ -22,6 +22,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #if _PATCHCONFIG_ENGINEPATCHES && _PATCHCONFIG_FIX_STRINGS
 
+// Patched function
+void P_CPrintF(const char *strFormat, ...);
+
+// Patched function
+void P_CPutString(const char *strString);
+
 class CStringPatch : public CTString {
   public:
     INDEX P_VPrintF(const char *strFormat, va_list arg);

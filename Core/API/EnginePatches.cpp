@@ -38,6 +38,8 @@ ICorePatches::ICorePatches() {
 
   _bNoListening = FALSE;
 
+  _bLogTimestamps = FALSE;
+
   _eWorldFormat = E_LF_CURRENT;
   _iWantedWorldFormat = -1;
   _strWorldConverters = "";
@@ -367,11 +369,21 @@ void ICorePatches::SoundLibrary(void) {
 void ICorePatches::Strings(void) {
 #if _PATCHCONFIG_FIX_STRINGS
 
+  void (*pPrintF)(const char *, ...) = &CPrintF;
+  CreatePatch(pPrintF, &P_CPrintF, "::CPrintF(...)");
+
+  extern void (*pPutString)(const char *);
+  pPutString = &CPutString;
+  CreatePatch(pPutString, &P_CPutString, "::CPutString(...)");
+
   INDEX (CTString::*pVPrintF)(const char *, va_list) = &CTString::VPrintF;
   CreatePatch(pVPrintF, &CStringPatch::P_VPrintF, "CTString::VPrintF(...)");
 
   CTString (CTString::*pUndecorated)(void) const = &CTString::Undecorated;
   CreatePatch(pUndecorated, &CStringPatch::P_Undecorated, "CTString::Undecorated()");
+
+  // Custom symbols
+  _pShell->DeclareSymbol("persistent user INDEX con_bLogTimestamps;", &_EnginePatches._bLogTimestamps);
 
 #endif // _PATCHCONFIG_FIX_STRINGS
 };

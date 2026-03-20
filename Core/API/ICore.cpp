@@ -54,6 +54,8 @@ FLOAT inp_afAxisValues[MAX_OVERALL_AXES];
 // Where the current game is being ran from
 ERunningGameMode _gmRunningGameMode = GM_NONE;
 
+extern BOOL _bTempIgnoreTimestamps;
+
 // Toggle vanilla query manager
 void ICore::DisableGameSpy(void) {
 #if _PATCHCONFIG_NEW_QUERY
@@ -158,6 +160,8 @@ void ICore::ReinitConsole(INDEX ctCharsPerLine, INDEX ctLines) {
   // Restore contents of the last log
   BOOL bSkipEmptyLines = TRUE;
 
+  _bTempIgnoreTimestamps = TRUE;
+
   for (INDEX iRestore = 0; iRestore < aLastLines.Count(); iRestore++) {
     // Skip empty lines in the beginning
     if (bSkipEmptyLines) {
@@ -171,6 +175,8 @@ void ICore::ReinitConsole(INDEX ctCharsPerLine, INDEX ctLines) {
     CPutString(aLastLines[iRestore] + "\n");
     bSkipEmptyLines = FALSE;
   }
+
+  _bTempIgnoreTimestamps = FALSE;
 };
 
 PatchVer_t ClassicsCore_GetVersion(void) {
