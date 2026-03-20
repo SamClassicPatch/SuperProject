@@ -399,6 +399,8 @@ void Chat(void) {
   _pShell->DeclareSymbol("user void ClientLogDelete(INDEX, INDEX);", &ClientLogDelete);
   _pShell->DeclareSymbol("user void ClientLogSave(void);", &ClientLogSave);
   _pShell->DeclareSymbol("user void ClientLogLoad(void);", &ClientLogLoad);
+
+  _pShell->DeclareSymbol("persistent user INDEX ser_bAutoSaveClientLog;", &ser_bAutoSaveClientLog);
 };
 
 }; // namespace

@@ -149,7 +149,9 @@ void IHooks::OnGameStop(void)
   CActiveClient::ResetAll();
 
   // Save client log by the end of the game
-  IClientLogging::SaveLog();
+  if (ser_bAutoSaveClientLog) {
+    IClientLogging::SaveLog();
+  }
 };
 
 // Called after saving the game

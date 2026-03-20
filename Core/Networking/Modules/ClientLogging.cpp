@@ -18,6 +18,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "ClientLogging.h"
 #include "Networking/CommInterface.h"
 
+// Auto-save the client log in a file at the end of each game
+INDEX ser_bAutoSaveClientLog = FALSE;
+
 // Get client's address by the client ID on the server
 void IClientLogging::GetAddress(SClientAddress &addr, INDEX iClient) {
   const BOOL bServer = GetComm().Server_IsClientLocal(iClient);

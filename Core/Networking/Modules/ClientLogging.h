@@ -20,6 +20,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
+// Auto-save the client log in a file at the end of each game
+extern INDEX ser_bAutoSaveClientLog;
+
 // IP address of a client with their host name
 struct CORE_API SClientAddress {
   private:
