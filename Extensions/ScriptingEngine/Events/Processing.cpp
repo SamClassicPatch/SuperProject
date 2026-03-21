@@ -15,8 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-void IProcessingEvents_OnStep(void)
-{
+void IProcessingEvents_OnStep(void) {
+  RunCustomScripts("OnStep", NULL);
 };
 
 void IProcessingEvents_OnFrame(CDrawPort *pdp)

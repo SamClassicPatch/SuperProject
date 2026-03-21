@@ -17,18 +17,36 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 BOOL INetworkEvents_OnServerPacket(CNetworkMessage &nmMessage, const ULONG ulType)
 {
+  // Don't use this function in custom scripts
+  // Reenable this function in plugin startup before adding any code here
   return FALSE;
 };
 
 BOOL INetworkEvents_OnClientPacket(CNetworkMessage &nmMessage, const ULONG ulType)
 {
+  // Don't use this function in custom scripts
+  // Reenable this function in plugin startup before adding any code here
   return FALSE;
 };
 
-void INetworkEvents_OnAddPlayer(CPlayerTarget &plt, BOOL bLocal)
-{
+static CPlayerEntity *_penPlayer = NULL;
+static BOOL _bLocal;
+
+inline SQRESULT PushPlayer(sq::VM &vm) {
+  sq_pushroottable(vm);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penPlayer);
+  sq_pushbool(vm, _bLocal);
+  return SQ_OK;
 };
 
-void INetworkEvents_OnRemovePlayer(CPlayerTarget &plt, BOOL bLocal)
-{
+void INetworkEvents_OnAddPlayer(CPlayerTarget &plt, BOOL bLocal) {
+  _penPlayer = plt.plt_penPlayerEntity;
+  _bLocal = bLocal;
+  RunCustomScripts("OnAddPlayer", &PushPlayer);
+};
+
+void INetworkEvents_OnRemovePlayer(CPlayerTarget &plt, BOOL bLocal) {
+  _penPlayer = plt.plt_penPlayerEntity;
+  _bLocal = bLocal;
+  RunCustomScripts("OnRemovePlayer", &PushPlayer);
 };

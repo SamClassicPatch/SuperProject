@@ -311,8 +311,8 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   events.m_rendering->OnPostDraw   = &IRenderingEvents_OnPostDraw;
   events.m_rendering->OnRenderView = &IRenderingEvents_OnRenderView;
 
-  events.m_network->OnServerPacket = &INetworkEvents_OnServerPacket;
-  events.m_network->OnClientPacket = &INetworkEvents_OnClientPacket;
+  //events.m_network->OnServerPacket = &INetworkEvents_OnServerPacket;
+  //events.m_network->OnClientPacket = &INetworkEvents_OnClientPacket;
   events.m_network->OnAddPlayer    = &INetworkEvents_OnAddPlayer;
   events.m_network->OnRemovePlayer = &INetworkEvents_OnRemovePlayer;
 
@@ -331,7 +331,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   events.m_demo->OnDemoStart = &IDemoEvents_OnDemoStart;
   events.m_demo->OnDemoStop  = &IDemoEvents_OnDemoStop;
 
-  events.m_world->OnWorldLoad = &IWorldEvents_OnWorldLoad;
+  //events.m_world->OnWorldLoad = &IWorldEvents_OnWorldLoad;
 
   events.m_listener->OnSendEvent     = &IListenerEvents_OnSendEvent;
   events.m_listener->OnReceiveItem   = &IListenerEvents_OnReceiveItem;

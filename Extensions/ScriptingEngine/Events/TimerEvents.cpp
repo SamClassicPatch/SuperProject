@@ -15,10 +15,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-void ITimerEvents_OnTick(void)
-{
+void ITimerEvents_OnTick(void) {
+  RunCustomScripts("OnTick", NULL);
 };
 
-void ITimerEvents_OnSecond(void)
-{
+void ITimerEvents_OnSecond(void) {
+  RunCustomScripts("OnSecond", NULL);
 };

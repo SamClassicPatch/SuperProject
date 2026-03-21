@@ -15,22 +15,32 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-void IGameEvents_OnGameStart(void)
-{
+static const CTFileName *_pfnm = NULL;
+
+inline SQRESULT PushPath(sq::VM &vm) {
+  sq_pushroottable(vm);
+  sq_pushstring(vm, _pfnm->str_String, -1);
+  return SQ_OK;
 };
 
-void IGameEvents_OnChangeLevel(void)
-{
+void IGameEvents_OnGameStart(void) {
+  RunCustomScripts("OnGameStart", NULL);
 };
 
-void IGameEvents_OnGameStop(void)
-{
+void IGameEvents_OnChangeLevel(void) {
+  RunCustomScripts("OnChangeLevel", NULL);
 };
 
-void IGameEvents_OnGameSave(const CTFileName &fnmSave)
-{
+void IGameEvents_OnGameStop(void) {
+  RunCustomScripts("OnGameStop", NULL);
 };
 
-void IGameEvents_OnGameLoad(const CTFileName &fnmSave)
-{
+void IGameEvents_OnGameSave(const CTFileName &fnmSave) {
+  _pfnm = &fnmSave;
+  RunCustomScripts("OnGameSave", &PushPath);
+};
+
+void IGameEvents_OnGameLoad(const CTFileName &fnmSave) {
+  _pfnm = &fnmSave;
+  RunCustomScripts("OnGameLoad", &PushPath);
 };

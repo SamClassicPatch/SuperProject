@@ -15,14 +15,24 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-void IDemoEvents_OnDemoPlay(const CTFileName &fnmDemo)
-{
+static const CTFileName *_pfnm = NULL;
+
+inline SQRESULT PushPath(sq::VM &vm) {
+  sq_pushroottable(vm);
+  sq_pushstring(vm, _pfnm->str_String, -1);
+  return SQ_OK;
 };
 
-void IDemoEvents_OnDemoStart(const CTFileName &fnmDemo)
-{
+void IDemoEvents_OnDemoPlay(const CTFileName &fnmDemo) {
+  _pfnm = &fnmDemo;
+  RunCustomScripts("OnDemoPlay", &PushPath);
 };
 
-void IDemoEvents_OnDemoStop(void)
-{
+void IDemoEvents_OnDemoStart(const CTFileName &fnmDemo) {
+  _pfnm = &fnmDemo;
+  RunCustomScripts("OnDemoStart", &PushPath);
+};
+
+void IDemoEvents_OnDemoStop(void) {
+  RunCustomScripts("OnDemoStop", NULL);
 };

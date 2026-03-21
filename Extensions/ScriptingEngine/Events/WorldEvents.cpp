@@ -17,4 +17,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 void IWorldEvents_OnWorldLoad(CWorld *pwo, const CTFileName &fnmWorld)
 {
+  // Don't use this function in custom scripts, use IGameEvents_OnGameStart() and IGameEvents_OnChangeLevel() instead
+  // Reenable this function in plugin startup before adding any code here
 };
