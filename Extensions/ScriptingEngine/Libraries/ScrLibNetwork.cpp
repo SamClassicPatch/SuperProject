@@ -1254,18 +1254,18 @@ void VM::RegisterNetwork(void) {
       sqcSound.RegisterMethod(SqSound::_aMethods[i]);
     }
 
-    sqcSound.RegisterVar("file",    &SqSound::GetFile, &SqSound::SetFile);
-    sqcSound.RegisterVar("channel", &SqSound::GetChannel, &SqSound::SetChannel);
-    sqcSound.RegisterVar("flags",   &SqSound::GetFlags, &SqSound::SetFlags);
-    sqcSound.RegisterVar("delay",   &SqSound::GetDelay, &SqSound::SetDelay);
-    sqcSound.RegisterVar("offset",  &SqSound::GetOffset, &SqSound::SetOffset);
-    sqcSound.RegisterVar("volumeL", &SqSound::GetVolumeL, &SqSound::SetVolumeL);
-    sqcSound.RegisterVar("volumeR", &SqSound::GetVolumeR, &SqSound::SetVolumeR);
-    sqcSound.RegisterVar("volume",  NULL, &SqSound::SetVolumes);
-    sqcSound.RegisterVar("filterL", &SqSound::GetFilterL, &SqSound::SetFilterL);
-    sqcSound.RegisterVar("filterR", &SqSound::GetFilterR, &SqSound::SetFilterR);
-    sqcSound.RegisterVar("filter",  NULL, &SqSound::SetFilters);
-    sqcSound.RegisterVar("pitch",   &SqSound::GetPitch, &SqSound::SetPitch);
+    sqcSound.RegisterVar("strFile",  &SqSound::GetFile, &SqSound::SetFile);
+    sqcSound.RegisterVar("iChannel", &SqSound::GetChannel, &SqSound::SetChannel);
+    sqcSound.RegisterVar("ulFlags",  &SqSound::GetFlags, &SqSound::SetFlags);
+    sqcSound.RegisterVar("fDelay",   &SqSound::GetDelay, &SqSound::SetDelay);
+    sqcSound.RegisterVar("fOffset",  &SqSound::GetOffset, &SqSound::SetOffset);
+    sqcSound.RegisterVar("fVolumeL", &SqSound::GetVolumeL, &SqSound::SetVolumeL);
+    sqcSound.RegisterVar("fVolumeR", &SqSound::GetVolumeR, &SqSound::SetVolumeR);
+    sqcSound.RegisterVar("fVolume",  NULL, &SqSound::SetVolumes);
+    sqcSound.RegisterVar("fFilterL", &SqSound::GetFilterL, &SqSound::SetFilterL);
+    sqcSound.RegisterVar("fFilterR", &SqSound::GetFilterR, &SqSound::SetFilterR);
+    sqcSound.RegisterVar("fFilter",  NULL, &SqSound::SetFilters);
+    sqcSound.RegisterVar("fPitch",   &SqSound::GetPitch, &SqSound::SetPitch);
 
     sqtNetwork.AddClass(sqcSound);
   }

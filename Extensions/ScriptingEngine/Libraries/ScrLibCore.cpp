@@ -205,7 +205,7 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CBrushPolygon *&val) {
   val = NULL;
 
   if (ctArgs > 0) {
-    GetInstanceValueVerify(CBrushPolygon *, pOther, v, 2);
+    GetInstanceValueVerifyN(CBrushPolygon *, pOther, v, 2, "CBrushPolygon");
     if (pOther != NULL) val = *pOther;
   }
 
@@ -581,16 +581,16 @@ void VM::RegisterCore(void) {
     }
 
     // Setup variables
-    sqcCastRay.RegisterVar("cr_bHitPortals",              &SqCastRay::GetFlagPortals,      &SqCastRay::SetFlagPortals);
-    sqcCastRay.RegisterVar("cr_bHitTranslucentPortals",   &SqCastRay::GetFlagTransPortals, &SqCastRay::SetFlagTransPortals);
-    sqcCastRay.RegisterVar("cr_ttHitModels",              &SqCastRay::GetTestType,         &SqCastRay::SetTestType);
-    sqcCastRay.RegisterVar("cr_bHitFields",               &SqCastRay::GetFlagFields,       &SqCastRay::SetFlagFields);
+    sqcCastRay.RegisterVar("bHitPortals",              &SqCastRay::GetFlagPortals,      &SqCastRay::SetFlagPortals);
+    sqcCastRay.RegisterVar("bHitTranslucentPortals",   &SqCastRay::GetFlagTransPortals, &SqCastRay::SetFlagTransPortals);
+    sqcCastRay.RegisterVar("ttHitModels",              &SqCastRay::GetTestType,         &SqCastRay::SetTestType);
+    sqcCastRay.RegisterVar("bHitFields",               &SqCastRay::GetFlagFields,       &SqCastRay::SetFlagFields);
   #if SE1_VER >= SE1_107
-    sqcCastRay.RegisterVar("cr_bHitBrushes",              &SqCastRay::GetFlagBrushes,      &SqCastRay::SetFlagBrushes);
-    sqcCastRay.RegisterVar("cr_bHitTerrainInvisibleTris", &SqCastRay::GetFlagInvisTris,    &SqCastRay::SetFlagInvisTris);
+    sqcCastRay.RegisterVar("bHitBrushes",              &SqCastRay::GetFlagBrushes,      &SqCastRay::SetFlagBrushes);
+    sqcCastRay.RegisterVar("bHitTerrainInvisibleTris", &SqCastRay::GetFlagInvisTris,    &SqCastRay::SetFlagInvisTris);
   #endif
-    sqcCastRay.RegisterVar("cr_bPhysical",                &SqCastRay::GetFlagPhysical,     &SqCastRay::SetFlagPhysical);
-    sqcCastRay.RegisterVar("cr_fTestR",                   &SqCastRay::GetTestR,            &SqCastRay::SetTestR);
+    sqcCastRay.RegisterVar("bPhysical",                &SqCastRay::GetFlagPhysical,     &SqCastRay::SetFlagPhysical);
+    sqcCastRay.RegisterVar("fTestR",                   &SqCastRay::GetTestR,            &SqCastRay::SetTestR);
 
     Root().AddClass(sqcCastRay);
   }
