@@ -427,6 +427,249 @@ static Method<RayHolder> _aMethods[] = {
 
 }; // namespace
 
+// CDrawPort class methods
+namespace SqDrawPort {
+
+static SQInteger Constructor(HSQUIRRELVM v, int, CDrawPort &val) {
+  return sq_throwerror(v, "CDrawPort cannot be created within scripts");
+};
+
+static SQInteger Equal(HSQUIRRELVM v, int, CDrawPort &val) {
+  // Compare against another pointer
+  GetInstanceValueVerify(CDrawPort, pOther, v, 2);
+  sq_pushbool(v, &val == pOther);
+  return 1;
+};
+
+static SQInteger IsDualHead(HSQUIRRELVM v, int, CDrawPort &val) {
+  sq_pushbool(v, val.IsDualHead());
+  return 1;
+};
+
+static SQInteger IsWideScreen(HSQUIRRELVM v, int, CDrawPort &val) {
+  sq_pushbool(v, val.IsWideScreen());
+  return 1;
+};
+
+static SQInteger GetWidth(HSQUIRRELVM v, int, CDrawPort &val) {
+  sq_pushinteger(v, val.GetWidth());
+  return 1;
+};
+
+static SQInteger GetHeight(HSQUIRRELVM v, int, CDrawPort &val) {
+  sq_pushinteger(v, val.GetHeight());
+  return 1;
+};
+
+static SQInteger SetTextCharSpacing(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQInteger iSpacing;
+  sq_getinteger(v, 2, &iSpacing);
+  val.SetTextCharSpacing(iSpacing);
+  return 0;
+};
+
+static SQInteger SetTextLineSpacing(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQInteger iSpacing;
+  sq_getinteger(v, 2, &iSpacing);
+  val.SetTextLineSpacing(iSpacing);
+  return 0;
+};
+
+static SQInteger SetTextScaling(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQFloat fScalingFactor;
+  sq_getfloat(v, 2, &fScalingFactor);
+  val.SetTextScaling(fScalingFactor);
+  return 0;
+};
+
+static SQInteger SetTextAspect(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQFloat fAspectRatio;
+  sq_getfloat(v, 2, &fAspectRatio);
+  val.SetTextAspect(fAspectRatio);
+  return 0;
+};
+
+static SQInteger SetTextMode(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQInteger iMode;
+  sq_getinteger(v, 2, &iMode);
+  val.SetTextMode(iMode);
+  return 0;
+};
+
+static SQInteger GetTextWidth(HSQUIRRELVM v, int, CDrawPort &val) {
+  const SQChar *strText;
+  sq_getstring(v, 2, &strText);
+  sq_pushinteger(v, val.GetTextWidth(strText));
+  return 1;
+};
+
+static SQInteger PutText(HSQUIRRELVM v, int, CDrawPort &val) {
+  const SQChar *strText;
+  sq_getstring(v, 2, &strText);
+
+  SQInteger iX, iY, colBlend;
+  sq_getinteger(v, 3, &iX);
+  sq_getinteger(v, 4, &iY);
+  sq_getinteger(v, 5, &colBlend);
+
+  val.PutText(strText, iX, iY, colBlend);
+  return 0;
+};
+
+static SQInteger PutTextC(HSQUIRRELVM v, int, CDrawPort &val) {
+  const SQChar *strText;
+  sq_getstring(v, 2, &strText);
+
+  SQInteger iX, iY, colBlend;
+  sq_getinteger(v, 3, &iX);
+  sq_getinteger(v, 4, &iY);
+  sq_getinteger(v, 5, &colBlend);
+
+  val.PutTextC(strText, iX, iY, colBlend);
+  return 0;
+};
+
+static SQInteger PutTextCXY(HSQUIRRELVM v, int, CDrawPort &val) {
+  const SQChar *strText;
+  sq_getstring(v, 2, &strText);
+
+  SQInteger iX, iY, colBlend;
+  sq_getinteger(v, 3, &iX);
+  sq_getinteger(v, 4, &iY);
+  sq_getinteger(v, 5, &colBlend);
+
+  val.PutTextCXY(strText, iX, iY, colBlend);
+  return 0;
+};
+
+static SQInteger PutTextR(HSQUIRRELVM v, int, CDrawPort &val) {
+  const SQChar *strText;
+  sq_getstring(v, 2, &strText);
+
+  SQInteger iX, iY, colBlend;
+  sq_getinteger(v, 3, &iX);
+  sq_getinteger(v, 4, &iY);
+  sq_getinteger(v, 5, &colBlend);
+
+  val.PutTextR(strText, iX, iY, colBlend);
+  return 0;
+};
+
+#if SE1_VER > SE1_105
+
+static SQInteger DrawPoint(HSQUIRRELVM v, int ctArgs, CDrawPort &val) {
+  SQInteger iX, iY, col;
+  sq_getinteger(v, 2, &iX);
+  sq_getinteger(v, 3, &iY);
+  sq_getinteger(v, 4, &col);
+
+  SQInteger iRadius = 1;
+  if (ctArgs > 3) sq_getinteger(v, 5, &iRadius);
+
+  val.DrawPoint(iX, iY, col, iRadius);
+  return 0;
+};
+
+#endif
+
+static SQInteger DrawLine(HSQUIRRELVM v, int ctArgs, CDrawPort &val) {
+  SQInteger iX1, iY1, iX2, iY2, col;
+  sq_getinteger(v, 2, &iX1);
+  sq_getinteger(v, 3, &iY1);
+  sq_getinteger(v, 4, &iX2);
+  sq_getinteger(v, 5, &iY2);
+  sq_getinteger(v, 6, &col);
+
+  SQInteger iLine = _FULL_;
+  if (ctArgs > 5) sq_getinteger(v, 7, &iLine);
+
+  val.DrawLine(iX1, iY1, iX2, iY2, col, iLine);
+  return 0;
+};
+
+static SQInteger DrawBorder(HSQUIRRELVM v, int ctArgs, CDrawPort &val) {
+  SQInteger iX, iY, iW, iH, col;
+  sq_getinteger(v, 2, &iX);
+  sq_getinteger(v, 3, &iY);
+  sq_getinteger(v, 4, &iW);
+  sq_getinteger(v, 5, &iH);
+  sq_getinteger(v, 6, &col);
+
+  SQInteger iLine = _FULL_;
+  if (ctArgs > 5) sq_getinteger(v, 7, &iLine);
+
+  val.DrawBorder(iX, iY, iW, iH, col, iLine);
+  return 0;
+};
+
+static SQInteger Fill(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQInteger iX, iY, iW, iH, col;
+  sq_getinteger(v, 2, &iX);
+  sq_getinteger(v, 3, &iY);
+  sq_getinteger(v, 4, &iW);
+  sq_getinteger(v, 5, &iH);
+  sq_getinteger(v, 6, &col);
+  val.Fill(iX, iY, iW, iH, col);
+  return 0;
+};
+
+static SQInteger FillGradient(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQInteger iX, iY, iW, iH, colUL, colUR, colDL, colDR;
+  sq_getinteger(v, 2, &iX);
+  sq_getinteger(v, 3, &iY);
+  sq_getinteger(v, 4, &iW);
+  sq_getinteger(v, 5, &iH);
+  sq_getinteger(v, 6, &colUL);
+  sq_getinteger(v, 7, &colUR);
+  sq_getinteger(v, 8, &colDL);
+  sq_getinteger(v, 9, &colDR);
+  val.Fill(iX, iY, iW, iH, colUL, colUR, colDL, colDR);
+  return 0;
+};
+
+static SQInteger FillScreen(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQInteger col;
+  sq_getinteger(v, 2, &col);
+  val.Fill(col);
+  return 0;
+};
+
+static Method<CDrawPort> _aMethods[] = {
+  { "Equal", &Equal, 2, ".x" },
+
+  // Resolution info
+  { "IsDualHead",   &IsDualHead,   1, "." },
+  { "IsWideScreen", &IsWideScreen, 1, "." },
+  { "GetWidth",     &GetWidth,     1, "." },
+  { "GetHeight",    &GetHeight,    1, "." },
+
+  // Font setup
+  { "SetTextCharSpacing", &SetTextCharSpacing, 2, ".n" },
+  { "SetTextLineSpacing", &SetTextLineSpacing, 2, ".n" },
+  { "SetTextScaling",     &SetTextScaling,     2, ".n" },
+  { "SetTextAspect",      &SetTextAspect,      2, ".n" },
+  { "SetTextMode",        &SetTextMode,        2, ".n" },
+
+  // Text
+  { "GetTextWidth", &GetTextWidth, 2, ".s" },
+  { "PutText",      &PutText,      5, ".snnn" },
+  { "PutTextC",     &PutTextC,     5, ".snnn" },
+  { "PutTextCXY",   &PutTextCXY,   5, ".snnn" },
+  { "PutTextR",     &PutTextR,     5, ".snnn" },
+
+  // Shapes
+#if SE1_VER > SE1_105
+  { "DrawPoint",    &DrawPoint,   -4, ".nnnn" },
+#endif
+  { "DrawLine",     &DrawLine,    -6, ".nnnnnn" },
+  { "DrawBorder",   &DrawBorder,  -6, ".nnnnnn" },
+  { "Fill",         &Fill,         6, ".nnnnn" },
+  { "FillGradient", &FillGradient, 9, ".nnnnnnnn" },
+  { "FillScreen",   &FillScreen,   2, ".n" },
+};
+
+}; // namespace
+
 namespace Core {
 
 static SQInteger GetVersion(HSQUIRRELVM v) {
@@ -594,6 +837,16 @@ void VM::RegisterCore(void) {
 
     Root().AddClass(sqcCastRay);
   }
+  {
+    Class<CDrawPort> sqcDrawPort(GetVM(), "CDrawPort", &SqDrawPort::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqDrawPort::_aMethods); i++) {
+      sqcDrawPort.RegisterMethod(SqDrawPort::_aMethods[i]);
+    }
+
+    Root().AddClass(sqcDrawPort);
+  }
 
   // Register functions
   for (i = 0; i < ARRAYCOUNT(_aCoreFuncs); i++) {
@@ -631,6 +884,28 @@ void VM::RegisterCore(void) {
 #undef ADD_TESTTYPE
 
   Const().AddEnum("TestType", enRayTestTypes);
+
+  // Pre-defined line types
+  Enumeration enLineTypes(GetVM());
+
+  enLineTypes.RegisterValue("Full",         (SQInteger)_FULL_);
+  enLineTypes.RegisterValue("Symmetric_16", (SQInteger)_SYMMET16_);
+  enLineTypes.RegisterValue("Symmetric_32", (SQInteger)_SYMMET32_);
+  enLineTypes.RegisterValue("Point",        (SQInteger)_POINT_);
+
+  enLineTypes.RegisterValue("Dot_2",  (SQInteger)_DOT2_);
+  enLineTypes.RegisterValue("Dot_4",  (SQInteger)_DOT4_);
+  enLineTypes.RegisterValue("Dot_8",  (SQInteger)_DOT8_);
+  enLineTypes.RegisterValue("Dot_16", (SQInteger)_DOT16_);
+
+  enLineTypes.RegisterValue("Pattern_3_1",  (SQInteger)_TY31_);
+  enLineTypes.RegisterValue("Pattern_6_2",  (SQInteger)_TY62_);
+  enLineTypes.RegisterValue("Pattern_1_24", (SQInteger)_TY124_);
+  enLineTypes.RegisterValue("Pattern_1_3",  (SQInteger)_TY13_);
+  enLineTypes.RegisterValue("Pattern_2_6",  (SQInteger)_TY26_);
+  enLineTypes.RegisterValue("Pattern_4_12", (SQInteger)_TY412_);
+
+  Const().AddEnum("LineMask", enLineTypes);
 };
 
 }; // namespace
