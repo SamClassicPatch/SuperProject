@@ -188,6 +188,22 @@ class VM {
     // Convert any object in the stack into a string
     bool GetString(SQInteger idx, CTString &strValue);
 
+    // Retrieve the last value from some array in the stack
+    template<class Type>
+    bool ArrayPop(SQInteger idx, Type *pVal) {
+      // Remove the last array element and push it
+      if (SQ_FAILED(sq_arraypop(m_vm, idx, SQTrue))) return false;
+
+      // Retrieve value into the supplied pointer
+      Value<Type> val;
+      bool bResult = val.Get(m_vm, -1);
+
+      if (bResult) *pVal = val.val;
+
+      sq_poptop(m_vm); // Remove the element
+      return bResult;
+    };
+
     // Display current contents of the stack in console
     void PrintCurrentStack(bool bOnlyCount = false, const char *strLabel = "Current stack");
 

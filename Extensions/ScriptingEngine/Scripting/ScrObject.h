@@ -130,7 +130,7 @@ class Object {
 
       // Retrieve value into the supplied pointer
       Value<Type> val;
-      bool bResult = val.Get(m_vm);
+      bool bResult = val.Get(m_vm, -1);
 
       if (bResult) *pVal = val.val;
 

@@ -43,6 +43,7 @@ struct Value : public AbstractValue {};
   template<>                                                                               \
   struct Value< _Type > : public AbstractValue {                                           \
     _Type val;                                                                             \
+    Value() {};                                                                            \
     Value(_Type valSet) : val(valSet) {};                                                  \
     virtual void Push(HSQUIRRELVM v) const { _PushFunc(v, static_cast< _SqType >(val)); }; \
     virtual bool Get(HSQUIRRELVM v, SQInteger idx) {                                       \
