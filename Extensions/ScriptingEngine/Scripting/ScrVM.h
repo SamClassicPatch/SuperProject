@@ -190,7 +190,7 @@ class VM {
 
     // Retrieve the last value from some array in the stack
     template<class Type>
-    bool ArrayPop(SQInteger idx, Type *pVal) {
+    bool ArrayPopLast(SQInteger idx, Type *pVal) {
       // Remove the last array element and push it
       if (SQ_FAILED(sq_arraypop(m_vm, idx, SQTrue))) return false;
 
@@ -201,6 +201,17 @@ class VM {
       if (bResult) *pVal = val.val;
 
       sq_poptop(m_vm); // Remove the element
+      return bResult;
+    };
+
+    // Retrieve the first value from some array in the stack
+    template<class Type>
+    bool ArrayPopFirst(SQInteger idx, Type *pVal) {
+      // Reverse the array to pop from the other side and then reverse it again after popping the value
+      if (SQ_FAILED(sq_arrayreverse(m_vm, idx))) return false;
+      bool bResult = ArrayPopLast(idx, pVal);
+      if (SQ_FAILED(sq_arrayreverse(m_vm, idx))) return false;
+
       return bResult;
     };
 
