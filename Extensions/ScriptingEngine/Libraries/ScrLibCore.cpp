@@ -461,6 +461,12 @@ static SQInteger GetHeight(HSQUIRRELVM v, int, CDrawPort &val) {
   return 1;
 };
 
+static SQInteger SetFont(HSQUIRRELVM v, int, CDrawPort &val) {
+  GetInstanceValueVerify(CFontData, pfd, v, 2);
+  val.SetFont(pfd);
+  return 0;
+};
+
 static SQInteger SetTextCharSpacing(HSQUIRRELVM v, int, CDrawPort &val) {
   SQInteger iSpacing;
   sq_getinteger(v, 2, &iSpacing);
@@ -555,6 +561,159 @@ static SQInteger PutTextR(HSQUIRRELVM v, int, CDrawPort &val) {
   return 0;
 };
 
+static SQInteger PutTexture(HSQUIRRELVM v, int, CDrawPort &val) {
+  VM &vm = GetVMClass(v);
+
+  GetInstanceValueVerify(CTextureObject, pto, v, 2);
+
+  SQInteger iX0, iY0, iX1, iY1;
+  if (!vm.ArrayPopFirst(3, &iX0)) return sq_throwerror(v, "cannot retrieve starting X position from the array in argument 2");
+  if (!vm.ArrayPopFirst(3, &iY0)) return sq_throwerror(v, "cannot retrieve starting Y position from the array in argument 2");
+  if (!vm.ArrayPopFirst(4, &iX1)) return sq_throwerror(v, "cannot retrieve ending X position from the array in argument 3");
+  if (!vm.ArrayPopFirst(4, &iY1)) return sq_throwerror(v, "cannot retrieve ending Y position from the array in argument 3");
+
+  const PIXaabbox2D boxTexture(PIX2D(iX0, iY0), PIX2D(iX1, iY1));
+  SQInteger col0, col1, col2, col3;
+
+  // One color
+  if (SQ_SUCCEEDED(sq_getinteger(v, 5, &col0))) {
+    val.PutTexture(pto, boxTexture, col0);
+
+  // Color per corner
+  } else {
+    if (!vm.ArrayPopFirst(5, &col0)) return sq_throwerror(v, "cannot retrieve upper left color from the array in argument 4");
+    if (!vm.ArrayPopFirst(5, &col1)) return sq_throwerror(v, "cannot retrieve upper right color from the array in argument 4");
+    if (!vm.ArrayPopFirst(5, &col2)) return sq_throwerror(v, "cannot retrieve lower left color from the array in argument 4");
+    if (!vm.ArrayPopFirst(5, &col3)) return sq_throwerror(v, "cannot retrieve lower right color from the array in argument 4");
+
+    val.PutTexture(pto, boxTexture, col0, col1, col2, col3);
+  }
+  return 0;
+};
+
+static SQInteger PutTextureUV(HSQUIRRELVM v, int, CDrawPort &val) {
+  VM &vm = GetVMClass(v);
+
+  GetInstanceValueVerify(CTextureObject, pto, v, 2);
+
+  SQInteger iX0, iY0, iX1, iY1;
+  if (!vm.ArrayPopFirst(3, &iX0)) return sq_throwerror(v, "cannot retrieve starting X position from the array in argument 2");
+  if (!vm.ArrayPopFirst(3, &iY0)) return sq_throwerror(v, "cannot retrieve starting Y position from the array in argument 2");
+  if (!vm.ArrayPopFirst(4, &iX1)) return sq_throwerror(v, "cannot retrieve ending X position from the array in argument 3");
+  if (!vm.ArrayPopFirst(4, &iY1)) return sq_throwerror(v, "cannot retrieve ending Y position from the array in argument 3");
+
+  SQFloat fU0, fV0, fU1, fV1;
+  if (!vm.ArrayPopFirst(5, &fU0)) return sq_throwerror(v, "cannot retrieve starting X position from the array in argument 4");
+  if (!vm.ArrayPopFirst(5, &fV0)) return sq_throwerror(v, "cannot retrieve starting Y position from the array in argument 4");
+  if (!vm.ArrayPopFirst(6, &fU1)) return sq_throwerror(v, "cannot retrieve ending X position from the array in argument 5");
+  if (!vm.ArrayPopFirst(6, &fV1)) return sq_throwerror(v, "cannot retrieve ending Y position from the array in argument 5");
+
+  const PIXaabbox2D boxTexture(PIX2D(iX0, iY0), PIX2D(iX1, iY1));
+  const MEXaabbox2D boxUV(MEX2D(fU0, fV0), MEX2D(fU1, fV1));
+  SQInteger col0, col1, col2, col3;
+
+  // One color
+  if (SQ_SUCCEEDED(sq_getinteger(v, 7, &col0))) {
+    val.PutTexture(pto, boxTexture, boxUV, col0);
+
+  // Color per corner
+  } else {
+    if (!vm.ArrayPopFirst(7, &col0)) return sq_throwerror(v, "cannot retrieve upper left color from the array in argument 6");
+    if (!vm.ArrayPopFirst(7, &col1)) return sq_throwerror(v, "cannot retrieve upper right color from the array in argument 6");
+    if (!vm.ArrayPopFirst(7, &col2)) return sq_throwerror(v, "cannot retrieve lower left color from the array in argument 6");
+    if (!vm.ArrayPopFirst(7, &col3)) return sq_throwerror(v, "cannot retrieve lower right color from the array in argument 6");
+
+    val.PutTexture(pto, boxTexture, boxUV, col0, col1, col2, col3);
+  }
+  return 0;
+};
+
+static SQInteger InitTexture(HSQUIRRELVM v, int, CDrawPort &val) {
+  GetInstanceValueVerify(CTextureObject, pto, v, 2);
+
+  SQBool bClamp;
+  sq_getbool(v, 3, &bClamp);
+
+  val.InitTexture(pto, bClamp);
+  return 0;
+};
+
+static SQInteger AddTexture(HSQUIRRELVM v, int, CDrawPort &val) {
+  VM &vm = GetVMClass(v);
+
+  SQFloat fX0, fY0, fX1, fY1;
+  if (!vm.ArrayPopFirst(2, &fX0)) return sq_throwerror(v, "cannot retrieve starting X position from the array in argument 1");
+  if (!vm.ArrayPopFirst(2, &fY0)) return sq_throwerror(v, "cannot retrieve starting Y position from the array in argument 1");
+  if (!vm.ArrayPopFirst(3, &fX1)) return sq_throwerror(v, "cannot retrieve ending X position from the array in argument 2");
+  if (!vm.ArrayPopFirst(3, &fY1)) return sq_throwerror(v, "cannot retrieve ending Y position from the array in argument 2");
+
+  SQInteger col;
+  sq_getinteger(v, 4, &col);
+
+  val.AddTexture(fX0, fY0, fX1, fY1, col);
+  return 0;
+};
+
+static SQInteger AddTextureUV(HSQUIRRELVM v, int, CDrawPort &val) {
+  VM &vm = GetVMClass(v);
+
+  SQFloat fX0, fY0, fX1, fY1, fU0, fV0, fU1, fV1;
+  if (!vm.ArrayPopFirst(2, &fX0)) return sq_throwerror(v, "cannot retrieve starting X position from the array in argument 1");
+  if (!vm.ArrayPopFirst(2, &fY0)) return sq_throwerror(v, "cannot retrieve starting Y position from the array in argument 1");
+  if (!vm.ArrayPopFirst(3, &fX1)) return sq_throwerror(v, "cannot retrieve ending X position from the array in argument 2");
+  if (!vm.ArrayPopFirst(3, &fY1)) return sq_throwerror(v, "cannot retrieve ending Y position from the array in argument 2");
+
+  if (!vm.ArrayPopFirst(4, &fU0)) return sq_throwerror(v, "cannot retrieve starting U coordinate from the array in argument 3");
+  if (!vm.ArrayPopFirst(4, &fV0)) return sq_throwerror(v, "cannot retrieve starting V coordinate from the array in argument 3");
+  if (!vm.ArrayPopFirst(5, &fU1)) return sq_throwerror(v, "cannot retrieve ending U coordinate from the array in argument 4");
+  if (!vm.ArrayPopFirst(5, &fV1)) return sq_throwerror(v, "cannot retrieve ending V coordinate from the array in argument 4");
+
+  SQInteger col;
+  sq_getinteger(v, 6, &col);
+
+  val.AddTexture(fX0, fY0, fX1, fY1, fU0, fV0, fU1, fV1, col);
+  return 0;
+};
+
+static SQInteger AddTexture_4points(HSQUIRRELVM v, int, CDrawPort &val) {
+  VM &vm = GetVMClass(v);
+
+  SQFloat fX0, fY0, fU0, fV0, fX1, fY1, fU1, fV1, fX2, fY2, fU2, fV2, fX3, fY3, fU3, fV3;
+  if (!vm.ArrayPopFirst(2, &fX0)) return sq_throwerror(v, "cannot retrieve X0 position from the array in argument 1");
+  if (!vm.ArrayPopFirst(2, &fY0)) return sq_throwerror(v, "cannot retrieve Y0 position from the array in argument 1");
+  if (!vm.ArrayPopFirst(3, &fU0)) return sq_throwerror(v, "cannot retrieve U0 coordinate from the array in argument 2");
+  if (!vm.ArrayPopFirst(3, &fV0)) return sq_throwerror(v, "cannot retrieve V0 coordinate from the array in argument 2");
+
+  if (!vm.ArrayPopFirst(4, &fX1)) return sq_throwerror(v, "cannot retrieve X1 position from the array in argument 3");
+  if (!vm.ArrayPopFirst(4, &fY1)) return sq_throwerror(v, "cannot retrieve Y1 position from the array in argument 3");
+  if (!vm.ArrayPopFirst(5, &fU1)) return sq_throwerror(v, "cannot retrieve U1 coordinate from the array in argument 4");
+  if (!vm.ArrayPopFirst(5, &fV1)) return sq_throwerror(v, "cannot retrieve V1 coordinate from the array in argument 4");
+
+  if (!vm.ArrayPopFirst(6, &fX2)) return sq_throwerror(v, "cannot retrieve X2 position from the array in argument 5");
+  if (!vm.ArrayPopFirst(6, &fY2)) return sq_throwerror(v, "cannot retrieve Y2 position from the array in argument 5");
+  if (!vm.ArrayPopFirst(7, &fU2)) return sq_throwerror(v, "cannot retrieve U2 coordinate from the array in argument 6");
+  if (!vm.ArrayPopFirst(7, &fV2)) return sq_throwerror(v, "cannot retrieve V2 coordinate from the array in argument 6");
+
+  if (!vm.ArrayPopFirst(8, &fX3)) return sq_throwerror(v, "cannot retrieve X3 position from the array in argument 7");
+  if (!vm.ArrayPopFirst(8, &fY3)) return sq_throwerror(v, "cannot retrieve Y3 position from the array in argument 7");
+  if (!vm.ArrayPopFirst(9, &fU3)) return sq_throwerror(v, "cannot retrieve U3 coordinate from the array in argument 8");
+  if (!vm.ArrayPopFirst(9, &fV3)) return sq_throwerror(v, "cannot retrieve V3 coordinate from the array in argument 8");
+
+  SQInteger col0, col1, col2, col3;
+  sq_getinteger(v, 10, &col0);
+  sq_getinteger(v, 11, &col1);
+  sq_getinteger(v, 12, &col2);
+  sq_getinteger(v, 13, &col3);
+
+  val.AddTexture(fX0, fY0, fU0, fV0, fX1, fY1, fU1, fV1, fX2, fY2, fU2, fV2, fX3, fY3, fU3, fV3, col0, col1, col2, col3);
+  return 0;
+};
+
+static SQInteger FlushRenderingQueue(HSQUIRRELVM v, int, CDrawPort &val) {
+  val.FlushRenderingQueue();
+  return 0;
+};
+
 #if SE1_VER > SE1_105
 
 static SQInteger DrawPoint(HSQUIRRELVM v, int ctArgs, CDrawPort &val) {
@@ -644,6 +803,7 @@ static Method<CDrawPort> _aMethods[] = {
   { "GetHeight",    &GetHeight,    1, "." },
 
   // Font setup
+  { "SetFont",            &SetFont,            2, ".x" },
   { "SetTextCharSpacing", &SetTextCharSpacing, 2, ".n" },
   { "SetTextLineSpacing", &SetTextLineSpacing, 2, ".n" },
   { "SetTextScaling",     &SetTextScaling,     2, ".n" },
@@ -656,6 +816,15 @@ static Method<CDrawPort> _aMethods[] = {
   { "PutTextC",     &PutTextC,     5, ".snnn" },
   { "PutTextCXY",   &PutTextCXY,   5, ".snnn" },
   { "PutTextR",     &PutTextR,     5, ".snnn" },
+
+  // Textures
+  { "PutTexture",          &PutTexture,          5, ".xaan|a" },
+  { "PutTextureUV",        &PutTextureUV,        7, ".xaaaan|a" },
+  { "InitTexture",         &InitTexture,         3, ".xb" },
+  { "AddTexture",          &AddTexture,          4, ".aan" },
+  { "AddTextureUV",        &AddTextureUV,        6, ".aaaan" },
+  { "AddTexture_4points",  &AddTexture_4points, 13, ".aaaaaaaannnn" },
+  { "FlushRenderingQueue", &FlushRenderingQueue, 1, "." },
 
   // Shapes
 #if SE1_VER > SE1_105
