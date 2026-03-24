@@ -235,8 +235,10 @@ void CGame::QuickTest(const CTFileName &fnMapName,
         GameRedrawView(pdp, (_pGame->gm_csConsoleState==CS_ON)?0:GRV_SHOWEXTRAS);
       }
       ComputerRender(pdp);
+      pdp->Unlock(); // [Cecil] Unlock for the console
+
       ConsoleRender(pdp);
-      pdp->Unlock();
+
       // show it
       pvp->SwapBuffers();
     }

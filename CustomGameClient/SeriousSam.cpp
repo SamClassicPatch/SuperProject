@@ -1030,7 +1030,9 @@ void DoGame(void) {
     #endif
 
     // render console
+    _pdpMenu->Unlock(); // [Cecil] Unlock for the console
     _pGame->ConsoleRender(_pdpMenu);
+    _pdpMenu->Lock(); // [Cecil] Relock after the console
 
     // [Cecil] Call API every render frame
     IHooks::OnFrame(_pdpMenu);
