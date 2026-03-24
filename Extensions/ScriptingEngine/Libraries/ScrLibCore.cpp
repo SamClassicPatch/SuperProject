@@ -1069,7 +1069,7 @@ void VM::RegisterCore(void) {
 
   enLineTypes.RegisterValue("Pattern_3_1",  (SQInteger)_TY31_);
   enLineTypes.RegisterValue("Pattern_6_2",  (SQInteger)_TY62_);
-  enLineTypes.RegisterValue("Pattern_1_24", (SQInteger)_TY124_);
+  enLineTypes.RegisterValue("Pattern_12_4", (SQInteger)_TY124_);
   enLineTypes.RegisterValue("Pattern_1_3",  (SQInteger)_TY13_);
   enLineTypes.RegisterValue("Pattern_2_6",  (SQInteger)_TY26_);
   enLineTypes.RegisterValue("Pattern_4_12", (SQInteger)_TY412_);
