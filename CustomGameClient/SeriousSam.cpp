@@ -1394,23 +1394,17 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         _bReconsiderInput = TRUE;
       }
 
-      // [Cecil] Stop demo on some controller buttons
-      if ((AnyControllerButton(msg) || IsBackPressed(msg)) &&
-        (_gmRunningGameMode == GM_DEMO || _gmRunningGameMode == GM_INTRO)) {
-        _pGame->StopGame();
-        _gmRunningGameMode = GM_NONE;
-      }
-
       if (GetGameAPI()->GetConState() == CS_TALK && IsBackPressed(msg)) {
         GetGameAPI()->SetConState(CS_OFF);
         msg.message = WM_NULL;
       }
 
-      BOOL bMenuForced = (_gmRunningGameMode == GM_NONE &&
+      const BOOL bMenuForced = (_gmRunningGameMode == GM_NONE &&
         (GetGameAPI()->GetConState() == CS_OFF || GetGameAPI()->GetConState() == CS_TURNINGOFF));
-      BOOL bMenuToggle = (IsBackPressed(msg)
+      const BOOL bMenuToggle = (IsBackPressed(msg)
         && (GetGameAPI()->GetCompState() == CS_OFF || GetGameAPI()->GetCompState() == CS_ONINBACKGROUND));
 
+      // Menu is inactive and needs to be active
       if (!bMenuActive) {
         if (bMenuForced || bMenuToggle) {
           // if console is active
@@ -1420,19 +1414,21 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             _iAddonExecState = 0;
           }
 
-          // delete key down message so menu would not exit because of it
-          msg.message = WM_NULL;
+          // [Cecil] Don't start the menu during demos
+          if (_gmRunningGameMode != GM_DEMO && _gmRunningGameMode != GM_INTRO) {
+            // delete key down message so menu would not exit because of it
+            msg.message = WM_NULL;
 
-          // start menu
-          StartMenus();
+            // start menu
+            StartMenus();
+          }
         }
 
-      } else {
-        if (bMenuForced && bMenuToggle && _pGUIM->aVisitedMenus.Count() == 0) {
-          // delete key down message so menu would not exit because of it
-          if (msg.message != WM_CTRLBUTTONDOWN) {
-            msg.message = WM_NULL;
-          }
+      // Menu is active because it was just toggled
+      } else if (bMenuForced && bMenuToggle && _pGUIM->aVisitedMenus.Count() == 0) {
+        // delete key down message so menu would not exit because of it
+        if (msg.message != WM_CTRLBUTTONDOWN) {
+          msg.message = WM_NULL;
         }
       }
 
@@ -1695,32 +1691,40 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
       // if demo is playing
       if (_gmRunningGameMode == GM_DEMO || _gmRunningGameMode == GM_INTRO) {
-        // check if escape is pressed
-        BOOL bEscape = IsBackPressed(msg);
+        // [Cecil] Stop demo on some controller buttons as well
+        const BOOL bEscape = AnyControllerButton(msg) || IsBackPressed(msg);
 
         // check if console-invoke key is pressed
-        BOOL bTilde = (msg.message == WM_KEYDOWN &&
+        const BOOL bTilde = (msg.message == WM_KEYDOWN &&
           (msg.wParam == VK_F1 || MapVirtualKey(msg.wParam, 0) == 41)); // scan code for '~'
 
         // check if any key is pressed
-        BOOL bAnyKey = ((msg.message == WM_KEYDOWN && (msg.wParam == VK_SPACE || msg.wParam == VK_RETURN))
-                      || msg.message == WM_LBUTTONDOWN || msg.message == WM_RBUTTONDOWN);
+        const BOOL bAnyKey = ((msg.message == WM_KEYDOWN && (msg.wParam == VK_SPACE || msg.wParam == VK_RETURN))
+          || msg.message == WM_LBUTTONDOWN || msg.message == WM_RBUTTONDOWN);
+
+        // [Cecil] Photo mode
+        const BOOL bCamera = GetGameAPI()->GetCamera().IsActive(FALSE);
 
         // if escape is pressed
         if (bEscape) {
-          _pGame->StopGame();
+          // [Cecil] Exit photo mode
+          if (bCamera) {
+            GetGameAPI()->GetCamera().TogglePhotoMode();
 
-          // stop demo
-          _bInAutoPlayLoop = FALSE;
-          _gmRunningGameMode = GM_NONE;
+          } else {
+            // stop demo
+            _pGame->StopGame();
+            _bInAutoPlayLoop = FALSE;
+            _gmRunningGameMode = GM_NONE;
+          }
 
         // if any other key is pressed except console invoking
-        } else if (bAnyKey && !bTilde) {
+        // [Cecil] And the observer camera isn't active
+        } else if (bAnyKey && !bTilde && !bCamera) {
           // if not in menu or in console
           if (!bMenuActive && !bMenuRendering && GetGameAPI()->GetConState() == CS_OFF) {
-            _pGame->StopGame();
-
             // skip to next demo
+            _pGame->StopGame();
             _gmRunningGameMode = GM_NONE;
             StartNextDemo();
           }
