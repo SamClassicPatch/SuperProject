@@ -109,6 +109,12 @@ class CORE_API INetwork {
         && _pNetwork->ga_sesSessionState.ses_ctMaxPlayers > 1;
     };
 
+    // Check if connected to a remote server as one of the active players
+    static inline BOOL IsPlayingOnRemoteServer(void) {
+      // Not a local server, playing online and with actual players (not observing)
+      return !_pNetwork->IsServer() && _pNetwork->IsNetworkEnabled() && IWorld::AnyLocalPlayers();
+    };
+
   // CServer method reimplementations
   public:
 

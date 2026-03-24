@@ -20,6 +20,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
+#include <Core/Networking/NetworkFunctions.h>
+
 #include "ScrConstants.h"
 #include "ScrTable.h"
 
@@ -267,9 +269,7 @@ __forceinline VM &GetVMClass(HSQUIRRELVM v) {
 // Macro for marking specific Squirrel functions as restricted for clients that are currently playing on a server
 // i.e. not a host, playing online and with any local players that can be controlled (instead of observing others)
 #define SQ_RESTRICT(_SqVM) { \
-  if (!_pNetwork->IsServer() && _pNetwork->IsNetworkEnabled() && IWorld::AnyLocalPlayers()) { \
-    return sq_throwerror((_SqVM), "the usage of this function is restricted for server players"); \
-  } \
+  if (INetwork::IsPlayingOnRemoteServer()) return sq_throwerror((_SqVM), "the usage of this function is restricted for server players"); \
 }
 
 }; // namespace

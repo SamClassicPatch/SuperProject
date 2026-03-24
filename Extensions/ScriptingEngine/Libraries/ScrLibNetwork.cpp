@@ -600,6 +600,11 @@ static SQInteger IsOnlineServer(HSQUIRRELVM v) {
   return 1;
 };
 
+static SQInteger IsPlayingOnline(HSQUIRRELVM v) {
+  sq_pushbool(v, INetwork::IsPlayingOnRemoteServer());
+  return 1;
+};
+
 static SQInteger IsObserving(HSQUIRRELVM v) {
   sq_pushbool(v, _pNetwork->IsNetworkEnabled() && !IWorld::AnyLocalPlayers());
   return 1;
@@ -1121,12 +1126,13 @@ static SQInteger GetSessionPropByte(HSQUIRRELVM v) {
 // "Network" namespace functions
 static SQRegFunction _aNetworkFuncs[] = {
   // Network states
-  { "IsHost",                &Network::IsHost,               1, "." },
-  { "IsOnline",              &Network::IsOnline,             1, "." },
-  { "IsOnlineServer",        &Network::IsOnlineServer,       1, "." },
-  { "IsObserving",           &Network::IsObserving,          1, "." },
-  { "IsPredicting",          &Network::IsPredicting,         1, "." },
-  { "GetMaxPlayers",         &Network::GetMaxPlayers,        1, "." },
+  { "IsHost",                &Network::IsHost,          1, "." },
+  { "IsOnline",              &Network::IsOnline,        1, "." },
+  { "IsOnlineServer",        &Network::IsOnlineServer,  1, "." },
+  { "IsPlayingOnline",       &Network::IsPlayingOnline, 1, "." },
+  { "IsObserving",           &Network::IsObserving,     1, "." },
+  { "IsPredicting",          &Network::IsPredicting,    1, "." },
+  { "GetMaxPlayers",         &Network::GetMaxPlayers,   1, "." },
 
   // Demos
   { "StartDemoRec",          &Network::StartDemoRec,       2, ".s" },
