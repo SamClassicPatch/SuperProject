@@ -15,14 +15,34 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-void IRenderingEvents_OnPreDraw(CDrawPort *pdp)
-{
+static CEntity *_penViewer = NULL;
+static CDrawPort *_pdp = NULL;
+
+inline SQRESULT PushDrawPort(sq::VM &vm) {
+  sq_pushroottable(vm);
+  PushNewPointer(vm.Root(), "CDrawPort", *_pdp);
+  return SQ_OK;
 };
 
-void IRenderingEvents_OnPostDraw(CDrawPort *pdp)
-{
+inline SQRESULT PushRenderView(sq::VM &vm) {
+  sq_pushroottable(vm);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penViewer);
+  PushNewPointer(vm.Root(), "CDrawPort", *_pdp);
+  return SQ_OK;
 };
 
-void IRenderingEvents_OnRenderView(CWorld &wo, CEntity *penViewer, CAnyProjection3D &apr, CDrawPort *pdp)
-{
+void IRenderingEvents_OnPreDraw(CDrawPort *pdp) {
+  _pdp = pdp;
+  RunCustomScripts("OnPreDraw", &PushDrawPort);
+};
+
+void IRenderingEvents_OnPostDraw(CDrawPort *pdp) {
+  _pdp = pdp;
+  RunCustomScripts("OnPostDraw", &PushDrawPort);
+};
+
+void IRenderingEvents_OnRenderView(CWorld &wo, CEntity *penViewer, CAnyProjection3D &apr, CDrawPort *pdp) {
+  _penViewer = penViewer;
+  _pdp = pdp;
+  RunCustomScripts("OnRenderView", &PushRenderView);
 };

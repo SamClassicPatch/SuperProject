@@ -15,10 +15,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+static CDrawPort *_pdp = NULL;
+
+inline SQRESULT PushDrawPort(sq::VM &vm) {
+  sq_pushroottable(vm);
+  PushNewPointer(vm.Root(), "CDrawPort", *_pdp);
+  return SQ_OK;
+};
+
 void IProcessingEvents_OnStep(void) {
   RunCustomScripts("OnStep", NULL);
 };
 
-void IProcessingEvents_OnFrame(CDrawPort *pdp)
-{
+void IProcessingEvents_OnFrame(CDrawPort *pdp) {
+  _pdp = pdp;
+  RunCustomScripts("OnFrame", &PushDrawPort);
 };
