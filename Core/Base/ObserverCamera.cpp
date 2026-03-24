@@ -321,16 +321,44 @@ BOOL &CObserverCamera::GetState(void) {
 };
 
 // Check if camera is on
-BOOL CObserverCamera::IsActive(void) {
+BOOL CObserverCamera::IsActive(BOOL bAlsoDemoPlayback) {
   // Camera can only be used during observing or in demos
   const BOOL bObserver = (GetGameAPI()->GetCurrentSplitCfg() == CGame::SSC_OBSERVER);
 
   // Or if it needs to be used externally
   if (cam_bExternalUsage || bObserver || _pNetwork->IsPlayingDemo()) {
-    return cam_props.bActive || cam_bPlayback;
+    return cam_props.bActive || (cam_bPlayback && bAlsoDemoPlayback);
   }
 
   return FALSE;
+};
+
+// Toggle photo mode during the game or demos
+BOOL CObserverCamera::TogglePhotoMode(void) {
+  // Toggle camera state
+  cam_props.bActive = !cam_props.bActive;
+
+  // Toggle pause in singleplayer if it's of the opposite state
+  if (_gmRunningGameMode == GM_SINGLE_PLAYER) {
+    if (!!IsActive(FALSE) ^ !!_pNetwork->IsPaused()) {
+      _pNetwork->TogglePause();
+    }
+
+  // Toggle pause in demos if it's of the opposite state
+  } else if (_gmRunningGameMode == GM_DEMO) {
+    static CSymbolPtr pfSyncRate("dem_fSyncRate");
+
+    if (pfSyncRate.Exists()) {
+      bool bDemoPause = (pfSyncRate.GetFloat() == DEMOSYNC_STOP);
+
+      if (!!IsActive(FALSE) ^ bDemoPause) {
+        pfSyncRate.GetFloat() = (bDemoPause ? DEMOSYNC_REALTIME : DEMOSYNC_STOP);
+      }
+    }
+  }
+
+  // Camera was supposed to activate
+  return cam_props.bActive;
 };
 
 // Start recording into a file
@@ -356,14 +384,7 @@ void CObserverCamera::UpdateControls(void) {
   static BOOL _bToggle = FALSE;
 
   if (!_bToggle && bBtnToggle) {
-    cam_props.bActive = !cam_props.bActive;
-
-    // Toggle pause for the photo mode in singleplayer if it's of the opposite state
-    if (_gmRunningGameMode == GM_SINGLE_PLAYER) {
-      if (!!IsActive() ^ !!_pNetwork->IsPaused()) {
-        _pNetwork->TogglePause();
-      }
-    }
+    TogglePhotoMode();
   }
 
   _bToggle = bBtnToggle;

@@ -129,18 +129,10 @@ extern void ExitConfirm(void);
 
 // [Cecil] Toggle the observer camera and return to the game
 static void ToggleOCAM(void) {
-  BOOL &bToggle = GetGameAPI()->GetCamera().GetState();
-  bToggle = !bToggle;
-
-  // Toggle pause for the photo mode in singleplayer if it's of the opposite state
-  if (_gmRunningGameMode == GM_SINGLE_PLAYER) {
-    if (!!GetGameAPI()->GetCamera().IsActive() ^ !!_pNetwork->IsPaused()) {
-      _pNetwork->TogglePause();
-    }
-  }
+  const BOOL bToggled = GetGameAPI()->GetCamera().TogglePhotoMode();
 
   // Notify about the photo mode being unavailable if it has been enabled but still isn't active
-  if (bToggle && !GetGameAPI()->GetCamera().IsActive()) {
+  if (bToggled && !GetGameAPI()->GetCamera().IsActive(FALSE)) {
     CPutString(TRANS("^cff0000Photo mode is unavailable during this game! Try recording a demo or joining the server as an observer.\n"));
   }
 

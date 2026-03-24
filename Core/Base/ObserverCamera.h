@@ -159,7 +159,11 @@ class CORE_API CObserverCamera {
     BOOL &GetState(void);
 
     // Check if camera is on
-    BOOL IsActive(void);
+    BOOL IsActive(BOOL bAlsoDemoPlayback = TRUE);
+
+    // Toggle photo mode during the game or demos
+    // Returns whether the camera was supposed to activate
+    BOOL TogglePhotoMode(void);
 
     // Start recording into a file
     BOOL StartRecording(void);
