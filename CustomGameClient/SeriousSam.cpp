@@ -927,6 +927,9 @@ void DoGame(void) {
     StartNextDemo();
 
     if (!_bInAutoPlayLoop) {
+      // [Cecil] Close the console before returning to the menu
+      GetGameAPI()->SetConState(CS_OFF);
+
       // start menu
       StartMenus();
     }
