@@ -177,15 +177,16 @@ functions:
       const RenderType eRender = penParent->GetRenderType();
       const BOOL bModel = (eRender == RT_MODEL || eRender == RT_EDITORMODEL || eRender == RT_SKAMODEL || eRender == RT_SKAEDITORMODEL);
 
-      // [Cecil] Prevent burning particles from rendering on the original entity while viewing through its predicted copy
-      const BOOL bNotPredicted = (!penParent->IsPredicted() || Particle_GetViewer() != penParent->GetPredictor());
+      if (bModel) {
+        // [Cecil] Prevent burning particles from rendering on the original entity while viewing through its predicted copy
+        const BOOL bNotPredicted = (!penParent->IsPredicted() || Particle_GetViewer() != penParent->GetPredictor());
 
-      if (bModel && Particle_GetViewer() != penParent && bNotPredicted)
-      {
-        Particles_Burning(penParent, fPower, fTimeFactor*fDeathFactor);
-      }
-      else
-      {
+        // [Cecil] Always render flame particles in photo mode
+        if ((Particle_GetViewer() != penParent && bNotPredicted) || GetGameAPI()->GetCamera().IsActive()) {
+          Particles_Burning(penParent, fPower, fTimeFactor*fDeathFactor);
+        }
+
+      } else {
         Particles_BrushBurning(this, &m_vPos01, m_ctFlames, m_vPlaneNormal, fPower, fTimeFactor*fDeathFactor);
       }
     }
