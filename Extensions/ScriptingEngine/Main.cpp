@@ -269,8 +269,11 @@ static void LoadCustomScript(SHELL_FUNC_ARGS) {
 
   // Remove an existing script under the same file
   FOREACHINDYNAMICCONTAINER(_cCustomScripts, sq::VM, itvm) {
-    if (itvm->GetName() == strScript) {
-      _cCustomScripts.Remove(itvm);
+    sq::VM *pOldVM = itvm;
+
+    if (pOldVM->GetName() == strScript) {
+      _cCustomScripts.Remove(pOldVM);
+      delete pOldVM; // Delete old script
       break;
     }
   }
@@ -284,6 +287,8 @@ void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, s
   // Sync all threads that might be running the scripts from the same VMs
   CTSingleLock sl(&_csScripts, TRUE);
 
+  CDynamicContainer<sq::VM> cToRemove;
+
   FOREACHINDYNAMICCONTAINER(_cCustomScripts, sq::VM, itvm) {
     sq::VM &vm = *itvm;
 
@@ -294,7 +299,40 @@ void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, s
       // Pass execution error
       sq_throwerror(vm, vm.GetError());
       CPrintF("^cff0000%s (%s):\n%s\n", strFunc, vm.GetName().str_String, vm.GetError());
+      continue;
     }
+
+    // Not suspended - proceed with business as usual
+    if (!vm.IsSuspended()) continue;
+
+    // Warn about suspension not being supported
+    CPrintF("^cffff00%s (%s):\n%s\n", strFunc, vm.GetName().str_String,
+      "suspend() function is not supported in custom scripts! Attempting to resume...");
+
+    // Try to resume execution for a few times until it works
+    INDEX ctResumeAttempts = 1000;
+
+    while (--ctResumeAttempts >= 0 && vm.IsSuspended()) {
+      if (!vm.Resume(pReturnCallback)) {
+        // Pass execution error
+        sq_throwerror(vm, vm.GetError());
+        CPrintF("^cff0000%s (%s):\n%s\n", strFunc, vm.GetName().str_String, vm.GetError());
+        break;
+      }
+    }
+
+    // Remove the script altogether if it couldn't get resumed after all of the attempts
+    if (vm.IsSuspended()) {
+      CPrintF("^cff0000%s (%s):\n%s\n", strFunc, vm.GetName().str_String,
+        "Could not resume custom script execution after many attempts, unloading the script...");
+      cToRemove.Add(&vm);
+    }
+  }
+
+  // Remove errored scripts
+  FOREACHINDYNAMICCONTAINER(cToRemove, sq::VM, itvmRemove) {
+    _cCustomScripts.Remove(itvmRemove);
+    delete &itvmRemove.Current(); // Delete old script
   }
 };
 
