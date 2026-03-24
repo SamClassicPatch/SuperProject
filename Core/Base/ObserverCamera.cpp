@@ -151,6 +151,7 @@ static INDEX ocam_kidZoomIn   = KID_MOUSEWHEELUP;
 static INDEX ocam_kidZoomOut  = KID_MOUSEWHEELDOWN;
 static INDEX ocam_kidTeleport = KID_X;
 static INDEX ocam_kidReset    = KID_Z;
+static INDEX ocam_kidSpeedUp  = KID_MOUSE1;
 
 // Initialize camera interface
 void CObserverCamera::Init(void)
@@ -170,6 +171,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("user INDEX ocam_bResetToPlayer;",    &cam_ctl.bResetToPlayer);
   _pShell->DeclareSymbol("user INDEX ocam_bFollowPlayer;",     &cam_ctl.bFollowPlayer);
   _pShell->DeclareSymbol("user INDEX ocam_bSnapshot;",         &cam_ctl.bSnapshot);
+  _pShell->DeclareSymbol("user INDEX ocam_bSpeedUp;",          &cam_ctl.bSpeedUp);
 
   // Keys for the default controls
   _pShell->DeclareSymbol("persistent INDEX ocam_kidToggle;",     &ocam_kidToggle);
@@ -197,6 +199,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent INDEX ocam_kidZoomOut;",    &ocam_kidZoomOut);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidTeleport;",   &ocam_kidTeleport);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidReset;",      &ocam_kidReset);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidSpeedUp;",    &ocam_kidSpeedUp);
 
   // Camera properties
   _pShell->DeclareSymbol("           user INDEX ocam_bActive;",               &cam_props.bActive);
@@ -444,6 +447,7 @@ void CObserverCamera::UpdateControls(void) {
   cam_ctl.bZoomIn = _pInput->GetButtonState(ocam_kidZoomIn);
   cam_ctl.bZoomOut = _pInput->GetButtonState(ocam_kidZoomOut);
   cam_ctl.bResetToPlayer = _pInput->GetButtonState(ocam_kidTeleport);
+  cam_ctl.bSpeedUp = _pInput->GetButtonState(ocam_kidSpeedUp);
 
   // Reset FOV and banking angle
   if (_pInput->GetButtonState(ocam_kidReset)) {
@@ -508,6 +512,7 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
       strControls += CTString(0, TRANS("Follow current player: %s\n"), _pInput->GetButtonTransName(ocam_kidFollow));
       strControls += CTString(0, TRANS("Teleport to current player: %s\n"), _pInput->GetButtonTransName(ocam_kidTeleport));
       strControls += CTString(0, TRANS("Reset tilt and zoom: %s\n"), _pInput->GetButtonTransName(ocam_kidReset));
+      strControls += CTString(0, TRANS("Speed up flight: %s\n"), _pInput->GetButtonTransName(ocam_kidSpeedUp));
 
       if (cam_fnmDemo != "") {
         strControls += CTString(0, TRANS("Take position snapshot: %s\n"), _pInput->GetButtonTransName(ocam_kidSnapshot));
@@ -624,7 +629,8 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
       MakeRotationMatrixFast(mRot, ANGLE3D(cp.Rot()(1), 0, 0)); // Only heading direction
 
       // Normalize vector, apply current rotation and speed
-      vMoveDir += (vInputDir / fInputLength) * mRot * cam_props.fSpeed;
+      const FLOAT fSpeedMul = cam_ctl.bSpeedUp ? 5.0f : 1.0f;
+      vMoveDir += (vInputDir / fInputLength) * mRot * cam_props.fSpeed * fSpeedMul;
     }
 
     // Set immediately

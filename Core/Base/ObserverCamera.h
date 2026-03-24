@@ -27,7 +27,7 @@ class CORE_API CObserverCamera {
     struct CameraControl {
       INDEX bMoveF, bMoveB, bMoveL, bMoveR, bMoveU, bMoveD;
       INDEX bBankingL, bBankingR, bZoomIn, bZoomOut;
-      INDEX bResetToPlayer, bFollowPlayer, bSnapshot;
+      INDEX bResetToPlayer, bFollowPlayer, bSnapshot, bSpeedUp;
       FLOAT fFOV;
 
       CameraControl() {
@@ -38,7 +38,7 @@ class CORE_API CObserverCamera {
       void Reset(void) {
         bMoveF = bMoveB = bMoveL = bMoveR = bMoveU = bMoveD = FALSE;
         bBankingL = bBankingR = bZoomIn = bZoomOut = FALSE;
-        bResetToPlayer = bFollowPlayer = bSnapshot = FALSE;
+        bResetToPlayer = bFollowPlayer = bSnapshot = bSpeedUp = FALSE;
         fFOV = 90.0f;
       };
     };
