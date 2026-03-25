@@ -108,6 +108,19 @@ void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDr
     fNewFOV = ATan(Tan(fNewFOV * 0.5f) * fOppositeAspectRatio / ppr.pr_AspectRatio) * 2.0f;
   }
 
+  // Remember the viewpoint for the next activation of the observer camera
+  CObserverCamera &ocam = GetGameAPI()->GetCamera();
+
+  if (!ocam.IsActive()) {
+    ocam.cam_cpCurrent.plPos = ppr.ViewerPlacementL();
+    ocam.cam_ctl.fFOV = fNewFOV;
+
+    // Adjust FOV to match the adjusted projection of the player view
+    if (_EnginePatches._bUseVerticalFOV > 1) {
+      IRender::AdjustHFOV(vScreen, ocam.cam_ctl.fFOV);
+    }
+  }
+
   // [Cecil] NOTE: Player code never does this at the end of CPlayer::SetupView() function for some reason specifically in TFE, and not TSE,
   // which leads to some very rare and bizarre bugs, one of which involves player tags from Advanced HUD during demos in TFE (see issue #19)
   #if SE1_GAME == SS_TFE

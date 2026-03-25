@@ -717,7 +717,8 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
   if (!IsActive()) {
     cam_props.bActive = FALSE; // Prevent it from suddenly switching if the conditions are met
 
-    // Remember player view position for the next activation
+    // Remember player view position for the next activation if it's not possible to do through the render view patch
+  #if !_PATCHCONFIG_ENGINEPATCHES || !_PATCHCONFIG_FIX_RENDERING
     if (IsDerivedFromID(pen, CPlayerEntity_ClassID)) {
       // Make sure the player has initialized properly by checking entity density (CMovableEntity's default is 5000)
       CPlayerEntity *penPlayer = (CPlayerEntity *)pen;
@@ -726,6 +727,7 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
         cam_cpCurrent.plPos = IWorld::GetViewpoint(penPlayer, FALSE);
       }
     }
+  #endif
 
     cam_vMovement = FLOAT3D(0, 0, 0);
     cam_aRotation = ANGLE3D(0, 0, 0);
@@ -778,6 +780,10 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
       cp.Rot() = Lerp(acp[1].Rot(), acp[2].Rot(), fRatio);
       cp.fFOV  = Lerp(acp[1].fFOV,  acp[2].fFOV,  fRatio);
     }
+
+    // Update position of the free fly camera based on the playback camera for the next activation
+    cam_cpCurrent.plPos = cp.plPos;
+    cam_ctl.fFOV = cp.fFOV;
 
   // Free fly movement
   } else {
