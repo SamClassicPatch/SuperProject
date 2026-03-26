@@ -152,6 +152,7 @@ static INDEX ocam_kidZoomOut  = KID_MOUSEWHEELDOWN;
 static INDEX ocam_kidTeleport = KID_X;
 static INDEX ocam_kidReset    = KID_Z;
 static INDEX ocam_kidSpeedUp  = KID_MOUSE1;
+static INDEX ocam_kidRotate   = KID_MOUSE2;
 
 // Initialize camera interface
 void CObserverCamera::Init(void)
@@ -172,6 +173,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("user INDEX ocam_bFollowPlayer;",     &cam_ctl.bFollowPlayer);
   _pShell->DeclareSymbol("user INDEX ocam_bSnapshot;",         &cam_ctl.bSnapshot);
   _pShell->DeclareSymbol("user INDEX ocam_bSpeedUp;",          &cam_ctl.bSpeedUp);
+  _pShell->DeclareSymbol("user INDEX ocam_bRotate;",           &cam_ctl.bRotate);
 
   // Keys for the default controls
   _pShell->DeclareSymbol("persistent INDEX ocam_kidToggle;",     &ocam_kidToggle);
@@ -200,6 +202,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent INDEX ocam_kidTeleport;",   &ocam_kidTeleport);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidReset;",      &ocam_kidReset);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidSpeedUp;",    &ocam_kidSpeedUp);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidRotate;",     &ocam_kidRotate);
 
   // Camera properties
   _pShell->DeclareSymbol("           user INDEX ocam_bActive;",               &cam_props.bActive);
@@ -467,6 +470,7 @@ void CObserverCamera::UpdateControls(void) {
   cam_ctl.bMoveD = _pInput->GetButtonState(ocam_kidMoveD_1) || _pInput->GetButtonState(ocam_kidMoveD_2);
   cam_ctl.bZoomIn = _pInput->GetButtonState(ocam_kidZoomIn);
   cam_ctl.bZoomOut = _pInput->GetButtonState(ocam_kidZoomOut);
+  cam_ctl.bRotate = _pInput->GetButtonState(ocam_kidRotate);
   cam_ctl.bResetToPlayer = _pInput->GetButtonState(ocam_kidTeleport);
   cam_ctl.bSpeedUp = _pInput->GetButtonState(ocam_kidSpeedUp);
 
@@ -529,11 +533,12 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
     CTString strControls = TRANS("Disabled");
 
     if (cam_props.bDefaultControls) {
-      strControls = CTString(0, TRANS("Zoom in/out: %s/%s\n"), _pInput->GetButtonTransName(ocam_kidZoomIn), _pInput->GetButtonTransName(ocam_kidZoomOut));
+      strControls = CTString(0, TRANS("Rotate camera: %s\n"), _pInput->GetButtonTransName(ocam_kidRotate));
+      strControls += CTString(0, TRANS("Speed up flight: %s\n"), _pInput->GetButtonTransName(ocam_kidSpeedUp));
+      strControls += CTString(0, TRANS("Zoom in/out: %s/%s\n"), _pInput->GetButtonTransName(ocam_kidZoomIn), _pInput->GetButtonTransName(ocam_kidZoomOut));
       strControls += CTString(0, TRANS("Follow current player: %s\n"), _pInput->GetButtonTransName(ocam_kidFollow));
       strControls += CTString(0, TRANS("Teleport to current player: %s\n"), _pInput->GetButtonTransName(ocam_kidTeleport));
       strControls += CTString(0, TRANS("Reset tilt and zoom: %s\n"), _pInput->GetButtonTransName(ocam_kidReset));
-      strControls += CTString(0, TRANS("Speed up flight: %s\n"), _pInput->GetButtonTransName(ocam_kidSpeedUp));
 
       if (cam_fnmDemo != "") {
         strControls += CTString(0, TRANS("Take position snapshot: %s\n"), _pInput->GetButtonTransName(ocam_kidSnapshot));
@@ -585,7 +590,7 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
       BOOL bInput = _pInput->IsInputEnabled() && GetGameAPI()->IsHooked()
                  && !GetGameAPI()->IsMenuOn() && GetGameAPI()->IsGameOn();
 
-      if (bInput) {
+      if (bInput && cam_ctl.bRotate) {
         // Need to do it here in case the game is paused, otherwise axis values aren't updated
         if (_pNetwork->IsPaused() || _pNetwork->GetLocalPause()) {
           _pInput->SetJoyPolling(FALSE);
