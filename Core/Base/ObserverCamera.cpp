@@ -125,7 +125,8 @@ void CObserverCamera::ResetCameraAngles(void) {
 };
 
 // Default control buttons
-static INDEX ocam_kidToggle = KID_P;
+static INDEX ocam_kidToggle     = KID_P;
+static INDEX ocam_kidToggleInfo = KID_I;
 
 static INDEX ocam_kidBankingL   = KID_Q;
 static INDEX ocam_kidBankingR   = KID_E;
@@ -177,6 +178,7 @@ void CObserverCamera::Init(void)
 
   // Keys for the default controls
   _pShell->DeclareSymbol("persistent INDEX ocam_kidToggle;",     &ocam_kidToggle);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidToggleInfo;", &ocam_kidToggleInfo);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidBankingL;",   &ocam_kidBankingL);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidBankingR;",   &ocam_kidBankingR);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidFollow;",     &ocam_kidFollow);
@@ -392,6 +394,16 @@ void CObserverCamera::UpdateControls(void) {
 
   _bToggle = bBtnToggle;
 
+  // Toggle camera info
+  const BOOL bBtnToggleInfo = _pInput->GetButtonState(ocam_kidToggleInfo);
+  static BOOL _bToggleInfo = FALSE;
+
+  if (!_bToggleInfo && bBtnToggleInfo) {
+    cam_props.iShowInfo = ClampDn(cam_props.iShowInfo + 1L, 1L) % 3;
+  }
+
+  _bToggleInfo = bBtnToggleInfo;
+
   // Camera or default controls are disabled
   if (!cam_props.bDefaultControls || !IsActive()) return;
 
@@ -482,18 +494,24 @@ void CObserverCamera::UpdateControls(void) {
 
 // Print info and default controls for the camera
 void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
-  if (cam_props.iShowInfo <= 0) return;
-
   const FLOAT fScaling = HEIGHT_SCALING(pdp);
   const FLOAT fTextScaling = fScaling * 0.8f;
   const PIX pixLineHeight = _pfdDisplayFont->GetHeight() * fTextScaling + fTextScaling + 1;
+
+  // Black background gradient from left to right
+  if (cam_props.iShowInfo > 0) {
+    pdp->Fill(0, 0, 160 * fScaling, 480 * fScaling, 0x7F, 0x00, 0x7F, 0x00);
+  }
 
   pdp->SetFont(_pfdDisplayFont);
   pdp->SetTextScaling(fScaling);
 
   // Info header
   PIX pixInfoY = 16 * fScaling;
-  pdp->PutText(TRANS("Observer camera info (ocam_iShowInfo)"), 8 * fScaling, pixInfoY, 0xFFFFFF9F);
+  CTString strHeader(0, TRANS("Press %s to toggle observer camera info (ocam_iShowInfo)"), _pInput->GetButtonTransName(ocam_kidToggleInfo));
+  pdp->PutText(strHeader, 8 * fScaling, pixInfoY, 0xFFFFFF9F);
+
+  if (cam_props.iShowInfo <= 0) return;
 
   // Relevant camera properties
   pdp->SetTextScaling(fTextScaling);
