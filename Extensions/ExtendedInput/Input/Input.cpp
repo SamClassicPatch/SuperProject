@@ -580,6 +580,10 @@ void CInputPatch::P_DisableInput( void)
  */
 void CInputPatch::P_GetInput(BOOL bPreScan)
 {
+  if (!inp_bInputEnabled) return;
+
+  // [Cecil] NOTE: Doing this specifically after the input enabled check in case this function somehow
+  // executes on accident before these symbols are registered (happens very rarely, which causes a crash)
   static CSymbolPtr pbAllowPrescan("inp_bAllowPrescan");
   static CSymbolPtr piReadingMethod("inp_iKeyboardReadingMethod");
   static CSymbolPtr pfMouseSensitivity("inp_fMouseSensitivity");
@@ -593,13 +597,7 @@ void CInputPatch::P_GetInput(BOOL bPreScan)
   static CSymbolPtr pbFilterMouse("inp_bFilterMouse");
   static CSymbolPtr pbInvertMouse("inp_bInvertMouse");
 
-  if (!inp_bInputEnabled) {
-    return;
-  }
-
-  if (bPreScan && !pbAllowPrescan.GetIndex()) {
-    return;
-  }
+  if (bPreScan && !pbAllowPrescan.GetIndex()) return;
 
   // if not pre-scanning
   if (!bPreScan) {
