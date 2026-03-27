@@ -30,6 +30,9 @@ class CEntityPatch : public CEntity {
     // RenderGameView() pointer
     typedef void (CEntity::*CRenderGameView)(CDrawPort *, void *);
 
+    // GetModelForRendering() pointer
+    typedef CModelObject *(CEntity::*CGetModelForRendering)(void);
+
     // GetForce() pointer
     typedef void (CEntity::*CGetForce)(INDEX, const FLOAT3D &, CForceStrength &, CForceStrength &);
 
@@ -45,6 +48,9 @@ class CEntityPatch : public CEntity {
 
     // Render game view from the player's perspective
     void P_RenderGameView(CDrawPort *pdp, void *pvUserData);
+
+    // Get model for rendering the player
+    CModelObject *P_GetModelForRendering(void);
 
     // Multiply gravity acceleration of specific mod-independent brush entities
     void P_WorldBase_GetForce(INDEX iForce, const FLOAT3D &vPoint, CForceStrength &fsGravity, CForceStrength &fsField);

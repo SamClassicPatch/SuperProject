@@ -59,6 +59,7 @@ class CORE_API CObserverCamera {
       FLOAT fFollowDist; // Close in on the player if they're far enough from the camera
 
       INDEX iScreenshotW, iScreenshotH; // Screenshot resolution (limited to 1x1 .. 20000x20000)
+      BOOL bPosingMode; // Currently in the player posing mode instead of free fly
 
       CameraProps() {
         Reset();
@@ -80,6 +81,8 @@ class CORE_API CObserverCamera {
 
         iScreenshotW = 1920;
         iScreenshotH = 1080;
+
+        bPosingMode = FALSE;
       };
     };
 
@@ -115,7 +118,7 @@ class CORE_API CObserverCamera {
     CTimerValue cam_tvDelta; // Time since last render frame
 
     CameraPos cam_acpCurve[4]; // Camera positions for a curve (playback mode)
-    CameraPos cam_cpCurrent; // Current camera position (freecam mode)
+    CameraPos cam_cpCurrent; // Current camera position (free fly mode)
     CameraPos cam_cpView; // Camera position for the current frame
 
     // Absolute movement & rotation speed
@@ -126,10 +129,18 @@ class CORE_API CObserverCamera {
     CSoundListener cam_sliWorld; // Listener for world sounds
     BOOL cam_bExternalUsage; // Check whether or not the camera is usable from the outside
 
+    // Photo mode player posing
+    CModelObject cam_moPose; // Player model for posing
+    CEntity *cam_penPosingPlayer; // Player that needs to be posed
+
+    FLOAT3D cam_vPoseOffset; // Player model offset (all from -1 to +1)
+    FLOAT cam_fPoseRotation; // Player model rotation
+
   public:
     // Constructor
     CObserverCamera() {
       cam_bExternalUsage = FALSE;
+      ResetPhotoModePose(FALSE);
       Reset();
     };
 
@@ -147,6 +158,17 @@ class CORE_API CObserverCamera {
 
     // Reset camera FOV and the banking angle
     void ResetCameraAngles(void);
+
+    // Reset player for photo mode to reload the pose
+    inline void ResetPhotoModePose(BOOL bOnlyReload) {
+      cam_penPosingPlayer = NULL;
+
+      if (!bOnlyReload) {
+        cam_props.bPosingMode = FALSE;
+        cam_vPoseOffset = FLOAT3D(0, 0, 0);
+        cam_fPoseRotation = 0;
+      }
+    };
 
   public:
     // Start camera for a game (or a currently playing demo)
@@ -167,6 +189,9 @@ class CORE_API CObserverCamera {
 
     // Start recording into a file
     BOOL StartRecording(void);
+
+    // Retrieve a photo mode model for some player entity
+    CModelObject *GetPoseModel(CEntity *penPlayer, CModelObject *pmoOriginalAppearance);
 
   public:
     // Direct button input using default controls

@@ -25,6 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 void (CEntity::*pSendEvent)(const CEntityEvent &) = NULL;
 CEntityPatch::CReceiveItem pReceiveItem = NULL;
 CEntityPatch::CRenderGameView pRenderGameView = NULL;
+CEntityPatch::CGetModelForRendering pGetModelForRendering = NULL;
 CEntityPatch::CGetForce pWorldBase_GetForce = NULL;
 CEntityPatch::CGetForce pMovingBrush_GetForce = NULL;
 
@@ -326,6 +327,15 @@ void CEntityPatch::P_RenderGameView(CDrawPort *pdp, void *pvUserData) {
     (this->*pRenderGameView)(pdp, pvUserData);
     GetGameAPI()->GetCamera().Update(this, pdp);
   }
+};
+
+// Get model for rendering the player
+CModelObject *CEntityPatch::P_GetModelForRendering(void) {
+  // Retrieve model appearance from the original function
+  CModelObject *pmoOriginal = (this->*pGetModelForRendering)();
+
+  // Try to retrieve a model for photo mode for this specific player
+  return GetGameAPI()->GetCamera().GetPoseModel(this, pmoOriginal);
 };
 
 // Multiply gravity acceleration of specific mod-independent brush entities

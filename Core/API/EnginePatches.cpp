@@ -118,6 +118,14 @@ void ICorePatches::Entities(void) {
     CreatePatch(pRenderGameView, &CEntityPatch::P_RenderGameView, "CPlayer::RenderGameView(...)");
   }
 
+  extern CEntityPatch::CGetModelForRendering pGetModelForRendering;
+  StructPtr pGetModelForRenderingPtr(ClassicsCore_GetEntitiesSymbol("?GetModelForRendering@CPlayer@@UAEPAVCModelObject@@XZ"));
+
+  if (pGetModelForRenderingPtr.iAddress != NULL) {
+    pGetModelForRendering = pGetModelForRenderingPtr(CEntityPatch::CGetModelForRendering());
+    CreatePatch(pGetModelForRendering, &CEntityPatch::P_GetModelForRendering, "CPlayer::GetModelForRendering()");
+  }
+
 #if _PATCHCONFIG_ENTITY_FORCE
   // Mod's brush entities
   CWorld woTemp;

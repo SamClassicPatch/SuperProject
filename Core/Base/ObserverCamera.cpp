@@ -133,6 +133,7 @@ static INDEX ocam_kidBankingR   = KID_E;
 static INDEX ocam_kidFollow     = KID_F;
 static INDEX ocam_kidSnapshot   = KID_TAB;
 static INDEX ocam_kidChangeRes  = KID_F10;
+static INDEX ocam_kidChangeMode = KID_C;
 
 static INDEX ocam_kidMoveF_1 = KID_W;
 static INDEX ocam_kidMoveB_1 = KID_S;
@@ -184,6 +185,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent INDEX ocam_kidFollow;",     &ocam_kidFollow);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidSnapshot;",   &ocam_kidSnapshot);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidChangeRes;",  &ocam_kidChangeRes);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidChangeMode;", &ocam_kidChangeMode);
 
   _pShell->DeclareSymbol("persistent INDEX ocam_kidMoveF_1;",    &ocam_kidMoveF_1);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidMoveB_1;",    &ocam_kidMoveB_1);
@@ -222,6 +224,8 @@ void CObserverCamera::Init(void)
 
   _pShell->DeclareSymbol("persistent user INDEX ocam_iScreenshotW;", &cam_props.iScreenshotW);
   _pShell->DeclareSymbol("persistent user INDEX ocam_iScreenshotH;", &cam_props.iScreenshotH);
+
+  _pShell->DeclareSymbol("user INDEX ocam_bPosingMode;", &cam_props.bPosingMode);
 };
 
 // Dummy variable and function for compatibility
@@ -382,6 +386,66 @@ BOOL CObserverCamera::StartRecording(void) {
   return FALSE;
 };
 
+// Recursively freeze all model animations at their current frame
+static void PauseModelAnims(CModelObject &mo) {
+  mo.PauseAnim();
+  mo.NextFrame();
+
+  FOREACHINLIST(CAttachmentModelObject, amo_lnInMain, mo.mo_lhAttachments, itamo) {
+    PauseModelAnims(itamo->amo_moModelObject);
+  }
+};
+
+// Retrieve a photo mode model for some player entity
+CModelObject *CObserverCamera::GetPoseModel(CEntity *penPlayer, CModelObject *pmoOriginalAppearance) {
+  // Photo mode is inactive or this player isn't focused by the camera in photo mode
+  if (!IsActive(FALSE) || cam_penViewer != penPlayer) return pmoOriginalAppearance;
+
+  // Reset the model if not in posing mode
+  if (!cam_props.bPosingMode) {
+    ResetPhotoModePose(TRUE);
+    return pmoOriginalAppearance;
+  }
+
+  // Setup the photo mode model by copying the player appearance onto an attachment on the first frame of the photo mode
+  if (cam_penPosingPlayer != penPlayer) {
+    cam_penPosingPlayer = penPlayer;
+
+    try {
+      cam_moPose.SetData_t(CTString("ModelsPatch\\PhotoModePoser.mdl"));
+
+      CAttachmentModelObject *pamo = cam_moPose.AddAttachmentModel(0);
+      CModelObject &moPlayer = pamo->amo_moModelObject;
+      moPlayer.Copy(*pmoOriginalAppearance);
+      moPlayer.Synchronize(*pmoOriginalAppearance);
+
+      PauseModelAnims(moPlayer);
+
+      // Adjust poser size for the model shadow
+      FLOATaabbox3D boxFrame;
+      moPlayer.GetCurrentFrameBBox(boxFrame);
+      cam_moPose.StretchSingleModel(boxFrame.Size());
+
+    } catch (char *strError) {
+      // Exit posing mode if it can't be set up
+      CPrintF(TRANS("Cannot setup player model for the photo mode: %s\n"), strError);
+      ResetPhotoModePose(FALSE);
+      return pmoOriginalAppearance;
+    }
+  }
+
+  // Adjust offset and rotation
+  CAttachmentModelObject *pamo = cam_moPose.GetAttachmentModel(0);
+  pamo->amo_plRelative.pl_OrientationAngle(1) = cam_fPoseRotation;
+
+  // Divide offset by poser's stretch to cancel it out
+  pamo->amo_plRelative.pl_PositionVector(1) = cam_vPoseOffset(1) / ClampDn(cam_moPose.mo_Stretch(1), 0.001f);
+  pamo->amo_plRelative.pl_PositionVector(2) = cam_vPoseOffset(2) / ClampDn(cam_moPose.mo_Stretch(2), 0.001f);
+  pamo->amo_plRelative.pl_PositionVector(3) = cam_vPoseOffset(3) / ClampDn(cam_moPose.mo_Stretch(3), 0.001f);
+
+  return &cam_moPose;
+};
+
 // Direct button input using default controls
 void CObserverCamera::UpdateControls(void) {
   // Toggle the camera itself
@@ -394,6 +458,9 @@ void CObserverCamera::UpdateControls(void) {
 
   _bToggle = bBtnToggle;
 
+  // Camera is disabled
+  if (!IsActive()) return;
+
   // Toggle camera info
   const BOOL bBtnToggleInfo = _pInput->GetButtonState(ocam_kidToggleInfo);
   static BOOL _bToggleInfo = FALSE;
@@ -404,9 +471,10 @@ void CObserverCamera::UpdateControls(void) {
 
   _bToggleInfo = bBtnToggleInfo;
 
-  // Camera or default controls are disabled
-  if (!cam_props.bDefaultControls || !IsActive()) return;
+  // Default controls are disabled
+  if (!cam_props.bDefaultControls) return;
 
+  // [Cecil] NOTE: Needs to be here only when the camera is active, otherwise it messes with player controls
   _pInput->SetJoyPolling(FALSE);
   _pInput->GetInput(FALSE);
 
@@ -416,6 +484,7 @@ void CObserverCamera::UpdateControls(void) {
   const BOOL bBtnFollow   = _pInput->GetButtonState(ocam_kidFollow);
   const BOOL bBtnSnap     = _pInput->GetButtonState(ocam_kidSnapshot);
   const BOOL bBtnRes      = _pInput->GetButtonState(ocam_kidChangeRes);
+  const BOOL bBtnMode     = _pInput->GetButtonState(ocam_kidChangeMode);
 
   // Turn left
   static BOOL _bLeft = FALSE;
@@ -472,6 +541,11 @@ void CObserverCamera::UpdateControls(void) {
     }
   }
   _bRes = bBtnRes;
+
+  // Change posing mode
+  static BOOL _bChangeMode = FALSE;
+  if (!_bChangeMode && bBtnMode) cam_props.bPosingMode = !cam_props.bPosingMode;
+  _bChangeMode = bBtnMode;
 
   // Movement and zoom
   cam_ctl.bMoveF = _pInput->GetButtonState(ocam_kidMoveF_1) || _pInput->GetButtonState(ocam_kidMoveF_2);
@@ -539,24 +613,38 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
   }
 
   strProps += CTString(0, "ocam_iScreenshotW/H = %dx%d\n", cam_props.iScreenshotW, cam_props.iScreenshotH);
+  strProps += CTString(0, "ocam_bPosingMode = %d\n", cam_props.bPosingMode);
 
   pixInfoY += pixLineHeight;
   pdp->PutText(strProps, 16 * fScaling, pixInfoY, 0xFFFFFFFF);
 
   // Default controls for free fly camera
   if (cam_props.bActive && cam_props.iShowInfo > 1) {
-    pixInfoY += pixLineHeight * 10;
-    pdp->PutText(TRANS("Default camera controls"), 8 * fScaling, pixInfoY, 0xFFD700FF);
+    pixInfoY += pixLineHeight * 11;
+
+    const CTString strCategory = (cam_props.bPosingMode ? TRANS("Camera controls (posing mode)") : TRANS("Camera controls (free-fly mode)"));
+    pdp->PutText(strCategory, 8 * fScaling, pixInfoY, 0xFFD700FF);
 
     CTString strControls = TRANS("Disabled");
 
     if (cam_props.bDefaultControls) {
-      strControls = CTString(0, TRANS("Rotate camera: %s\n"), _pInput->GetButtonTransName(ocam_kidRotate));
-      strControls += CTString(0, TRANS("Speed up flight: %s\n"), _pInput->GetButtonTransName(ocam_kidSpeedUp));
+      // Pose customization controls
+      if (cam_props.bPosingMode) {
+        strControls = TRANS("Use movement keys to offset the player model\n");
+        strControls += TRANS("Use tilt keys to rotate the player model\n");
+
+      // Movement controls
+      } else {
+        strControls = CTString(0, TRANS("Rotate camera: %s\n"), _pInput->GetButtonTransName(ocam_kidRotate));
+        strControls += CTString(0, TRANS("Speed up flight: %s\n"), _pInput->GetButtonTransName(ocam_kidSpeedUp));
+      }
+
+      strControls += "\n";
       strControls += CTString(0, TRANS("Zoom in/out: %s/%s\n"), _pInput->GetButtonTransName(ocam_kidZoomIn), _pInput->GetButtonTransName(ocam_kidZoomOut));
       strControls += CTString(0, TRANS("Follow current player: %s\n"), _pInput->GetButtonTransName(ocam_kidFollow));
       strControls += CTString(0, TRANS("Teleport to current player: %s\n"), _pInput->GetButtonTransName(ocam_kidTeleport));
       strControls += CTString(0, TRANS("Reset tilt and zoom: %s\n"), _pInput->GetButtonTransName(ocam_kidReset));
+      strControls += CTString(0, TRANS("Toggle player posing mode: %s\n"), _pInput->GetButtonTransName(ocam_kidChangeMode));
 
       if (cam_fnmDemo != "") {
         strControls += CTString(0, TRANS("Take position snapshot: %s\n"), _pInput->GetButtonTransName(ocam_kidSnapshot));
@@ -605,10 +693,10 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
 
     // Manual mouse input during the game
     } else {
-      BOOL bInput = _pInput->IsInputEnabled() && GetGameAPI()->IsHooked()
-                 && !GetGameAPI()->IsMenuOn() && GetGameAPI()->IsGameOn();
+      const BOOL bInput = _pInput->IsInputEnabled() && GetGameAPI()->IsHooked()
+                       && !GetGameAPI()->IsMenuOn() && GetGameAPI()->IsGameOn();
 
-      if (bInput && cam_ctl.bRotate) {
+      if (bInput && cam_ctl.bRotate && !cam_props.bPosingMode) {
         // Need to do it here in case the game is paused, otherwise axis values aren't updated
         if (_pNetwork->IsPaused() || _pNetwork->GetLocalPause()) {
           _pInput->SetJoyPolling(FALSE);
@@ -620,13 +708,24 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
       }
     }
 
-    aRotate(3) = FLOAT(cam_ctl.bBankingL - cam_ctl.bBankingR) * cam_props.fTiltAngleMul * 0.5f;
+    // Rotate the player model
+    if (cam_props.bPosingMode) {
+      cam_fPoseRotation += FLOAT(cam_ctl.bBankingL - cam_ctl.bBankingR) * 5.0f * dTimeMul;
+      cam_fPoseRotation = WrapAngle(cam_fPoseRotation);
+
+    // Tilt the camera
+    } else {
+      aRotate(3) = FLOAT(cam_ctl.bBankingL - cam_ctl.bBankingR) * cam_props.fTiltAngleMul * 0.5f;
+    }
 
     // Set immediately
     if (bInstantRotation) {
       cam_aRotation = aRotate;
       cam_aRotation(3) *= dTicks;
-      cam_ctl.bBankingL = cam_ctl.bBankingR = 0;
+
+      if (!cam_props.bPosingMode) {
+        cam_ctl.bBankingL = cam_ctl.bBankingR = 0;
+      }
 
     // Smooth rotation
     } else {
@@ -669,12 +768,22 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
     const FLOAT fInputLength = vInputDir.Length();
 
     if (fInputLength > 0.01f) {
-      FLOATmatrix3D mRot;
-      MakeRotationMatrixFast(mRot, ANGLE3D(cp.Rot()(1), 0, 0)); // Only heading direction
+      // Offset the pose model
+      if (cam_props.bPosingMode) {
+        cam_vPoseOffset += vInputDir * 0.05f * dTimeMul;
+        cam_vPoseOffset(1) = Clamp(cam_vPoseOffset(1), -1.0f, +1.0f);
+        cam_vPoseOffset(2) = Clamp(cam_vPoseOffset(2), -1.0f, +1.0f);
+        cam_vPoseOffset(3) = Clamp(cam_vPoseOffset(3), -1.0f, +1.0f);
 
-      // Normalize vector, apply current rotation and speed
-      const FLOAT fSpeedMul = cam_ctl.bSpeedUp ? 5.0f : 1.0f;
-      vMoveDir += (vInputDir / fInputLength) * mRot * cam_props.fSpeed * fSpeedMul;
+      // Move the camera around
+      } else {
+        FLOATmatrix3D mRot;
+        MakeRotationMatrixFast(mRot, ANGLE3D(cp.Rot()(1), 0, 0)); // Only heading direction
+
+        // Normalize vector, apply current rotation and speed
+        const FLOAT fSpeedMul = cam_ctl.bSpeedUp ? 5.0f : 1.0f;
+        vMoveDir += (vInputDir / fInputLength) * mRot * cam_props.fSpeed * fSpeedMul;
+      }
     }
 
     // Set immediately
@@ -755,6 +864,7 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     cam_vMovement = FLOAT3D(0, 0, 0);
     cam_aRotation = ANGLE3D(0, 0, 0);
     cam_penViewer = NULL;
+    ResetPhotoModePose(FALSE);
     return FALSE;
   }
 

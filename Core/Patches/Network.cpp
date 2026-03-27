@@ -463,6 +463,10 @@ void CSessionStatePatch::P_ProcessGameStreamBlock(CNetworkMessage &nmMessage) {
         // Update its character
         penNewPlayer->CharacterChanged(pcCharacter);
 
+        // Update the pose model for photo mode
+        CObserverCamera &ocam = GetGameAPI()->GetCamera();
+        if (ocam.cam_penPosingPlayer == penNewPlayer) ocam.ResetPhotoModePose(TRUE);
+
         if (!_pNetwork->IsPlayerLocal(penNewPlayer)) {
           CPrintF(LOCALIZE("%s rejoined\n"), penNewPlayer->GetPlayerName());
         }
@@ -522,6 +526,10 @@ void CSessionStatePatch::P_ProcessGameStreamBlock(CNetworkMessage &nmMessage) {
       if (IProcessPacket::CanChangeCharacter(penPlayer)) {
         // Change the character
         penPlayer->CharacterChanged(pcCharacter);
+
+        // Update the pose model for photo mode
+        CObserverCamera &ocam = GetGameAPI()->GetCamera();
+        if (ocam.cam_penPosingPlayer == penPlayer) ocam.ResetPhotoModePose(TRUE);
 
       } else {
         static CTString strWarning = TRANS("Please wait until you are fully connected to change your character.");
