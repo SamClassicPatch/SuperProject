@@ -646,7 +646,8 @@ static void Key_Tab(BOOL bCtrl, BOOL bShift)
         bCanBeExpanded = (strstr(strSymbolLower, strExpandLower) != NULL);
 
       } else {
-        bCanBeExpanded = (strnicmp(strSymbol, strExpandStart, Min(strSymbol.Length(), strExpandStart.Length())) == 0);
+        // [Cecil] Check if the symbol name starts with the string instead of comparing the first min amount of characters between both strings
+        bCanBeExpanded = strSymbol.HasPrefix(strExpandStart);
       }
 
       // if this symbol can be expanded
@@ -704,7 +705,8 @@ static void Key_Tab(BOOL bCtrl, BOOL bShift)
       bCanBeExpanded = (strstr(strSymbolLower, strExpandLower) != NULL);
 
     } else {
-      bCanBeExpanded = (strnicmp(strSymbol, strExpandStart, Min(strSymbol.Length(), strExpandStart.Length())) == 0);
+      // [Cecil] Check if the symbol name starts with the string instead of comparing the first min amount of characters between both strings
+      bCanBeExpanded = strSymbol.HasPrefix(strExpandStart);
     }
 
     // if this symbol can be expanded
