@@ -13,10 +13,10 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#ifndef SE_GAME_SIMPLECONFIGS_H
-#define SE_GAME_SIMPLECONFIGS_H
+#ifndef CECIL_INCL_SIMPLECONFIGS_H
+#define CECIL_INCL_SIMPLECONFIGS_H
 
-class CSimpleConfig {
+class CORE_API CSimpleConfig {
   public:
     typedef void (*ProcessorFunc)(CSimpleConfig &cfg, CTString &strLine);
 
@@ -55,7 +55,7 @@ class CSimpleConfig {
     virtual void Parse_t(void);
 };
 
-class CModelConfig : public CSimpleConfig {
+class CORE_API CModelConfig : public CSimpleConfig {
   public:
     CModelObject *_pmo; // CModelObject to set from the config
     CAttachmentModelObject *_pamo; // If this CModelObject is an attachment of another model
@@ -80,7 +80,7 @@ class CModelConfig : public CSimpleConfig {
   public:
     virtual BOOL ProcessProperty(const CTString &strProp, CTString &strValue);
 
-    static BOOL SetModel(CModelConfig &cfg, const CTString &strConfigFile, CTString &strName);
+    BOOL SetModel(const CTString &strConfigFile, CTString &strName);
 };
 
 #endif

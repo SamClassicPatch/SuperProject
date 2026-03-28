@@ -273,6 +273,9 @@
     <ClInclude Include="Networking\EntityEvent.h">
       <Filter>Header Files\Networking headers</Filter>
     </ClInclude>
+    <ClInclude Include="Objects\SimpleConfigs.h">
+      <Filter>Header Files\Objects headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdH.cpp">
@@ -496,6 +499,9 @@
     </ClCompile>
     <ClCompile Include="Networking\EntityEvent.cpp">
       <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\SimpleConfigs.cpp">
+      <Filter>Source Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

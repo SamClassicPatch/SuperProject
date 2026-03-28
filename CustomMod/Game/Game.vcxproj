@@ -369,7 +369,6 @@
   <ItemGroup>
     <ClCompile Include="Cecil\GameThemes.cpp" />
     <ClCompile Include="Cecil\Module.cpp" />
-    <ClCompile Include="Cecil\SimpleConfigs.cpp" />
     <ClCompile Include="CompMessage.cpp" />
     <ClCompile Include="CompModels.cpp" />
     <ClCompile Include="Computer.cpp" />
@@ -400,7 +399,6 @@
     <ClInclude Include="Cecil\GameColors.h" />
     <ClInclude Include="Cecil\GameThemes.h" />
     <ClInclude Include="Cecil\Map.h" />
-    <ClInclude Include="Cecil\SimpleConfigs.h" />
     <ClInclude Include="CompMessage.h" />
     <ClInclude Include="Computer.h" />
     <ClInclude Include="Game.h" />

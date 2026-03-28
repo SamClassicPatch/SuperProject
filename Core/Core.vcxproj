@@ -85,6 +85,7 @@
     <ClInclude Include="Networking\Modules.h" />
     <ClInclude Include="Networking\StreamBlock.h" />
     <ClInclude Include="Objects\PropertyPtr.h" />
+    <ClInclude Include="Objects\SimpleConfigs.h" />
     <ClInclude Include="Patches\Entities.h" />
     <ClInclude Include="Patches\FileSystem.h" />
     <ClInclude Include="Patches\LogicTimers.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Networking\SessionStateServerInfo.cpp" />
     <ClCompile Include="Networking\StreamBlock.cpp" />
     <ClCompile Include="Objects\PropertyPtr.cpp" />
+    <ClCompile Include="Objects\SimpleConfigs.cpp" />
     <ClCompile Include="Patches\Entities.cpp" />
     <ClCompile Include="Patches\FileSystem.cpp" />
     <ClCompile Include="Patches\LogicTimers.cpp" />

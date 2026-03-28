@@ -15,7 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdAfx.h"
 
-#include "Cecil/SimpleConfigs.h"
+#include <Core/Objects/SimpleConfigs.h>
 
 enum CompModelParticles {
   E_PRT_NONE,
@@ -108,7 +108,7 @@ static void SetupCompModel_t(const CTString &strName)
   }
 
   static CTString strDummy;
-  CModelConfig::SetModel(cfg, "Models\\CompConfigs\\" + strName + ".amc", strDummy);
+  cfg.SetModel("Models\\CompConfigs\\" + strName + ".amc", strDummy);
 };
 
 void RenderMessageModel(CDrawPort *pdp, const CTString &strModel)

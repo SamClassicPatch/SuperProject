@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#include "StdAfx.h"
+#include "StdH.h"
 
 #include "SimpleConfigs.h"
 
@@ -42,7 +42,7 @@ CSimpleConfig::ProcessorFunc CSimpleConfig::FindProcessor(const char *strProp) {
 
 void CSimpleConfig::Open_t(const CTString &strConfigFile) {
   // Close last opened file
-  _strmFile.Close();
+  if (_strConfig != "") _strmFile.Close();
 
   _strConfig = strConfigFile;
   _strmFile.Open_t(strConfigFile);
@@ -141,6 +141,9 @@ void CSimpleConfig::Parse_t(void) {
 
 BOOL CModelConfig::ProcessProperty(const CTString &strProp, CTString &strValue)
 {
+  // Process custom properties first
+  if (CSimpleConfig::ProcessProperty(strProp, strValue)) return TRUE;
+
   if (strProp == "PreviewOnly") {
     if (_bPreview) {
       Parse_t();
@@ -206,9 +209,9 @@ BOOL CModelConfig::ProcessProperty(const CTString &strProp, CTString &strValue)
   } else if (strProp == "Rotate") {
     // Ignore offset if not an attachment
     if (_pamo != NULL) {
-      FLOAT3D vOffset(0, 0, 0);
-      strValue.ScanF("%g;%g;%g", &vOffset(1), &vOffset(2), &vOffset(3));
-      _pamo->amo_plRelative.pl_OrientationAngle = vOffset;
+      ANGLE3D aOffset(0, 0, 0);
+      strValue.ScanF("%g;%g;%g", &aOffset(1), &aOffset(2), &aOffset(3));
+      _pamo->amo_plRelative.pl_OrientationAngle = aOffset;
     }
 
   } else if (strProp == "Blend") {
@@ -244,20 +247,20 @@ BOOL CModelConfig::ProcessProperty(const CTString &strProp, CTString &strValue)
     _pmo = pmoRestore;
     _pamo = pamoRestore;
 
-  } else if (!CSimpleConfig::ProcessProperty(strProp, strValue)) {
+  } else {
     ThrowF_t(TRANS("Unknown property '%s'"), strProp.str_String);
   }
 
   return TRUE;
 };
 
-BOOL CModelConfig::SetModel(CModelConfig &cfg, const CTString &strConfigFile, CTString &strName)
+BOOL CModelConfig::SetModel(const CTString &strConfigFile, CTString &strName)
 {
   try {
-    cfg.Open_t(strConfigFile);
+    Open_t(strConfigFile);
 
-    const SLONG slBeforeName = cfg._strmFile.GetPos_t();
-    CTString strLine = cfg.GetNonEmptyLine_t();
+    const SLONG slBeforeName = _strmFile.GetPos_t();
+    CTString strLine = GetNonEmptyLine_t();
 
     // Read optional name
     if (strLine.RemovePrefix("Name:")) {
@@ -266,14 +269,14 @@ BOOL CModelConfig::SetModel(CModelConfig &cfg, const CTString &strConfigFile, CT
 
     } else {
       strName = "<unnamed>";
-      cfg._strmFile.SetPos_t(slBeforeName);
+      _strmFile.SetPos_t(slBeforeName);
     }
 
-    cfg.Parse_t();
+    Parse_t();
     return TRUE;
 
   } catch (char *strError) {
-    CPrintF(TRANS("Cannot load model config:\n%s (%d) : %s\n"), strConfigFile.str_String, cfg._ctLine, strError);
+    CPrintF(TRANS("Cannot load model config:\n%s (%d) : %s\n"), strConfigFile.str_String, _ctLine, strError);
   }
 
   return FALSE;
