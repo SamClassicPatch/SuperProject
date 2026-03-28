@@ -80,6 +80,10 @@ class CORE_API CModelConfig : public CSimpleConfig {
   public:
     virtual BOOL ProcessProperty(const CTString &strProp, CTString &strValue);
 
+    // Throws an exception on error
+    void SetModel_t(const CTString &strConfigFile, CTString &strName);
+
+    // Returns FALSE on error
     BOOL SetModel(const CTString &strConfigFile, CTString &strName);
 };
 

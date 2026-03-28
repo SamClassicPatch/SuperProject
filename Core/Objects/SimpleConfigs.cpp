@@ -254,25 +254,29 @@ BOOL CModelConfig::ProcessProperty(const CTString &strProp, CTString &strValue)
   return TRUE;
 };
 
+void CModelConfig::SetModel_t(const CTString &strConfigFile, CTString &strName) {
+  Open_t(strConfigFile);
+
+  const SLONG slBeforeName = _strmFile.GetPos_t();
+  CTString strLine = GetNonEmptyLine_t();
+
+  // Read optional name
+  if (strLine.RemovePrefix("Name:")) {
+    strName = strLine;
+    strName.TrimSpacesLeft();
+
+  } else {
+    strName = "<unnamed>";
+    _strmFile.SetPos_t(slBeforeName);
+  }
+
+  Parse_t();
+};
+
 BOOL CModelConfig::SetModel(const CTString &strConfigFile, CTString &strName)
 {
   try {
-    Open_t(strConfigFile);
-
-    const SLONG slBeforeName = _strmFile.GetPos_t();
-    CTString strLine = GetNonEmptyLine_t();
-
-    // Read optional name
-    if (strLine.RemovePrefix("Name:")) {
-      strName = strLine;
-      strName.TrimSpacesLeft();
-
-    } else {
-      strName = "<unnamed>";
-      _strmFile.SetPos_t(slBeforeName);
-    }
-
-    Parse_t();
+    SetModel_t(strConfigFile, strName);
     return TRUE;
 
   } catch (char *strError) {

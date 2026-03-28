@@ -26,6 +26,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // [Cecil] Common logic
 #include <CommonEntities/Common.inl>
 
+// [Cecil] New model configs
+#include <Core/Objects/SimpleConfigs.h>
+
 #include "ModelsMP/Player/SeriousSam/Player.h"
 #include "ModelsMP/Player/SeriousSam/Body.h"
 #include "ModelsMP/Player/SeriousSam/Head.h"
@@ -761,210 +764,23 @@ void ModelAddAttachment_t(CModelObject *pmo, INDEX iAttachment,
   SetModel_t(&(pamo->amo_moModelObject), fnmModel, fnmTexture);
 };
 
-CTString _strFile;
-INDEX _ctLines;
-
-CTString GetNonEmptyLine_t(CTStream &strm)
-{
-  FOREVER {
-   if(strm.AtEOF()) {
-     ThrowF_t(LOCALIZE("Unexpected end of file"));
-   }
-   CTString str;
-   _ctLines++;
-   strm.GetLine_t(str);
-   str.TrimSpacesLeft();
-   if (str.RemovePrefix("//")) {  // skip comments
-     continue;
-   }
-   if (str!="") {
-     str.TrimSpacesRight();
-     return str;
-   }
-  }
-}
-
-void FixupFileName_t(CTString &strFnm)
-{
-  strFnm.TrimSpacesLeft();
-  if (!strFnm.RemovePrefix(CTString("TF") +"NM ")) {  // must not directly have ids in code
-    ThrowF_t(LOCALIZE("Expected %s%s before filename"), "TF", "NM");
-  }
-}
-
-// skip one block in pmc
-void SkipBlock_t(CTStream &strm)
-{
-  CTString strLine;
-  // expect to begin with an open bracket
-  strLine = GetNonEmptyLine_t(strm);
-  if (strLine!="{") {
-    ThrowF_t(LOCALIZE("Expected '{'"));
-  }
-  // start at level one
-  INDEX ctLevel = 1;
-  // repeat
-  do {
-    strLine = GetNonEmptyLine_t(strm);
-    // count brackets
-    if (strLine=="{") {
-      ctLevel++;
-    } else if (strLine=="}") {
-      ctLevel--;
-    }
-  // until we close down all brackets
-  } while(ctLevel>0);
-}
-
-void ParseAMC_t(CModelObject *pmo, CTStream &strm, BOOL bPreview)
-{
-  CTString strLine;
-  // expect to begin with an open bracket
-  strLine = GetNonEmptyLine_t(strm);
-  if (strLine!="{") {
-    ThrowF_t(LOCALIZE("Expected '{'"));
-  }
-
-  // repeat
-  FOREVER {
-    // read one line
-    strLine = GetNonEmptyLine_t(strm);
-    
-    // if closed bracket
-    if (strLine == "}") {
-      // finish parsing
-      return;
-    }
-
-
-    // if a preview-only block
-    if (strLine.RemovePrefix("PreviewOnly")) {
-      // if this is a preview
-      if (bPreview) {
-        // keep parsing it
-        ParseAMC_t(pmo, strm, bPreview);
-      // if this is not a preview
-      } else {
-        // skip that block
-        SkipBlock_t(strm);
-      }
-    // if include block
-    } else if (strLine.RemovePrefix("Include:")) {
-      // open the new file
-      FixupFileName_t(strLine);
-      CTFileStream strmIncluded;
-      strmIncluded.Open_t(strLine);
-
-      // include it
-      INDEX ctLinesOld = _ctLines;
-      CTString strFileOld = _strFile;
-      _ctLines = 0;
-      _strFile = strLine;
-      ParseAMC_t(pmo, strmIncluded, bPreview);
-      strmIncluded.Close();
-      _ctLines = ctLinesOld;
-      _strFile = strFileOld;
-
-    // if setting the model
-    } else if (strLine.RemovePrefix("Model:")) {
-      // set the model
-      FixupFileName_t(strLine);
-      pmo->SetData_t(strLine);
-
-    // if setting an anim for the model
-    } else if (strLine.RemovePrefix("Animation:")) {
-      // get animation number
-      INDEX iAnim = -1;
-      strLine.ScanF("%d", &iAnim);
-      if (iAnim<0) {
-        ThrowF_t(LOCALIZE("Invalid animation number"));
-      }
-      // check it
-      if (iAnim>=pmo->GetAnimsCt()) {
-        ThrowF_t(LOCALIZE("Animation %d does not exist in that model"), iAnim);
-      };
-      // set it
-      pmo->PlayAnim(iAnim, AOF_LOOPING);
-
-    // if texture
-    } else if (strLine.RemovePrefix("Texture:")) {
-      // set texture
-      FixupFileName_t(strLine);
-      pmo->mo_toTexture.SetData_t(strLine);
-
-    // if specular
-    } else if (strLine.RemovePrefix("Specular:")) {
-      // set texture
-      FixupFileName_t(strLine);
-      pmo->mo_toSpecular.SetData_t(strLine);
-
-    // if reflection
-    } else if (strLine.RemovePrefix("Reflection:")) {
-      // set texture
-      FixupFileName_t(strLine);
-      pmo->mo_toReflection.SetData_t(strLine);
-
-    // if specular
-    } else if (strLine.RemovePrefix("Bump:")) {
-      // set texture
-      FixupFileName_t(strLine);
-      pmo->mo_toBump.SetData_t(strLine);
-
-    // if attachment
-    } else if (strLine.RemovePrefix("Attachment:")) {
-      // get attachment number
-      INDEX iAtt = -1;
-      strLine.ScanF("%d", &iAtt);
-      if (iAtt<0) {
-        ThrowF_t(LOCALIZE("Invalid attachment number"));
-      }
-      // create attachment
-      CModelData *pmd = (CModelData*)pmo->GetData();
-      if (iAtt>=pmd->md_aampAttachedPosition.Count()) {
-        ThrowF_t(LOCALIZE("Attachment %d does not exist in that model"), iAtt);
-      };
-      CAttachmentModelObject *pamo = pmo->AddAttachmentModel(iAtt);
-      
-      // recursively parse it
-      ParseAMC_t(&pamo->amo_moModelObject, strm, bPreview);
-    } else {
-      ThrowF_t(LOCALIZE("Expected texture or attachment"));
-    }
-  }
-}
-
 /* Set player appearance */
 BOOL SetPlayerAppearance_internal(CModelObject *pmo, const CTFileName &fnmAMC, CTString &strName, BOOL bPreview)
 {
-  // try to
+  // [Cecil] Set player appearance using the new config loader from the patch
+  CModelConfig cfg;
+  cfg._pmo = pmo;
+  cfg._bPreview = bPreview;
+
   try {
-    // open the config file
-    CTFileStream strm;
-    strm.Open_t(fnmAMC);
-
-    _ctLines = 0;
-    _strFile = fnmAMC;
-
-    // read the name
-    CTString strLine = GetNonEmptyLine_t(strm);
-    if (!strLine.RemovePrefix("Name: ")) {
-      ThrowF_t(LOCALIZE("Expected name"));
-    }
-    strName = strLine;
-    strName.TrimSpacesLeft();
-
-    // parse the file recursively starting at root model object and add everything
-    ParseAMC_t(pmo, strm, bPreview);
+    cfg.SetModel_t(fnmAMC, strName);
     return TRUE;
 
-  // if anything failed
   } catch (char *strError) {
-    // report error
-    CPrintF(LOCALIZE("Cannot load player model:\n%s (%d) : %s\n"), 
-      (const char*)_strFile, _ctLines, strError);
-    return FALSE;
+    CPrintF(LOCALIZE("Cannot load player model:\n%s (%d) : %s\n"), fnmAMC.str_String, cfg._ctLine, strError);
   }
-}
+  return FALSE;
+};
 
 #if SE1_GAME == SS_REV
   // [Cecil] Rev: Wrapper method with extra team index
