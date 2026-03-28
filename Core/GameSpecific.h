@@ -68,6 +68,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   // InitStreams()
   #define ADDR_INITSTREAMS (ADDR_ENGINE + 0x80ED0)
 
+  // CRenderer::RenderLensFlares()
+  #define ADDR_RENDERLENSFLARES (ADDR_ENGINE + 0x168D20)
+
   // Static variables from Unzip.cpp
   #define ADDR_UNZIP_CRITSEC  (ADDR_ENGINE + 0x29B938) // &zip_csLock
   #define ADDR_UNZIP_HANDLES  (ADDR_ENGINE + 0x270D58) // &_azhHandles
@@ -89,6 +92,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   // InitStreams()
   #define ADDR_INITSTREAMS (&InitStreams)
 
+  // CRenderer::RenderLensFlares()
+  #define ADDR_RENDERLENSFLARES (&CRenderer::RenderLensFlares)
+
   // Static variables from Unzip.cpp
   #define ADDR_UNZIP_CRITSEC  (&zip_csLock)
   #define ADDR_UNZIP_HANDLES  (&_azhHandles)
@@ -102,6 +108,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #elif defined(NDEBUG) // Release 1.05 & 1.07 addresses
   // InitStreams()
   #define ADDR_INITSTREAMS (ADDR_ENGINE + CHOOSE_FOR_GAME(0x1A2C0, 0x1A2C0, 0x265F0))
+
+  // CRenderer::RenderLensFlares()
+  #define ADDR_RENDERLENSFLARES (ADDR_ENGINE + CHOOSE_FOR_GAME(0xE4B30, 0xE4C10, 0xEF930))
 
   // Strings with the master server address
   #define ADDR_GAMESPY_MS_1 (ADDR_ENGINE + CHOOSE_FOR_GAME(0x1BD1CC, 0x1BD20C, 0x1ED9FC))
@@ -130,6 +139,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #elif SE1_VER == SE1_107 // Debug addresses
   // InitStreams()
   #define ADDR_INITSTREAMS (ADDR_ENGINE + 0x7B49)
+
+  // CRenderer::RenderLensFlares()
+  #define ADDR_RENDERLENSFLARES (ADDR_ENGINE + 0x1FF1B3)
 
   // Strings with the master server address
   #define ADDR_GAMESPY_MS_1 (ADDR_ENGINE + 0x413D14)

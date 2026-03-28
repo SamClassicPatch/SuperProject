@@ -942,7 +942,7 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
   apr->ViewerPlacementL() = cp.plPos;
 
   CWorld &wo = _pNetwork->ga_World;
-  RenderView(wo, *(CEntity *)NULL, apr, *pdp);
+  RenderView(wo, *(CEntity *)NULL, apr, *pdp); // NULL viewer to make the player entity visible
 
   PrintCameraInfo(pdp);
 
@@ -989,8 +989,14 @@ BOOL CObserverCamera::TakeScreenshot(CImageInfo &iiScreenshot) {
     apr = prProjection;
     apr->ViewerPlacementL() = cam_cpView.plPos;
 
+    // Force lens flares to render immediately on the screenshot
+    extern BOOL _bLensFlaresFullFade;
+    _bLensFlaresFullFade = TRUE;
+
     CWorld &wo = _pNetwork->ga_World;
     RenderView(wo, *(CEntity *)NULL, apr, *pdpScreenshot); // NULL viewer to make the player entity visible
+
+    _bLensFlaresFullFade = FALSE;
 
     // Take screenshot
     pdpScreenshot->GrabScreen(iiScreenshot, 0);

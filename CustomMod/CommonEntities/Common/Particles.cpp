@@ -1488,7 +1488,7 @@ void Particles_BloodTrail(CEntity *pen)
   const BloodTheme blood = GetBloodTheme();
 
   // [Cecil] Transparent
-  if (blood.GetColor(0, 0xFF, 0xFF) & 0xFF == 0) return;
+  if ((blood.GetColor(0, 0xFF, 0xFF) & 0xFF) == 0) return;
 
   COLOR col;
 
@@ -4424,7 +4424,7 @@ void Particles_BloodSpray(enum SprayParticlesType sptType, FLOAT3D vSource, FLOA
   #endif
     {
       // [Cecil] Transparent
-      if (blood.GetColor(0, 0xFF, 0xFF) & 0xFF == 0) return;
+      if ((blood.GetColor(0, 0xFF, 0xFF) & 0xFF) == 0) return;
 
       // [Cecil] Local blood customization
       if (blood.eType == BloodTheme::E_HIPPIE) {

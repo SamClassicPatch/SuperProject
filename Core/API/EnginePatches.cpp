@@ -315,6 +315,10 @@ void ICorePatches::Rendering(void) {
   void *pPrepare = ClassicsCore_GetEngineSymbol("?Prepare@CPerspectiveProjection3D@@UAEXXZ");
   CreatePatch(pPrepare, &CProjectionPatch::P_Prepare, "CPerspectiveProjection3D::Prepare()");
 
+  extern void (CRenderer::*pRenderLensFlares)(void);
+  pRenderLensFlares = StructPtr(ADDR_RENDERLENSFLARES)(pRenderLensFlares);
+  CreatePatch(pRenderLensFlares, &CRendererPatch::P_RenderLensFlares, "CRenderer::RenderLensFlares()");
+
   // Custom symbols
   _pShell->DeclareSymbol("persistent user INDEX sam_bAdjustForAspectRatio;", &_EnginePatches._bAdjustForAspectRatio);
   _pShell->DeclareSymbol("persistent user INDEX sam_bUseVerticalFOV;", &_EnginePatches._bUseVerticalFOV);
@@ -563,7 +567,7 @@ void ICorePatches::FileSystem(void) {
 
   // Global methods
   extern void (*pInitStreams)(void);
-  pInitStreams = StructPtr(ADDR_INITSTREAMS)(&P_InitStreams);
+  pInitStreams = StructPtr(ADDR_INITSTREAMS)(pInitStreams);
   CreatePatch(pInitStreams, &P_InitStreams, "::InitStreams()");
 
   void (*pMakeDirList)(CFileList &, const CTFileName &, const CTString &, ULONG) = &MakeDirList;

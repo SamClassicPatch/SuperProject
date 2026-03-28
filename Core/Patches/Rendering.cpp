@@ -15,6 +15,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+// Force lens flares to render instantaneously
+BOOL _bLensFlaresFullFade = FALSE;
+
 #if _PATCHCONFIG_ENGINEPATCHES
 
 #include "Rendering.h"
@@ -24,6 +27,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Original function pointers
 void (*pRenderView)(CWorld &, CEntity &, CAnyProjection3D &, CDrawPort &) = NULL;
 CEntity *(*pParticleGetViewer)(void) = NULL;
+void (CRenderer::*pRenderLensFlares)(void) = NULL;
 
 // Patched function
 void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDrawPort &dp)
@@ -309,6 +313,21 @@ void CProjectionPatch::P_Prepare(void) {
     // Original function code
     ppr_fMipRatio = pr_ScreenBBox.Size()(1) / (ppr_PerspectiveRatios(1) * 640.0f);
   }
+};
+
+void CRendererPatch::P_RenderLensFlares(void) {
+  if (!_bLensFlaresFullFade) {
+    // Proceed to the original function
+    (this->*pRenderLensFlares)();
+    return;
+  }
+
+  // Offset the time to trick the renderer into thinking that the last time the lens flares
+  // were rendered was 10 seconds ago to force them to be drawn fully faded in this frame
+  const TIME tmOld = _pTimer->tm_RealTimeTimer;
+  _pTimer->tm_RealTimeTimer -= 10.0f;
+  (this->*pRenderLensFlares)();
+  _pTimer->tm_RealTimeTimer = tmOld;
 };
 
 #endif // _PATCHCONFIG_FIX_RENDERING

@@ -34,6 +34,11 @@ class CProjectionPatch : public CPerspectiveProjection3D {
     void P_Prepare(void);
 };
 
+class CRendererPatch : public CRenderer {
+  public:
+    void P_RenderLensFlares(void);
+};
+
 #endif // _PATCHCONFIG_FIX_RENDERING
 
 #endif
