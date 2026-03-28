@@ -2374,7 +2374,8 @@ void CGame::GameRedrawView( CDrawPort *pdpDrawPort, ULONG ulFlags)
         cenViewers.Add(penLocal);
 
         // Precreate action for it for this tick
-        if (bDoPrescan) {
+        // [Cecil] If not in photo mode
+        if (bDoPrescan && !GetGameAPI()->GetCamera().IsActive()) {
           // Copy its local controls to current controls
           SetCurrentControls(iLocal, TRUE);
 
