@@ -2424,8 +2424,9 @@ void CGame::GameRedrawView( CDrawPort *pdpDrawPort, ULONG ulFlags)
     CObserverCamera &ocam = GetGameAPI()->GetCamera();
     ocam.cam_bExternalUsage = (GetSP()->sp_bCooperative || GetSP()->sp_bSinglePlayer);
 
-    // [Cecil] Force only one viewer when the camera is active to prevent rendering it for each player view
-    if (ocam.IsActive()) ctViewers = 1;
+    // [Cecil] Force only one viewer at most (should be 0 with no players/for observers)
+    // when the camera is active to prevent rendering it for each player view
+    if (ocam.IsActive()) ctViewers = ClampUp(ctViewers, (INDEX)1);
 
     // Render each view
     for (INDEX iViewer = 0; iViewer < ctViewers; iViewer++) {
