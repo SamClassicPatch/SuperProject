@@ -124,7 +124,7 @@ void CObserverCamera::ResetCameraAngles(void) {
   cam_aRotation(3) = 0.0f;
 };
 
-// Default control buttons
+// Free fly controls
 static INDEX ocam_kidToggle     = KID_P;
 static INDEX ocam_kidToggleInfo = KID_I;
 
@@ -159,25 +159,7 @@ static INDEX ocam_kidRotate   = KID_MOUSE2;
 // Initialize camera interface
 void CObserverCamera::Init(void)
 {
-  // Bindable camera controls
-  _pShell->DeclareSymbol("user INDEX ocam_bMoveForward;",      &cam_ctl.bMoveF);
-  _pShell->DeclareSymbol("user INDEX ocam_bMoveBackward;",     &cam_ctl.bMoveB);
-  _pShell->DeclareSymbol("user INDEX ocam_bMoveLeft;",         &cam_ctl.bMoveL);
-  _pShell->DeclareSymbol("user INDEX ocam_bMoveRight;",        &cam_ctl.bMoveR);
-  _pShell->DeclareSymbol("user INDEX ocam_bMoveUp;",           &cam_ctl.bMoveU);
-  _pShell->DeclareSymbol("user INDEX ocam_bMoveDown;",         &cam_ctl.bMoveD);
-  _pShell->DeclareSymbol("user INDEX ocam_bTurnBankingLeft;",  &cam_ctl.bBankingL);
-  _pShell->DeclareSymbol("user INDEX ocam_bTurnBankingRight;", &cam_ctl.bBankingR);
-  _pShell->DeclareSymbol("user INDEX ocam_bZoomIn;",           &cam_ctl.bZoomIn);
-  _pShell->DeclareSymbol("user INDEX ocam_bZoomOut;",          &cam_ctl.bZoomOut);
-  _pShell->DeclareSymbol("user FLOAT ocam_fFOV;",              &cam_ctl.fFOV);
-  _pShell->DeclareSymbol("user INDEX ocam_bResetToPlayer;",    &cam_ctl.bResetToPlayer);
-  _pShell->DeclareSymbol("user INDEX ocam_bFollowPlayer;",     &cam_ctl.bFollowPlayer);
-  _pShell->DeclareSymbol("user INDEX ocam_bSnapshot;",         &cam_ctl.bSnapshot);
-  _pShell->DeclareSymbol("user INDEX ocam_bSpeedUp;",          &cam_ctl.bSpeedUp);
-  _pShell->DeclareSymbol("user INDEX ocam_bRotate;",           &cam_ctl.bRotate);
-
-  // Keys for the default controls
+  // Keys for the controls
   _pShell->DeclareSymbol("persistent INDEX ocam_kidToggle;",     &ocam_kidToggle);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidToggleInfo;", &ocam_kidToggleInfo);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidBankingL;",   &ocam_kidBankingL);
@@ -211,15 +193,16 @@ void CObserverCamera::Init(void)
   // Camera properties
   _pShell->DeclareSymbol("           user INDEX ocam_bActive;",               &cam_props.bActive);
   _pShell->DeclareSymbol("persistent user INDEX ocam_iShowInfo;",             &cam_props.iShowInfo);
-  _pShell->DeclareSymbol("persistent user INDEX ocam_bDefaultControls;",      &cam_props.bDefaultControls);
   _pShell->DeclareSymbol("persistent user INDEX ocam_bPlaybackSpeedControl;", &cam_props.bPlaybackSpeedControl);
   _pShell->DeclareSymbol("persistent user INDEX ocam_bSmoothPlayback;",       &cam_props.bSmoothPlayback);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fSmoothTension;",        &cam_props.fSmoothTension);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fSpeed;",                &cam_props.fSpeed);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fTiltAngleMul;",         &cam_props.fTiltAngleMul);
+  _pShell->DeclareSymbol("           user FLOAT ocam_fFOV;",                  &cam_ctl.fFOV);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fFOVChangeMul;",         &cam_props.fFOVChangeMul);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fSmoothMovement;",       &cam_props.fSmoothMovement);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fSmoothRotation;",       &cam_props.fSmoothRotation);
+  _pShell->DeclareSymbol("           user INDEX ocam_bFollowPlayer;",         &cam_ctl.bFollowPlayer);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fFollowDist;",           &cam_props.fFollowDist);
 
   _pShell->DeclareSymbol("persistent user INDEX ocam_iScreenshotW;", &cam_props.iScreenshotW);
@@ -446,7 +429,7 @@ CModelObject *CObserverCamera::GetPoseModel(CEntity *penPlayer, CModelObject *pm
   return &cam_moPose;
 };
 
-// Direct button input using default controls
+// Free fly camera control using direct button input
 void CObserverCamera::UpdateControls(void) {
   // Toggle the camera itself
   const BOOL bBtnToggle = _pInput->GetButtonState(ocam_kidToggle);
@@ -461,6 +444,10 @@ void CObserverCamera::UpdateControls(void) {
   // Camera is disabled
   if (!IsActive()) return;
 
+  // [Cecil] NOTE: Needs to be here only when the camera is active, otherwise it messes with player controls
+  _pInput->SetJoyPolling(FALSE);
+  _pInput->GetInput(FALSE);
+
   // Toggle camera info
   const BOOL bBtnToggleInfo = _pInput->GetButtonState(ocam_kidToggleInfo);
   static BOOL _bToggleInfo = FALSE;
@@ -470,13 +457,6 @@ void CObserverCamera::UpdateControls(void) {
   }
 
   _bToggleInfo = bBtnToggleInfo;
-
-  // Default controls are disabled
-  if (!cam_props.bDefaultControls) return;
-
-  // [Cecil] NOTE: Needs to be here only when the camera is active, otherwise it messes with player controls
-  _pInput->SetJoyPolling(FALSE);
-  _pInput->GetInput(FALSE);
 
   // Button states for some controls
   const BOOL bBtnBankingL = _pInput->GetButtonState(ocam_kidBankingL);
@@ -566,7 +546,7 @@ void CObserverCamera::UpdateControls(void) {
   }
 };
 
-// Print info and default controls for the camera
+// Print camera info and controls
 void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
   const FLOAT fScaling = HEIGHT_SCALING(pdp);
   const FLOAT fTextScaling = fScaling * 0.8f;
@@ -601,7 +581,6 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
     strProps += CTString(0, "ocam_fSmoothTension = %g\n", cam_props.fSmoothTension);
 
   } else {
-    strProps += CTString(0, "ocam_bDefaultControls = %d\n", cam_props.bDefaultControls);
     strProps += CTString(0, "ocam_fSpeed = %g\n", cam_props.fSpeed);
     strProps += CTString(0, "ocam_fTiltAngleMul = %g\n", cam_props.fTiltAngleMul);
     strProps += CTString(0, "ocam_fFOVChangeMul = %g\n", cam_props.fFOVChangeMul);
@@ -618,47 +597,46 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
   pixInfoY += pixLineHeight;
   pdp->PutText(strProps, 16 * fScaling, pixInfoY, 0xFFFFFFFF);
 
-  // Default controls for free fly camera
-  if (cam_props.bActive && cam_props.iShowInfo > 1) {
-    pixInfoY += pixLineHeight * 11;
+  // Don't display camera controls
+  if (!cam_props.bActive || cam_props.iShowInfo <= 1) return;
 
-    const CTString strCategory = (cam_props.bPosingMode ? TRANS("Camera controls (posing mode)") : TRANS("Camera controls (free-fly mode)"));
-    pdp->PutText(strCategory, 8 * fScaling, pixInfoY, 0xFFD700FF);
+  // Free fly camera controls
+  pixInfoY += pixLineHeight * 10;
 
-    CTString strControls = TRANS("Disabled");
+  const CTString strCategory = (cam_props.bPosingMode ? TRANS("Camera controls (posing mode)") : TRANS("Camera controls (free-fly mode)"));
+  pdp->PutText(strCategory, 8 * fScaling, pixInfoY, 0xFFD700FF);
 
-    if (cam_props.bDefaultControls) {
-      // Pose customization controls
-      if (cam_props.bPosingMode) {
-        strControls = TRANS("Use movement keys to offset the player model\n");
-        strControls += TRANS("Use tilt keys to rotate the player model\n");
+  CTString strControls;
 
-      // Movement controls
-      } else {
-        strControls = CTString(0, TRANS("Rotate camera: %s\n"), _pInput->GetButtonTransName(ocam_kidRotate));
-        strControls += CTString(0, TRANS("Speed up flight: %s\n"), _pInput->GetButtonTransName(ocam_kidSpeedUp));
-      }
+  // Pose customization controls
+  if (cam_props.bPosingMode) {
+    strControls = TRANS("Use movement keys to offset the player model\n");
+    strControls += TRANS("Use tilt keys to rotate the player model\n");
 
-      strControls += "\n";
-      strControls += CTString(0, TRANS("Zoom in/out: %s/%s\n"), _pInput->GetButtonTransName(ocam_kidZoomIn), _pInput->GetButtonTransName(ocam_kidZoomOut));
-      strControls += CTString(0, TRANS("Follow current player: %s\n"), _pInput->GetButtonTransName(ocam_kidFollow));
-      strControls += CTString(0, TRANS("Teleport to current player: %s\n"), _pInput->GetButtonTransName(ocam_kidTeleport));
-      strControls += CTString(0, TRANS("Reset tilt and zoom: %s\n"), _pInput->GetButtonTransName(ocam_kidReset));
-      strControls += CTString(0, TRANS("Toggle player posing mode: %s\n"), _pInput->GetButtonTransName(ocam_kidChangeMode));
-
-      if (cam_fnmDemo != "") {
-        strControls += CTString(0, TRANS("Take position snapshot: %s\n"), _pInput->GetButtonTransName(ocam_kidSnapshot));
-      }
-
-      // Screenshot controls
-      strControls += "\n";
-      strControls += CTString(0, TRANS("Select resolution preset: %s\n"), _pInput->GetButtonTransName(ocam_kidChangeRes));
-      strControls += CTString(0, TRANS("Take HQ screenshot: %s\n"), _pInput->GetButtonTransName(sam_kidScreenshot));
-    }
-
-    pixInfoY += pixLineHeight;
-    pdp->PutText(strControls, 16 * fScaling, pixInfoY, 0xFFFFFFFF);
+  // Movement controls
+  } else {
+    strControls = CTString(0, TRANS("Rotate camera: %s\n"), _pInput->GetButtonTransName(ocam_kidRotate));
+    strControls += CTString(0, TRANS("Speed up flight: %s\n"), _pInput->GetButtonTransName(ocam_kidSpeedUp));
   }
+
+  strControls += "\n";
+  strControls += CTString(0, TRANS("Zoom in/out: %s/%s\n"), _pInput->GetButtonTransName(ocam_kidZoomIn), _pInput->GetButtonTransName(ocam_kidZoomOut));
+  strControls += CTString(0, TRANS("Follow current player: %s\n"), _pInput->GetButtonTransName(ocam_kidFollow));
+  strControls += CTString(0, TRANS("Teleport to current player: %s\n"), _pInput->GetButtonTransName(ocam_kidTeleport));
+  strControls += CTString(0, TRANS("Reset tilt and zoom: %s\n"), _pInput->GetButtonTransName(ocam_kidReset));
+  strControls += CTString(0, TRANS("Toggle player posing mode: %s\n"), _pInput->GetButtonTransName(ocam_kidChangeMode));
+
+  if (cam_fnmDemo != "") {
+    strControls += CTString(0, TRANS("Take position snapshot: %s\n"), _pInput->GetButtonTransName(ocam_kidSnapshot));
+  }
+
+  // Screenshot controls
+  strControls += "\n";
+  strControls += CTString(0, TRANS("Select resolution preset: %s\n"), _pInput->GetButtonTransName(ocam_kidChangeRes));
+  strControls += CTString(0, TRANS("Take HQ screenshot: %s\n"), _pInput->GetButtonTransName(sam_kidScreenshot));
+
+  pixInfoY += pixLineHeight;
+  pdp->PutText(strControls, 16 * fScaling, pixInfoY, 0xFFFFFFFF);
 };
 
 // Free fly camera movement during the game
