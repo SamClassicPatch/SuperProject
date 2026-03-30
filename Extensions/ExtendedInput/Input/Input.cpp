@@ -582,20 +582,35 @@ void CInputPatch::P_GetInput(BOOL bPreScan)
 {
   if (!inp_bInputEnabled) return;
 
-  // [Cecil] NOTE: Doing this specifically after the input enabled check in case this function somehow
+  static CSymbolPtr pbAllowPrescan;
+  static CSymbolPtr piReadingMethod;
+  static CSymbolPtr pfMouseSensitivity;
+  static CSymbolPtr pbAllowAcceleration;
+
+  static CSymbolPtr pbPrecision;
+  static CSymbolPtr pfPrecisionThreshold;
+  static CSymbolPtr pfPrecisionTimeout;
+  static CSymbolPtr pfPrecisionFactor;
+
+  static CSymbolPtr pbFilterMouse;
+  static CSymbolPtr pbInvertMouse;
+
+  // [Cecil] NOTE: Doing this to ensure that the symbols actually exist before use in case this function somehow
   // executes on accident before these symbols are registered (happens very rarely, which causes a crash)
-  static CSymbolPtr pbAllowPrescan("inp_bAllowPrescan");
-  static CSymbolPtr piReadingMethod("inp_iKeyboardReadingMethod");
-  static CSymbolPtr pfMouseSensitivity("inp_fMouseSensitivity");
-  static CSymbolPtr pbAllowAcceleration("inp_bAllowMouseAcceleration");
+#define FIND_SYMBOL(_SymbolPtr, _SymbolName) { if (!_SymbolPtr.Exists()) _SymbolPtr.Find(_SymbolName); }
+  FIND_SYMBOL(pbAllowPrescan, "inp_bAllowPrescan");
+  FIND_SYMBOL(piReadingMethod, "inp_iKeyboardReadingMethod");
+  FIND_SYMBOL(pfMouseSensitivity, "inp_fMouseSensitivity");
+  FIND_SYMBOL(pbAllowAcceleration, "inp_bAllowMouseAcceleration");
 
-  static CSymbolPtr pbPrecision("inp_bMousePrecision");
-  static CSymbolPtr pfPrecisionThreshold("inp_fMousePrecisionThreshold");
-  static CSymbolPtr pfPrecisionTimeout("inp_fMousePrecisionTimeout");
-  static CSymbolPtr pfPrecisionFactor("inp_fMousePrecisionFactor");
+  FIND_SYMBOL(pbPrecision, "inp_bMousePrecision");
+  FIND_SYMBOL(pfPrecisionThreshold, "inp_fMousePrecisionThreshold");
+  FIND_SYMBOL(pfPrecisionTimeout, "inp_fMousePrecisionTimeout");
+  FIND_SYMBOL(pfPrecisionFactor, "inp_fMousePrecisionFactor");
 
-  static CSymbolPtr pbFilterMouse("inp_bFilterMouse");
-  static CSymbolPtr pbInvertMouse("inp_bInvertMouse");
+  FIND_SYMBOL(pbFilterMouse, "inp_bFilterMouse");
+  FIND_SYMBOL(pbInvertMouse, "inp_bInvertMouse");
+#undef FIND_SYMBOL
 
   if (bPreScan && !pbAllowPrescan.GetIndex()) return;
 
