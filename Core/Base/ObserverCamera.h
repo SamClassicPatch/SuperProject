@@ -57,6 +57,7 @@ class CORE_API CObserverCamera {
       FLOAT fSmoothRotation; // Factor for smooth camera rotation
       FLOAT fFollowDist; // Close in on the player if they're far enough from the camera
 
+      BOOL bGrid; // Rule of thirds grid rendering
       INDEX iScreenshotW, iScreenshotH; // Screenshot resolution (limited to 1x1 .. 20000x20000)
       BOOL bPosingMode; // Currently in the player posing mode instead of free fly
 
@@ -77,6 +78,7 @@ class CORE_API CObserverCamera {
         fSmoothRotation = 1.0f;
         fFollowDist = -1.0f;
 
+        bGrid = FALSE;
         iScreenshotW = 1920;
         iScreenshotH = 1080;
 

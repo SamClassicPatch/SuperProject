@@ -131,6 +131,7 @@ static INDEX ocam_kidToggleInfo = KID_I;
 static INDEX ocam_kidBankingL   = KID_Q;
 static INDEX ocam_kidBankingR   = KID_E;
 static INDEX ocam_kidFollow     = KID_F;
+static INDEX ocam_kidGrid       = KID_G;
 static INDEX ocam_kidSnapshot   = KID_TAB;
 static INDEX ocam_kidChangeRes  = KID_F10;
 static INDEX ocam_kidChangeMode = KID_C;
@@ -165,6 +166,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent INDEX ocam_kidBankingL;",   &ocam_kidBankingL);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidBankingR;",   &ocam_kidBankingR);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidFollow;",     &ocam_kidFollow);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidGrid;",       &ocam_kidGrid);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidSnapshot;",   &ocam_kidSnapshot);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidChangeRes;",  &ocam_kidChangeRes);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidChangeMode;", &ocam_kidChangeMode);
@@ -205,6 +207,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("           user INDEX ocam_bFollowPlayer;",         &cam_ctl.bFollowPlayer);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fFollowDist;",           &cam_props.fFollowDist);
 
+  _pShell->DeclareSymbol("persistent user INDEX ocam_bGrid;",        &cam_props.bGrid);
   _pShell->DeclareSymbol("persistent user INDEX ocam_iScreenshotW;", &cam_props.iScreenshotW);
   _pShell->DeclareSymbol("persistent user INDEX ocam_iScreenshotH;", &cam_props.iScreenshotH);
 
@@ -462,6 +465,7 @@ void CObserverCamera::UpdateControls(void) {
   const BOOL bBtnBankingL = _pInput->GetButtonState(ocam_kidBankingL);
   const BOOL bBtnBankingR = _pInput->GetButtonState(ocam_kidBankingR);
   const BOOL bBtnFollow   = _pInput->GetButtonState(ocam_kidFollow);
+  const BOOL bBtnGrid     = _pInput->GetButtonState(ocam_kidGrid);
   const BOOL bBtnSnap     = _pInput->GetButtonState(ocam_kidSnapshot);
   const BOOL bBtnRes      = _pInput->GetButtonState(ocam_kidChangeRes);
   const BOOL bBtnMode     = _pInput->GetButtonState(ocam_kidChangeMode);
@@ -488,6 +492,11 @@ void CObserverCamera::UpdateControls(void) {
   static BOOL _bFollow = FALSE;
   if (!_bFollow && bBtnFollow) cam_ctl.bFollowPlayer = !cam_ctl.bFollowPlayer;
   _bFollow = bBtnFollow;
+
+  // Toggle grid
+  static BOOL _bGrid = FALSE;
+  if (!_bGrid && bBtnGrid) cam_props.bGrid = !cam_props.bGrid;
+  _bGrid = bBtnGrid;
 
   // Take snapshot
   static BOOL _bSnap = FALSE;
@@ -668,6 +677,7 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
     }
 
     // View controls
+    PrintLine(pdp, CTString(0, TRANS("Toggle grid: %s"), CameraButton(ocam_kidGrid)) + (cam_props.bGrid ? " (ON)" : " (OFF)"), pixInfoY, "ocam_bGrid");
     PrintLine(pdp, CTString(0, TRANS("Zoom in/out: %s / %s"), CameraButton(ocam_kidZoomIn), CameraButton(ocam_kidZoomOut)), pixInfoY, "");
     PrintFloatField(pdp, TRANS("Field of view"), cam_ctl.fFOV, pixInfoY, "ocam_fFOV");
     pixInfoY += GetFontHeight(pdp);
@@ -976,10 +986,13 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     cp = FreeFly(penObserving);
   }
 
+  const PIX pixW = pdp->GetWidth();
+  const PIX pixH = pdp->GetHeight();
+
   // Prepare view projection
   CPerspectiveProjection3D prProjection;
   prProjection.FOVL() = cp.fFOV;
-  prProjection.ScreenBBoxL() = FLOATaabbox2D(FLOAT2D(0, 0), FLOAT2D(pdp->GetWidth(), pdp->GetHeight()));
+  prProjection.ScreenBBoxL() = FLOATaabbox2D(FLOAT2D(0, 0), FLOAT2D(pixW, pixH));
   prProjection.AspectRatioL() = 1.0f;
   prProjection.FrontClipDistanceL() = 0.3f;
 
@@ -990,6 +1003,27 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
 
   CWorld &wo = _pNetwork->ga_World;
   RenderView(wo, *(CEntity *)NULL, apr, *pdp); // NULL viewer to make the player entity visible
+
+  // Rule of thirds grid (2 pixels thick, light gray)
+  if (cam_props.bGrid) {
+    const PIX pixGridW = pixW / 3;
+    const PIX pixGridH = pixH / 3;
+    const COLOR colGrid = 0xBFBFBFFF;
+
+    // Vertical lines
+    pdp->DrawLine(pixGridW+0,   0, pixGridW+1,   pixH, colGrid);
+    pdp->DrawLine(pixGridW+1,   0, pixGridW+1,   pixH, colGrid);
+
+    pdp->DrawLine(pixGridW*2+0, 0, pixGridW*2+0, pixH, colGrid);
+    pdp->DrawLine(pixGridW*2+1, 0, pixGridW*2+1, pixH, colGrid);
+
+    // Horizontal lines
+    pdp->DrawLine(0, pixGridH+0,   pixW, pixGridH+0,   colGrid);
+    pdp->DrawLine(0, pixGridH+1,   pixW, pixGridH+1,   colGrid);
+
+    pdp->DrawLine(0, pixGridH*2+0, pixW, pixGridH*2+0, colGrid);
+    pdp->DrawLine(0, pixGridH*2+1, pixW, pixGridH*2+1, colGrid);
+  }
 
   PrintCameraInfo(pdp);
 
