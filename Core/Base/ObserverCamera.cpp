@@ -546,11 +546,68 @@ void CObserverCamera::UpdateControls(void) {
   }
 };
 
+//================================================================================================//
+// Observer camera info
+//================================================================================================//
+
+const FLOAT _fInfoScale = 0.8f;
+
+__forceinline PIX GetFontHeight(CDrawPort *pdp) {
+  return pdp->dp_FontData->GetHeight() * pdp->dp_fTextScaling + pdp->dp_fTextScaling + 1;
+};
+
+__forceinline CTString CameraButton(INDEX iKID) {
+  return "^c9FDFFF" + _pInput->GetButtonTransName(iKID) + "^r";
+};
+
+static void PrintCommand(CDrawPort *pdp, const CTString &strSymbol, PIX pixY, const CTString &strTextForWidth) {
+  // Not displaying symbols or no symbol to display
+  if (CObserverCamera::cam_props.iShowInfo <= 1 || strSymbol == "") return;
+  const FLOAT fScaling = HEIGHT_SCALING(pdp);
+
+  // Remember last font
+  CFontData *pfdLast = pdp->dp_FontData;
+  FLOAT fLastScaling = pdp->dp_fTextScaling;
+
+  const PIX pixLastFontH = GetFontHeight(pdp);
+  const PIX pixTextW = pdp->GetTextWidth(strTextForWidth);
+
+  pdp->SetFont(_pfdConsoleFont);
+  const PIX pixFontH = pdp->dp_FontData->GetHeight();
+  pixY += (pixLastFontH - pixFontH) * 0.4f;
+
+  pdp->Fill(30 * fScaling + pixTextW - 2, pixY - 4, pdp->GetTextWidth(strSymbol) + 6, pixFontH + 6, 0x5F);
+  pdp->PutText(strSymbol, 30 * fScaling + pixTextW, pixY, 0xFFD700FF);
+
+  // Restore last font
+  pdp->SetFont(pfdLast);
+  pdp->SetTextScaling(fLastScaling);
+};
+
+static void PrintLine(CDrawPort *pdp, const CTString &strText, PIX &pixY, const CTString &strSymbol, BOOL bCategory = FALSE) {
+  const FLOAT fScaling = HEIGHT_SCALING(pdp);
+  pdp->SetTextScaling(fScaling * _fInfoScale);
+  pdp->PutText(strText, (bCategory ? 10 : 20) * fScaling, pixY, bCategory ? 0xFFD700FF : 0xFFFFFFFF);
+
+  PrintCommand(pdp, strSymbol, pixY, strText);
+  pixY += GetFontHeight(pdp);
+};
+
+__forceinline void PrintIndexField(CDrawPort *pdp, const CTString &strName, INDEX iValue, PIX &pixY, const CTString &strSymbol) {
+  PrintLine(pdp, strName + CTString(0, ": %d", iValue), pixY, strSymbol);
+};
+
+__forceinline void PrintFloatField(CDrawPort *pdp, const CTString &strName, FLOAT fValue, PIX &pixY, const CTString &strSymbol) {
+  PrintLine(pdp, strName + CTString(0, ": %.2f", fValue), pixY, strSymbol);
+};
+
+__forceinline void PrintStateField(CDrawPort *pdp, const CTString &strName, BOOL bValue, PIX &pixY, const CTString &strSymbol) {
+  PrintLine(pdp, strName + (bValue ? ": ON" : ": OFF"), pixY, strSymbol);
+};
+
 // Print camera info and controls
 void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
   const FLOAT fScaling = HEIGHT_SCALING(pdp);
-  const FLOAT fTextScaling = fScaling * 0.8f;
-  const PIX pixLineHeight = _pfdDisplayFont->GetHeight() * fTextScaling + fTextScaling + 1;
 
   // Black background gradient from left to right
   if (cam_props.iShowInfo > 0) {
@@ -561,83 +618,95 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
   pdp->SetTextScaling(fScaling);
 
   // Info header
-  PIX pixInfoY = 16 * fScaling;
-  CTString strHeader(0, TRANS("Press %s to toggle observer camera info (ocam_iShowInfo)"), _pInput->GetButtonTransName(ocam_kidToggleInfo));
-  pdp->PutText(strHeader, 8 * fScaling, pixInfoY, 0xFFFFFF9F);
+  PIX pixInfoY = 8 * fScaling;
+  pdp->Fill(0, pixInfoY, 480 * fScaling, 48 * fScaling, 0xAF, 0x00, 0xAF, 0x00);
+  pixInfoY += 10 * fScaling;
+
+  CTString strHeader(0, TRANS("Observer camera info (press %s to toggle)"), CameraButton(ocam_kidToggleInfo));
+  pdp->PutText(strHeader, 8 * fScaling, pixInfoY, 0xFFFFFFFF);
+  pixInfoY += GetFontHeight(pdp);
+
+  CTString strSwitchMode, strModeCommand;
+
+  if (cam_bPlayback && !cam_props.bActive) {
+    strSwitchMode.PrintF(TRANS("Press %s to enter free-fly mode"), CameraButton(ocam_kidToggle));
+    strModeCommand = "ocam_bActive";
+
+  } else if (cam_props.bPosingMode) {
+    strSwitchMode.PrintF(TRANS("Press %s to exit posing mode"), CameraButton(ocam_kidChangeMode));
+    strModeCommand = "ocam_bPosingMode";
+
+  } else {
+    strSwitchMode.PrintF(TRANS("Press %s to enter posing mode"), CameraButton(ocam_kidChangeMode));
+    strModeCommand = "ocam_bPosingMode";
+  }
+
+  PrintLine(pdp, strSwitchMode, pixInfoY, strModeCommand);
+  pixInfoY += GetFontHeight(pdp);
 
   if (cam_props.iShowInfo <= 0) return;
 
   // Relevant camera properties
-  pdp->SetTextScaling(fTextScaling);
+  PrintLine(pdp, TRANS("Camera properties & controls"), pixInfoY, "", TRUE);
 
-  pixInfoY += pixLineHeight * 2;
-  pdp->PutText(TRANS("Camera properties"), 8 * fScaling, pixInfoY, 0xFFD700FF);
-
-  CTString strProps = "";
-
+  // Playback properties
   if (cam_bPlayback && !cam_props.bActive) {
-    strProps += CTString(0, "ocam_bPlaybackSpeedControl = %d\n", cam_props.bPlaybackSpeedControl);
-    strProps += CTString(0, "ocam_bSmoothPlayback = %d\n", cam_props.bSmoothPlayback);
-    strProps += CTString(0, "ocam_fSmoothTension = %g\n", cam_props.fSmoothTension);
+    PrintStateField(pdp, TRANS("Demo speed control"), cam_props.bPlaybackSpeedControl, pixInfoY, "ocam_bPlaybackSpeedControl");
+    PrintStateField(pdp, TRANS("Smooth movement"),    cam_props.bSmoothPlayback,       pixInfoY, "ocam_bSmoothPlayback");
+    PrintFloatField(pdp, TRANS("Movement tension"),   cam_props.fSmoothTension,        pixInfoY, "ocam_fSmoothTension");
 
+  // Free fly properties
   } else {
-    strProps += CTString(0, "ocam_fSpeed = %g\n", cam_props.fSpeed);
-    strProps += CTString(0, "ocam_fTiltAngleMul = %g\n", cam_props.fTiltAngleMul);
-    strProps += CTString(0, "ocam_fFOVChangeMul = %g\n", cam_props.fFOVChangeMul);
-    strProps += CTString(0, "ocam_fSmoothMovement = %g\n", cam_props.fSmoothMovement);
-    strProps += CTString(0, "ocam_fSmoothRotation = %g\n", cam_props.fSmoothRotation);
-    strProps += CTString(0, "ocam_fFOV = %g\n", cam_ctl.fFOV);
-    strProps += CTString(0, "ocam_bFollowPlayer = %d\n", cam_ctl.bFollowPlayer);
-    strProps += CTString(0, "ocam_fFollowDist = %g\n", cam_props.fFollowDist);
-  }
+    // Camera controls
+    if (!cam_props.bPosingMode) {
+      PrintLine(pdp, CTString(0, TRANS("Hold %s to rotate the camera"), CameraButton(ocam_kidRotate)), pixInfoY, "");
+      PrintLine(pdp, CTString(0, TRANS("Hold %s to speed up flight"), CameraButton(ocam_kidSpeedUp)), pixInfoY, "");
+      PrintLine(pdp, CTString(0, TRANS("Tilt left/right: %s / %s"), CameraButton(ocam_kidBankingL), CameraButton(ocam_kidBankingR))
+                   + CTString(0, " (%.1f deg)", NormalizeAngle(cam_cpCurrent.Rot()(3))), pixInfoY, "");
+      PrintFloatField(pdp, TRANS("Camera speed"), cam_props.fSpeed, pixInfoY, "ocam_fSpeed");
+      pixInfoY += GetFontHeight(pdp);
+    }
 
-  strProps += CTString(0, "ocam_iScreenshotW/H = %dx%d\n", cam_props.iScreenshotW, cam_props.iScreenshotH);
-  strProps += CTString(0, "ocam_bPosingMode = %d\n", cam_props.bPosingMode);
+    // View controls
+    PrintLine(pdp, CTString(0, TRANS("Zoom in/out: %s / %s"), CameraButton(ocam_kidZoomIn), CameraButton(ocam_kidZoomOut)), pixInfoY, "");
+    PrintFloatField(pdp, TRANS("Field of view"), cam_ctl.fFOV, pixInfoY, "ocam_fFOV");
+    pixInfoY += GetFontHeight(pdp);
 
-  pixInfoY += pixLineHeight;
-  pdp->PutText(strProps, 16 * fScaling, pixInfoY, 0xFFFFFFFF);
+    PrintLine(pdp, CTString(0, TRANS("Follow current player: %s"), CameraButton(ocam_kidFollow))
+                 + (cam_ctl.bFollowPlayer ? " (ON)" : " (OFF)"), pixInfoY, "ocam_bFollowPlayer");
+    PrintFloatField(pdp, TRANS("Follow distance"), cam_props.fFollowDist, pixInfoY, "ocam_fFollowDist");
+    pixInfoY += GetFontHeight(pdp);
 
-  // Don't display camera controls
-  if (!cam_props.bActive || cam_props.iShowInfo <= 1) return;
+    PrintLine(pdp, CTString(0, TRANS("Teleport to current player: %s"), CameraButton(ocam_kidTeleport)), pixInfoY, "");
+    PrintLine(pdp, CTString(0, TRANS("Reset tilt and zoom: %s"), CameraButton(ocam_kidReset)), pixInfoY, "");
 
-  // Free fly camera controls
-  pixInfoY += pixLineHeight * 10;
+    if (cam_fnmDemo != "") {
+      PrintLine(pdp, CTString(0, TRANS("Take position snapshot: %s"), CameraButton(ocam_kidSnapshot)), pixInfoY, "");
+    }
 
-  const CTString strCategory = (cam_props.bPosingMode ? TRANS("Camera controls (posing mode)") : TRANS("Camera controls (free-fly mode)"));
-  pdp->PutText(strCategory, 8 * fScaling, pixInfoY, 0xFFD700FF);
+    // Pose customization
+    if (cam_props.bPosingMode) {
+      pixInfoY += GetFontHeight(pdp);
+      PrintLine(pdp, TRANS("Player posing"), pixInfoY, "", TRUE);
 
-  CTString strControls;
-
-  // Pose customization controls
-  if (cam_props.bPosingMode) {
-    strControls = TRANS("Use movement keys to offset the player model\n");
-    strControls += TRANS("Use tilt keys to rotate the player model\n");
-
-  // Movement controls
-  } else {
-    strControls = CTString(0, TRANS("Rotate camera: %s\n"), _pInput->GetButtonTransName(ocam_kidRotate));
-    strControls += CTString(0, TRANS("Speed up flight: %s\n"), _pInput->GetButtonTransName(ocam_kidSpeedUp));
-  }
-
-  strControls += "\n";
-  strControls += CTString(0, TRANS("Zoom in/out: %s/%s\n"), _pInput->GetButtonTransName(ocam_kidZoomIn), _pInput->GetButtonTransName(ocam_kidZoomOut));
-  strControls += CTString(0, TRANS("Follow current player: %s\n"), _pInput->GetButtonTransName(ocam_kidFollow));
-  strControls += CTString(0, TRANS("Teleport to current player: %s\n"), _pInput->GetButtonTransName(ocam_kidTeleport));
-  strControls += CTString(0, TRANS("Reset tilt and zoom: %s\n"), _pInput->GetButtonTransName(ocam_kidReset));
-  strControls += CTString(0, TRANS("Toggle player posing mode: %s\n"), _pInput->GetButtonTransName(ocam_kidChangeMode));
-
-  if (cam_fnmDemo != "") {
-    strControls += CTString(0, TRANS("Take position snapshot: %s\n"), _pInput->GetButtonTransName(ocam_kidSnapshot));
+      PrintLine(pdp, TRANS("Use movement keys to offset the player model"), pixInfoY, "");
+      PrintLine(pdp, TRANS("Use tilt keys to rotate the player model"), pixInfoY, "");
+    }
   }
 
   // Screenshot controls
-  strControls += "\n";
-  strControls += CTString(0, TRANS("Select resolution preset: %s\n"), _pInput->GetButtonTransName(ocam_kidChangeRes));
-  strControls += CTString(0, TRANS("Take HQ screenshot: %s\n"), _pInput->GetButtonTransName(sam_kidScreenshot));
+  pixInfoY = 424 * fScaling;
+  pdp->Fill(0, pixInfoY, 480 * fScaling, 48 * fScaling, 0xAF, 0x00, 0xAF, 0x00);
+  pixInfoY += 12 * fScaling;
 
-  pixInfoY += pixLineHeight;
-  pdp->PutText(strControls, 16 * fScaling, pixInfoY, 0xFFFFFFFF);
+  PrintLine(pdp, CTString(0, TRANS("Press %s to select resolution preset"), CameraButton(ocam_kidChangeRes))
+               + CTString(0, ": %dx%d", cam_props.iScreenshotW, cam_props.iScreenshotH), pixInfoY, "ocam_iScreenshotW / ocam_iScreenshotH");
+  PrintLine(pdp, CTString(0, TRANS("Take HQ screenshot: %s"), CameraButton(sam_kidScreenshot)), pixInfoY, "");
 };
+
+//================================================================================================//
+// Observer camera usage
+//================================================================================================//
 
 // Free fly camera movement during the game
 CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving) {
