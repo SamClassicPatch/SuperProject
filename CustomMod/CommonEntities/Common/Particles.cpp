@@ -4120,16 +4120,26 @@ void Particles_Burning(CEntity *pen, FLOAT fPower, FLOAT fTimeRatio)
   INDEX ctFrames=iFramesInRaw*iFramesInColumn;
   
   FLOAT fNow = _pTimer->GetLerpedCurrentTick();
+  const CEntity::RenderType eRender = pen->GetRenderType();
 
-  // fill array with absolute vertices of entity's model and its attached models
-  pen->GetModelVerticesAbsolute(avVertices, 0.0f, 0.0f); 
+  // [Cecil] Calculate rotation matrix in place using lerped placement instead of CEntity::GetRotationMatrix()
+  FLOATmatrix3D m;
+  MakeRotationMatrixFast(m, pen->GetLerpedPlacement().pl_OrientationAngle);
 
   // get entity position and orientation
-  const FLOATmatrix3D &m = pen->GetRotationMatrix();
   FLOAT3D vX( m(1,1), m(2,1), m(3,1));
   FLOAT3D vY( m(1,2), m(2,2), m(3,2));
   FLOAT3D vZ( m(1,3), m(2,3), m(3,3));
   FLOAT3D vCenter = pen->GetLerpedPlacement().pl_PositionVector;
+
+  if (eRender == CEntity::RT_MODEL || eRender == CEntity::RT_EDITORMODEL) {
+    // [Cecil] Model for rendering instead of the entity model
+    pen->GetModelForRendering()->GetModelVertices(avVertices, m, vCenter, 0.0f, 0.0f);
+
+  } else {
+    // fill array with absolute vertices of entity's model and its attached models
+    pen->GetModelVerticesAbsolute(avVertices, 0.0f, 0.0f);
+  }
 
   Particle_PrepareTexture( &_toFire, PBT_ADD);
 
@@ -4145,7 +4155,7 @@ void Particles_Burning(CEntity *pen, FLOAT fPower, FLOAT fTimeRatio)
   FLOATaabbox3D box;
 
 #if SE1_VER >= SE1_107
-  if(pen->en_RenderType == CEntity::RT_SKAMODEL || pen->en_RenderType == CEntity::RT_SKAEDITORMODEL) {
+  if (eRender == CEntity::RT_SKAMODEL || eRender == CEntity::RT_SKAEDITORMODEL) {
     pen->GetModelInstance()->GetCurrentColisionBox(box);
   } else
 #endif
@@ -6121,14 +6131,16 @@ void Particles_AirElemental_Comp(CModelObject *mo, FLOAT fStretch, FLOAT fFade, 
 }
 
 // [Cecil] Common function for both glow functions
-inline void Particles_ModelGlowCommon(CModelObject *mo, FLOAT3D vPos, FLOATmatrix3D mRotation,
+inline void Particles_ModelGlowCommon(CModelObject *mo, CPlacement3D pl,
   FLOAT tmEnd, enum ParticleTexture ptTexture, FLOAT fSize, FLOAT iVtxStep, FLOAT fAnimSpd, FLOAT fMipFactor, COLOR iCol)
 {
   FLOAT tmNow = _pTimer->GetLerpedCurrentTick();
   SetupParticleTextureWithAddAlpha(ptTexture);
 
   // fill array with absolute vertices of entity's model and its attached models
-  mo->GetModelVertices(avVertices, mRotation, vPos, fAnimSpd*(1.0f-0.5f*Sin(300.0f*tmNow)), fMipFactor); 
+  FLOATmatrix3D mRotation;
+  MakeRotationMatrixFast(mRotation, pl.pl_OrientationAngle);
+  mo->GetModelVertices(avVertices, mRotation, pl.pl_PositionVector, fAnimSpd*(1.0f-0.5f*Sin(300.0f*tmNow)), fMipFactor);
 
   UBYTE ubCol=255;
   if((tmEnd-tmNow)<5.0f)
@@ -6160,16 +6172,12 @@ void Particles_ModelGlow( CEntity *pen, FLOAT tmEnd, enum ParticleTexture ptText
   BOOL bVisible = pmo->IsModelVisible( fMipFactor);
   if( !bVisible) return;
 
-  Particles_ModelGlowCommon(pmo, pen->GetLerpedPlacement().pl_PositionVector, pen->GetRotationMatrix(),
-    tmEnd, ptTexture, fSize, iVtxStep, fAnimSpd, fMipFactor, iCol);
+  Particles_ModelGlowCommon(pmo, pen->GetLerpedPlacement(), tmEnd, ptTexture, fSize, iVtxStep, fAnimSpd, fMipFactor, iCol);
 }
 
 void Particles_ModelGlow2( CModelObject *mo, CPlacement3D pl, FLOAT tmEnd, enum ParticleTexture ptTexture, FLOAT fSize, FLOAT iVtxStep, FLOAT fAnimSpd, COLOR iCol)
 {
-  FLOATmatrix3D mRotation;
-  MakeRotationMatrixFast(mRotation, pl.pl_OrientationAngle);
-
-  Particles_ModelGlowCommon(mo, pl.pl_PositionVector, mRotation, tmEnd, ptTexture, fSize, iVtxStep, fAnimSpd, 0.0f, iCol);
+  Particles_ModelGlowCommon(mo, pl, tmEnd, ptTexture, fSize, iVtxStep, fAnimSpd, 0.0f, iCol);
 }
 
 void Particles_RunAfterBurner(CEntity *pen, FLOAT tmEnd, FLOAT fStretch, INDEX iGradientType)
