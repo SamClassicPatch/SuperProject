@@ -27,7 +27,8 @@ class CORE_API CObserverCamera {
     struct CameraControl {
       INDEX bMoveF, bMoveB, bMoveL, bMoveR, bMoveU, bMoveD;
       INDEX bBankingL, bBankingR, bZoomIn, bZoomOut, bRotate;
-      INDEX bResetToPlayer, bFollowPlayer, bSnapshot, bSpeedUp;
+      INDEX bResetToPlayer, bSnapshot, bSpeedUp;
+      INDEX iFocusPlayer;
       FLOAT fFOV;
 
       CameraControl() {
@@ -38,7 +39,8 @@ class CORE_API CObserverCamera {
       void Reset(void) {
         bMoveF = bMoveB = bMoveL = bMoveR = bMoveU = bMoveD = FALSE;
         bBankingL = bBankingR = bZoomIn = bZoomOut = bRotate = FALSE;
-        bResetToPlayer = bFollowPlayer = bSnapshot = bSpeedUp = FALSE;
+        bResetToPlayer = bSnapshot = bSpeedUp = FALSE;
+        iFocusPlayer = 0;
         fFOV = 90.0f;
       };
     };
@@ -55,7 +57,7 @@ class CORE_API CObserverCamera {
       FLOAT fFOVChangeMul; // Speed multiplier for changing the FOV
       FLOAT fSmoothMovement; // Factor for smooth camera movement
       FLOAT fSmoothRotation; // Factor for smooth camera rotation
-      FLOAT fFollowDist; // Close in on the player if they're far enough from the camera
+      FLOAT fFocusDist; // How close to keep the camera to the current player
 
       BOOL bGrid; // Rule of thirds grid rendering
       INDEX iScreenshotW, iScreenshotH; // Screenshot resolution (limited to 1x1 .. 20000x20000)
@@ -76,7 +78,7 @@ class CORE_API CObserverCamera {
         fFOVChangeMul = 1.0f;
         fSmoothMovement = 1.0f;
         fSmoothRotation = 1.0f;
-        fFollowDist = -1.0f;
+        fFocusDist = -1.0f;
 
         bGrid = FALSE;
         iScreenshotW = 1920;

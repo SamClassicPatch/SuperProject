@@ -130,7 +130,7 @@ static INDEX ocam_kidToggleInfo = KID_I;
 
 static INDEX ocam_kidBankingL   = KID_Q;
 static INDEX ocam_kidBankingR   = KID_E;
-static INDEX ocam_kidFollow     = KID_F;
+static INDEX ocam_kidFocus      = KID_F;
 static INDEX ocam_kidGrid       = KID_G;
 static INDEX ocam_kidSnapshot   = KID_TAB;
 static INDEX ocam_kidChangeRes  = KID_F10;
@@ -165,7 +165,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent INDEX ocam_kidToggleInfo;", &ocam_kidToggleInfo);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidBankingL;",   &ocam_kidBankingL);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidBankingR;",   &ocam_kidBankingR);
-  _pShell->DeclareSymbol("persistent INDEX ocam_kidFollow;",     &ocam_kidFollow);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidFocus;",      &ocam_kidFocus);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidGrid;",       &ocam_kidGrid);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidSnapshot;",   &ocam_kidSnapshot);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidChangeRes;",  &ocam_kidChangeRes);
@@ -204,8 +204,8 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fFOVChangeMul;",         &cam_props.fFOVChangeMul);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fSmoothMovement;",       &cam_props.fSmoothMovement);
   _pShell->DeclareSymbol("persistent user FLOAT ocam_fSmoothRotation;",       &cam_props.fSmoothRotation);
-  _pShell->DeclareSymbol("           user INDEX ocam_bFollowPlayer;",         &cam_ctl.bFollowPlayer);
-  _pShell->DeclareSymbol("persistent user FLOAT ocam_fFollowDist;",           &cam_props.fFollowDist);
+  _pShell->DeclareSymbol("           user INDEX ocam_iFocusPlayer;",          &cam_ctl.iFocusPlayer);
+  _pShell->DeclareSymbol("persistent user FLOAT ocam_fFocusDist;",            &cam_props.fFocusDist);
 
   _pShell->DeclareSymbol("persistent user INDEX ocam_bGrid;",        &cam_props.bGrid);
   _pShell->DeclareSymbol("persistent user INDEX ocam_iScreenshotW;", &cam_props.iScreenshotW);
@@ -436,12 +436,9 @@ CModelObject *CObserverCamera::GetPoseModel(CEntity *penPlayer, CModelObject *pm
 void CObserverCamera::UpdateControls(void) {
   // Toggle the camera itself
   const BOOL bBtnToggle = _pInput->GetButtonState(ocam_kidToggle);
+
   static BOOL _bToggle = FALSE;
-
-  if (!_bToggle && bBtnToggle) {
-    TogglePhotoMode();
-  }
-
+  if (!_bToggle && bBtnToggle) TogglePhotoMode();
   _bToggle = bBtnToggle;
 
   // Camera is disabled
@@ -451,24 +448,20 @@ void CObserverCamera::UpdateControls(void) {
   _pInput->SetJoyPolling(FALSE);
   _pInput->GetInput(FALSE);
 
-  // Toggle camera info
-  const BOOL bBtnToggleInfo = _pInput->GetButtonState(ocam_kidToggleInfo);
-  static BOOL _bToggleInfo = FALSE;
-
-  if (!_bToggleInfo && bBtnToggleInfo) {
-    cam_props.iShowInfo = ClampDn(cam_props.iShowInfo + 1L, 1L) % 3;
-  }
-
-  _bToggleInfo = bBtnToggleInfo;
-
   // Button states for some controls
-  const BOOL bBtnBankingL = _pInput->GetButtonState(ocam_kidBankingL);
-  const BOOL bBtnBankingR = _pInput->GetButtonState(ocam_kidBankingR);
-  const BOOL bBtnFollow   = _pInput->GetButtonState(ocam_kidFollow);
-  const BOOL bBtnGrid     = _pInput->GetButtonState(ocam_kidGrid);
-  const BOOL bBtnSnap     = _pInput->GetButtonState(ocam_kidSnapshot);
-  const BOOL bBtnRes      = _pInput->GetButtonState(ocam_kidChangeRes);
-  const BOOL bBtnMode     = _pInput->GetButtonState(ocam_kidChangeMode);
+  const BOOL bBtnToggleInfo = _pInput->GetButtonState(ocam_kidToggleInfo);
+  const BOOL bBtnBankingL   = _pInput->GetButtonState(ocam_kidBankingL);
+  const BOOL bBtnBankingR   = _pInput->GetButtonState(ocam_kidBankingR);
+  const BOOL bBtnFocus      = _pInput->GetButtonState(ocam_kidFocus);
+  const BOOL bBtnGrid       = _pInput->GetButtonState(ocam_kidGrid);
+  const BOOL bBtnSnap       = _pInput->GetButtonState(ocam_kidSnapshot);
+  const BOOL bBtnRes        = _pInput->GetButtonState(ocam_kidChangeRes);
+  const BOOL bBtnMode       = _pInput->GetButtonState(ocam_kidChangeMode);
+
+  // Toggle camera info
+  static BOOL _bToggleInfo = FALSE;
+  if (!_bToggleInfo && bBtnToggleInfo) cam_props.iShowInfo = ClampDn(cam_props.iShowInfo + 1L, 1L) % 3;
+  _bToggleInfo = bBtnToggleInfo;
 
   // Turn left
   static BOOL _bLeft = FALSE;
@@ -488,10 +481,10 @@ void CObserverCamera::UpdateControls(void) {
 
   _bRight = bBtnBankingR;
 
-  // Toggle following
-  static BOOL _bFollow = FALSE;
-  if (!_bFollow && bBtnFollow) cam_ctl.bFollowPlayer = !cam_ctl.bFollowPlayer;
-  _bFollow = bBtnFollow;
+  // Toggle focus
+  static BOOL _bFocus = FALSE;
+  if (!_bFocus && bBtnFocus) cam_ctl.iFocusPlayer = ClampDn(cam_ctl.iFocusPlayer + 1L, 1L) % 3;
+  _bFocus = bBtnFocus;
 
   // Toggle grid
   static BOOL _bGrid = FALSE;
@@ -682,9 +675,17 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
     PrintFloatField(pdp, TRANS("Field of view"), cam_ctl.fFOV, pixInfoY, "ocam_fFOV");
     pixInfoY += GetFontHeight(pdp);
 
-    PrintLine(pdp, CTString(0, TRANS("Follow current player: %s"), CameraButton(ocam_kidFollow))
-                 + (cam_ctl.bFollowPlayer ? " (ON)" : " (OFF)"), pixInfoY, "ocam_bFollowPlayer");
-    PrintFloatField(pdp, TRANS("Follow distance"), cam_props.fFollowDist, pixInfoY, "ocam_fFollowDist");
+    CTString strFocus = ": ^c9FDFFF";
+
+    switch (cam_ctl.iFocusPlayer) {
+      case 1: strFocus += TRANS("Locked on"); break;
+      case 2: strFocus += TRANS("Orbiting"); break;
+      default: strFocus += LOCALIZE("None");
+    }
+
+    PrintLine(pdp, CTString(0, TRANS("Focus on the current player: %s"), CameraButton(ocam_kidFocus)), pixInfoY, "");
+    PrintLine(pdp, TRANS("Focus mode") + strFocus, pixInfoY, "ocam_iFocusPlayer");
+    PrintFloatField(pdp, TRANS("Focus distance"), cam_props.fFocusDist, pixInfoY, "ocam_fFocusDist");
     pixInfoY += GetFontHeight(pdp);
 
     PrintLine(pdp, CTString(0, TRANS("Teleport to current player: %s"), CameraButton(ocam_kidTeleport)), pixInfoY, "");
@@ -730,13 +731,13 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
   {
     cam_props.fSmoothRotation = Clamp(cam_props.fSmoothRotation, 0.0f, 1.0f);
     const BOOL bInstantRotation = (cam_props.fSmoothRotation == 1.0f);
-    const BOOL bFollowing = (cam_ctl.bFollowPlayer && penObserving != NULL);
+    const BOOL bLockedOnPlayer = (cam_ctl.iFocusPlayer == 1 && penObserving != NULL);
 
     // Input rotation
     ANGLE3D aRotate(0, 0, 0);
 
-    // Focus on the current player
-    if (bFollowing) {
+    // Lock on the current player
+    if (bLockedOnPlayer) {
       // Direction towards the player
       CPlacement3D plView = IWorld::GetViewpoint(penObserving, TRUE);
       const FLOAT3D vDir = (plView.pl_PositionVector - cp.Pos()).SafeNormalize();
@@ -790,8 +791,8 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
       const FLOAT fSpeedMul = 1.0f - Cos(cam_props.fSmoothRotation * 90);
       cam_aRotation += (aRotate - cam_aRotation) * dTimeMul * fSpeedMul;
 
-      // Override directional rotation while following
-      if (bFollowing) {
+      // Override directional rotation while locked on
+      if (bLockedOnPlayer) {
         cam_aRotation(1) = aRotate(1) * dTimeMul * cam_props.fSmoothRotation;
         cam_aRotation(2) = aRotate(2) * dTimeMul * cam_props.fSmoothRotation;
       }
@@ -805,17 +806,48 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
     }
   }
 
+  // Orbit the player instead of simply locking onto them or following them
+  if (cam_ctl.iFocusPlayer == 2 && penObserving != NULL) {
+    CPlacement3D plPlayer(FLOAT3D(0, 2, 0), ANGLE3D(0, 0, 0));
+    plPlayer.RelativeToAbsoluteSmooth(penObserving->GetLerpedPlacement());
+
+    FLOAT3D vSrc = plPlayer.pl_PositionVector;
+
+    // Directly on the player if close to zero
+    if (Abs(cam_props.fFocusDist) < 0.001f) {
+      cp.Pos() = vSrc;
+
+    // Place the camera behind the player based on the current angle
+    } else {
+      FLOAT3D vDir;
+      AnglesToDirectionVector(cp.Rot(), vDir);
+
+      // Default to 6 meters if focus distance isn't set
+      FLOAT3D vDst = vSrc - vDir * (cam_props.fFocusDist < 0.0f ? 6.0f : cam_props.fFocusDist);
+
+      // Cast a ray to keep the camera within the map geometry
+      CCastRay crRay(penObserving, vSrc, vDst);
+      crRay.cr_ttHitModels = CCastRay::TT_NONE;
+      crRay.cr_bHitTranslucentPortals = FALSE;
+      crRay.cr_fTestR = 2.0f;
+      crRay.Cast(IWorld::GetWorld());
+
+      cp.Pos() = vSrc - vDir * (crRay.cr_fHitDistance - 1.0f);
+    }
+
   // Camera movement
-  if (cam_props.fSpeed != 0.0f) {
+  } else if (cam_props.fSpeed != 0.0f) {
     // Movement vector
     FLOAT3D vMoveDir(0, 0, 0);
 
     // Follow the player and always stay close enough
-    if (cam_props.fFollowDist >= 0.0f && penObserving != NULL) {
-      CPlacement3D plView = IWorld::GetViewpoint(penObserving, TRUE);
-      FLOAT3D vToPlayer = (plView.pl_PositionVector - cp.Pos());
+    if (cam_props.fFocusDist >= 0.0f && penObserving != NULL) {
+      // Above the player for better visibility when focusing on the player
+      CPlacement3D plFocus(FLOAT3D(0, 4, 0), ANGLE3D(0, 0, 0));
+      plFocus.RelativeToAbsoluteSmooth(penObserving->GetLerpedPlacement());
+      FLOAT3D vToPlayer = (plFocus.pl_PositionVector - cp.Pos());
 
-      if (vToPlayer.Length() > cam_props.fFollowDist) {
+      if (vToPlayer.Length() > cam_props.fFocusDist) {
         vMoveDir = vToPlayer.SafeNormalize() * cam_props.fSpeed;
       }
     }
