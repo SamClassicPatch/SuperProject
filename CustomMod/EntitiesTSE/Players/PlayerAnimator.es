@@ -383,7 +383,7 @@ components:
 */
 
 // ************** FLAMER **************
-130 model   MODEL_FLAMER                "ModelsMP\\Weapons\\Flamer\\FlamerItem.mdl",
+130 model   MODEL_FLAMER                "ModelsMP\\Weapons\\Flamer\\Flamer.mdl", // [Cecil] "FlamerItem.mdl" -> "Flamer.mdl"
 131 model   MODEL_FL_BODY               "ModelsMP\\Weapons\\Flamer\\Body.mdl",
 132 model   MODEL_FL_RESERVOIR          "ModelsMP\\Weapons\\Flamer\\FuelReservoir.mdl",
 133 model   MODEL_FL_FLAME              "ModelsMP\\Weapons\\Flamer\\Flame.mdl",
