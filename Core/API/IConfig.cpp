@@ -413,15 +413,15 @@ CAnyValue &ModData::operator[](int iProperty)
 }; // namespace
 
 bool ClassicsConfig_IsTrue(EConfigProps eProperty) { return IConfig::global[eProperty].IsTrue(); };
-int ClassicsConfig_GetInt(EConfigProps eProperty) { return IConfig::global[eProperty].GetIndex(); };
-float ClassicsConfig_GetFloat(EConfigProps eProperty) { return IConfig::global[eProperty].GetFloat(); };
-const char *ClassicsConfig_GetString(EConfigProps eProperty) { return IConfig::global[eProperty].GetString(); };
+int ClassicsConfig_GetInt(EConfigProps eProperty) { return IConfig::global[eProperty].ToIndex(); };
+float ClassicsConfig_GetFloat(EConfigProps eProperty) { return IConfig::global[eProperty].ToFloat(); };
+const char *ClassicsConfig_GetString(EConfigProps eProperty) { return IConfig::global[eProperty].ToString(); };
 
 #if _PATCHCONFIG_GAMEPLAY_EXT
   bool ClassicsGameplayExt_IsTrue(EGameplayExt eExtension) { return IConfig::gex[eExtension].IsTrue(); };
-  int ClassicsGameplayExt_GetInt(EGameplayExt eExtension) { return IConfig::gex[eExtension].GetIndex(); };
-  float ClassicsGameplayExt_GetFloat(EGameplayExt eExtension) { return IConfig::gex[eExtension].GetFloat(); };
-  const char *ClassicsGameplayExt_GetString(EGameplayExt eExtension) { return IConfig::gex[eExtension].GetString(); };
+  int ClassicsGameplayExt_GetInt(EGameplayExt eExtension) { return IConfig::gex[eExtension].ToIndex(); };
+  float ClassicsGameplayExt_GetFloat(EGameplayExt eExtension) { return IConfig::gex[eExtension].ToFloat(); };
+  const char *ClassicsGameplayExt_GetString(EGameplayExt eExtension) { return IConfig::gex[eExtension].ToString(); };
 #else
   bool ClassicsGameplayExt_IsTrue(EGameplayExt eExtension) { ASSERTALWAYS(GAMEPLAY_EXT_ASSERT_MSG); return false; };
   int ClassicsGameplayExt_GetInt(EGameplayExt eExtension) { ASSERTALWAYS(GAMEPLAY_EXT_ASSERT_MSG); return 0; };
@@ -430,9 +430,9 @@ const char *ClassicsConfig_GetString(EConfigProps eProperty) { return IConfig::g
 #endif // _PATCHCONFIG_GAMEPLAY_EXT
 
 bool ClassicsModData_IsTrue(EModDataProps eProperty) { return IConfig::mod[eProperty].IsTrue(); };
-int ClassicsModData_GetInt(EModDataProps eProperty) { return IConfig::mod[eProperty].GetIndex(); };
-float ClassicsModData_GetFloat(EModDataProps eProperty) { return IConfig::mod[eProperty].GetFloat(); };
-const char *ClassicsModData_GetString(EModDataProps eProperty) { return IConfig::mod[eProperty].GetString(); };
+int ClassicsModData_GetInt(EModDataProps eProperty) { return IConfig::mod[eProperty].ToIndex(); };
+float ClassicsModData_GetFloat(EModDataProps eProperty) { return IConfig::mod[eProperty].ToFloat(); };
+const char *ClassicsModData_GetString(EModDataProps eProperty) { return IConfig::mod[eProperty].ToString(); };
 
 ModDifficulty_t *ClassicsModData_GetDiff(int iDifficulty)
 {
