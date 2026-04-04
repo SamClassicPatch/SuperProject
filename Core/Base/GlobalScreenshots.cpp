@@ -170,6 +170,9 @@ static CTString MakeScreenshotName(INDEX iFormat) {
 
 // Write screenshot to disk in the specified format
 static void WriteScreenshot_t(CImageInfo &ii, const CTString &fnmScreenshot, INDEX iFormat) {
+  // Make sure the directory exists
+  IDir::CreateDir(fnmScreenshot);
+
   CTString fnmAbsolute = IDir::AppPath() + fnmScreenshot;
   int iBPP;
 
@@ -182,17 +185,20 @@ static void WriteScreenshot_t(CImageInfo &ii, const CTString &fnmScreenshot, IND
   }
 
   switch (iFormat) {
-    case E_SHOT_PNG:
-      stbi_write_png(fnmAbsolute.str_String, ii.ii_Width, ii.ii_Height, iBPP, ii.ii_Picture, ii.ii_Width * iBPP);
-      break;
+    case E_SHOT_PNG: {
+      BOOL bResult = stbi_write_png(fnmAbsolute.str_String, ii.ii_Width, ii.ii_Height, iBPP, ii.ii_Picture, ii.ii_Width * iBPP);
+      if (!bResult) ThrowF_t("stbi_write_png() failure");
+    } break;
 
-    case E_SHOT_JPG:
-      stbi_write_jpg(fnmAbsolute.str_String, ii.ii_Width, ii.ii_Height, iBPP, ii.ii_Picture, 100);
-      break;
+    case E_SHOT_JPG: {
+      BOOL bResult = stbi_write_jpg(fnmAbsolute.str_String, ii.ii_Width, ii.ii_Height, iBPP, ii.ii_Picture, 100);
+      if (!bResult) ThrowF_t("stbi_write_jpg() failure");
+    } break;
 
-    case E_SHOT_TGA:
-      stbi_write_tga(fnmAbsolute.str_String, ii.ii_Width, ii.ii_Height, iBPP, ii.ii_Picture);
-      break;
+    case E_SHOT_TGA: {
+      BOOL bResult = stbi_write_tga(fnmAbsolute.str_String, ii.ii_Width, ii.ii_Height, iBPP, ii.ii_Picture);
+      if (!bResult) ThrowF_t("stbi_write_tga() failure");
+    } break;
 
     // Use default engine method
     default: ii.SaveTGA_t(fnmScreenshot);
