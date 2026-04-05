@@ -18,10 +18,177 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "ObserverCamera.h"
 
 #include "Base/GlobalScreenshots.h"
+#include "Objects/SimpleConfigs.h"
+
+#include <Models/Player/SeriousSam/Body.h>
+#include <Models/Player/SeriousSam/Player.h>
+
+// [Cecil] TEMP: Custom poses
+#define PHOTO_MODE_CUSTOM_POSES 1
 
 // Global controls and properties for the observer camera
 CObserverCamera::CameraControl CObserverCamera::cam_ctl;
 CObserverCamera::CameraProps CObserverCamera::cam_props;
+
+// Specific pose for the player in photo mode
+struct SPhotoModePose {
+  CTString strName;
+  INDEX iLegsAnim, iBodyAnim, iLegsFrame, iBodyFrame;
+  ANGLE3D aBody;
+
+  SPhotoModePose() : iLegsAnim(-1), iBodyAnim(-1), iLegsFrame(0), iBodyFrame(0), aBody(0, 0, 0) {};
+};
+
+// Available player poses
+static CStaticStackArray<SPhotoModePose> _aPhotoModePoses;
+static SPhotoModePose _poseCustom;
+
+// Specific item model with some offset for hand attachments
+struct SPhotoModeItem {
+  CTString strName;
+  CModelObject mo;
+  CPlacement3D plOffset;
+
+  SPhotoModeItem() : plOffset(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0)) {};
+};
+
+// Available items for each hand
+static CStaticStackArray<SPhotoModeItem> _aPhotoModeItems;
+
+// Convenience structure for performing actions based on pressed keys
+struct SCamKey {
+  bool bState;
+  SCamKey() : bState(false) {};
+
+  // Check if the button is pressed and update its state
+  inline bool operator()(INDEX iKID) {
+    const bool bButton = !!_pInput->GetButtonState(iKID);
+    const bool bPressed = (!bState && bButton);
+    bState = bButton;
+    return bPressed;
+  };
+};
+
+#if PHOTO_MODE_CUSTOM_POSES
+
+// [Cecil] TEMP: Lists of animations for custom poses
+void PrintCustomPose(CObserverCamera &ocam, CDrawPort *pdp) {
+  if (_poseCustom.iLegsAnim < 0 && _poseCustom.iBodyAnim < 0) return;
+
+  // Get legs attachment
+  CAttachmentModelObject *pamo = ocam.cam_moPose.GetAttachmentModel(0);
+  if (pamo == NULL) return;
+  CModelObject &moLegs = pamo->amo_moModelObject;
+
+  // Get body attachment
+  pamo = moLegs.GetAttachmentModel(PLAYER_ATTACHMENT_TORSO);
+  if (pamo == NULL) return;
+  CModelObject &moBody = pamo->amo_moModelObject;
+
+  INDEX i, ct;
+  CAnimInfo ai;
+  CTString str;
+
+  const FLOAT fScaling = HEIGHT_SCALING(pdp);
+  const PIX pixW = pdp->GetWidth();
+  PIX pixY = 4 * fScaling;
+
+  const FLOAT fAnimInfoScaling = fScaling * 0.55f;
+  const PIX pixAnimH = _pfdDisplayFont->GetHeight() * fAnimInfoScaling + fAnimInfoScaling + 1;
+  pdp->SetTextScaling(fAnimInfoScaling);
+
+  const ANGLE3D &aBody = _poseCustom.aBody;
+  pdp->PutTextR(CTString(0, "ocam_fPoseBodyH/P/B: [%g, %g, %g]", aBody(1), aBody(2), aBody(3)), pixW - 16 * fScaling, pixY, 0xFFFFFFFF);
+  pixY += pixAnimH;
+
+  // Available legs animations
+  ct = moLegs.GetAnimsCt();
+
+  for (i = 0; i < ct; i++) {
+    const BOOL bThisAnim = (_poseCustom.iLegsAnim == i);
+    moLegs.GetAnimInfo(i, ai);
+
+    str.PrintF(bThisAnim ? "%d. %s (%d)" : "%d. %s", i, ai.ai_AnimName, _poseCustom.iLegsFrame);
+    pdp->PutTextR(str, pixW - 16 * fScaling, pixY + i * pixAnimH, bThisAnim ? 0xFFFF9FFF : 0x9F3F3FBF);
+  }
+
+  // Available body animations
+  ct = moBody.GetAnimsCt();
+
+  for (i = 0; i < ct; i++) {
+    const BOOL bThisAnim = (_poseCustom.iBodyAnim == i);
+    moBody.GetAnimInfo(i, ai);
+
+    str.PrintF(bThisAnim ? "%d. %s (%d)" : "%d. %s", i, ai.ai_AnimName, _poseCustom.iBodyFrame);
+    pdp->PutTextR(str, pixW - 144 * fScaling, pixY + i * pixAnimH, bThisAnim ? 0xFFFF9FFF : 0x9F3F3FBF);
+  }
+};
+
+// [Cecil] TEMP: Custom pose customization
+void CustomPoseKeys(void) {
+  static SCamKey keyLegsA1, keyLegsA2, keyBodyA1, keyBodyA2, keyLegsF1, keyLegsF2, keyBodyF1, keyBodyF2;
+
+  if (keyLegsA1(KID_NUM8)) _poseCustom.iLegsAnim = ClampDn(_poseCustom.iLegsAnim - 1L, -1L);
+  if (keyLegsA2(KID_NUM2)) _poseCustom.iLegsAnim++;
+
+  if (keyBodyA1(KID_NUM4)) _poseCustom.iBodyAnim = ClampDn(_poseCustom.iBodyAnim - 1L, -1L);
+  if (keyBodyA2(KID_NUM6)) _poseCustom.iBodyAnim++;
+
+  if (keyLegsF1(KID_NUM1)) _poseCustom.iLegsFrame = ClampDn(_poseCustom.iLegsFrame - 1L, 0L);
+  if (keyLegsF2(KID_NUM3)) _poseCustom.iLegsFrame++;
+
+  if (keyBodyF1(KID_NUM7)) _poseCustom.iBodyFrame = ClampDn(_poseCustom.iBodyFrame - 1L, 0L);
+  if (keyBodyF2(KID_NUM9)) _poseCustom.iBodyFrame++;
+};
+
+#else
+
+__forceinline void PrintCustomPose(CObserverCamera &, CDrawPort *) {};
+__forceinline void CustomPoseKeys(void) {};
+
+#endif // PHOTO_MODE_CUSTOM_POSES
+
+inline SPhotoModePose *GetPhotoModePose(void) {
+  const INDEX ct = _aPhotoModePoses.Count();
+  if (ct == 0) return NULL;
+
+  // Index 0 is reserved for "current player pose", so return nothing on it; actual poses start with 1
+  const INDEX i = CObserverCamera::cam_props.iPose - 1;
+  if (i < 0) return NULL;
+
+  return &_aPhotoModePoses[ClampUp(i, ct - 1L)];
+};
+
+inline CTString GetPhotoModePoseName(void) {
+  const INDEX i = CObserverCamera::cam_props.iPose;
+  if (i < 0) return CTString(0, "^cAFAFAF%s^r", TRANS("No pose"));
+
+  SPhotoModePose *pPose = GetPhotoModePose();
+  CTString strItem = (pPose != NULL) ? pPose->strName : LOCALIZE("Current player");
+
+  return CTString(0, "^c9FDFFF%d.^r %s", i, strItem.str_String);
+};
+
+inline SPhotoModeItem *GetPhotoModeItem(BOOL bRight) {
+  const INDEX ct = _aPhotoModeItems.Count();
+  if (ct == 0) return NULL;
+
+  // Index 0 is reserved for "no item", so return nothing on it; actual items start with 1
+  const INDEX i = (bRight ? CObserverCamera::cam_props.iItemR : CObserverCamera::cam_props.iItemL) - 1;
+  if (i < 0) return NULL;
+
+  return &_aPhotoModeItems[ClampUp(i, ct - 1L)];
+};
+
+inline CTString GetPhotoModeItemName(BOOL bRight) {
+  const INDEX i = (bRight ? CObserverCamera::cam_props.iItemR : CObserverCamera::cam_props.iItemL);
+  if (i < 0) return CTString(0, "^cAFAFAF%s^r", TRANS("Current item"));
+
+  SPhotoModeItem *pItem = GetPhotoModeItem(bRight);
+  CTString strItem = (pItem != NULL) ? pItem->strName : LOCALIZE("None");
+
+  return CTString(0, "^c9FDFFF%d.^r %s", i, strItem.str_String);
+};
 
 // Clamp distance from number difference
 __forceinline DOUBLE ClampDistDn(DOUBLE dDiff, DOUBLE dDown) {
@@ -124,6 +291,88 @@ void CObserverCamera::ResetCameraAngles(void) {
   cam_aRotation(3) = 0.0f;
 };
 
+// Reload photo mode poses
+static void ReloadPhotoModePoses(void) {
+  CFileList aConfigs;
+  ListGameFiles(aConfigs, "Scripts\\ClassicsPatch\\PhotoMode\\Poses\\", "*.ini", 0);
+
+  const INDEX ct = aConfigs.Count();
+  _aPhotoModePoses.PopAll();
+
+  INDEX ctLoaded = 0;
+
+  for (INDEX i = 0; i < ct; i++) {
+    CIniConfig ini;
+    ini.Load_t(aConfigs[i], TRUE);
+
+    const IniSections &map = ini.GetMap();
+    IniSections::const_iterator it;
+
+    for (it = map.begin(); it != map.end(); it++) {
+      SPhotoModePose &pose = _aPhotoModePoses.Push();
+      const char *strPose = it->first.c_str();
+
+      pose.strName = strPose;
+      pose.iLegsAnim  = ini.GetIntValue(strPose, "LegsAnim",  -1);
+      pose.iLegsFrame = ini.GetIntValue(strPose, "LegsFrame", -1);
+      pose.iBodyAnim  = ini.GetIntValue(strPose, "BodyAnim",  -1);
+      pose.iBodyFrame = ini.GetIntValue(strPose, "BodyFrame", -1);
+      pose.aBody(1) = ini.GetDoubleValue(strPose, "BodyH", 0.0);
+      pose.aBody(2) = ini.GetDoubleValue(strPose, "BodyP", 0.0);
+      pose.aBody(3) = ini.GetDoubleValue(strPose, "BodyB", 0.0);
+      ctLoaded++;
+    }
+  }
+
+  CPrintF(TRANS("Loaded %d photo mode poses\n"), ctLoaded);
+
+  // Reload pose model
+  GetGameAPI()->GetCamera().ResetPhotoModePose(TRUE);
+};
+
+static SPhotoModeItem *_pLoadingItem = NULL;
+
+static void SetOffset(CSimpleConfig &cfg, CTString &strValue) {
+  CPlacement3D &pl = _pLoadingItem->plOffset;
+  strValue.ScanF("%g;%g;%g", &pl.pl_PositionVector(1), &pl.pl_PositionVector(2), &pl.pl_PositionVector(3));
+};
+
+static void SetRotation(CSimpleConfig &cfg, CTString &strValue) {
+  CPlacement3D &pl = _pLoadingItem->plOffset;
+  strValue.ScanF("%g;%g;%g", &pl.pl_OrientationAngle(1), &pl.pl_OrientationAngle(2), &pl.pl_OrientationAngle(3));
+};
+
+// Reload photo mode items
+static void ReloadPhotoModeItems(void) {
+  CFileList aConfigs;
+  ListGameFiles(aConfigs, "Scripts\\ClassicsPatch\\PhotoMode\\Items\\", "*.amc", 0);
+
+  const INDEX ct = aConfigs.Count();
+  _aPhotoModeItems.PopAll();
+
+  CModelConfig cfg;
+  cfg.AddProcessor("Offset", &SetOffset);
+  cfg.AddProcessor("Rotate", &SetRotation);
+
+  INDEX ctLoaded = 0;
+
+  for (INDEX i = 0; i < ct; i++) {
+    _pLoadingItem = &_aPhotoModeItems.Push();
+    cfg._pmo = &_pLoadingItem->mo;
+
+    if (cfg.SetModel(aConfigs[i], _pLoadingItem->strName)) {
+      ctLoaded++;
+    } else {
+      _aPhotoModeItems.Pop();
+    }
+  }
+
+  CPrintF(TRANS("Loaded %d photo mode items\n"), ctLoaded);
+
+  // Reload pose model
+  GetGameAPI()->GetCamera().ResetPhotoModePose(TRUE);
+};
+
 // Free fly controls
 static INDEX ocam_kidToggle     = KID_P;
 static INDEX ocam_kidToggleInfo = KID_I;
@@ -156,6 +405,13 @@ static INDEX ocam_kidTeleport = KID_X;
 static INDEX ocam_kidReset    = KID_Z;
 static INDEX ocam_kidSpeedUp  = KID_MOUSE1;
 static INDEX ocam_kidRotate   = KID_MOUSE2;
+
+static INDEX ocam_kidPosePrev      = KID_MOUSE2;
+static INDEX ocam_kidPoseNext      = KID_MOUSE1;
+static INDEX ocam_kidItemLeftPrev  = KID_MINUS;
+static INDEX ocam_kidItemLeftNext  = KID_EQUALS;
+static INDEX ocam_kidItemRightPrev = KID_LBRACKET;
+static INDEX ocam_kidItemRightNext = KID_RBRACKET;
 
 // Initialize camera interface
 void CObserverCamera::Init(void)
@@ -192,6 +448,13 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent INDEX ocam_kidSpeedUp;",    &ocam_kidSpeedUp);
   _pShell->DeclareSymbol("persistent INDEX ocam_kidRotate;",     &ocam_kidRotate);
 
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidPosePrev;",      &ocam_kidPosePrev);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidPoseNext;",      &ocam_kidPoseNext);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidItemLeftPrev;",  &ocam_kidItemLeftPrev);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidItemLeftNext;",  &ocam_kidItemLeftNext);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidItemRightPrev;", &ocam_kidItemRightPrev);
+  _pShell->DeclareSymbol("persistent INDEX ocam_kidItemRightNext;", &ocam_kidItemRightNext);
+
   // Camera properties
   _pShell->DeclareSymbol("           user INDEX ocam_bActive;",               &cam_props.bActive);
   _pShell->DeclareSymbol("persistent user INDEX ocam_iShowInfo;",             &cam_props.iShowInfo);
@@ -212,6 +475,26 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("persistent user INDEX ocam_iScreenshotH;", &cam_props.iScreenshotH);
 
   _pShell->DeclareSymbol("user INDEX ocam_bPosingMode;", &cam_props.bPosingMode);
+  _pShell->DeclareSymbol("user INDEX ocam_iPose;",       &cam_props.iPose);
+  _pShell->DeclareSymbol("user INDEX ocam_iPoseItemL;",  &cam_props.iItemL);
+  _pShell->DeclareSymbol("user INDEX ocam_iPoseItemR;",  &cam_props.iItemR);
+
+#if PHOTO_MODE_CUSTOM_POSES
+  _pShell->DeclareSymbol("user INDEX ocam_iPoseLegsAnim;",  &_poseCustom.iLegsAnim);
+  _pShell->DeclareSymbol("user INDEX ocam_iPoseLegsFrame;", &_poseCustom.iLegsFrame);
+  _pShell->DeclareSymbol("user INDEX ocam_iPoseBodyAnim;",  &_poseCustom.iBodyAnim);
+  _pShell->DeclareSymbol("user INDEX ocam_iPoseBodyFrame;", &_poseCustom.iBodyFrame);
+#endif
+  _pShell->DeclareSymbol("user FLOAT ocam_fPoseBodyH;",     &_poseCustom.aBody(1));
+  _pShell->DeclareSymbol("user FLOAT ocam_fPoseBodyP;",     &_poseCustom.aBody(2));
+  _pShell->DeclareSymbol("user FLOAT ocam_fPoseBodyB;",     &_poseCustom.aBody(3));
+
+  _pShell->DeclareSymbol("user void ocam_ReloadPoses(void);", &ReloadPhotoModePoses);
+  _pShell->DeclareSymbol("user void ocam_ReloadItems(void);", &ReloadPhotoModeItems);
+
+  // Load poses and items for the first time
+  ReloadPhotoModePoses();
+  ReloadPhotoModeItems();
 };
 
 // Dummy variable and function for compatibility
@@ -372,13 +655,203 @@ BOOL CObserverCamera::StartRecording(void) {
   return FALSE;
 };
 
-// Recursively freeze all model animations at their current frame
-static void PauseModelAnims(CModelObject &mo) {
-  mo.PauseAnim();
-  mo.NextFrame();
+const CTString _strPoserModel = "ModelsPatch\\PhotoModePoser.mdl";
 
-  FOREACHINLIST(CAttachmentModelObject, amo_lnInMain, mo.mo_lhAttachments, itamo) {
-    PauseModelAnims(itamo->amo_moModelObject);
+// Setup pose model in photo mode for the original player appearance
+BOOL CObserverCamera::SetupPoseModel(CModelObject *pmoOriginal) {
+  // Reset temporary variables
+  cam_aOriginalBody = ANGLE3D(0, 0, 0);
+  cam_iLastItemL = cam_iLastItemR = -1;
+
+  try {
+    // Load the poser base for offsetting the player model
+    cam_moPose.SetData_t(_strPoserModel);
+    cam_moOriginalBody.SetData(NULL);
+
+    // Copy the original appearance onto a poser attachment
+    CAttachmentModelObject *pamo = cam_moPose.AddAttachmentModel(0);
+    CModelObject &moLegs = pamo->amo_moModelObject;
+    moLegs.Copy(*pmoOriginal);
+    moLegs.Synchronize(*pmoOriginal);
+
+    // Cache the original body attachment
+    pamo = moLegs.GetAttachmentModel(PLAYER_ATTACHMENT_TORSO);
+
+    if (pamo != NULL) {
+      cam_moOriginalBody.Copy(pamo->amo_moModelObject);
+      cam_moOriginalBody.Synchronize(pamo->amo_moModelObject);
+      cam_aOriginalBody = pamo->amo_plRelative.pl_OrientationAngle;
+    }
+
+    // Adjust poser size for the model shadow
+    FLOATaabbox3D boxFrame;
+    moLegs.GetCurrentFrameBBox(boxFrame);
+    cam_moPose.StretchSingleModel(boxFrame.Size());
+    return TRUE;
+
+  } catch (char *strError) {
+    CPrintF(TRANS("Cannot setup player model for the photo mode: %s\n"), strError);
+  }
+
+  return FALSE;
+};
+
+// Set new item attachment for a specific hand of the photo mode player body
+void CObserverCamera::SetItemForHand(CModelObject &moBody, BOOL bRight) {
+  INDEX &iLastItem = (bRight ? cam_iLastItemR : cam_iLastItemL);
+  const INDEX iItem = (bRight ? cam_props.iItemR : cam_props.iItemL);
+
+  // Item is already set
+  if (iLastItem == iItem) return;
+  iLastItem = iItem;
+
+  // Find item attachment
+  const INDEX iAttach = (bRight ? BODY_ATTACHMENT_COLT_RIGHT : BODY_ATTACHMENT_COLT_LEFT);
+  CAttachmentModelObject *pamo = moBody.GetAttachmentModel(iAttach);
+
+  // No attachment
+  if (pamo == NULL) return;
+
+  SPhotoModeItem *pItem = GetPhotoModeItem(bRight);
+
+  // Simply hide whatever item there is right now if no item selected
+  if (pItem == NULL) {
+    pamo->amo_moModelObject.StretchModel(FLOAT3D(0, 0, 0));
+    return;
+  }
+
+  // Copy item model and offset it
+  pamo->amo_moModelObject.SetData(NULL);
+  pamo->amo_moModelObject.Copy(pItem->mo);
+
+  CPlacement3D &pl = pamo->amo_plRelative;
+  pl = pItem->plOffset;
+
+  // Mirroring and extra offsetting for the left hand (difference between left and right Colts)
+  if (!bRight) {
+    pl.pl_PositionVector(1)   = -pl.pl_PositionVector(1);
+    pl.pl_OrientationAngle(1) = -pl.pl_OrientationAngle(1);
+    pl.pl_OrientationAngle(3) = -pl.pl_OrientationAngle(3);
+
+    pl.pl_PositionVector += FLOAT3D(0.03f, 0.01f, 0.0f);
+  }
+};
+
+// Update player pose in photo mode
+void CObserverCamera::UpdatePose(CModelObject &moLegs, CModelObject &moOriginal) {
+  CAnimInfo ai;
+
+  // Currently selected pose
+  const SPhotoModePose *pPose = GetPhotoModePose();
+  BOOL bCustomAnims = FALSE;
+
+#if PHOTO_MODE_CUSTOM_POSES
+  bCustomAnims = (_poseCustom.iLegsAnim >= 0 || _poseCustom.iBodyAnim >= 0);
+  if (bCustomAnims) pPose = &_poseCustom;
+#endif
+
+  // Play specified animation for the legs
+  if (pPose != NULL && pPose->iLegsAnim >= 0) {
+    // Pause the animation on some frame only if the frame is specified
+    ULONG ulFlags = (pPose->iLegsFrame >= 0 ? AOF_PAUSED : AOF_LOOPING);
+    moLegs.PlayAnim(pPose->iLegsAnim, ulFlags | AOF_NORESTART);
+
+    if (pPose->iLegsFrame >= 0) {
+      moLegs.GetAnimInfo(pPose->iLegsAnim, ai);
+      moLegs.SelectFrameInTime(ai.ai_SecsPerFrame * pPose->iLegsFrame);
+    }
+
+  // Synchronize animation with the original legs
+  } else {
+    moLegs.CAnimObject::Synchronize(moOriginal);
+  }
+
+  // Get body attachment
+  CAttachmentModelObject *pamoBody = moLegs.GetAttachmentModel(PLAYER_ATTACHMENT_TORSO);
+  if (pamoBody == NULL) return;
+
+  CModelObject &moBody = pamoBody->amo_moModelObject;
+  CAttachmentModelObject *pamoOriginalBody = moOriginal.GetAttachmentModel(PLAYER_ATTACHMENT_TORSO);
+
+  // Set body rotation from the pose
+  if (pPose != NULL) {
+    pamoBody->amo_plRelative.pl_OrientationAngle = pPose->aBody;
+
+  // Synchronize rotation with the original body
+  } else {
+    ANGLE3D aBody = (pamoOriginalBody != NULL ? pamoOriginalBody->amo_plRelative.pl_OrientationAngle : cam_aOriginalBody);
+    pamoBody->amo_plRelative.pl_OrientationAngle = aBody;
+  }
+
+  // Add custom rotation
+  if (!bCustomAnims) {
+    pamoBody->amo_plRelative.pl_OrientationAngle += _poseCustom.aBody;
+  }
+
+  // Restore the original attachments if no items have been specified
+  if (cam_props.iItemL < 0 && cam_props.iItemR < 0) {
+    // Only if requiring a new change
+    if (cam_iLastItemL != -1 || cam_iLastItemR != -1) {
+      cam_iLastItemL = cam_iLastItemR = -1;
+
+      if (cam_moOriginalBody.GetData() != NULL) {
+        moBody.SetData(NULL);
+        moBody.Copy(cam_moOriginalBody);
+        moBody.Synchronize(cam_moOriginalBody);
+      }
+    }
+
+  // Set items for each hand (or remove them)
+  } else {
+    // If there used to be no items selected
+    if (cam_iLastItemL == -1 && cam_iLastItemR == -1) {
+      CAttachmentModelObject *pamoItem;
+
+      // Remove all item attachments from the body
+      FORDELETELIST(CAttachmentModelObject, amo_lnInMain, moBody.mo_lhAttachments, itamo) {
+        pamoItem = itamo;
+        const INDEX i = pamoItem->amo_iAttachedPosition;
+
+        if (i > BODY_ATTACHMENT_HEAD && i <= BODY_ATTACHMENT_ITEM) {
+          pamoItem->amo_lnInMain.Remove();
+          delete pamoItem;
+        }
+      }
+
+      // Add dummy item attachments to each hand, if possible
+      pamoItem = moBody.AddAttachmentModel(BODY_ATTACHMENT_COLT_LEFT);
+
+      if (pamoItem != NULL) {
+        pamoItem->amo_moModelObject.SetData_t(_strPoserModel);
+        pamoItem->amo_moModelObject.StretchModel(FLOAT3D(0, 0, 0));
+      }
+
+      pamoItem = moBody.AddAttachmentModel(BODY_ATTACHMENT_COLT_RIGHT);
+
+      if (pamoItem != NULL) {
+        pamoItem->amo_moModelObject.SetData_t(_strPoserModel);
+        pamoItem->amo_moModelObject.StretchModel(FLOAT3D(0, 0, 0));
+      }
+    }
+
+    SetItemForHand(moBody, FALSE);
+    SetItemForHand(moBody, TRUE);
+  }
+
+  // Play specified animation for the body
+  if (pPose != NULL && pPose->iBodyAnim >= 0) {
+    // Pause the animation on some frame only if the frame is specified
+    ULONG ulFlags = (pPose->iBodyFrame >= 0 ? AOF_PAUSED : AOF_LOOPING);
+    moBody.PlayAnim(pPose->iBodyAnim, ulFlags | AOF_NORESTART);
+
+    if (pPose->iBodyFrame >= 0) {
+      moBody.GetAnimInfo(pPose->iBodyAnim, ai);
+      moBody.SelectFrameInTime(ai.ai_SecsPerFrame * pPose->iBodyFrame);
+    }
+
+  // Synchronize animation with the original body
+  } else if (pamoOriginalBody != NULL) {
+    moBody.CAnimObject::Synchronize(pamoOriginalBody->amo_moModelObject);
   }
 };
 
@@ -387,34 +860,24 @@ CModelObject *CObserverCamera::GetPoseModel(CEntity *penPlayer, CModelObject *pm
   // Photo mode is inactive or this player isn't focused by the camera in photo mode
   if (!IsActive(FALSE) || cam_penViewer != penPlayer) return pmoOriginalAppearance;
 
-  // Reset the model if not in posing mode
-  if (!cam_props.bPosingMode) {
+  BOOL bPose = (cam_props.iPose >= 0);
+
+#if PHOTO_MODE_CUSTOM_POSES
+  bPose |= (_poseCustom.iLegsAnim >= 0 || _poseCustom.iBodyAnim >= 0);
+#endif
+
+  // Reset the model if no pose is selected to reload it again next time
+  if (!bPose) {
     ResetPhotoModePose(TRUE);
     return pmoOriginalAppearance;
   }
 
-  // Setup the photo mode model by copying the player appearance onto an attachment on the first frame of the photo mode
+  // Setup the photo mode model for this player entity
   if (cam_penPosingPlayer != penPlayer) {
     cam_penPosingPlayer = penPlayer;
 
-    try {
-      cam_moPose.SetData_t(CTString("ModelsPatch\\PhotoModePoser.mdl"));
-
-      CAttachmentModelObject *pamo = cam_moPose.AddAttachmentModel(0);
-      CModelObject &moPlayer = pamo->amo_moModelObject;
-      moPlayer.Copy(*pmoOriginalAppearance);
-      moPlayer.Synchronize(*pmoOriginalAppearance);
-
-      PauseModelAnims(moPlayer);
-
-      // Adjust poser size for the model shadow
-      FLOATaabbox3D boxFrame;
-      moPlayer.GetCurrentFrameBBox(boxFrame);
-      cam_moPose.StretchSingleModel(boxFrame.Size());
-
-    } catch (char *strError) {
-      // Exit posing mode if it can't be set up
-      CPrintF(TRANS("Cannot setup player model for the photo mode: %s\n"), strError);
+    if (!SetupPoseModel(pmoOriginalAppearance)) {
+      // Exit posing mode if the pose model could not be set up
       ResetPhotoModePose(FALSE);
       return pmoOriginalAppearance;
     }
@@ -424,22 +887,32 @@ CModelObject *CObserverCamera::GetPoseModel(CEntity *penPlayer, CModelObject *pm
   CAttachmentModelObject *pamo = cam_moPose.GetAttachmentModel(0);
   pamo->amo_plRelative.pl_OrientationAngle(1) = cam_fPoseRotation;
 
-  // Divide offset by poser's stretch to cancel it out
-  pamo->amo_plRelative.pl_PositionVector(1) = cam_vPoseOffset(1) / ClampDn(cam_moPose.mo_Stretch(1), 0.001f);
-  pamo->amo_plRelative.pl_PositionVector(2) = cam_vPoseOffset(2) / ClampDn(cam_moPose.mo_Stretch(2), 0.001f);
-  pamo->amo_plRelative.pl_PositionVector(3) = cam_vPoseOffset(3) / ClampDn(cam_moPose.mo_Stretch(3), 0.001f);
+  // Snap offset to the 0.05m grid and divide it by poser's stretch to cancel it out
+  FLOAT3D vOffset = cam_vPoseOffset;
+  Snap(vOffset(1), 0.05f);
+  Snap(vOffset(2), 0.05f);
+  Snap(vOffset(3), 0.05f);
+  pamo->amo_plRelative.pl_PositionVector(1) = vOffset(1) / ClampDn(cam_moPose.mo_Stretch(1), 0.001f);
+  pamo->amo_plRelative.pl_PositionVector(2) = vOffset(2) / ClampDn(cam_moPose.mo_Stretch(2), 0.001f);
+  pamo->amo_plRelative.pl_PositionVector(3) = vOffset(3) / ClampDn(cam_moPose.mo_Stretch(3), 0.001f);
 
+  CModelObject &moLegs = pamo->amo_moModelObject;
+  UpdatePose(moLegs, *pmoOriginalAppearance);
+
+  // Adjust poser size for the model shadow
+  FLOATaabbox3D boxFrame;
+  moLegs.GetCurrentFrameBBox(boxFrame);
+  cam_moPose.StretchSingleModel(boxFrame.Size());
+
+  // Return set up photo mode pose
   return &cam_moPose;
 };
 
 // Free fly camera control using direct button input
 void CObserverCamera::UpdateControls(void) {
   // Toggle the camera itself
-  const BOOL bBtnToggle = _pInput->GetButtonState(ocam_kidToggle);
-
-  static BOOL _bToggle = FALSE;
-  if (!_bToggle && bBtnToggle) TogglePhotoMode();
-  _bToggle = bBtnToggle;
+  static SCamKey keyToggle;
+  if (keyToggle(ocam_kidToggle)) TogglePhotoMode();
 
   // Camera is disabled
   if (!IsActive()) return;
@@ -448,22 +921,12 @@ void CObserverCamera::UpdateControls(void) {
   _pInput->SetJoyPolling(FALSE);
   _pInput->GetInput(FALSE);
 
-  // Button states for some controls
-  const BOOL bBtnToggleInfo = _pInput->GetButtonState(ocam_kidToggleInfo);
-  const BOOL bBtnBankingL   = _pInput->GetButtonState(ocam_kidBankingL);
-  const BOOL bBtnBankingR   = _pInput->GetButtonState(ocam_kidBankingR);
-  const BOOL bBtnFocus      = _pInput->GetButtonState(ocam_kidFocus);
-  const BOOL bBtnGrid       = _pInput->GetButtonState(ocam_kidGrid);
-  const BOOL bBtnSnap       = _pInput->GetButtonState(ocam_kidSnapshot);
-  const BOOL bBtnRes        = _pInput->GetButtonState(ocam_kidChangeRes);
-  const BOOL bBtnMode       = _pInput->GetButtonState(ocam_kidChangeMode);
-
   // Toggle camera info
-  static BOOL _bToggleInfo = FALSE;
-  if (!_bToggleInfo && bBtnToggleInfo) cam_props.iShowInfo = ClampDn(cam_props.iShowInfo + 1L, 1L) % 3;
-  _bToggleInfo = bBtnToggleInfo;
+  static SCamKey keyToggleInfo;
+  if (keyToggleInfo(ocam_kidToggleInfo)) cam_props.iShowInfo = ClampDn(cam_props.iShowInfo + 1L, 1L) % 3;
 
   // Turn left
+  const BOOL bBtnBankingL = _pInput->GetButtonState(ocam_kidBankingL);
   static BOOL _bLeft = FALSE;
 
   if (!_bLeft && bBtnBankingL) cam_ctl.bBankingL = TRUE;
@@ -473,6 +936,7 @@ void CObserverCamera::UpdateControls(void) {
   _bLeft = bBtnBankingL;
 
   // Turn right
+  const BOOL bBtnBankingR = _pInput->GetButtonState(ocam_kidBankingR);
   static BOOL _bRight = FALSE;
 
   if (!_bRight && bBtnBankingR) cam_ctl.bBankingR = TRUE;
@@ -482,23 +946,21 @@ void CObserverCamera::UpdateControls(void) {
   _bRight = bBtnBankingR;
 
   // Toggle focus
-  static BOOL _bFocus = FALSE;
-  if (!_bFocus && bBtnFocus) cam_ctl.iFocusPlayer = ClampDn(cam_ctl.iFocusPlayer + 1L, 1L) % 3;
-  _bFocus = bBtnFocus;
+  static SCamKey keyFocus;
+  if (keyFocus(ocam_kidFocus)) cam_ctl.iFocusPlayer = ClampDn(cam_ctl.iFocusPlayer + 1L, 1L) % 3;
 
   // Toggle grid
-  static BOOL _bGrid = FALSE;
-  if (!_bGrid && bBtnGrid) cam_props.bGrid = !cam_props.bGrid;
-  _bGrid = bBtnGrid;
+  static SCamKey keyGrid;
+  if (keyGrid(ocam_kidGrid)) cam_props.bGrid = !cam_props.bGrid;
 
   // Take snapshot
-  static BOOL _bSnap = FALSE;
-  if (!_bSnap && bBtnSnap) cam_ctl.bSnapshot = TRUE;
-  _bSnap = bBtnSnap;
+  static SCamKey keySnap;
+  if (keySnap(ocam_kidSnapshot)) cam_ctl.bSnapshot = TRUE;
 
   // Change screenshot resolution
-  static BOOL _bRes = FALSE;
-  if (!_bRes && bBtnRes) {
+  static SCamKey keyRes;
+
+  if (keyRes(ocam_kidChangeRes)) {
     switch (cam_props.iScreenshotW)
     {
       case 1920: // 1080p 21:9
@@ -522,12 +984,12 @@ void CObserverCamera::UpdateControls(void) {
         break;
     }
   }
-  _bRes = bBtnRes;
 
   // Change posing mode
-  static BOOL _bChangeMode = FALSE;
-  if (!_bChangeMode && bBtnMode) cam_props.bPosingMode = !cam_props.bPosingMode;
-  _bChangeMode = bBtnMode;
+  static SCamKey keyChangeMode;
+  if (keyChangeMode(ocam_kidChangeMode)) cam_props.bPosingMode = !cam_props.bPosingMode;
+
+  CustomPoseKeys();
 
   // Movement and zoom
   cam_ctl.bMoveF = _pInput->GetButtonState(ocam_kidMoveF_1) || _pInput->GetButtonState(ocam_kidMoveF_2);
@@ -546,6 +1008,23 @@ void CObserverCamera::UpdateControls(void) {
   if (_pInput->GetButtonState(ocam_kidReset)) {
     ResetCameraAngles();
   }
+
+  // Player pose customization
+  if (!cam_props.bPosingMode) return;
+
+  static SCamKey keyPose1, keyPose2, keyItemL1, keyItemL2, keyItemR1, keyItemR2;
+
+  // Change pose
+  if (keyPose1(ocam_kidPosePrev)) cam_props.iPose = Clamp(cam_props.iPose - 1L, -1L, _aPhotoModePoses.Count());
+  if (keyPose2(ocam_kidPoseNext)) cam_props.iPose = Clamp(cam_props.iPose + 1L, -1L, _aPhotoModePoses.Count());
+
+  // Change left item
+  if (keyItemL1(ocam_kidItemLeftPrev)) cam_props.iItemL = Clamp(cam_props.iItemL - 1L, -1L, _aPhotoModeItems.Count());
+  if (keyItemL2(ocam_kidItemLeftNext)) cam_props.iItemL = Clamp(cam_props.iItemL + 1L, -1L, _aPhotoModeItems.Count());
+
+  // Change right item
+  if (keyItemR1(ocam_kidItemRightPrev)) cam_props.iItemR = Clamp(cam_props.iItemR - 1L, -1L, _aPhotoModeItems.Count());
+  if (keyItemR2(ocam_kidItemRightNext)) cam_props.iItemR = Clamp(cam_props.iItemR + 1L, -1L, _aPhotoModeItems.Count());
 };
 
 //================================================================================================//
@@ -646,6 +1125,8 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
   PrintLine(pdp, strSwitchMode, pixInfoY, strModeCommand);
   pixInfoY += GetFontHeight(pdp);
 
+  PrintCustomPose(*this, pdp);
+
   if (cam_props.iShowInfo <= 0) return;
 
   // Relevant camera properties
@@ -700,8 +1181,25 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
       pixInfoY += GetFontHeight(pdp);
       PrintLine(pdp, TRANS("Player posing"), pixInfoY, "", TRUE);
 
-      PrintLine(pdp, TRANS("Use movement keys to offset the player model"), pixInfoY, "");
-      PrintLine(pdp, TRANS("Use tilt keys to rotate the player model"), pixInfoY, "");
+      PrintLine(pdp, CTString(0, TRANS("Select player pose: %s / %s"), CameraButton(ocam_kidPosePrev), CameraButton(ocam_kidPoseNext)), pixInfoY, "");
+      PrintLine(pdp, CTString(0, TRANS("Select left hand item: %s / %s"), CameraButton(ocam_kidItemLeftPrev), CameraButton(ocam_kidItemLeftNext)), pixInfoY, "");
+      PrintLine(pdp, CTString(0, TRANS("Select right hand item: %s / %s"), CameraButton(ocam_kidItemRightPrev), CameraButton(ocam_kidItemRightNext)), pixInfoY, "");
+      pixInfoY += GetFontHeight(pdp);
+
+      PrintLine(pdp, TRANS("Selected pose") + CTString(": ") + GetPhotoModePoseName(), pixInfoY, "ocam_iPose");
+      PrintLine(pdp, TRANS("Left hand")  + CTString(": ") + GetPhotoModeItemName(FALSE), pixInfoY, "ocam_iPoseItemL");
+      PrintLine(pdp, TRANS("Right hand") + CTString(": ") + GetPhotoModeItemName(TRUE),  pixInfoY, "ocam_iPoseItemR");
+
+      if (_poseCustom.aBody != ANGLE3D(0, 0, 0)) {
+        const ANGLE3D &aBody = _poseCustom.aBody;
+        PrintLine(pdp, TRANS("Custom body rotation") + CTString(0, ": ^c9FDFFF%.1f^C; ^c9FDFFF%.1f^C; ^c9FDFFF%.1f", aBody(1), aBody(2), aBody(3)), pixInfoY, "ocam_fPoseBodyH/P/B");
+      }
+
+      if (cam_props.iPose >= 0) {
+        pixInfoY += GetFontHeight(pdp);
+        PrintLine(pdp, TRANS("Use movement keys to offset the player model"), pixInfoY, "");
+        PrintLine(pdp, TRANS("Use tilt keys to rotate the player model"), pixInfoY, "");
+      }
     }
   }
 

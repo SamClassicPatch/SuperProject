@@ -62,6 +62,8 @@ class CORE_API CObserverCamera {
       BOOL bGrid; // Rule of thirds grid rendering
       INDEX iScreenshotW, iScreenshotH; // Screenshot resolution (limited to 1x1 .. 20000x20000)
       BOOL bPosingMode; // Currently in the player posing mode instead of free fly
+      INDEX iPose; // Selected player pose (-1 for no posing; 0 for a copy of the current appearance)
+      INDEX iItemL, iItemR; // Selected items for each hand of the player pose (-1 for current item; 0 for none)
 
       CameraProps() {
         Reset();
@@ -85,6 +87,7 @@ class CORE_API CObserverCamera {
         iScreenshotH = 1080;
 
         bPosingMode = FALSE;
+        iPose = iItemL = iItemR = -1;
       };
     };
 
@@ -133,10 +136,13 @@ class CORE_API CObserverCamera {
 
     // Photo mode player posing
     CModelObject cam_moPose; // Player model for posing
+    CModelObject cam_moOriginalBody; // Original player body for restoring item attachments
+    ANGLE3D cam_aOriginalBody; // Rotation of the original player body attachment
     CEntity *cam_penPosingPlayer; // Player that needs to be posed
 
     FLOAT3D cam_vPoseOffset; // Player model offset (all from -1 to +1)
     FLOAT cam_fPoseRotation; // Player model rotation
+    INDEX cam_iLastItemL, cam_iLastItemR; // For updating pose items only once
 
   public:
     // Constructor
@@ -194,6 +200,16 @@ class CORE_API CObserverCamera {
 
     // Retrieve a photo mode model for some player entity
     CModelObject *GetPoseModel(CEntity *penPlayer, CModelObject *pmoOriginalAppearance);
+
+  private:
+    // Setup pose model in photo mode for the original player appearance
+    BOOL SetupPoseModel(CModelObject *pmoOriginal);
+
+    // Set new item attachment for a specific hand of the photo mode player body
+    void SetItemForHand(CModelObject &moBody, BOOL bRight);
+
+    // Update player pose in photo mode
+    void UpdatePose(CModelObject &moLegs, CModelObject &moOriginal);
 
   public:
     // Direct button input using default controls
