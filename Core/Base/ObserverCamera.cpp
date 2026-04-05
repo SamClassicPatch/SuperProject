@@ -71,8 +71,11 @@ struct SCamKey {
 
 #if PHOTO_MODE_CUSTOM_POSES
 
+static INDEX ocam_bCustomPoses = FALSE;
+
 // [Cecil] TEMP: Lists of animations for custom poses
 void PrintCustomPose(CObserverCamera &ocam, CDrawPort *pdp) {
+  if (!ocam_bCustomPoses) return;
   if (_poseCustom.iLegsAnim < 0 && _poseCustom.iBodyAnim < 0) return;
 
   // Get legs attachment
@@ -126,6 +129,7 @@ void PrintCustomPose(CObserverCamera &ocam, CDrawPort *pdp) {
 
 // [Cecil] TEMP: Custom pose customization
 void CustomPoseKeys(void) {
+  if (!ocam_bCustomPoses) return;
   static SCamKey keyLegsA1, keyLegsA2, keyBodyA1, keyBodyA2, keyLegsF1, keyLegsF2, keyBodyF1, keyBodyF2;
 
   if (keyLegsA1(KID_NUM8)) _poseCustom.iLegsAnim = ClampDn(_poseCustom.iLegsAnim - 1L, -1L);
@@ -480,6 +484,7 @@ void CObserverCamera::Init(void)
   _pShell->DeclareSymbol("user INDEX ocam_iPoseItemR;",  &cam_props.iItemR);
 
 #if PHOTO_MODE_CUSTOM_POSES
+  _pShell->DeclareSymbol("user INDEX ocam_bCustomPoses;",   &ocam_bCustomPoses);
   _pShell->DeclareSymbol("user INDEX ocam_iPoseLegsAnim;",  &_poseCustom.iLegsAnim);
   _pShell->DeclareSymbol("user INDEX ocam_iPoseLegsFrame;", &_poseCustom.iLegsFrame);
   _pShell->DeclareSymbol("user INDEX ocam_iPoseBodyAnim;",  &_poseCustom.iBodyAnim);
@@ -746,8 +751,10 @@ void CObserverCamera::UpdatePose(CModelObject &moLegs, CModelObject &moOriginal)
   BOOL bCustomAnims = FALSE;
 
 #if PHOTO_MODE_CUSTOM_POSES
-  bCustomAnims = (_poseCustom.iLegsAnim >= 0 || _poseCustom.iBodyAnim >= 0);
-  if (bCustomAnims) pPose = &_poseCustom;
+  if (ocam_bCustomPoses) {
+    bCustomAnims = (_poseCustom.iLegsAnim >= 0 || _poseCustom.iBodyAnim >= 0);
+    if (bCustomAnims) pPose = &_poseCustom;
+  }
 #endif
 
   // Play specified animation for the legs
@@ -863,7 +870,9 @@ CModelObject *CObserverCamera::GetPoseModel(CEntity *penPlayer, CModelObject *pm
   BOOL bPose = (cam_props.iPose >= 0);
 
 #if PHOTO_MODE_CUSTOM_POSES
-  bPose |= (_poseCustom.iLegsAnim >= 0 || _poseCustom.iBodyAnim >= 0);
+  if (ocam_bCustomPoses) {
+    bPose |= (_poseCustom.iLegsAnim >= 0 || _poseCustom.iBodyAnim >= 0);
+  }
 #endif
 
   // Reset the model if no pose is selected to reload it again next time

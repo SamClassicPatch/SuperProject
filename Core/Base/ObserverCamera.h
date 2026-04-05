@@ -71,7 +71,7 @@ class CORE_API CObserverCamera {
 
       void Reset(void) {
         bActive = FALSE;
-        iShowInfo = 2;
+        iShowInfo = 1;
         bPlaybackSpeedControl = FALSE;
         bSmoothPlayback = FALSE;
         fSmoothTension = 0.0f;
