@@ -1564,7 +1564,9 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     pdp->DrawLine(0, pixGridH*2+1, pixW, pixGridH*2+1, colGrid);
   }
 
-  PrintCameraInfo(pdp);
+  if (cam_props.iShowInfo >= 0) {
+    PrintCameraInfo(pdp);
+  }
 
   // Listen to world sounds
   cam_sliWorld.sli_vPosition = cp.Pos();
