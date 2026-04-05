@@ -1,0 +1,8 @@
+Name: Serious Bomb
+{
+  Offset: 0; -0.02; 0
+  Rotate: 180; 0; 0
+
+  Model:   TFNM ModelsMP\Items\PowerUps\SeriousBomb\SeriousBomb.mdl
+  Texture: TFNM ModelsMP\Items\PowerUps\SeriousBomb\SeriousBomb.tex
+}

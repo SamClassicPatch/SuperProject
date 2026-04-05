@@ -1,0 +1,32 @@
+Name: MKIII Grenade Launcher
+{
+  Offset: 0; -0.14; -0.61
+  Rotate: 0; 2; 0
+
+  Model:   TFNM Models\Weapons\GrenadeLauncher\GrenadeLauncherItem.mdl
+  Texture: TFNM Models\Weapons\GrenadeLauncher\Body.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Weapons\GrenadeLauncher\Grenadeback.mdl
+    Texture: TFNM Models\Weapons\GrenadeLauncher\MovingPipe.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Weapons\GrenadeLauncher\Body.mdl
+    Texture: TFNM Models\Weapons\GrenadeLauncher\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Weapons\GrenadeLauncher\MovingPipe.mdl
+    Texture: TFNM Models\Weapons\GrenadeLauncher\MovingPipe.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+}

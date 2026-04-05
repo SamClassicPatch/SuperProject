@@ -1,0 +1,32 @@
+Name: 12 Gauge Pump Action Shotgun
+{
+  Offset: -0.01; -0.03; -0.47
+  Rotate: 0; 0; 0
+
+  Model:   TFNM Models\Weapons\SingleShotgun\SingleShotgunItem.mdl
+  Texture: TFNM Models\Weapons\SingleShotgun\Barrels.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Weapons\SingleShotgun\Handle.mdl
+    Texture: TFNM Models\Weapons\SingleShotgun\Handle.tex
+    Reflection: TFNM Models\ReflectionTextures\DarkMetal.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Weapons\SingleShotgun\Barrels.mdl
+    Texture: TFNM Models\Weapons\SingleShotgun\Barrels.tex
+    Reflection: TFNM Models\ReflectionTextures\DarkMetal.tex
+    Specular:   TFNM Models\SpecularTextures\Weak.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Weapons\SingleShotgun\Slider.mdl
+    Texture: TFNM Models\Weapons\SingleShotgun\Barrels.tex
+    Reflection: TFNM Models\ReflectionTextures\DarkMetal.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+}

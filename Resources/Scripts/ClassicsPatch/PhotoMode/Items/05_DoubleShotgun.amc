@@ -1,0 +1,32 @@
+Name: Double Barrel Coach Gun
+{
+  Offset: 0; -0.12; -0.3
+  Rotate: 0; 0; 0
+
+  Model:   TFNM Models\Weapons\DoubleShotgun\DoubleShotgunItem.mdl
+  Texture: TFNM Models\Weapons\DoubleShotgun\Ammo.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Weapons\DoubleShotgun\Dshotgunhandle.mdl
+    Texture: TFNM Models\Weapons\DoubleShotgun\Handle.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Weapons\DoubleShotgun\Dshotgunbarrels.mdl
+    Texture: TFNM Models\Weapons\DoubleShotgun\Barrels.tex
+    Reflection: TFNM Models\ReflectionTextures\BWRiples01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Weapons\DoubleShotgun\Switch.mdl
+    Texture: TFNM Models\Weapons\DoubleShotgun\Switch.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+}

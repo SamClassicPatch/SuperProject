@@ -1,0 +1,16 @@
+Name: SBC Cannon
+{
+  Offset: 0.035; -0.2; -0.45
+  Rotate: 0; 0; 0
+
+  Model:   TFNM Models\Weapons\Cannon\Cannon.mdl
+  Texture: TFNM Models\Weapons\Cannon\Body.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Weapons\Cannon\Body.mdl
+    Texture: TFNM Models\Weapons\Cannon\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+}

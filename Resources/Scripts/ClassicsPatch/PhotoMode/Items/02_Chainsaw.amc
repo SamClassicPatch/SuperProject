@@ -1,0 +1,32 @@
+Name: 'Bonecracker' P-LAH Chainsaw
+{
+  Offset: 0; -0.3; -0.97
+  Rotate: 0; 0; 0
+
+  Model:   TFNM ModelsMP\Weapons\Chainsaw\ChainsawForPlayer.mdl
+  Texture: TFNM ModelsMP\Weapons\Chainsaw\Body.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM ModelsMP\Weapons\Chainsaw\BodyForPlayer.mdl
+    Texture: TFNM ModelsMP\Weapons\Chainsaw\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM ModelsMP\Weapons\Chainsaw\Blade.mdl
+    Texture: TFNM ModelsMP\Weapons\Chainsaw\Blade.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+
+    Attachment: 0
+    {
+      Model:   TFNM ModelsMP\Weapons\Chainsaw\Teeth.mdl
+      Texture: TFNM ModelsMP\Weapons\Chainsaw\Teeth.tex
+      Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+      Specular:   TFNM Models\SpecularTextures\Medium.tex
+    }
+  }
+}

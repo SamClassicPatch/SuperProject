@@ -1,0 +1,48 @@
+Name: XL2 Lasergun
+{
+  Offset: 0; -0.03; -0.49
+  Rotate: 0; 0; 0
+
+  Model:   TFNM Models\Weapons\Laser\LaserItem.mdl
+  Texture: TFNM Models\Weapons\Laser\Body.tex
+
+  Attachment: 0
+  {
+    Model:   TFNM Models\Weapons\Laser\Body.mdl
+    Texture: TFNM Models\Weapons\Laser\Body.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 1
+  {
+    Model:   TFNM Models\Weapons\Laser\Barrel.mdl
+    Texture: TFNM Models\Weapons\Laser\Barrel.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 2
+  {
+    Model:   TFNM Models\Weapons\Laser\Barrel.mdl
+    Texture: TFNM Models\Weapons\Laser\Barrel.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 3
+  {
+    Model:   TFNM Models\Weapons\Laser\Barrel.mdl
+    Texture: TFNM Models\Weapons\Laser\Barrel.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+
+  Attachment: 4
+  {
+    Model:   TFNM Models\Weapons\Laser\Barrel.mdl
+    Texture: TFNM Models\Weapons\Laser\Barrel.tex
+    Reflection: TFNM Models\ReflectionTextures\LightMetal01.tex
+    Specular:   TFNM Models\SpecularTextures\Medium.tex
+  }
+}

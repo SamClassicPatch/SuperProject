@@ -1,0 +1,8 @@
+Name: Military Knife
+{
+  Offset: 0; -0.035; -0.065
+  Rotate: 0; 15; 0
+
+  Model:   TFNM Models\Weapons\Knife\KnifeItem.mdl
+  Texture: TFNM Models\Weapons\Knife\KnifeItem.tex
+}
