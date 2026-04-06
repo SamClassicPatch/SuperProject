@@ -227,7 +227,7 @@ static void LoadCustomScripts(void) {
   CTSingleLock sl(&_csScripts, TRUE);
 
   CFileList aScripts;
-  ListGameFiles(aScripts, "Scripts\\Squirrel\\Custom\\", "*.nut", 0);
+  ListGameFiles(aScripts, "Scripts\\Squirrel\\Custom\\", "*.nut", FLF_RECURSIVE | FLF_SEARCHMOD);
 
   const INDEX ct = aScripts.Count();
 

@@ -192,6 +192,20 @@ VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false)
     RegisterTimer();
     RegisterWorld();
   }
+
+  // Include global scripts
+  CFileList aScripts;
+  ListGameFiles(aScripts, "Scripts\\Squirrel\\Includes\\", "*.nut", FLF_RECURSIVE | FLF_SEARCHMOD);
+
+  const INDEX ct = aScripts.Count();
+
+  for (INDEX i = 0; i < ct; i++) {
+    const CTFileName &fnm = aScripts[i];
+
+    if (!ExecuteFile(fnm, NULL)) {
+      CPrintF("^cff0000Cannot include global script (%s):\n%s\n", fnm.str_String, GetError());
+    }
+  }
 };
 
 VM::~VM() {
