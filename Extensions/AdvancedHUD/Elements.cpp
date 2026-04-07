@@ -318,7 +318,10 @@ void CHud::DrawCorrectTexture(CTextureObject *pto, FLOAT fX, FLOAT fY, FLOAT fWi
 #if SE1_GAME != SS_TFE
 
 // Draw sniper mask
-void CHud::DrawSniperMask(void) {
+void CHud::DrawSniperMask(const CPlayer *penOwner) {
+  CPlayerWeapons &enMyWeapons = (CPlayerWeapons &)*penOwner->m_penWeapons;
+  if (enMyWeapons.m_iCurrentWeapon != WEAPON_SNIPER || !enMyWeapons.m_bSniping) return;
+
   // Determine location
   const FLOAT fW = _vpixScreen(1);
   const FLOAT fH = _vpixScreen(2);
@@ -392,8 +395,7 @@ void CHud::DrawSniperMask(void) {
   }
 
   // Reload indicator
-  DrawCorrectTexture(&tex.toSniperLed, fX - 37.0f * fScalingY,
-    fY + 36.0f * fScalingY, 15.0f * fScalingY, colLED);
+  DrawCorrectTexture(&tex.toSniperLed, fX - 37.0f * fScalingY, fY + 36.0f * fScalingY, 15.0f * fScalingY, colLED);
 
   if (_vScaling(1) >= 1.0f) {
     FLOAT fIconSize;
@@ -428,23 +430,17 @@ void CHud::DrawSniperMask(void) {
     const COLOR colDetails = COL_ScopeDetails() | 0x99;
 
     // Arrow + distance
-    DrawCorrectTexture(&tex.toSniperArrow, fX - fLeftX * fScalingY,
-      fY - fLeftYU * fScalingY, fIconSize * fScalingY, colDetails);
+    DrawCorrectTexture(&tex.toSniperArrow, fX - fLeftX * fScalingY, fY - fLeftYU * fScalingY, fIconSize * fScalingY, colDetails);
 
     CTString strTmp = "---.-";
-
-    if (fDistance <= 9999.9f) {
-      strTmp.PrintF("%.1f", fDistance);
-    }
+    if (fDistance <= 9999.9f) strTmp.PrintF("%.1f", fDistance);
 
     _pdp->PutTextC(strTmp, fX - fLeftX * fScalingY, fY + fLeftYD * fScalingY, colMask | 0xAA);
 
     // Eye + zoom level
-    DrawCorrectTexture(&tex.toSniperEye, fX + fRightX * fScalingY,
-      fY - fRightYU * fScalingY, fIconSize * fScalingY, colDetails);
+    DrawCorrectTexture(&tex.toSniperEye, fX + fRightX * fScalingY, fY - fRightYU * fScalingY, fIconSize * fScalingY, colDetails);
 
     strTmp.PrintF("%.1fx", fZoom);
-
     _pdp->PutTextC(strTmp, fX + fRightX * fScalingY, fY + fRightYD * fScalingY, colMask | 0xAA);
   }
 };

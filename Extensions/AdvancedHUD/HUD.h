@@ -183,6 +183,7 @@ class CHud {
 
     // Reset scaling and unit sizes
     inline void ResetScale(FLOAT fScale) {
+      if (_fCustomScaling == fScale) return; // Same scale
       _fCustomScaling = fScale;
 
       const PIX pixChar = _pfdCurrentNumbers->GetWidth() + _pfdCurrentNumbers->GetCharSpacing() + 1;
@@ -196,6 +197,8 @@ class CHud {
 
     // Scale unit sizes by a factor
     inline FLOAT Rescale(FLOAT fFactor) {
+      if (fFactor == 1.0f) return 1.0f; // No difference
+
       const FLOAT fUpperSize = (_fCustomScaling * fFactor) / _fCustomScaling;
       _fCustomScaling *= fUpperSize;
 
@@ -270,7 +273,7 @@ class CHud {
 
   #if SE1_GAME != SS_TFE
     // Draw sniper mask
-    void DrawSniperMask(void);
+    void DrawSniperMask(const CPlayer *penOwner);
   #endif
 
   // Parts of the HUD
@@ -286,9 +289,12 @@ class CHud {
     void RenderVitals(void);
     void RenderCurrentWeapon(SIconTexture **pptoWantedWeapon, SIconTexture **pptoCurrentAmmo);
     void RenderActiveArsenal(SIconTexture *ptoAmmo);
+    void RenderWeaponSelection(SIconTexture *ptoWeapon);
     void RenderBars(void);
     void RenderGameModeInfo(void);
+    void RenderLatency(void);
     void RenderCheats(void);
+    void RenderClock(void);
 
   // HUD colors
   public:

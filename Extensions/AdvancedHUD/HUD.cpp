@@ -43,14 +43,12 @@ void CHud::UpdateWeaponArsenal(void) {
   GetAmmo()[2].iMaxAmmo = _penWeapons->m_iMaxRockets;
   GetAmmo()[3].iAmmo    = _penWeapons->m_iGrenades;
   GetAmmo()[3].iMaxAmmo = _penWeapons->m_iMaxGrenades;
-
 #if SE1_GAME != SS_TFE
   GetAmmo()[4].iAmmo    = _penWeapons->m_iNapalm;
   GetAmmo()[4].iMaxAmmo = _penWeapons->m_iMaxNapalm;
   GetAmmo()[5].iAmmo    = _penWeapons->m_iSniperBullets;
   GetAmmo()[5].iMaxAmmo = _penWeapons->m_iMaxSniperBullets;
 #endif
-
   GetAmmo()[6].iAmmo    = _penWeapons->m_iElectricity;
   GetAmmo()[6].iMaxAmmo = _penWeapons->m_iMaxElectricity;
   GetAmmo()[7].iAmmo    = _penWeapons->m_iIronBalls;
@@ -184,12 +182,6 @@ BOOL CHud::PrepareHUD(CPlayer *penCurrent, CDrawPort *pdpCurrent)
 // Render entire interface
 void CHud::DrawHUD(const CPlayer *penCurrent, BOOL bSnooping, const CPlayer *penOwner)
 {
-  static CSymbolPtr pfWeapons("hud_tmWeaponsOnScreen");
-  static CSymbolPtr pbLatency("hud_bShowLatency");
-
-  const FLOAT tmWeaponsOnScreen = pfWeapons.GetFloat();
-  const INDEX bShowLatency = pbLatency.GetIndex();
-
   // No player or no owner for snooping
   if (penCurrent == NULL || penCurrent->GetFlags() & ENF_DELETED) return;
   if (bSnooping && penOwner == NULL) return;
@@ -207,12 +199,11 @@ void CHud::DrawHUD(const CPlayer *penCurrent, BOOL bSnooping, const CPlayer *pen
 
 #if SE1_GAME != SS_TFE
   // Render sniper mask (even while snooping)
-  CPlayerWeapons &enMyWeapons = (CPlayerWeapons &)*penOwner->m_penWeapons;
-
-  if (enMyWeapons.m_iCurrentWeapon == WEAPON_SNIPER && enMyWeapons.m_bSniping) {
-    DrawSniperMask();
-  }
+  DrawSniperMask(penOwner);
 #endif
+
+  // Prepare weapon arsenal
+  UpdateWeaponArsenal();
 
   // Set font and unit sizes
   _pdp->SetFont(_pfdCurrentNumbers);
@@ -229,52 +220,9 @@ void CHud::DrawHUD(const CPlayer *penCurrent, BOOL bSnooping, const CPlayer *pen
   RenderActiveArsenal(ptoCurrentAmmo);
   ResetScale(_fHudScaling);
 
-  // If weapon change is in progress
-  if (_tmNow - _penWeapons->m_tmWeaponChangeRequired < tmWeaponsOnScreen) {
-    // Determine amount of available weapons
-    INDEX ctWeapons = 0;
+  RenderWeaponSelection(ptoWantedWeapon);
 
-    for (INDEX iCount = 1; iCount < GetWeapons().Count(); iCount++) {
-      if (GetWeapons()[iCount].iWeapon != WEAPON_NONE && GetWeapons()[iCount].iWeapon != WEAPON_DOUBLECOLT
-       && GetWeapons()[iCount].bHasWeapon) {
-        ctWeapons++;
-      }
-    }
-
-    FLOAT fCol = 320.0f - (ctWeapons * units.fAdv - units.fOne) * 0.5f;
-    FLOAT fRow = _vpixBR(2) - units.fHalf - units.fNext * 3;
-
-    // Display all available weapons
-    for (INDEX iWeapon = 0; iWeapon < GetWeapons().Count(); iWeapon++) {
-      HudWeapon &wiInfo = GetWeapons()[iWeapon];
-
-      // Skip if no weapon
-      if (wiInfo.iWeapon == WEAPON_NONE || wiInfo.iWeapon == WEAPON_DOUBLECOLT || !wiInfo.bHasWeapon) {
-        continue;
-      }
-
-      // Display weapon icon
-      COLOR colBorder = COL_WeaponBorder();
-      COLOR colIcon = COL_WeaponIcon();
-
-      // No ammo
-      if (wiInfo.paiAmmo != NULL && wiInfo.paiAmmo->iAmmo == 0) {
-        colBorder = colIcon = COL_WeaponNoAmmo();
-
-      // Selected weapon
-      } else if (ptoWantedWeapon == wiInfo.ptoWeapon) {
-        colBorder = colIcon = COL_WeaponWanted();
-      }
-
-      DrawBorder(fCol, fRow, units.fOne, units.fOne, colBorder);
-      DrawIcon(fCol, fRow, *wiInfo.ptoWeapon, colIcon, 1.0f, FALSE);
-
-      // Advance to the next position
-      fCol += units.fAdv;
-    }
-  }
-
-  Rescale(0.5f / _fWideAdjustment);
+  Rescale(0.7f);
   RenderBars();
   ResetScale(_fHudScaling);
 
@@ -282,54 +230,9 @@ void CHud::DrawHUD(const CPlayer *penCurrent, BOOL bSnooping, const CPlayer *pen
   RenderGameModeInfo();
   ResetScale(_fHudScaling);
 
-  // Display local client latency
-  if (bShowLatency) {
-    const FLOAT fTextScale = (_vScaling(1) + 1) * 0.5f * _fTextFontScale;
-
-    _pfdCurrentText->SetFixedWidth();
-    _pdp->SetFont(_pfdCurrentText);
-    _pdp->SetTextScaling(fTextScale);
-    _pdp->SetTextCharSpacing(-2.0f * fTextScale);
-
-    CTString strLatency;
-    strLatency.PrintF("%4.0fms", _penPlayer->m_tmLatency * 1000.0f);
-
-    const PIX pixFontHeight = _pfdCurrentText->GetHeight() * fTextScale + fTextScale + 1;
-    _pdp->PutTextR(strLatency, _vpixScreen(1), _vpixScreen(2) - pixFontHeight, C_WHITE | CT_OPAQUE);
-  }
-
-  // Restore font defaults
-  _pfdCurrentText->SetVariableWidth();
-
+  RenderLatency();
   RenderCheats();
-
-#if SE1_GAME == SS_TFE
-  // Display real time
-  INDEX iClockMode = _psShowClock.GetIndex();
-
-  if (!ClassicsCore_IsCustomModActive() && iClockMode) {
-    // Set font
-    _pdp->SetFont(_pfdConsoleFont);
-    _pdp->SetTextScaling(1.0f);
-    _pdp->SetTextAspect(1.0f);
-
-    // Determine time
-    time_t iLongTime;
-    time(&iLongTime);
-    tm *tmNewTime = localtime(&iLongTime);
-
-    CTString strTime;
-
-    // Show seconds as extra
-    if (iClockMode > 1) {
-      strTime.PrintF("%2d:%02d:%02d", tmNewTime->tm_hour, tmNewTime->tm_min, tmNewTime->tm_sec);
-    } else {
-      strTime.PrintF("%2d:%02d", tmNewTime->tm_hour, tmNewTime->tm_min);
-    }
-
-    _pdp->PutTextR(strTime, _vpixScreen(1) - 3, 2, C_lYELLOW | CT_OPAQUE);
-  }
-#endif
+  RenderClock();
 };
 
 // Display tags above players
@@ -551,13 +454,11 @@ void CHud::Initialize(void) {
   NEW_AMMO(&tex.toAIronBall);
 
   // Added in order of appearance instead of using 'aiWeaponRemap'
-  NEW_WEAPON(WEAPON_NONE,  NULL);
-  NEW_WEAPON(WEAPON_KNIFE, &tex.toWKnife);
-
-  #if SE1_GAME != SS_TFE
-    NEW_WEAPON(WEAPON_CHAINSAW, &tex.toWChainsaw, NULL);
-  #endif
-
+  NEW_WEAPON(WEAPON_NONE,            NULL);
+  NEW_WEAPON(WEAPON_KNIFE,           &tex.toWKnife);
+#if SE1_GAME != SS_TFE
+  NEW_WEAPON(WEAPON_CHAINSAW,        &tex.toWChainsaw, NULL);
+#endif
   NEW_WEAPON(WEAPON_COLT,            &tex.toWColt);
   NEW_WEAPON(WEAPON_DOUBLECOLT,      &tex.toWColt);
   NEW_WEAPON(WEAPON_SINGLESHOTGUN,   &tex.toWSingleShotgun,   &aAmmo[0]);
@@ -566,14 +467,12 @@ void CHud::Initialize(void) {
   NEW_WEAPON(WEAPON_MINIGUN,         &tex.toWMinigun,         &aAmmo[1]);
   NEW_WEAPON(WEAPON_ROCKETLAUNCHER,  &tex.toWRocketLauncher,  &aAmmo[2]);
   NEW_WEAPON(WEAPON_GRENADELAUNCHER, &tex.toWGrenadeLauncher, &aAmmo[3]);
-
-  #if SE1_GAME != SS_TFE
-    NEW_WEAPON(WEAPON_FLAMER, &tex.toWFlamer, &aAmmo[4]);
-    NEW_WEAPON(WEAPON_SNIPER, &tex.toWSniper, &aAmmo[5]);
-  #endif
-
-  NEW_WEAPON(WEAPON_LASER,      &tex.toWLaser,      &aAmmo[6]);
-  NEW_WEAPON(WEAPON_IRONCANNON, &tex.toWIronCannon, &aAmmo[7]);
+#if SE1_GAME != SS_TFE
+  NEW_WEAPON(WEAPON_FLAMER,          &tex.toWFlamer,          &aAmmo[4]);
+  NEW_WEAPON(WEAPON_SNIPER,          &tex.toWSniper,          &aAmmo[5]);
+#endif
+  NEW_WEAPON(WEAPON_LASER,           &tex.toWLaser,           &aAmmo[6]);
+  NEW_WEAPON(WEAPON_IRONCANNON,      &tex.toWIronCannon,      &aAmmo[7]);
 };
 
 // Clean everything up before disabling the plugin

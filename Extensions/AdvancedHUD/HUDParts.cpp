@@ -18,79 +18,85 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "HUD.h"
 
 // Armor & health constants (they don't reflect tourist/easy top values by design)
-#define TOP_ARMOR  100
-#define TOP_HEALTH 100
+#define TOP_ARMOR  FLOAT(100)
+#define TOP_HEALTH FLOAT(100)
 
 void CHud::RenderVitals(void) {
-  // Prepare and draw health info
-  FLOAT fValue = ClampDn(_penPlayer->GetHealth(), 0.0f);
-  FLOAT fNormValue = fValue / TOP_HEALTH;
+  INDEX iValue;
+  FLOAT fNormValue;
+  CTString strValue;
+  FLOAT fCol, fRow, fMoverX, fMoverY;
+  COLOR colValue;
 
   // Adjust border width based on which value is bigger
-  const FLOAT fArmor = _penPlayer->m_fArmor;
-  const FLOAT fMaxHealthArmor = Max(fValue, fArmor);
-  FLOAT fBorderWidth = Clamp((FLOAT)floor(log10(fMaxHealthArmor) + 1.0f), 3.0f, 5.0f);
+  const INDEX iHealth = ceil(ClampDn(_penPlayer->GetHealth(), 0.0f));
+  const INDEX iArmor = ceil(_penPlayer->m_fArmor);
+  const INDEX iMaxHealthArmor = Max(iHealth, iArmor);
 
-  if (_psTheme.GetIndex() == E_HUD_SSR) {
-    fBorderWidth = 3.0f;
+  FLOAT fBorderWidth = Clamp((FLOAT)floor(log10(iMaxHealthArmor) + 1.0f), 3.0f, 5.0f);
+  if (_psTheme.GetIndex() == E_HUD_SSR) fBorderWidth = 3.0f;
+
+  // Prepare and draw health info
+  {
+    iValue = iHealth;
+    fNormValue = (FLOAT)iValue / TOP_HEALTH;
+    strValue.PrintF("%d", iValue);
+
+    // Health shaking should affect value color
+    colValue = AddShaker(5, iValue, _penLast->m_iLastHealth, _penLast->m_tmHealthChanged, fMoverX, fMoverY);
+    PrepareColorTransitions(_colMax, _colTop, _colMid, _colLow, 0.5f, 0.25f, FALSE);
+    if (colValue == NONE) colValue = GetCurrentColor(fNormValue);
+
+    fCol = _vpixTL(1) + units.fHalf;
+    fRow = _vpixBR(2) - units.fHalf;
+
+    // Shaking icon
+    DrawBorder(fCol + fMoverX, fRow + fMoverY, units.fOne, units.fOne, _colBorder);
+    DrawIcon(fCol + fMoverX, fRow + fMoverY, tex.toHealth, _colIconStd, fNormValue, TRUE);
+
+    // Value text
+    fCol += units.fAdv + units.fChar * (fBorderWidth * 0.5f) - units.fHalf;
+    DrawBorder(fCol, fRow, units.fChar * fBorderWidth, units.fOne, _colBorder);
+    DrawString(fCol, fRow, strValue, colValue, fNormValue);
   }
-
-  CTString strValue;
-  strValue.PrintF("%d", (SLONG)ceil(fValue));
-
-  PrepareColorTransitions(_colMax, _colTop, _colMid, _colLow, 0.5f, 0.25f, FALSE);
-
-  FLOAT fMoverX, fMoverY;
-  COLOR col = AddShaker(5, fValue, _penLast->m_iLastHealth, _penLast->m_tmHealthChanged, fMoverX, fMoverY);
-
-  if (col == NONE) col = GetCurrentColor(fNormValue);
-
-  FLOAT fCol = _vpixTL(1) + units.fHalf;
-  FLOAT fRow = _vpixBR(2) - units.fHalf;
-
-  DrawBorder(fCol + fMoverX, fRow + fMoverY, units.fOne, units.fOne, _colBorder);
-  DrawIcon(fCol + fMoverX, fRow + fMoverY, tex.toHealth, _colIconStd, fNormValue, TRUE);
-
-  fCol += units.fAdv + units.fChar * (fBorderWidth * 0.5f) - units.fHalf;
-
-  DrawBorder(fCol, fRow, units.fChar * fBorderWidth, units.fOne, _colBorder);
-  DrawString(fCol, fRow, strValue, col, fNormValue);
 
   // Don't display empty armor
-  if (fArmor <= 0.0f) return;
+  if (iArmor <= 0) return;
 
-  fValue = fArmor;
-  fNormValue = fValue / TOP_ARMOR;
-  strValue.PrintF("%d", (SLONG)ceil(fValue));
+  // Prepare and draw armor info
+  {
+    iValue = iArmor;
+    fNormValue = (FLOAT)iValue / TOP_ARMOR;
+    strValue.PrintF("%d", iValue);
 
-  PrepareColorTransitions(_colMax, _colTop, _colMid, C_lGRAY, 0.5f, 0.25f, FALSE);
+    // Choose armor icon
+    SIconTexture *ptoArmor;
 
-  fCol = _vpixTL(1) + units.fHalf;
-  fRow = _vpixBR(2) - (units.fNext + units.fHalf);
+    if (iValue <= 50) {
+      ptoArmor = &tex.atoArmor[0];
+    } else if (iValue <= 100) {
+      ptoArmor = &tex.atoArmor[1];
+    } else {
+      ptoArmor = &tex.atoArmor[2];
+    }
 
-  AddShaker(3, fValue, _penLast->m_iLastArmor, _penLast->m_tmArmorChanged, fMoverX, fMoverY);
+    // Armor shaking shouldn't affect value color
+    AddShaker(3, iValue, _penLast->m_iLastArmor, _penLast->m_tmArmorChanged, fMoverX, fMoverY);
+    PrepareColorTransitions(_colMax, _colTop, _colMid, C_lGRAY, 0.5f, 0.25f, FALSE);
+    colValue = GetCurrentColor(fNormValue);
 
-  fCol += fMoverX;
-  fRow += fMoverY;
+    fCol = _vpixTL(1) + units.fHalf;
+    fRow = _vpixBR(2) - units.fHalf - units.fNext;
 
-  DrawBorder(fCol, fRow, units.fOne, units.fOne, _colBorder);
+    // Shaking icon
+    DrawBorder(fCol + fMoverX, fRow + fMoverY, units.fOne, units.fOne, _colBorder);
+    DrawIcon(fCol + fMoverX, fRow + fMoverY, *ptoArmor, _colIconStd, fNormValue, FALSE);
 
-  if (fValue <= 50.5f) {
-    DrawIcon(fCol, fRow, tex.atoArmor[0], _colIconStd, fNormValue, FALSE);
-
-  } else if (fValue <= 100.5f) {
-    DrawIcon(fCol, fRow, tex.atoArmor[1], _colIconStd, fNormValue, FALSE);
-
-  } else {
-    DrawIcon(fCol, fRow, tex.atoArmor[2], _colIconStd, fNormValue, FALSE);
+    // Value text
+    fCol += units.fAdv + units.fChar * (fBorderWidth * 0.5f) - units.fHalf;
+    DrawBorder(fCol, fRow, units.fChar * fBorderWidth, units.fOne, _colBorder);
+    DrawString(fCol, fRow, strValue, colValue, fNormValue);
   }
-
-  fCol -= fMoverX;
-  fRow -= fMoverY;
-
-  fCol += units.fAdv + units.fChar * (fBorderWidth * 0.5f) - units.fHalf;
-  DrawBorder(fCol, fRow, units.fChar * fBorderWidth, units.fOne, _colBorder);
-  DrawString(fCol, fRow, strValue, GetCurrentColor(fNormValue), fNormValue);
 };
 
 void CHud::RenderCurrentWeapon(SIconTexture **pptoWantedWeapon, SIconTexture **pptoCurrentAmmo) {
@@ -175,12 +181,10 @@ void CHud::RenderCurrentWeapon(SIconTexture **pptoWantedWeapon, SIconTexture **p
 void CHud::RenderActiveArsenal(SIconTexture *ptoAmmo) {
   PrepareColorTransitions(_colMax, _colTop, _colMid, _colLow, 0.5f, 0.25f, FALSE);
 
-  // Prepare position and the weapon arsenal
+  // Prepare position
   FLOAT fCol = _vpixBR(1) - units.fHalf;
   FLOAT fRow = _vpixBR(2) - units.fHalf;
   const FLOAT fBarPos = units.fHalf * 0.7f;
-
-  UpdateWeaponArsenal();
 
 #if SE1_GAME != SS_TFE
   // Display stored bombs
@@ -234,7 +238,6 @@ void CHud::RenderActiveArsenal(SIconTexture *ptoAmmo) {
 
       if (ptoAmmo == ai.ptoAmmo) {
         colIcon = COL_AmmoSelected();
-
       } else if (ai.iAmmo == 0) {
         colIcon = COL_AmmoDepleted();
       }
@@ -318,6 +321,54 @@ void CHud::RenderActiveArsenal(SIconTexture *ptoAmmo) {
     fCol -= units.fAdv;
   }
 #endif
+};
+
+void CHud::RenderWeaponSelection(SIconTexture *ptoWeapon) {
+  // Weapon change isn't in progress
+  static CSymbolPtr pfWeapons("hud_tmWeaponsOnScreen");
+  if (_tmNow - _penWeapons->m_tmWeaponChangeRequired >= pfWeapons.GetFloat()) return;
+
+  // Determine amount of available weapons
+  INDEX ctWeapons = 0;
+
+  for (INDEX iCount = 1; iCount < GetWeapons().Count(); iCount++) {
+    if (GetWeapons()[iCount].iWeapon != WEAPON_NONE && GetWeapons()[iCount].iWeapon != WEAPON_DOUBLECOLT
+      && GetWeapons()[iCount].bHasWeapon) {
+      ctWeapons++;
+    }
+  }
+
+  FLOAT fCol = 320.0f - (ctWeapons * units.fAdv - units.fOne) * 0.5f;
+  FLOAT fRow = _vpixBR(2) - units.fHalf - units.fNext * 3;
+
+  // Display all available weapons
+  for (INDEX iWeapon = 0; iWeapon < GetWeapons().Count(); iWeapon++) {
+    HudWeapon &wiInfo = GetWeapons()[iWeapon];
+
+    // Skip if no weapon
+    if (wiInfo.iWeapon == WEAPON_NONE || wiInfo.iWeapon == WEAPON_DOUBLECOLT || !wiInfo.bHasWeapon) {
+      continue;
+    }
+
+    // Display weapon icon
+    COLOR colBorder = COL_WeaponBorder();
+    COLOR colIcon = COL_WeaponIcon();
+
+    // No ammo
+    if (wiInfo.paiAmmo != NULL && wiInfo.paiAmmo->iAmmo == 0) {
+      colBorder = colIcon = COL_WeaponNoAmmo();
+
+    // Selected weapon
+    } else if (ptoWeapon == wiInfo.ptoWeapon) {
+      colBorder = colIcon = COL_WeaponWanted();
+    }
+
+    DrawBorder(fCol, fRow, units.fOne, units.fOne, colBorder);
+    DrawIcon(fCol, fRow, *wiInfo.ptoWeapon, colIcon, 1.0f, FALSE);
+
+    // Advance to the next position
+    fCol += units.fAdv;
+  }
 };
 
 void CHud::RenderBars(void) {
@@ -844,6 +895,29 @@ void CHud::RenderGameModeInfo(void) {
   }
 };
 
+void CHud::RenderLatency(void) {
+  static CSymbolPtr pbLatency("hud_bShowLatency");
+  if (!pbLatency.GetIndex()) return;
+
+  // Adjust the font
+  const FLOAT fTextScale = (_vScaling(1) + 1) * 0.5f * _fTextFontScale;
+
+  _pfdCurrentText->SetFixedWidth();
+  _pdp->SetFont(_pfdCurrentText);
+  _pdp->SetTextScaling(fTextScale);
+  _pdp->SetTextCharSpacing(-2.0f * fTextScale);
+
+  // Display local client latency
+  CTString strLatency;
+  strLatency.PrintF("%4.0fms", _penPlayer->m_tmLatency * 1000.0f);
+
+  const PIX pixFontHeight = _pfdCurrentText->GetHeight() * fTextScale + fTextScale + 1;
+  _pdp->PutTextR(strLatency, _vpixScreen(1), _vpixScreen(2) - pixFontHeight, C_WHITE | CT_OPAQUE);
+
+  // Restore font defaults
+  _pfdCurrentText->SetVariableWidth();
+};
+
 void CHud::RenderCheats(void) {
   // Render active cheats while in singleplayer
   if (pGetSP()->sp_ctMaxPlayers != 1) return;
@@ -884,4 +958,36 @@ void CHud::RenderCheats(void) {
   if (pbGod.GetIndex()) {
     _pdp->PutTextR("god", _vpixScreen(1) - 1, CHEAT_LINE_Y, colCheat);
   }
+};
+
+void CHud::RenderClock(void) {
+#if SE1_GAME == SS_TFE
+  // Only render clock in TFE outside of the custom mod
+  if (ClassicsCore_IsCustomModActive()) return;
+
+  // Whether to display real time
+  const INDEX iClockMode = _psShowClock.GetIndex();
+  if (!iClockMode) return;
+
+  // Set font
+  _pdp->SetFont(_pfdConsoleFont);
+  _pdp->SetTextScaling(1.0f);
+  _pdp->SetTextAspect(1.0f);
+
+  // Determine time
+  time_t iLongTime;
+  time(&iLongTime);
+  tm *tmNewTime = localtime(&iLongTime);
+
+  CTString strTime;
+
+  // Show seconds as extra
+  if (iClockMode > 1) {
+    strTime.PrintF("%2d:%02d:%02d", tmNewTime->tm_hour, tmNewTime->tm_min, tmNewTime->tm_sec);
+  } else {
+    strTime.PrintF("%2d:%02d", tmNewTime->tm_hour, tmNewTime->tm_min);
+  }
+
+  _pdp->PutTextR(strTime, _vpixScreen(1) - 3, 2, C_lYELLOW | CT_OPAQUE);
+#endif
 };
