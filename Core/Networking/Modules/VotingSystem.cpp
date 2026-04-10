@@ -116,6 +116,11 @@ void Initialize(void) {
   _tvNextVote = -100.0;
 };
 
+// Check if the vote command is usable
+BOOL VoteCommandCheck(INDEX iClient) {
+  return IsVotingAvailable() || CActiveClient::IsAdmin(iClient);
+};
+
 // Check if voting is available
 BOOL IsVotingAvailable(void) {
   // Setting is on; server is running

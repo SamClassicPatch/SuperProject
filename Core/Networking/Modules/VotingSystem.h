@@ -51,6 +51,9 @@ inline CTString VoteNoCommand(void) {
   return "^cff0000" + ser_strCommandPrefix + "n";
 };
 
+// Check if the vote command is usable
+BOOL VoteCommandCheck(INDEX iClient);
+
 // Check if voting is available
 CORE_API BOOL IsVotingAvailable(void);
 
