@@ -39,16 +39,30 @@ struct ChatCommand_t {
 
   BOOL bPure;
   BOOL bHidden; // Whether to hide the command from the help
+  FCheckChatCommand pCheckFunc;
 
   union {
     FEngineChatCommand pEngineHandler;
     FPureChatCommand pPureHandler;
   };
 
-  ChatCommand_t() : eAccess(k_EChatCommandAccessLevel_Everyone), bPure(FALSE), bHidden(FALSE), pEngineHandler(NULL) {};
+  ChatCommand_t() : eAccess(k_EChatCommandAccessLevel_Everyone), bPure(FALSE), bHidden(FALSE), pCheckFunc(NULL), pEngineHandler(NULL) {};
 
   inline bool operator==(const ChatCommand_t &other) const {
     return bPure == other.bPure && pEngineHandler == other.pEngineHandler;
+  };
+
+  // Check whether the command is usable by a specific client
+  inline bool CheckCommand(INDEX iClient) const {
+    // Non-operator tries executing an operator command
+    if (!CActiveClient::IsOperator(iClient) && eAccess == k_EChatCommandAccessLevel_Operator) return false;
+
+    // Non-admin tries executing an admin command
+    if (!CActiveClient::IsAdmin(iClient) && eAccess == k_EChatCommandAccessLevel_Admin) return false;
+
+    // Check the command using specified callback, if it exists
+    if (pCheckFunc == NULL) return true;
+    return !!pCheckFunc(iClient);
   };
 };
 
@@ -111,15 +125,8 @@ BOOL HandleChatCommand(INDEX iClient, const CTString &strCommand)
   if (it != _mapChatCommands.end()) {
     const ChatCommand_t &com = it->second;
 
-    // Process as a normal chat message if a non-operator tries executing an operator command
-    if (!CActiveClient::IsOperator(iClient) && com.eAccess == k_EChatCommandAccessLevel_Operator) {
-      return TRUE;
-    }
-
-    // Process as a normal chat message if a non-admin tries executing an admin command
-    if (!CActiveClient::IsAdmin(iClient) && com.eAccess == k_EChatCommandAccessLevel_Admin) {
-      return TRUE;
-    }
+    // Process as a normal chat message if the command is currently unusable
+    if (!com.CheckCommand(iClient)) return TRUE;
 
     // Execute it
     CTString strOut = "";
@@ -180,16 +187,15 @@ BOOL IStockCommands::ListCommands(CTString &strResult, INDEX iClient, const CTSt
   INDEX ctCommands = 0;
 
   for (it = _mapChatCommands.begin(); it != _mapChatCommands.end(); it++) {
-    const ChatCommand_t &con = it->second;
+    const ChatCommand_t &com = it->second;
 
-    // Don't list higher access commands for clients without elevated privileges
-    if (!CActiveClient::IsOperator(iClient) && con.eAccess == k_EChatCommandAccessLevel_Operator) continue;
-    if (!CActiveClient::IsAdmin(iClient) && con.eAccess == k_EChatCommandAccessLevel_Admin) continue;
+    // Don't list unusable commands
+    if (!com.CheckCommand(iClient)) continue;
 
     // Don't list hidden commands for non-admins
-    if (!CActiveClient::IsAdmin(iClient) && con.bHidden) continue;
+    if (!CActiveClient::IsAdmin(iClient) && com.bHidden) continue;
 
-    mapList[it->first] = &con;
+    mapList[it->first] = &com;
     ctCommands++;
   }
 
@@ -272,6 +278,15 @@ BOOL ClassicsChat_SetCommandAccess(const char *strName, EChatCommandAccessLevel 
 
   itCommand->second.eAccess = eAccess;
   itCommand->second.bHidden = bHidden;
+  return TRUE;
+};
+
+BOOL ClassicsChat_SetCommandCheck(const char *strName, FCheckChatCommand pFunction)
+{
+  CChatCommands::iterator itCommand = _mapChatCommands.find(strName);
+  if (itCommand == _mapChatCommands.end()) return FALSE;
+
+  itCommand->second.pCheckFunc = pFunction;
   return TRUE;
 };
 
