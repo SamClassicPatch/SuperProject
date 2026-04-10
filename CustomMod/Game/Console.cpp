@@ -658,14 +658,14 @@ static void Key_Tab(BOOL bCtrl, BOOL bShift)
 
           // [Cecil] Add color and symbol help, if needed
           if (con_bTabHelpInfo) {
-            CPrintF( "  %s%s^r - %s\n", strCurrentColor, strLastMatched.str_String, GetHelpForSymbol(strLastMatched));
+            CPrintF("  ^o%s%s^r - %s\n", strCurrentColor, strLastMatched.str_String, GetHelpForSymbol(strLastMatched));
 
             // [Cecil] Switch colors for the next entry
             bAltColor = !bAltColor;
             strCurrentColor = bAltColor ? strColorAlt : strColorReg;
 
           } else {
-            CPrintF( "  %s\n", strLastMatched.str_String);
+            CPrintF("  %s\n", strLastMatched.str_String);
           }
 
           bFirstFound = TRUE;
@@ -679,9 +679,9 @@ static void Key_Tab(BOOL bCtrl, BOOL bShift)
     if (ctSymbolsFound > 1) {
       // [Cecil] Add color and symbol help, if needed
       if (con_bTabHelpInfo) {
-        CPrintF( "  %s%s^r - %s\n", strCurrentColor, strLastMatched.str_String, GetHelpForSymbol(strLastMatched));
+        CPrintF("  ^o%s%s^r - %s\n", strCurrentColor, strLastMatched.str_String, GetHelpForSymbol(strLastMatched));
       } else {
-        CPrintF( "  %s\n", strLastMatched.str_String);
+        CPrintF("  %s\n", strLastMatched.str_String);
       }
     }
   }
