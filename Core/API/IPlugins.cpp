@@ -37,12 +37,7 @@ static void ListPlugins(void) {
 
     // Light blue - ON; Red - OFF
     CPutString(pPlugin->IsInitialized() ? "^c00ffff" : "^cff0000");
-
-    // Indent the index
-    const INDEX ctIndentLog10 = (iPlugin == 0) ? 0 : log10((FLOAT)iPlugin);
-    const INDEX ctIndent = ClampDn(2 - ctIndentLog10, (INDEX)0);
-
-    CPrintF("%*s%d - %s\n", ctIndent, "", iPlugin, pPlugin->GetName().str_String);
+    CPrintF("%3d - %s\n", iPlugin, pPlugin->GetName().str_String);
 
     // Print metadata
     const PluginInfo_t &info = pPlugin->pm_info;

@@ -169,12 +169,9 @@ static void ListFuncPatches(void) {
     HFuncPatch hPatch = it->second;
     const bool bPatched = ((CoreFunctionPatch_t *)hPatch)->IsPatched();
 
-    // Mark as enabled or not and indent the index
+    // Mark as enabled or disabled
     const char *strPatched = (bPatched ? " [^c00ff00ON^r]" : "[^cff0000OFF^r]");
-    const INDEX ctIndentLog10 = (iPatch == 0) ? 0 : log10((FLOAT)iPatch);
-    const INDEX ctIndent = ClampDn(2 - ctIndentLog10, (INDEX)0);
-
-    CPrintF("%s %*s%d - %s\n", strPatched, ctIndent, "", iPatch, hPatch->GetName());
+    CPrintF("%s %3d - %s\n", strPatched, iPatch, hPatch->GetName());
   }
 };
 
