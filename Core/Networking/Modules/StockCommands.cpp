@@ -71,12 +71,38 @@ BOOL IStockCommands::RemoteConsole(CTString &strResult, INDEX iClient, const CTS
 
   // Log commands from non-server clients
   if (!GetComm().Server_IsClientLocal(iClient)) {
-    CPrintF(TRANS("Client '%s' (identity %d) is executing a command:\n"), strClientName, iIdentity);
+    CPrintF(TRANS("Client '%s' (identity %d) is executing a command:\n"), strClientName.str_String, iIdentity);
     CPrintF("> %s\n", strArguments);
   }
 
+  // Nothing to execute
+  CTString strTrim = strArguments;
+  strTrim.TrimSpacesLeft();
+  if (strTrim == "") return TRUE;
+
+#if SE1_GAME != SS_REV
+  static BOOL &con_bCapture = *(BOOL *)ADDR_CONSOLE_CAPTUREFLAG;
+  static CTString &con_strCapture = *(CTString *)ADDR_CONSOLE_CAPTURESTR;
+
+  con_bCapture = TRUE;
+  con_strCapture = "\n"; // Start with a line break after the actual command
+
   _pShell->Execute(strArguments + ";");
-  strResult = TRANS("See server log for the command output.");
+
+  // Remove the last line break (or the first one, if nothing was printed)
+  char &chLast = con_strCapture.str_String[con_strCapture.Length() - 1];
+  if (chLast == '\n') chLast = '\0';
+
+  // Return captured command output
+  strResult = ">" + strArguments + con_strCapture;
+
+  con_bCapture = FALSE;
+  con_strCapture = "";
+
+#else
+  _pShell->Execute(strArguments + ";");
+  strResult = "See server log for the command output.";
+#endif
 
   return TRUE;
 };

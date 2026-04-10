@@ -88,12 +88,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   ENGINE_API extern CStaticStackArray<class CZipHandle> _azhHandles;   // Defined in Engine/Base/Unzip.cpp
   ENGINE_API extern CStaticStackArray<class CZipEntry>  _azeFiles;     // Defined in Engine/Base/Unzip.cpp
   ENGINE_API extern CStaticStackArray<class CTFileName> _afnmArchives; // Defined in Engine/Base/Unzip.cpp
+  ENGINE_API extern BOOL con_bCapture;                                 // Defined in Engine/Base/Console.cpp
+  ENGINE_API extern CTString con_strCapture;                           // Defined in Engine/Base/Console.cpp
 
   // InitStreams()
   #define ADDR_INITSTREAMS (&InitStreams)
 
   // CRenderer::RenderLensFlares()
   #define ADDR_RENDERLENSFLARES (&CRenderer::RenderLensFlares)
+
+  // Console text capturing variables
+  #define ADDR_CONSOLE_CAPTURESTR  (&con_bCapture)
+  #define ADDR_CONSOLE_CAPTUREFLAG (&con_strCapture)
 
   // Static variables from Unzip.cpp
   #define ADDR_UNZIP_CRITSEC  (&zip_csLock)
@@ -116,6 +122,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #define ADDR_GAMESPY_MS_1 (ADDR_ENGINE + CHOOSE_FOR_GAME(0x1BD1CC, 0x1BD20C, 0x1ED9FC))
   #define ADDR_GAMESPY_MS_2 (ADDR_ENGINE + CHOOSE_FOR_GAME(0x1BD300, 0x1BD340, 0x1EDB30))
   #define ADDR_GAMESPY_MS_3 (ADDR_ENGINE + CHOOSE_FOR_GAME(0x1BD314, 0x1BD354, 0x1EDB44))
+
+  // Console text capturing variables
+  #define ADDR_CONSOLE_CAPTURESTR  (ADDR_ENGINE + CHOOSE_FOR_GAME(0x1BFA98, 0x1BFAD8, 0x1F0878)) // con_strCapture
+  #define ADDR_CONSOLE_CAPTUREFLAG (ADDR_ENGINE + CHOOSE_FOR_GAME(0x1BFAA0, 0x1BFAE0, 0x1F0880)) // con_bCapture
 
   // Static variables from Unzip.cpp
   #define ADDR_UNZIP_CRITSEC  (ADDR_ENGINE + CHOOSE_FOR_GAME(0x1E0388, 0x1E03C8, 0x2131C8)) // &zip_csLock
@@ -147,6 +157,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #define ADDR_GAMESPY_MS_1 (ADDR_ENGINE + 0x413D14)
   #define ADDR_GAMESPY_MS_2 (ADDR_ENGINE + 0x4140FC)
   #define ADDR_GAMESPY_MS_3 (ADDR_ENGINE + 0x414110)
+
+  // Console text capturing variables
+  #define ADDR_CONSOLE_CAPTURESTR  (ADDR_ENGINE + 0x41D560) // con_strCapture
+  #define ADDR_CONSOLE_CAPTUREFLAG (ADDR_ENGINE + 0x41D568) // con_bCapture
 
   // Static variables from Unzip.cpp
   #define ADDR_UNZIP_CRITSEC  (ADDR_ENGINE + 0x446BC8) // &zip_csLock
