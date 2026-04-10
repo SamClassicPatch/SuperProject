@@ -218,9 +218,7 @@ BOOL INetwork::ClientHandle(CSessionState *pses, CNetworkMessage &nmMessage) {
 // Send disconnect message to a client (CServer::SendDisconnectMessage reimplementation)
 void INetwork::SendDisconnectMessage(INDEX iClient, const char *strExplanation, BOOL bStream) {
   // Not a server
-  if (!_pNetwork->IsServer()) {
-    return;
-  }
+  if (!_pNetwork->IsServer()) return;
 
   CSessionSocket &sso = _pNetwork->ga_srvServer.srv_assoSessions[iClient];
 
@@ -260,12 +258,10 @@ void INetwork::SendDisconnectMessage(INDEX iClient, const char *strExplanation, 
   CActiveClient::DeactivateClient(iClient);
 };
 
-// Send chat message to a client with custom name of a sender
+// Send chat message to a client with a custom sender name
 void INetwork::SendChatToClient(INDEX iClient, const CTString &strFromName, const CTString &strMessage) {
   // Not a server
-  if (!_pNetwork->IsServer()) {
-    return;
-  }
+  if (!_pNetwork->IsServer()) return;
 
   CNetworkMessage nm(MSG_CHAT_OUT);
   nm << (INDEX)0;
@@ -273,4 +269,16 @@ void INetwork::SendChatToClient(INDEX iClient, const CTString &strFromName, cons
   nm << strMessage;
 
   _pNetwork->SendToClient(iClient, nm);
+};
+
+// Send chat message from the server to all clients
+void INetwork::SendChatFromServer(const CTString &strMessage) {
+  // Not a server
+  if (!_pNetwork->IsServer()) return;
+
+  // Relay the message to the server, which then sends it to everyone
+  CNetworkMessage nm(MSG_CHAT_IN);
+  nm << ULONG(0) << ULONG(-1); // From server (0) to all clients (-1)
+  nm << strMessage;
+  _pNetwork->SendToServer(nm);
 };

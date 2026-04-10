@@ -157,7 +157,7 @@ BOOL InitiateVoting(INDEX iClient, CGenericVote *pvt) {
   strChatMessage += CTString(0, TRANS("^CYou have ^cffffff%d^C seconds to vote. Type %s^C or %s^C to vote for or against it!"),
     (INDEX)dTimeLeft, VoteYesCommand(), VoteNoCommand());
 
-  _pNetwork->SendChat(0, -1, strChatMessage);
+  INetwork::SendChatFromServer(strChatMessage);
   return TRUE;
 };
 
@@ -210,7 +210,7 @@ void UpdateVote(void) {
       EndVote(TRUE);
     }
 
-    _pNetwork->SendChat(0, -1, strChatMessage);
+    INetwork::SendChatFromServer(strChatMessage);
     return;
   }
 
@@ -218,7 +218,7 @@ void UpdateVote(void) {
   if (dNextReport <= 0.0) {
     CTString strChatMessage(0, TRANS("^cffffff%d^C seconds left to vote"), (INDEX)dTimeLeft);
     strChatMessage += CTString(0, " -- %s %d^C / %s %d", VoteYesCommand(), ctYes, VoteNoCommand(), ctNo);
-    _pNetwork->SendChat(0, -1, strChatMessage);
+    INetwork::SendChatFromServer(strChatMessage);
 
     // Set next report
     _pvtCurrentVote->SetReportTime();

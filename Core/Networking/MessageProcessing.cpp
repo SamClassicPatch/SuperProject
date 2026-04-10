@@ -649,7 +649,7 @@ void IProcessPacket::OnCharacterChangeRequest(INDEX iClient, CNetworkMessage &nm
   CPlayerEntity *penPlayer = _pNetwork->ga_sesSessionState.ses_apltPlayers[iPlayer].plt_penPlayerEntity;
 
   if (!CanChangeCharacter(penPlayer)) {
-    INetwork::SendChatToClient(iClient, "Server", TRANS("Please wait until you are fully connected to change your character."));
+    INetwork::SendChatToClient(iClient, LOCALIZE("Server"), TRANS("Please wait until you are fully connected to change your character."));
     return;
   }
 
@@ -857,7 +857,7 @@ void IProcessPacket::OnSyncCheck(INDEX iClient, CNetworkMessage &nmMessage) {
           strSyncBad.PrintF(TRANS("SYNCBAD: Sequence %d Tick %.2f - bad %d"),
             scRemote.sc_iSequence, tmTick, sso.sso_ctBadSyncs);
 
-          INetwork::SendChatToClient(iClient, "Server", strSyncBad);
+          INetwork::SendChatToClient(iClient, LOCALIZE("Server"), strSyncBad);
         }
       }
 

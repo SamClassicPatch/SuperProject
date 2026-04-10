@@ -99,8 +99,11 @@ class CORE_API INetwork {
     // Send disconnect message to a client (CServer::SendDisconnectMessage reimplementation)
     static void SendDisconnectMessage(INDEX iClient, const char *strExplanation, BOOL bStream);
 
-    // Send chat message to a client with custom name of a sender
+    // Send chat message to a client with a custom sender name
     static void SendChatToClient(INDEX iClient, const CTString &strFromName, const CTString &strMessage);
+
+    // Send chat message from the server to all clients
+    static void SendChatFromServer(const CTString &strMessage);
 
     // Check if hosting an online multiplayer game
     static inline BOOL IsHostingMultiplayer(void) {

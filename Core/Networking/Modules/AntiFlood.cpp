@@ -46,7 +46,7 @@ static BOOL DetectPacketFlood(INDEX iClient)
 
   CTString strChatMessage;
   strChatMessage.PrintF("^cff0000 Client %d has been kicked for a packet flood attempt!", iClient);
-  _pNetwork->SendChat(0, -1, strChatMessage);
+  INetwork::SendChatFromServer(strChatMessage);
 
   // Detected
   return TRUE;
@@ -105,7 +105,7 @@ BOOL IAntiFlood::HandleChatMessage(INDEX iClient)
       strWarning += strKickWarning;
     }
 
-    INetwork::SendChatToClient(iClient, "Server", strWarning);
+    INetwork::SendChatToClient(iClient, LOCALIZE("Server"), strWarning);
 
     // Don't show the message in chat
     return TRUE;
@@ -131,7 +131,7 @@ BOOL IAntiFlood::HandleChatMessage(INDEX iClient)
       strWarning += strKickWarning;
     }
 
-    INetwork::SendChatToClient(iClient, "Server", strWarning);
+    INetwork::SendChatToClient(iClient, LOCALIZE("Server"), strWarning);
 
     // Don't show the message in chat
     return TRUE;
