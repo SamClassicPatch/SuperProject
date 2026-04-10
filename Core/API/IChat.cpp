@@ -140,8 +140,16 @@ BOOL HandleChatCommand(INDEX iClient, const CTString &strCommand)
     }
 
     // Reply to the client with the inputted command
-    const CTString strReply = strCommand + "\n" + strOut;
-    INetwork::SendChatToClient(iClient, "Chat command", strReply);
+    INetwork::SendChatToClient(iClient, TRANS("Chat command"), strCommand);
+
+    // Separate command output by lines and send each line as the sender name with an empty chat message
+    CStringStack astrLines;
+    IData::GetStrings(astrLines, strOut, '\n');
+    const INDEX ctLines = astrLines.Count();
+
+    for (INDEX iLine = 0; iLine < ctLines; iLine++) {
+      INetwork::SendChatToClient(iClient, "^a7F", "^r" + astrLines[iLine]);
+    }
 
     // Don't process as a chat message
     return FALSE;
@@ -218,7 +226,7 @@ BOOL IStockCommands::ListCommands(CTString &strResult, INDEX iClient, const CTSt
       strArgs = " " + strArgs;
     }
 
-    strResult += CTString(0, "\n  ^cffdf00%s%s%s^r - %s", ser_strCommandPrefix.str_String, itList->first.str_String,
+    strResult += CTString(0, "\n^cffdf00%s%s%s^r - %s", ser_strCommandPrefix.str_String, itList->first.str_String,
       strArgs.str_String, itList->second->strDescription);
 
     itList++;
