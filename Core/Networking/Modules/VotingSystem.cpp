@@ -200,7 +200,7 @@ void UpdateVote(void) {
 
   // Voting time expired
   if (dTimeLeft <= 0.0) {
-    CTString strChatMessage(0, TRANS("Voting is over! ^c00ff00Yes: %d^C / ^cff0000No: %d"), ctYes, ctNo);
+    CTString strChatMessage(0, TRANS("Voting is over! %sYes: %d^C / %sNo: %d"), _strColorTagPositive, ctYes, _strColorTagNegative, ctNo);
 
     // Describe action that's about to be performed
     if (bVotePassed) {
@@ -222,7 +222,7 @@ void UpdateVote(void) {
   // Make a report
   if (dNextReport <= 0.0) {
     CTString strChatMessage(0, TRANS("^cffffff%d^C seconds left to vote"), (INDEX)dTimeLeft);
-    strChatMessage += CTString(0, " -- %s %d^C / %s %d", VoteYesCommand(), ctYes, VoteNoCommand(), ctNo);
+    strChatMessage += CTString(0, " -- %s %d^C / %s %d^C", VoteYesCommand(), ctYes, VoteNoCommand(), ctNo);
     INetwork::SendChatFromServer(strChatMessage);
 
     // Set next report

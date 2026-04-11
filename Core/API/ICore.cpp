@@ -54,6 +54,10 @@ FLOAT inp_afAxisValues[MAX_OVERALL_AXES];
 // Where the current game is being ran from
 ERunningGameMode _gmRunningGameMode = GM_NONE;
 
+// Common positive and negative colors
+const char *_strColorTagPositive = "^c5FFF5F";
+const char *_strColorTagNegative = "^cFF3F3F";
+
 extern BOOL _bTempIgnoreTimestamps;
 
 // Toggle vanilla query manager

@@ -170,7 +170,14 @@ static void ListFuncPatches(void) {
     const bool bPatched = ((CoreFunctionPatch_t *)hPatch)->IsPatched();
 
     // Mark as enabled or disabled
-    const char *strPatched = (bPatched ? " [^c00ff00ON^r]" : "[^cff0000OFF^r]");
+    CTString strPatched;
+
+    if (bPatched) {
+      strPatched.PrintF(" [%sON^r]", _strColorTagPositive);
+    } else {
+      strPatched.PrintF("[%sOFF^r]", _strColorTagNegative);
+    }
+
     CPrintF("%s %3d - %s\n", strPatched, iPatch, hPatch->GetName());
   }
 };

@@ -53,6 +53,10 @@ enum ERunningGameMode {
 // Where the current game is being ran from
 CORE_API extern ERunningGameMode _gmRunningGameMode;
 
+// Common positive and negative colors
+CORE_API extern const char *_strColorTagPositive;
+CORE_API extern const char *_strColorTagNegative;
+
 namespace ICore {
 
 // Own constants to replace engine ones

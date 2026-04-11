@@ -60,10 +60,10 @@ static BOOL NotifyAboutUpdates(void) {
 static void DownloadUpdatePrompt(void) {
   const CTString strPrompt(0, TRANS(
     "A new version of Classics Patch is available!\n"
-    "   Your version: ^cff3f3f%s^r      Latest version: ^c5fff5f%s^r\n\n"
+    "   Your version: %s%s^r      Latest version: %s%s^r\n\n"
     "- \"Remind me later\" will show this again in a week.\n"
     "- Use '^cffffffNotifyAboutUpdates^r' config property to toggle it."
-  ), ClassicsCore_GetVersionName(), _strLatestVersion);
+  ), _strColorTagNegative, ClassicsCore_GetVersionName(), _strColorTagPositive, _strLatestVersion);
 
   CConfirmMenu::ChangeTo(strPrompt, &OpenLatestUpdate, &PostponeNotification, FALSE,
     TRANS("DOWNLOAD"), TRANS("REMIND ME LATER"), 0.3f);

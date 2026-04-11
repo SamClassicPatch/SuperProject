@@ -44,11 +44,11 @@ namespace IVotingSystem {
 void Initialize(void);
 
 inline CTString VoteYesCommand(void) {
-  return "^c00ff00" + ser_strCommandPrefix + "y";
+  return _strColorTagPositive + ser_strCommandPrefix + "y";
 };
 
 inline CTString VoteNoCommand(void) {
-  return "^cff0000" + ser_strCommandPrefix + "n";
+  return _strColorTagNegative + ser_strCommandPrefix + "n";
 };
 
 // Check if the vote command is usable
