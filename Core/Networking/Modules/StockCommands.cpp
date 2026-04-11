@@ -310,9 +310,9 @@ BOOL IStockCommands::ClientLog(CTString &strResult, INDEX iClient, const CTStrin
 };
 
 // Parse arguments of a timed action aimed at some client
-static CTString TimedClientAction(INDEX &iIdentity, FLOAT &fTime, CTString strArgs) {
+static CTString TimedClientAction(INDEX &iIdentity, DOUBLE &fTime, CTString strArgs) {
   // Get identity index and time from the arguments
-  INDEX iScan = strArgs.ScanF("%d %f", &iIdentity, &fTime);
+  INDEX iScan = strArgs.ScanF("%d %lf", &iIdentity, &fTime);
 
   if (iScan < 1) {
     return "Couldn't parse the client index!";
@@ -325,7 +325,7 @@ static CTString TimedClientAction(INDEX &iIdentity, FLOAT &fTime, CTString strAr
 
   // Set default time (5 minutes)
   if (iScan < 2) {
-    fTime = 300.0f;
+    fTime = 300.0;
   }
 
   return "";
@@ -368,7 +368,7 @@ static CTString ReasonedClientAction(INDEX &iIdentity, CTString &strReason, CTSt
 BOOL IStockCommands::BanClient(CTString &strResult, INDEX iClient, const CTString &strArguments) {
   // Get arguments
   INDEX iIdentity;
-  FLOAT fTime;
+  DOUBLE fTime;
 
   strResult = TimedClientAction(iIdentity, fTime, strArguments);
 
@@ -386,7 +386,7 @@ BOOL IStockCommands::BanClient(CTString &strResult, INDEX iClient, const CTStrin
 BOOL IStockCommands::MuteClient(CTString &strResult, INDEX iClient, const CTString &strArguments) {
   // Get arguments
   INDEX iIdentity;
-  FLOAT fTime;
+  DOUBLE fTime;
 
   strResult = TimedClientAction(iIdentity, fTime, strArguments);
 

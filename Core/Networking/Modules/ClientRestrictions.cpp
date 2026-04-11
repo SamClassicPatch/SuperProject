@@ -19,91 +19,104 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "ActiveClients.h"
 #include "Networking/NetworkFunctions.h"
 
-// Records of all client restrictions
-static CDynamicContainer<CClientRestriction> _cClientRestrictions;
+static __int64 SecondsSinceEpoch(void) {
+  typedef unsigned __int64 Ticks_t;
+
+  FILETIME ft;
+  GetSystemTimeAsFileTime(&ft);
+  Ticks_t ullTicks = ((Ticks_t)ft.dwHighDateTime << 32) | ft.dwLowDateTime;
+
+  // Difference between 1601-01-01 and 1970-01-01 in 100ns units (including leap years)
+  const Ticks_t ullDiff = Ticks_t(116444736000000000);
+  if (ullTicks < ullDiff) return 0; // Don't go below the epoch
+
+  // Convert ticks since 1601-01-01 to seconds since Unix epoch
+  Ticks_t ullEpoch100ns = ullTicks - ullDiff;
+  return (__int64)(ullEpoch100ns / Ticks_t(10000000));
+};
 
 // Set new ban time
-void CClientRestriction::SetBanTime(CTimerValue tvTime) {
+void CClientRestriction::SetBanTime(__int64 llSeconds) {
   // Indefinite ban
-  if (tvTime.tv_llValue < 0) {
-    tvBanExpiration.tv_llValue = -1;
+  if (llSeconds < 0) {
+    llBanExpiration = -1;
     return;
   }
 
-  tvBanExpiration = _pTimer->GetHighPrecisionTimer() + tvTime;
+  llBanExpiration = SecondsSinceEpoch() + llSeconds;
 };
 
 // Get remaining ban time
-CTimerValue CClientRestriction::GetBanTime(void) const {
-  return tvBanExpiration - _pTimer->GetHighPrecisionTimer();
+__int64 CClientRestriction::GetBanTime(void) const {
+  return llBanExpiration - SecondsSinceEpoch();
 };
 
 // Check if banned
 BOOL CClientRestriction::IsBanned(void) const {
   // Indefinite ban
-  if (tvBanExpiration.tv_llValue < 0) {
+  if (llBanExpiration < 0) {
     return TRUE;
   }
 
-  return (GetBanTime().tv_llValue > 0);
+  return (GetBanTime() > 0);
 };
 
 // Print out remaining ban time
 void CClientRestriction::PrintBanTime(CTString &str) const {
   // Indefinite time
-  if (tvBanExpiration.tv_llValue < 0) {
+  if (llBanExpiration < 0) {
     str = TRANS("indefinite time");
     return;
   }
 
-  IData::PrintDetailedTime(str, GetBanTime());
+  IData::PrintDetailedTimeSec(str, GetBanTime());
 };
 
 // Set new mute time
-void CClientRestriction::SetMuteTime(CTimerValue tvTime) {
+void CClientRestriction::SetMuteTime(__int64 llSeconds) {
   // Indefinite mute
-  if (tvTime.tv_llValue < 0) {
-    tvMuteExpiration.tv_llValue = -1;
+  if (llSeconds < 0) {
+    llMuteExpiration = -1;
     return;
   }
 
-  tvMuteExpiration = _pTimer->GetHighPrecisionTimer() + tvTime;
+  llMuteExpiration = SecondsSinceEpoch() + llSeconds;
 };
 
 // Get remaining mute time
-CTimerValue CClientRestriction::GetMuteTime(void) const {
-  return tvMuteExpiration - _pTimer->GetHighPrecisionTimer();
+__int64 CClientRestriction::GetMuteTime(void) const {
+  return llMuteExpiration - SecondsSinceEpoch();
 };
 
 // Check if muted
 BOOL CClientRestriction::IsMuted(void) const {
   // Indefinite mute
-  if (tvMuteExpiration.tv_llValue < 0) {
+  if (llMuteExpiration < 0) {
     return TRUE;
   }
 
-  return (GetMuteTime().tv_llValue > 0);
+  return (GetMuteTime() > 0);
 };
 
 // Print out remaining mute time
 void CClientRestriction::PrintMuteTime(CTString &str) const {
   // Indefinite time
-  if (tvMuteExpiration.tv_llValue < 0) {
+  if (llMuteExpiration < 0) {
     str = TRANS("indefinite time");
     return;
   }
 
-  IData::PrintDetailedTime(str, GetMuteTime());
+  IData::PrintDetailedTimeSec(str, GetMuteTime());
 };
 
 // Ban a specific client by the identity index
-CTString CClientRestriction::BanClient(INDEX iIdentity, FLOAT fTime) {
+CTString CClientRestriction::BanClient(INDEX iIdentity, DOUBLE fTime) {
   // Get restriction record (create if there isn't one)
   CClientIdentity *pci = &_aClientIdentities[iIdentity];
   CClientRestriction &cr = pci->crRestrictions;
 
   // Update ban time and print it out
-  cr.SetBanTime((DOUBLE)fTime);
+  cr.SetBanTime((__int64)ceil(fTime));
 
   CTString strTime;
   cr.PrintBanTime(strTime);
@@ -133,13 +146,13 @@ CTString CClientRestriction::BanClient(INDEX iIdentity, FLOAT fTime) {
 };
 
 // Mute a specific client by the identity index
-CTString CClientRestriction::MuteClient(INDEX iIdentity, FLOAT fTime) {
+CTString CClientRestriction::MuteClient(INDEX iIdentity, DOUBLE fTime) {
   // Get restriction record (create if there isn't one)
   CClientIdentity *pci = &_aClientIdentities[iIdentity];
   CClientRestriction &cr = pci->crRestrictions;
 
   // Update mute time and print it out
-  cr.SetMuteTime((DOUBLE)fTime);
+  cr.SetMuteTime((__int64)ceil(fTime));
 
   CTString strTime;
   cr.PrintMuteTime(strTime);

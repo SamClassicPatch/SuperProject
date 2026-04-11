@@ -1412,7 +1412,7 @@ CObserverCamera::CameraPos &CObserverCamera::FreeFly(CPlayerEntity *penObserving
     // Try starting the recording first
     if (StartRecording()) {
       CTString strTime;
-      IData::PrintDetailedTime(strTime, DOUBLE(_pTimer->GetLerpedCurrentTick() - cam_tmStartTime));
+      IData::PrintDetailedTimeSec(strTime, __int64(_pTimer->GetLerpedCurrentTick() - cam_tmStartTime));
 
       CPrintF(TRANS("OCAM: Took snapshot at %s\n"), strTime.str_String);
       WritePos(cp);

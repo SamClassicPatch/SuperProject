@@ -23,24 +23,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // One record of client's restriction
 class CORE_API CClientRestriction {
   private:
-    CTimerValue tvBanExpiration; // Time when the ban expires
-    CTimerValue tvMuteExpiration; // Time when the mute expires
+    __int64 llBanExpiration;  // Time when the ban expires
+    __int64 llMuteExpiration; // Time when the mute expires
 
   public:
     // Default constructor
-    CClientRestriction() {
-      tvBanExpiration.Clear();
-      tvMuteExpiration.Clear();
-    };
+    CClientRestriction() : llBanExpiration(0), llMuteExpiration(0) {};
 
   // Ban methods
   public:
 
-    // Set new ban time
-    void SetBanTime(CTimerValue tvTime);
+    // Set new ban time in seconds
+    void SetBanTime(__int64 llSeconds);
 
-    // Get remaining ban time
-    CTimerValue GetBanTime(void) const;
+    // Get remaining ban time in seconds
+    __int64 GetBanTime(void) const;
 
     // Check if banned
     BOOL IsBanned(void) const;
@@ -51,11 +48,11 @@ class CORE_API CClientRestriction {
   // Mute methods
   public:
 
-    // Set new mute time
-    void SetMuteTime(CTimerValue tvTime);
+    // Set new mute time in seconds
+    void SetMuteTime(__int64 llSeconds);
 
-    // Get remaining mute time
-    CTimerValue GetMuteTime(void) const;
+    // Get remaining mute time in seconds
+    __int64 GetMuteTime(void) const;
 
     // Check if muted
     BOOL IsMuted(void) const;
@@ -67,10 +64,10 @@ class CORE_API CClientRestriction {
   public:
 
     // Ban a specific client by the identity index
-    static CTString BanClient(INDEX iIdentity, FLOAT fTime);
+    static CTString BanClient(INDEX iIdentity, DOUBLE fTime);
 
     // Mute a specific client by the identity index
-    static CTString MuteClient(INDEX iIdentity, FLOAT fTime);
+    static CTString MuteClient(INDEX iIdentity, DOUBLE fTime);
 
     // Kick a specific client by the identity index
     static CTString KickClient(INDEX iIdentity, const CTString &strReason);
