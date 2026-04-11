@@ -75,7 +75,7 @@ static void VoteMapRemove(SHELL_FUNC_ARGS) {
   }
 
   SVoteMap &map = _aVoteMapPool[iMap - 1];
-  CPrintF(TRANS("Removed '%s' from the map pool!\n"), map.strName.Undecorated());
+  CPrintF(TRANS("Removed '%s^r' from the map pool!\n"), map.strName.str_String);
 
   _aVoteMapPool.Delete(&map);
 };
@@ -153,11 +153,11 @@ BOOL InitiateVoting(INDEX iClient, CGenericVote *pvt) {
   if (ac.cPlayers.Count() == 0) {
     strPlayers.PrintF(TRANS("Client %d"), iClient);
   } else {
-    strPlayers = ac.ListPlayers().Undecorated();
+    strPlayers = ac.ListPlayers();
   }
 
-  CTString strChatMessage(0, TRANS("%s has initiated a vote:\n"), strPlayers);
-  strChatMessage += "  " + _pvtCurrentVote->VoteMessage() + "\n";
+  CTString strChatMessage(0, TRANS("%s has initiated a vote:"), strPlayers);
+  strChatMessage += "\n  " + _pvtCurrentVote->VoteMessage() + "\n";
 
   strChatMessage += CTString(0, TRANS("^CYou have ^cffffff%d^C seconds to vote. Type %s^C or %s^C to vote for or against it!"),
     (INDEX)dTimeLeft, VoteYesCommand(), VoteNoCommand());
@@ -308,6 +308,7 @@ BOOL AddMapToPool(const CTFileName &fnmWorldFile) {
 
     // Add map to the pool
     _aVoteMapPool.Push() = map;
+    CPrintF(TRANS("Added '%s^r' to the map pool!\n"), map.strName.str_String);
     return TRUE;
 
   } catch (char *strError) {
@@ -319,18 +320,23 @@ BOOL AddMapToPool(const CTFileName &fnmWorldFile) {
 
 // Print current map pool
 void PrintMapPool(CTString &str) {
-  str = TRANS("^cffffffAvailable maps:");
+  str = TRANS("^cffffffAvailable maps");
+  str += "\n^cffffff--------------------------------";
+
   const INDEX ct = _aVoteMapPool.Count();
+  const INDEX ctIndent = (ct == 0) ? 0 : log10((double)ct);
 
   for (INDEX i = 0; i < ct; i++) {
     const CTString &strMap = _aVoteMapPool[i].strName;
-    str += CTString(0, "\n%d. %s", i + 1, strMap.Undecorated());
+    str += CTString(0, "\n%s%*d^C. %s%s", GetChatCommandColor().str_String, ctIndent + 1, i + 1, GetChatCommandColor2().str_String, strMap.str_String);
   }
 };
 
 // Print current clients
 void PrintClientList(CTString &str) {
-  str = TRANS("^cffffffAvailable clients:");
+  str = TRANS("^cffffffAvailable clients");
+  str += "\n^cffffff--------------------------------";
+
   const INDEX ct = _aActiveClients.Count();
 
   for (INDEX i = 0; i < ct; i++) {
@@ -339,7 +345,7 @@ void PrintClientList(CTString &str) {
     // Inactive
     if (!ac.IsActive()) continue;
 
-    str += CTString(0, "\n%d. ", i);
+    str += CTString(0, "\n%s%2d^C. ", GetChatCommandColor().str_String, i);
 
     // No active players
     if (ac.cPlayers.Count() == 0) {
@@ -414,7 +420,8 @@ BOOL Chat::VoteMap(CTString &strResult, INDEX iClient, const CTString &strArgume
   // Display current map pool
   if (iScan != 1) {
     PrintMapPool(strResult);
-    strResult += "\n\n" + CTString(0, TRANS("To initiate a vote, type \"%svotemap <map index>\""), ser_strCommandPrefix);
+    strResult += "\n\n" + CTString(0, TRANS("To initiate a vote, type %s%svotemap <map index>"),
+                                   GetChatCommandColor().str_String, ser_strCommandPrefix.str_String);
     return TRUE;
   }
 
@@ -442,7 +449,8 @@ static INDEX FindClientToVoteFor(const CTString &strChatCommand, CTString &strRe
   // Display current clients
   if (iScan != 1) {
     PrintClientList(strResult);
-    strResult += "\n\n" + CTString(0, TRANS("To initiate a vote, type \"%s%s <client index>\""), ser_strCommandPrefix, strChatCommand);
+    strResult += "\n\n" + CTString(0, TRANS("To initiate a vote, type %s%s%s <client index>"),
+                                   GetChatCommandColor().str_String, ser_strCommandPrefix.str_String, strChatCommand.str_String);
     return -1;
   }
 

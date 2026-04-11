@@ -22,8 +22,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // Display name of the current map
 BOOL IStockCommands::CurrentMap(CTString &strResult, INDEX, const CTString &) {
   CWorld &wo = *IWorld::GetWorld();
-  strResult.PrintF("Current map: \"%s^r\"\n- %s", wo.wo_strName, wo.wo_fnmFileName.str_String);
-
+  strResult  = GetChatCommandColor() + TRANS("World name:") + "^r \"" + wo.wo_strName + "^r\"\n";
+  strResult += GetChatCommandColor() + TRANS("World file:") + "^r \"" + wo.wo_fnmFileName + "\"";
   return TRUE;
 };
 
@@ -118,7 +118,7 @@ BOOL IStockCommands::RemoteSave(CTString &strResult, INDEX iClient, const CTStri
   }
 
   _pNetwork->Save_t(strSaveFile);
-  strResult.PrintF(TRANS("Saved game: %s"), strSaveFile);
+  strResult = GetChatCommandColor() + TRANS("Saved game:") + "^r \"" + strSaveFile + "\"";
 
   return TRUE;
 };
@@ -132,7 +132,7 @@ static void PrintIdentityRestrictions(CClientIdentity &ci, CTString &strInfo) {
     CTString strTime;
     pcr->PrintBanTime(strTime);
 
-    strInfo += CTString(0, "\n  ^caa0000BANNED for %s!", strTime);
+    strInfo += CTString(0, "\n  ^cbf3f3fBANNED for %s!", strTime);
   }
 
   // Check for a mute
@@ -142,17 +142,14 @@ static void PrintIdentityRestrictions(CClientIdentity &ci, CTString &strInfo) {
     CTString strTime;
     pcr->PrintMuteTime(strTime);
 
-    strInfo += CTString(0, "\n  ^c7f7f7fMUTED for %s!", strTime);
+    strInfo += CTString(0, "\n  ^cbfbf7fMUTED for %s!", strTime);
   }
 };
 
 // Display minimal information about a specific identity
 static void PrintIdentityInfoMinimal(CTString &strResult, INDEX iIdentity) {
   CClientIdentity &ci = _aClientIdentities[iIdentity];
-  strResult += CTString(0, "\nClient %d: ", iIdentity);
-
-  // Print relevant information
-  CTString strInfo = "";
+  CTString strInfo = "^cffffff";
 
   // Check current activity
   CActiveClient::List cClients;
@@ -165,30 +162,22 @@ static void PrintIdentityInfoMinimal(CTString &strResult, INDEX iIdentity) {
     FOREACHINDYNAMICCONTAINER(itac->cPlayers, CPlayerBuffer, itplb) {
       const CPlayerCharacter &pc = itplb->plb_pcCharacter;
 
-      // Add color in the beginning and a comma later on
-      if (bNoActivePlayers) {
-        strInfo += "^cffffff";
-      } else {
-        strInfo += ", ";
-      }
-        
+      // Separate active players with a comma
+      if (!bNoActivePlayers) strInfo += "^cffffff, ";
+
       // Names in a row
-      strInfo += pc.GetName().Undecorated();
+      strInfo += pc.GetNameForPrinting();
       bNoActivePlayers = FALSE;
     }
   }
 
-  // No active players found
-  if (bNoActivePlayers) {
-    strInfo += "^caaaaaaOffline";
-  }
+  // Client identity is offline
+  if (bNoActivePlayers) return;
 
   PrintIdentityRestrictions(ci, strInfo);
 
   // Display relevant information
-  if (strInfo != "") {
-    strResult += strInfo;
-  }
+  strResult += CTString(0, "\nClient %d: ", iIdentity) + strInfo;
 };
 
 // Display full information about a specific identity
@@ -197,34 +186,35 @@ static void PrintIdentityInfoFull(CTString &strResult, INDEX iIdentity, INDEX iC
   iCharacter = ClampUp(iCharacter, ci.aCharacters.Count());
 
   if (iCharacter > 0) {
-    strResult = CTString(0, "\nClient %d, Character %d: ", iIdentity, iCharacter);
+    strResult = CTString(0, "^cffffffClient %d, Character %d: ", iIdentity, iCharacter);
+    strResult += "\n^cffffff--------------------------------";
 
     const CPlayerCharacter &pc = ci.aCharacters[iCharacter - 1];
     const UBYTE *pGUID = pc.pc_aubGUID;
+    const CPlayerSettings *pps = (const CPlayerSettings *)pc.pc_aubAppearance;
 
-    // GUID and name
-    strResult += CTString(0, "\n GUID: %02X%02X%02X%02X %02X%02X%02X%02X %02X%02X%02X%02X %02X%02X%02X%02X\n Name: %s",
+    // GUID, name and player skin
+    strResult += CTString(0, "\nGUID: %02X%02X%02X%02X %02X%02X%02X%02X %02X%02X%02X%02X %02X%02X%02X%02X\nName: %s\nSkin: %s",
       pGUID[0], pGUID[1], pGUID[2], pGUID[3], pGUID[4], pGUID[5], pGUID[6], pGUID[7],
-      pGUID[8], pGUID[9], pGUID[10], pGUID[11], pGUID[12], pGUID[13], pGUID[14], pGUID[15], pc.GetNameForPrinting());
+      pGUID[8], pGUID[9], pGUID[10], pGUID[11], pGUID[12], pGUID[13], pGUID[14], pGUID[15],
+      pc.GetNameForPrinting(), pps->GetModelFilename().str_String);
 
     return;
 
   } else {
     // List addresses
-    strResult = "\nAddresses:";
+    strResult = "^cffffffAddresses:";
 
     for (INDEX iAddr = 0; iAddr < ci.aAddresses.Count(); iAddr++) {
-      strResult += CTString(0, "\n%d %s", iAddr + 1, ci.aAddresses[iAddr].GetHost());
+      strResult += CTString(0, "\n%2d. %s%s", iAddr + 1, GetChatCommandColor(), ci.aAddresses[iAddr].GetHost());
     }
 
     // List characters
-    strResult += "\nCharacters:";
+    strResult += "\n^cffffffCharacters:";
 
     for (INDEX iChar = 0; iChar < ci.aCharacters.Count(); iChar++) {
       const CPlayerCharacter &pc = ci.aCharacters[iChar];
-
-      // Undecorated name
-      strResult += CTString(0, "\n%d %s", iChar + 1, pc.GetName().Undecorated());
+      strResult += CTString(0, "\n%2d. %s", iChar + 1, pc.GetNameForPrinting());
     }
   }
 
@@ -239,9 +229,7 @@ static void PrintIdentityInfoFull(CTString &strResult, INDEX iIdentity, INDEX iC
 
   FOREACHINDYNAMICCONTAINER(cClients, CActiveClient, itac) {
     CDynamicContainer<CPlayerBuffer> &aPlayers = itac->cPlayers;
-    strInfo += CTString(0, "\n^cffff00Active %d: %s\n ", itac.GetIndex(), itac->addr.GetHost());
-
-    BOOL bNext = FALSE;
+    strInfo += CTString(0, "\n%sActive %d: %s", GetChatCommandColor(), itac.GetIndex(), itac->addr.GetHost());
 
     // List active characters
     FOREACHINDYNAMICCONTAINER(aPlayers, CPlayerBuffer, itplb) {
@@ -252,11 +240,7 @@ static void PrintIdentityInfoFull(CTString &strResult, INDEX iIdentity, INDEX iC
         const CPlayerCharacter &pcCompare = ci.aCharacters[iCompare];
 
         if (pc == pcCompare) {
-          if (bNext) strInfo += ", ";
-
-          // Character indices in a row
-          strInfo += CTString(0, "%d", iCompare + 1);
-          bNext = TRUE;
+          strInfo += CTString(0, "\n%2d. %s", iCompare + 1, pc.GetNameForPrinting());
           break;
         }
       }
@@ -286,6 +270,8 @@ void PrintClientLog(CTString &strResult, INDEX iIdentity, INDEX iCharacter) {
 
   // Print info about all identities
   const INDEX ct = _aClientIdentities.Count();
+  strResult.PrintF("^cffffffActive identities (total: %d)", ct);
+  strResult += "\n^cffffff--------------------------------";
 
   for (INDEX i = 0; i < ct; i++) {
     PrintIdentityInfoMinimal(strResult, i);

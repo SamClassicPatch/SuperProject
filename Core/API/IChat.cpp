@@ -70,6 +70,19 @@ struct ChatCommand_t {
 typedef se1::map<CTString, ChatCommand_t> CChatCommands;
 static CChatCommands _mapChatCommands;
 
+// Chat command output colors
+CTString GetChatCommandColor(void) {
+  return "^cFFDF00";
+};
+
+CTString GetChatCommandColor2(void) {
+  return "^cFF5F3F";
+};
+
+CTString GetVoteMessageColor(void) {
+  return "^cFFFF00";
+};
+
 // Extract command name from the string
 static INDEX ExtractCommand(CTString &strCommand) {
   const INDEX ct = strCommand.Length();
@@ -205,7 +218,7 @@ BOOL IStockCommands::ListCommands(CTString &strResult, INDEX iClient, const CTSt
   }
 
   // How many commands to list per page
-  INDEX ctPerPage = 8;
+  INDEX ctPerPage = 20;
 
   const INDEX ctPages = ceil((FLOAT)ctCommands / (FLOAT)ctPerPage);
 
@@ -219,9 +232,11 @@ BOOL IStockCommands::ListCommands(CTString &strResult, INDEX iClient, const CTSt
   strResult.PrintF(TRANS("^cffffffAvailable commands (page %d/%d):"), iPage, ctPages);
   strResult += "\n^cffffff--------------------------------";
 
+  // Get the first command on the specified page
   CListedCommands::const_iterator itList = mapList.begin();
   std::advance(itList, (iPage - 1) * ctPerPage);
 
+  // Print the commands until the counter per page reaches zero or until the end of the command list
   while (--ctPerPage >= 0 && itList != mapList.end()) {
     // Append argument list
     CTString strArgs = "";
@@ -232,9 +247,7 @@ BOOL IStockCommands::ListCommands(CTString &strResult, INDEX iClient, const CTSt
       strArgs = " " + strArgs;
     }
 
-    strResult += CTString(0, "\n^cffdf00%s%s%s^r - %s", ser_strCommandPrefix.str_String, itList->first.str_String,
-      strArgs.str_String, itList->second->strDescription);
-
+    strResult += "\n" + GetChatCommandColor() + ser_strCommandPrefix + itList->first + strArgs + "^r - " + itList->second->strDescription;
     itList++;
   }
 

@@ -47,11 +47,11 @@ void CGenericVote::SetReportTime(void) {
 };
 
 CTString CMapVote::VoteMessage(void) const {
-  return CTString(0, TRANS("^cffff00Change current map to: %s^r"), vt_map.strName);
+  return GetVoteMessageColor() + TRANS("Change current map to:") + " " + vt_map.strName + "^r";
 };
 
 CTString CMapVote::ResultMessage(void) const {
-  return CTString(0, TRANS("^cffff00Changing current map to: %s^r"), vt_map.strName);
+  return GetVoteMessageColor() + TRANS("Changing current map to:") + " " + vt_map.strName + "^r";
 };
 
 void CMapVote::VotingOver(void) {
@@ -75,7 +75,7 @@ IClientVote::IClientVote(CActiveClient &ac) : CGenericVote(), vt_pciIdentity(ac.
   if (ac.cPlayers.Count() == 0) {
     vt_strPlayers.PrintF(TRANS("Client %d"), _aActiveClients.Index(&ac));
   } else {
-    vt_strPlayers = ac.ListPlayers().Undecorated();
+    vt_strPlayers = ac.ListPlayers();
   }
 };
 
@@ -86,11 +86,11 @@ IClientVote::IClientVote(const IClientVote &vtOther) : CGenericVote(vtOther),
 };
 
 CTString CKickVote::VoteMessage(void) const {
-  return CTString(0, TRANS("^cffff00Kick %s from the server"), vt_strPlayers);
+  return GetVoteMessageColor() + CTString(0, TRANS("Kick %s%s from the server"), vt_strPlayers, GetVoteMessageColor());
 };
 
 CTString CKickVote::ResultMessage(void) const {
-  return CTString(0, TRANS("^cffff00Kicking %s from the server..."), vt_strPlayers);
+  return GetVoteMessageColor() + CTString(0, TRANS("Kicking %s%s from the server..."), vt_strPlayers, GetVoteMessageColor());
 };
 
 void CKickVote::VotingOver(void) {
@@ -105,11 +105,11 @@ void CKickVote::VotingOver(void) {
 };
 
 CTString CMuteVote::VoteMessage(void) const {
-  return CTString(0, TRANS("^cffff00Prevent %s from chatting"), vt_strPlayers);
+  return GetVoteMessageColor() + CTString(0, TRANS("Prevent %s%s from chatting"), vt_strPlayers, GetVoteMessageColor());
 };
 
 CTString CMuteVote::ResultMessage(void) const {
-  return CTString(0, TRANS("^cffff00Muting %s..."), vt_strPlayers);
+  return GetVoteMessageColor() + CTString(0, TRANS("Muting %s%s..."), vt_strPlayers, GetVoteMessageColor());
 };
 
 void CMuteVote::VotingOver(void) {
@@ -124,11 +124,11 @@ void CMuteVote::VotingOver(void) {
 };
 
 CTString CSkipRoundVote::VoteMessage(void) const {
-  return TRANS("^cffff00Skip current round");
+  return GetVoteMessageColor() + TRANS("Skip current round");
 };
 
 CTString CSkipRoundVote::ResultMessage(void) const {
-  return TRANS("^cffff00Skipping current round...");
+  return GetVoteMessageColor() + TRANS("Skipping current round...");
 };
 
 void CSkipRoundVote::VotingOver(void) {
