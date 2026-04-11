@@ -28,9 +28,12 @@ CORE_API extern CTString ser_strAdminPassword;
 CORE_API extern CTString ser_strOperatorPassword;
 
 // Chat command output colors
-CORE_API CTString GetChatCommandColor(void);
-CORE_API CTString GetChatCommandColor2(void);
-CORE_API CTString GetVoteMessageColor(void);
+CORE_API extern INDEX ser_iChatCommandColor;
+CORE_API extern INDEX ser_iChatCommandColor2;
+
+CORE_API const CTString &GetChatCommandColor(void);  // Primary chat command color
+CORE_API const CTString &GetChatCommandColor2(void); // Secondary chat command color
+CORE_API const CTString &GetVoteMessageColor(void);  // Vote message color
 
 // Handle chat command from a client
 CORE_API BOOL HandleChatCommand(INDEX iClient, const CTString &strCommand);

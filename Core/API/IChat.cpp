@@ -31,6 +31,10 @@ CTString ser_strCommandPrefix = "!";
 CTString ser_strAdminPassword = "";
 CTString ser_strOperatorPassword = "";
 
+// Chat command output colors
+INDEX ser_iChatCommandColor  = 0xFFDF00FF;
+INDEX ser_iChatCommandColor2 = 0xFF5F3FFF;
+
 // Chat command function holder
 struct ChatCommand_t {
   CTString strArgumentList;
@@ -70,17 +74,44 @@ struct ChatCommand_t {
 typedef se1::map<CTString, ChatCommand_t> CChatCommands;
 static CChatCommands _mapChatCommands;
 
-// Chat command output colors
-CTString GetChatCommandColor(void) {
-  return "^cFFDF00";
+// Primary chat command color
+const CTString &GetChatCommandColor(void) {
+  static INDEX _iLastColor = 0xFFFFFFFF;
+  static CTString _strColorTag = "^cFFFFFF^aFF";
+
+  // Cache the color tag string
+  if (_iLastColor != ser_iChatCommandColor) {
+    _iLastColor = ser_iChatCommandColor;
+
+    const ULONG ulColor = ULONG(ser_iChatCommandColor) >> 8;
+    const ULONG ulAlpha = ser_iChatCommandColor & 0xFF;
+    _strColorTag.PrintF("^c%06X^a%02X", ulColor, ulAlpha);
+  }
+
+  return _strColorTag;
 };
 
-CTString GetChatCommandColor2(void) {
-  return "^cFF5F3F";
+// Secondary chat command color
+const CTString &GetChatCommandColor2(void) {
+  static INDEX _iLastColor2 = 0xFFFFFFFF;
+  static CTString _strColorTag2 = "^cFFFFFF^aFF";
+
+  // Cache the color tag string
+  if (_iLastColor2 != ser_iChatCommandColor2) {
+    _iLastColor2 = ser_iChatCommandColor2;
+
+    const ULONG ulColor = ULONG(ser_iChatCommandColor2) >> 8;
+    const ULONG ulAlpha = ser_iChatCommandColor2 & 0xFF;
+    _strColorTag2.PrintF("^c%06X^a%02X", ulColor, ulAlpha);
+  }
+
+  return _strColorTag2;
 };
 
-CTString GetVoteMessageColor(void) {
-  return "^cFFFF00";
+// Vote message color
+const CTString &GetVoteMessageColor(void) {
+  static const CTString _strVoteColorTag = "^cFFFF00";
+  return _strVoteColorTag;
 };
 
 // Extract command name from the string
@@ -372,6 +403,8 @@ static void ClientLogLoad(void) {
 
 void Chat(void) {
   _pShell->DeclareSymbol("persistent user CTString ser_strCommandPrefix;", &ser_strCommandPrefix);
+  _pShell->DeclareSymbol("persistent user INDEX ser_iChatCommandColor;",  &ser_iChatCommandColor);
+  _pShell->DeclareSymbol("persistent user INDEX ser_iChatCommandColor2;", &ser_iChatCommandColor2);
   _pShell->DeclareSymbol("user CTString ser_strAdminPassword;", &ser_strAdminPassword);
   _pShell->DeclareSymbol("user CTString ser_strOperatorPassword;", &ser_strOperatorPassword);
 
