@@ -131,7 +131,6 @@ class CORE_API IClientLogging {
 
 // Declare all elements of client logging system
 #include "ClientIdentity.h"
-#include "ClientRestrictions.h"
 #include "ActiveClients.h"
 
 #endif

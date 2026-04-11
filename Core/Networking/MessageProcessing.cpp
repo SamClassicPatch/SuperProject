@@ -255,8 +255,8 @@ void IProcessPacket::OnConnectRemoteSessionStateRequest(INDEX iClient, CNetworkM
   CClientIdentity *pci = IClientLogging::GetIdentity(iClient);
 
   // [Cecil] Check if the client is banned
-  CClientRestriction *pcr = CClientRestriction::IsBanned(pci);
-  BOOL bBanned = (pcr != NULL);
+  CClientRestriction &cr = pci->crRestrictions;
+  const BOOL bBanned = cr.IsBanned();
 
   static CSymbolPtr pbWhiteList("ser_bInverseBanning");
 
@@ -269,7 +269,7 @@ void IProcessPacket::OnConnectRemoteSessionStateRequest(INDEX iClient, CNetworkM
     }
 
     CTString strTime, strReason;
-    pcr->PrintBanTime(strTime);
+    cr.PrintBanTime(strTime);
 
     strReason.PrintF(TRANS("You have been banned for %s!"), strTime);
     INetwork::SendDisconnectMessage(iClient, strReason, TRUE);

@@ -96,106 +96,17 @@ void CClientRestriction::PrintMuteTime(CTString &str) const {
   IData::PrintDetailedTime(str, GetMuteTime());
 };
 
-// Check if any records have expired and remove them from the list
-void CClientRestriction::UpdateExpirations(void) {
-  // Container of expired records
-  CDynamicContainer<CClientRestriction> cExpired;
-
-  const CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
-
-  // Go through all restriction records
-  FOREACHINDYNAMICCONTAINER(_cClientRestrictions, CClientRestriction, itcrCheck) {
-    CClientRestriction *pcr = itcrCheck;
-
-    // Skip records with indefinite times
-    if (pcr->tvBanExpiration.tv_llValue < 0 || pcr->tvMuteExpiration.tv_llValue < 0) {
-      continue;
-    }
-
-    // If both times are behind the current time
-    if (pcr->tvBanExpiration < tvNow && pcr->tvMuteExpiration < tvNow) {
-      // Add to the expired list
-      cExpired.Add(pcr);
-    }
-  }
-
-  // Remove expired records from the record list
-  FOREACHINDYNAMICCONTAINER(cExpired, CClientRestriction, itcrExpired) {
-    _cClientRestrictions.Remove(itcrExpired);
-    delete &*itcrExpired;
-  }
-};
-
-// Add new restriction for a specific client identity
-CClientRestriction *CClientRestriction::AddNew(CClientIdentity *pci) {
-  // Create a new record
-  CClientRestriction *pcrNew = new CClientRestriction();
-  pcrNew->pciClient = pci;
-
-  _cClientRestrictions.Add(pcrNew);
-
-  return pcrNew;
-};
-
-// Check if some client is banned and return a record with the ban
-CClientRestriction *CClientRestriction::IsBanned(CClientIdentity *pci) {
-  const CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
-  const INDEX ct = _cClientRestrictions.Count();
-
-  // Go through all restriction records
-  for (INDEX i = 0; i < ct; i++) {
-    CClientRestriction *pcr = _cClientRestrictions.Pointer(i);
-
-    // Found matching client identity
-    if (pcr->pciClient == pci) {
-      // Time hasn't expired yet
-      if (pcr->IsBanned()) {
-        return pcr;
-      }
-    }
-  }
-
-  // No restriction record found
-  return NULL;
-};
-
-// Check if some client is muted and return a record with the mute
-CClientRestriction *CClientRestriction::IsMuted(CClientIdentity *pci) {
-  const CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
-  const INDEX ct = _cClientRestrictions.Count();
-
-  // Go through all restriction records
-  for (INDEX i = 0; i < ct; i++) {
-    CClientRestriction *pcr = _cClientRestrictions.Pointer(i);
-
-    // Found matching client identity
-    if (pcr->pciClient == pci) {
-      // Time hasn't expired yet
-      if (pcr->IsMuted()) {
-        return pcr;
-      }
-    }
-  }
-
-  // No restriction record found
-  return NULL;
-};
-
 // Ban a specific client by the identity index
 CTString CClientRestriction::BanClient(INDEX iIdentity, FLOAT fTime) {
   // Get restriction record (create if there isn't one)
   CClientIdentity *pci = &_aClientIdentities[iIdentity];
-  CClientRestriction *pcr = CClientRestriction::IsBanned(pci);
-
-  if (pcr == NULL) {
-    pcr = CClientRestriction::AddNew(pci);
-  }
+  CClientRestriction &cr = pci->crRestrictions;
 
   // Update ban time and print it out
-  pcr->SetBanTime((DOUBLE)fTime);
+  cr.SetBanTime((DOUBLE)fTime);
 
   CTString strTime;
-  pcr->PrintBanTime(strTime);
+  cr.PrintBanTime(strTime);
 
   // Get active clients of this identity
   CActiveClient::List cActive;
@@ -225,17 +136,13 @@ CTString CClientRestriction::BanClient(INDEX iIdentity, FLOAT fTime) {
 CTString CClientRestriction::MuteClient(INDEX iIdentity, FLOAT fTime) {
   // Get restriction record (create if there isn't one)
   CClientIdentity *pci = &_aClientIdentities[iIdentity];
-  CClientRestriction *pcr = CClientRestriction::IsMuted(pci);
-
-  if (pcr == NULL) {
-    pcr = CClientRestriction::AddNew(pci);
-  }
+  CClientRestriction &cr = pci->crRestrictions;
 
   // Update mute time and print it out
-  pcr->SetMuteTime((DOUBLE)fTime);
+  cr.SetMuteTime((DOUBLE)fTime);
 
   CTString strTime;
-  pcr->PrintMuteTime(strTime);
+  cr.PrintMuteTime(strTime);
 
   // Report
   return CTString(0, TRANS("Client %d has been muted for %s!"), iIdentity, strTime);

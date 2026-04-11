@@ -125,22 +125,20 @@ BOOL IStockCommands::RemoteSave(CTString &strResult, INDEX iClient, const CTStri
 
 // Print client restrictions
 static void PrintIdentityRestrictions(CClientIdentity &ci, CTString &strInfo) {
-  // Check for a ban
-  CClientRestriction *pcr = CClientRestriction::IsBanned(&ci);
+  CClientRestriction &cr = ci.crRestrictions;
 
-  if (pcr != NULL) {
+  // Check for a ban
+  if (cr.IsBanned()) {
     CTString strTime;
-    pcr->PrintBanTime(strTime);
+    cr.PrintBanTime(strTime);
 
     strInfo += CTString(0, "\n  ^cbf3f3fBANNED for %s!", strTime);
   }
 
   // Check for a mute
-  pcr = CClientRestriction::IsMuted(&ci);
-
-  if (pcr != NULL) {
+  if (cr.IsMuted()) {
     CTString strTime;
-    pcr->PrintMuteTime(strTime);
+    cr.PrintMuteTime(strTime);
 
     strInfo += CTString(0, "\n  ^cbfbf7fMUTED for %s!", strTime);
   }

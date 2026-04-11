@@ -92,12 +92,12 @@ BOOL IAntiFlood::HandleChatMessage(INDEX iClient)
   static CTString strKickWarning = TRANS("\n^cffffffFurther attempts may lead to a kick!");
 
   // Check if the client is muted
-  CClientRestriction *pcr = CClientRestriction::IsMuted(pci);
+  CClientRestriction &cr = pci->crRestrictions;
 
-  if (pcr != NULL) {
+  if (cr.IsMuted()) {
     // Notify the client about being muted
     CTString strTime, strWarning;
-    pcr->PrintMuteTime(strTime);
+    cr.PrintMuteTime(strTime);
 
     strWarning.PrintF(TRANS("You are not allowed to chat for %s!"), strTime);
 

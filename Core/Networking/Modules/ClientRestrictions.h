@@ -20,19 +20,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   #pragma once
 #endif
 
-#include "ClientIdentity.h"
-
 // One record of client's restriction
 class CORE_API CClientRestriction {
-  public:
-    CClientIdentity *pciClient; // Whose record this is
-
+  private:
     CTimerValue tvBanExpiration; // Time when the ban expires
     CTimerValue tvMuteExpiration; // Time when the mute expires
 
   public:
     // Default constructor
-    CClientRestriction() : pciClient(NULL) {
+    CClientRestriction() {
       tvBanExpiration.Clear();
       tvMuteExpiration.Clear();
     };
@@ -69,18 +65,6 @@ class CORE_API CClientRestriction {
 
   // Static methods
   public:
-
-    // Check if any records have expired and remove them from the list
-    static void UpdateExpirations(void);
-
-    // Add new restriction for a specific client identity
-    static CClientRestriction *AddNew(CClientIdentity *pci);
-
-    // Check if some client is banned and return a record with the ban
-    static CClientRestriction *IsBanned(CClientIdentity *pci);
-
-    // Check if some client is muted and return a record with the mute
-    static CClientRestriction *IsMuted(CClientIdentity *pci);
 
     // Ban a specific client by the identity index
     static CTString BanClient(INDEX iIdentity, FLOAT fTime);

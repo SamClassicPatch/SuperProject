@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #endif
 
 #include "ClientLogging.h"
+#include "ClientRestrictions.h"
 
 // Clear method for CDynamicStackArray
 inline void Clear(CPlayerCharacter &pc) {
@@ -35,6 +36,9 @@ class CORE_API CClientIdentity {
 
     // Characters the client has played as (playing in split screen or from the same addresses)
     CDynamicStackArray<CPlayerCharacter> aCharacters;
+
+    // Restrictions put on the client
+    CClientRestriction crRestrictions;
 
   public:
     // Find address index of this client

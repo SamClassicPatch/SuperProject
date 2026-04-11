@@ -55,9 +55,6 @@ void CCoreTimerHandler::OnTick(void)
   // Check on annoying clients
   CActiveClient::CheckAnnoyingClients();
 
-  // Update client restriction records
-  CClientRestriction::UpdateExpirations();
-
   // Call per-tick function for each plugin
   FOREACHPLUGIN(itPlugin) {
     if (itPlugin->pm_events.m_timer->OnTick == NULL) continue;
