@@ -116,11 +116,6 @@ void Initialize(void) {
   _tvNextVote = -100.0;
 };
 
-// Check if the vote command is usable
-BOOL VoteCommandCheck(INDEX iClient) {
-  return IsVotingAvailable() || CActiveClient::IsAdmin(iClient);
-};
-
 // Check if voting is available
 BOOL IsVotingAvailable(void) {
   // Setting is on; server is running
@@ -140,8 +135,8 @@ void EndVote(BOOL bTimeout) {
 
 // Initiate voting for a specific thing by some client
 BOOL InitiateVoting(INDEX iClient, CGenericVote *pvt) {
-  // Unavailable or already voting in progress
-  if (!IsVotingAvailable() || _pvtCurrentVote != NULL) return FALSE;
+  // Already voting in progress
+  if (_pvtCurrentVote != NULL) return FALSE;
 
   _pvtCurrentVote = pvt->MakeCopy();
   DOUBLE dTimeLeft = ceil(_pvtCurrentVote->GetTimeLeft().GetSeconds());
@@ -396,11 +391,40 @@ BOOL CanInitiateVoting(CTString &strWhyCannot, INDEX iClient) {
   return TRUE;
 };
 
+// Check if a generic vote command is usable
+BOOL Chat::CheckGenericVoteCommand(INDEX iClient) {
+  return IsVotingAvailable();
+};
+
+// Check if the map vote command is usable
+BOOL Chat::CheckMapVoteCommand(INDEX iClient) {
+  // Enabled or an admin
+  return CheckGenericVoteCommand(iClient) && (ser_bVoteMap || CActiveClient::IsAdmin(iClient));
+};
+
+// Check if the kick vote command is usable
+BOOL Chat::CheckKickVoteCommand(INDEX iClient) {
+  // Enabled or an admin
+  return CheckGenericVoteCommand(iClient) && (ser_bVoteKick || CActiveClient::IsAdmin(iClient));
+};
+
+// Check if the mute vote command is usable
+BOOL Chat::CheckMuteVoteCommand(INDEX iClient) {
+  // Enabled or an admin
+  return CheckGenericVoteCommand(iClient) && (ser_bVoteMute || CActiveClient::IsAdmin(iClient));
+};
+
+// Check if the skip vote command is usable
+BOOL Chat::CheckSkipVoteCommand(INDEX iClient) {
+  // Not a dedicated server
+  if (!ClassicsCore_IsServerApp()) return FALSE;
+
+  // Enabled or an admin
+  return CheckGenericVoteCommand(iClient) && (ser_bVoteSkip || CActiveClient::IsAdmin(iClient));
+};
+
 // Initiate voting to change a map
 BOOL Chat::VoteMap(CTString &strResult, INDEX iClient, const CTString &strArguments) {
-  // Disabled (unless it's an admin)
-  if (!ser_bVoteMap && !CActiveClient::IsAdmin(iClient)) return FALSE;
-
   // Can't vote (reply to the client if there's a message)
   if (!CanInitiateVoting(strResult, iClient)) {
     return (strResult != "");
@@ -471,9 +495,6 @@ static INDEX FindClientToVoteFor(const CTString &strChatCommand, CTString &strRe
 
 // Initiate voting to kick a client
 BOOL Chat::VoteKick(CTString &strResult, INDEX iClient, const CTString &strArguments) {
-  // Disabled (unless it's an admin)
-  if (!ser_bVoteKick && !CActiveClient::IsAdmin(iClient)) return FALSE;
-
   // Can't vote (reply to the client if there's a message)
   if (!CanInitiateVoting(strResult, iClient)) {
     return (strResult != "");
@@ -498,9 +519,6 @@ BOOL Chat::VoteKick(CTString &strResult, INDEX iClient, const CTString &strArgum
 
 // Initiate voting to mute a client
 BOOL Chat::VoteMute(CTString &strResult, INDEX iClient, const CTString &strArguments) {
-  // Disabled (unless it's an admin)
-  if (!ser_bVoteMute && !CActiveClient::IsAdmin(iClient)) return FALSE;
-
   // Can't vote (reply to the client if there's a message)
   if (!CanInitiateVoting(strResult, iClient)) {
     return (strResult != "");
@@ -525,11 +543,6 @@ BOOL Chat::VoteMute(CTString &strResult, INDEX iClient, const CTString &strArgum
 
 // Initiate voting to skip current round
 BOOL Chat::VoteSkip(CTString &strResult, INDEX iClient, const CTString &strArguments) {
-  if (!ClassicsCore_IsServerApp()) return FALSE;
-
-  // Disabled (unless it's an admin)
-  if (!ser_bVoteSkip && !CActiveClient::IsAdmin(iClient)) return FALSE;
-
   // Can't vote (reply to the client if there's a message)
   if (!CanInitiateVoting(strResult, iClient)) {
     return (strResult != "");
@@ -548,8 +561,8 @@ BOOL Chat::VoteSkip(CTString &strResult, INDEX iClient, const CTString &strArgum
 
 // Make a vote as a client
 BOOL CheckVote(CTString &strResult, INDEX iClient, BOOL bVoteYes) {
-  // Unavailable or no voting in progress
-  if (!IsVotingAvailable() || _pvtCurrentVote == NULL) return FALSE;
+  // No voting in progress
+  if (_pvtCurrentVote == NULL) return FALSE;
 
   CActiveClient &ac = _aActiveClients[iClient];
 

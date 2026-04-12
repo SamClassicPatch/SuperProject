@@ -51,9 +51,6 @@ inline CTString VoteNoCommand(void) {
   return _strColorTagNegative + ser_strCommandPrefix + "n";
 };
 
-// Check if the vote command is usable
-BOOL VoteCommandCheck(INDEX iClient);
-
 // Check if voting is available
 CORE_API BOOL IsVotingAvailable(void);
 
@@ -86,6 +83,13 @@ CORE_API BOOL CheckVote(CTString &strResult, INDEX iClient, BOOL bVoteYes);
 
 // Chat commands
 struct CORE_API Chat {
+  // Check if specific vote commands are usable
+  static BOOL CheckGenericVoteCommand(INDEX iClient);
+  static BOOL CheckMapVoteCommand(INDEX iClient);
+  static BOOL CheckKickVoteCommand(INDEX iClient);
+  static BOOL CheckMuteVoteCommand(INDEX iClient);
+  static BOOL CheckSkipVoteCommand(INDEX iClient);
+
   // Initiate voting to change a map
   static BOOL VoteMap(CTString &strResult, INDEX iClient, const CTString &strArguments);
 

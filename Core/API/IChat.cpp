@@ -466,31 +466,29 @@ void Chat(void) {
   ClassicsChat_SetCommandAccess("kick", k_EChatCommandAccessLevel_Admin, FALSE);
 
   // Voting
-  if (ClassicsCore_IsServerApp()) {
-    ClassicsChat_RegisterCommand("voteskip", &IVotingSystem::Chat::VoteSkip);
-    ClassicsChat_SetCommandInfo("voteskip", "", TRANS("Initiate a voting process to skip the current round on a dedicated server"));
-    ClassicsChat_SetCommandCheck("voteskip", &IVotingSystem::VoteCommandCheck);
-  }
-
   ClassicsChat_RegisterCommand("votemap", &IVotingSystem::Chat::VoteMap);
   ClassicsChat_SetCommandInfo("votemap", "[map index]", TRANS("Initiate a voting process to change the current map with another one from the current map pool"));
-  ClassicsChat_SetCommandCheck("votemap", &IVotingSystem::VoteCommandCheck);
+  ClassicsChat_SetCommandCheck("votemap", &IVotingSystem::Chat::CheckMapVoteCommand);
 
   ClassicsChat_RegisterCommand("votekick", &IVotingSystem::Chat::VoteKick);
   ClassicsChat_SetCommandInfo("votekick", "[client]", TRANS("Initiate a voting process to kick a specific client under a specific index"));
-  ClassicsChat_SetCommandCheck("votekick", &IVotingSystem::VoteCommandCheck);
+  ClassicsChat_SetCommandCheck("votekick", &IVotingSystem::Chat::CheckKickVoteCommand);
 
   ClassicsChat_RegisterCommand("votemute", &IVotingSystem::Chat::VoteMute);
   ClassicsChat_SetCommandInfo("votemute", "[client]", TRANS("Initiate a voting process to mute a specific client under a specific index"));
-  ClassicsChat_SetCommandCheck("votemute", &IVotingSystem::VoteCommandCheck);
+  ClassicsChat_SetCommandCheck("votemute", &IVotingSystem::Chat::CheckMuteVoteCommand);
+
+  ClassicsChat_RegisterCommand("voteskip", &IVotingSystem::Chat::VoteSkip);
+  ClassicsChat_SetCommandInfo("voteskip", "", TRANS("Initiate a voting process to skip the current round on a dedicated server"));
+  ClassicsChat_SetCommandCheck("voteskip", &IVotingSystem::Chat::CheckSkipVoteCommand);
 
   ClassicsChat_RegisterCommand("y", &IVotingSystem::Chat::VoteYes);
   ClassicsChat_SetCommandInfo("y", "", TRANS("Vote \"yes\" during active voting"));
-  ClassicsChat_SetCommandCheck("y", &IVotingSystem::VoteCommandCheck);
+  ClassicsChat_SetCommandCheck("y", &IVotingSystem::Chat::CheckGenericVoteCommand);
 
   ClassicsChat_RegisterCommand("n", &IVotingSystem::Chat::VoteNo);
   ClassicsChat_SetCommandInfo("n", "", TRANS("Vote \"no\" during active voting"));
-  ClassicsChat_SetCommandCheck("n", &IVotingSystem::VoteCommandCheck);
+  ClassicsChat_SetCommandCheck("n", &IVotingSystem::Chat::CheckGenericVoteCommand);
 
   // Local interaction with the client log
   _pShell->DeclareSymbol("user void ClientLog(INDEX, INDEX);", &ClientLogInConsole);
