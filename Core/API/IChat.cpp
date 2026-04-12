@@ -35,6 +35,9 @@ CTString ser_strOperatorPassword = "";
 INDEX ser_iChatCommandColor  = 0xFFDF00FF;
 INDEX ser_iChatCommandColor2 = 0xFF5F3FFF;
 
+// Currently processed chat command by name
+static const CTString *_pstrCurrentChatCommand = NULL;
+
 // Chat command function holder
 struct ChatCommand_t {
   CTString strArgumentList;
@@ -56,8 +59,26 @@ struct ChatCommand_t {
     return bPure == other.bPure && pEngineHandler == other.pEngineHandler;
   };
 
+  // Execute the command function
+  inline BOOL Execute(const CTString &strCommand, CTString &strOut, INDEX iClient, const CTString &strArguments) const {
+    BOOL bHandled;
+    _pstrCurrentChatCommand = &strCommand; // Set current command
+
+    if (bPure) {
+      ChatCommandResultStr strBufferOut = { 0 };
+      bHandled = pPureHandler(strBufferOut, iClient, strArguments.str_String);
+      strOut = strBufferOut;
+
+    } else {
+      bHandled = pEngineHandler(strOut, iClient, strArguments);
+    }
+
+    _pstrCurrentChatCommand = NULL; // Reset current command
+    return bHandled;
+  };
+
   // Check whether the command is usable by a specific client
-  inline bool CheckCommand(INDEX iClient) const {
+  inline bool CheckCommand(const CTString &strCommand, INDEX iClient) const {
     // Non-operator tries executing an operator command
     if (!CActiveClient::IsOperator(iClient) && eAccess == k_EChatCommandAccessLevel_Operator) return false;
 
@@ -65,8 +86,15 @@ struct ChatCommand_t {
     if (!CActiveClient::IsAdmin(iClient) && eAccess == k_EChatCommandAccessLevel_Admin) return false;
 
     // Check the command using specified callback, if it exists
-    if (pCheckFunc == NULL) return true;
-    return !!pCheckFunc(iClient);
+    bool bResult = true;
+
+    if (pCheckFunc != NULL) {
+      _pstrCurrentChatCommand = &strCommand; // Set current command
+      bResult = !!pCheckFunc(iClient);
+      _pstrCurrentChatCommand = NULL; // Reset current command
+    }
+
+    return bResult;
   };
 };
 
@@ -170,25 +198,14 @@ BOOL HandleChatCommand(INDEX iClient, const CTString &strCommand)
     const ChatCommand_t &com = it->second;
 
     // Process as a normal chat message if the command is currently unusable
-    if (!com.CheckCommand(iClient)) return TRUE;
+    if (!com.CheckCommand(it->first, iClient)) return TRUE;
 
     // Execute it
     CTString strOut = "";
-    BOOL bHandled;
-
-    if (com.bPure) {
-      ChatCommandResultStr strBufferOut = { 0 };
-      bHandled = com.pPureHandler(strBufferOut, iClient, strArguments.str_String);
-      strOut = strBufferOut;
-
-    } else {
-      bHandled = com.pEngineHandler(strOut, iClient, strArguments);
-    }
+    const BOOL bHandled = com.Execute(it->first, strOut, iClient, strArguments);
 
     // Process as a normal chat message upon failure
-    if (!bHandled) {
-      return TRUE;
-    }
+    if (!bHandled) return TRUE;
 
     // Reply to the client with the inputted command
     INetwork::SendChatToClient(iClient, TRANS("Chat command"), strCommand);
@@ -234,7 +251,7 @@ BOOL IStockCommands::ListCommands(CTString &strResult, INDEX iClient, const CTSt
     const ChatCommand_t &com = it->second;
 
     // Don't list unusable commands
-    if (!com.CheckCommand(iClient)) continue;
+    if (!com.CheckCommand(it->first, iClient)) continue;
 
     // Don't list hidden commands for non-admins
     if (!CActiveClient::IsAdmin(iClient) && com.bHidden) continue;
@@ -342,6 +359,12 @@ BOOL ClassicsChat_SetCommandInfo(const char *strName, const char *strArgumentLis
   itCommand->second.strArgumentList = strArgumentList;
   itCommand->second.strDescription = strDescription;
   return TRUE;
+};
+
+const char *ClassicsChat_CurrentCommand(void)
+{
+  if (_pstrCurrentChatCommand == NULL) return NULL;
+  return _pstrCurrentChatCommand->str_String;
 };
 
 extern void PrintClientLog(CTString &strResult, INDEX iIdentity, INDEX iCharacter);
