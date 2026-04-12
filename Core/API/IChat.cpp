@@ -424,6 +424,34 @@ static void ClientLogLoad(void) {
   IClientLogging::LoadLog();
 };
 
+// Ban client under a specific identity for the specified amount of time
+static void ClientLogBan(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  INDEX iIdentity = NEXT_ARG(INDEX);
+  FLOAT fTime = NEXT_ARG(FLOAT);
+
+  if (iIdentity < 0 || iIdentity >= _aClientIdentities.Count()) {
+    CPutString("Invalid client index!\n");
+    return;
+  }
+
+  CClientRestriction::BanClient(iIdentity, fTime);
+};
+
+// Mute client under a specific identity for the specified amount of time
+static void ClientLogMute(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  INDEX iIdentity = NEXT_ARG(INDEX);
+  FLOAT fTime = NEXT_ARG(FLOAT);
+
+  if (iIdentity < 0 || iIdentity >= _aClientIdentities.Count()) {
+    CPutString("Invalid client index!\n");
+    return;
+  }
+
+  CClientRestriction::MuteClient(iIdentity, fTime);
+};
+
 void Chat(void) {
   _pShell->DeclareSymbol("persistent user CTString ser_strCommandPrefix;", &ser_strCommandPrefix);
   _pShell->DeclareSymbol("persistent user INDEX ser_iChatCommandColor;",  &ser_iChatCommandColor);
@@ -490,11 +518,13 @@ void Chat(void) {
   ClassicsChat_SetCommandInfo("n", "", TRANS("Vote \"no\" during active voting"));
   ClassicsChat_SetCommandCheck("n", &IVotingSystem::Chat::CheckGenericVoteCommand);
 
-  // Local interaction with the client log
+  // Local interactions with the client log
   _pShell->DeclareSymbol("user void ClientLog(INDEX, INDEX);", &ClientLogInConsole);
   _pShell->DeclareSymbol("user void ClientLogDelete(INDEX, INDEX);", &ClientLogDelete);
   _pShell->DeclareSymbol("user void ClientLogSave(void);", &ClientLogSave);
   _pShell->DeclareSymbol("user void ClientLogLoad(void);", &ClientLogLoad);
+  _pShell->DeclareSymbol("user void ClientLogBan(INDEX, FLOAT);", &ClientLogBan);
+  _pShell->DeclareSymbol("user void ClientLogMute(INDEX, FLOAT);", &ClientLogMute);
 
   _pShell->DeclareSymbol("persistent user INDEX ser_bAutoSaveClientLog;", &ser_bAutoSaveClientLog);
 };
