@@ -73,7 +73,7 @@ CORE_API BOOL AddMapToPool(const CTFileName &fnmWorldFile);
 CORE_API void PrintMapPool(CTString &str);
 
 // Print current clients
-CORE_API void PrintClientList(CTString &str);
+CORE_API void PrintClientList(CTString &str, BOOL bIncludeAdmins);
 
 // Check if can initiate voting
 CORE_API BOOL CanInitiateVoting(CTString &strWhyCannot, INDEX iClient);

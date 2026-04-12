@@ -146,12 +146,12 @@ BOOL InitiateVoting(INDEX iClient, CGenericVote *pvt) {
   CActiveClient &ac = _aActiveClients[iClient];
 
   if (ac.cPlayers.Count() == 0) {
-    strPlayers.PrintF(TRANS("Client %d"), iClient);
+    strPlayers.PrintF(LOCALIZE("Client %d"), iClient);
   } else {
     strPlayers = ac.ListPlayers();
   }
 
-  CTString strChatMessage(0, TRANS("%s has initiated a vote:"), strPlayers);
+  CTString strChatMessage = "^cFFFFFF" + strPlayers + "^r^cFFFFFF " + TRANS("has initiated a vote:");
   strChatMessage += "\n  " + _pvtCurrentVote->VoteMessage() + "\n";
 
   strChatMessage += CTString(0, TRANS("^CYou have ^cffffff%d^C seconds to vote. Type %s^C or %s^C to vote for or against it!"),
@@ -328,7 +328,7 @@ void PrintMapPool(CTString &str) {
 };
 
 // Print current clients
-void PrintClientList(CTString &str) {
+void PrintClientList(CTString &str, BOOL bIncludeAdmins) {
   str = TRANS("^cffffffAvailable clients");
   str += "\n^cffffff--------------------------------";
 
@@ -340,12 +340,14 @@ void PrintClientList(CTString &str) {
     // Inactive
     if (!ac.IsActive()) continue;
 
+    // Exclude admins
+    if (!bIncludeAdmins && CActiveClient::IsAdmin(i)) continue;
+
     str += CTString(0, "\n%s%2d^C. ", GetChatCommandColor().str_String, i);
 
     // No active players
     if (ac.cPlayers.Count() == 0) {
-      str += "<observer>";
-
+      str += CTString(0, LOCALIZE("Client %d"), i) + " " + TRANS("(observer)");
     } else {
       str += ac.ListPlayers();
     }
@@ -470,9 +472,9 @@ static INDEX FindClientToVoteFor(const CTString &strChatCommand, CTString &strRe
   INDEX iReturn = -1;
   INDEX iScan = const_cast<CTString &>(strArguments).ScanF("%d", &iReturn);
 
-  // Display current clients
+  // Display current clients (except for admins)
   if (iScan != 1) {
-    PrintClientList(strResult);
+    PrintClientList(strResult, FALSE);
     strResult += "\n\n" + CTString(0, TRANS("To initiate a vote, type %s%s%s <client index>"),
                                    GetChatCommandColor().str_String, ser_strCommandPrefix.str_String, strChatCommand.str_String);
     return -1;
@@ -486,6 +488,12 @@ static INDEX FindClientToVoteFor(const CTString &strChatCommand, CTString &strRe
 
   // Inactive client
   if (!_aActiveClients[iReturn].IsActive()) {
+    strResult = INVALID_CLIENT_MESSAGE;
+    return -1;
+  }
+
+  // Admin client (shouldn't be kicked or muted)
+  if (CActiveClient::IsAdmin(iReturn)) {
     strResult = INVALID_CLIENT_MESSAGE;
     return -1;
   }

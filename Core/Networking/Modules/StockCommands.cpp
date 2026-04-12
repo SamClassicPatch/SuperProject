@@ -175,7 +175,7 @@ static void PrintIdentityInfoMinimal(CTString &strResult, INDEX iIdentity) {
   PrintIdentityRestrictions(ci, strInfo);
 
   // Display relevant information
-  strResult += CTString(0, "\nClient %d: ", iIdentity) + strInfo;
+  strResult += "\n" + CTString(0, LOCALIZE("Client %d"), iIdentity) + ": " + strInfo;
 };
 
 // Display full information about a specific identity
