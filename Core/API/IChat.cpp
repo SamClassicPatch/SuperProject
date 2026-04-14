@@ -38,71 +38,46 @@ INDEX ser_iChatCommandColor2 = 0xFF5F3FFF;
 // Currently processed chat command by name
 static const CTString *_pstrCurrentChatCommand = NULL;
 
-// Chat command function holder
-struct ChatCommand_t {
-  CTString strArgumentList;
-  CTString strDescription;
-  EChatCommandAccessLevel eAccess;
+// Execute the command function
+BOOL ChatCommand_t::Execute(const CTString &strCommand, CTString &strOut, INDEX iClient, const CTString &strArguments) const {
+  BOOL bHandled;
+  _pstrCurrentChatCommand = &strCommand; // Set current command
 
-  BOOL bPure;
-  BOOL bHidden; // Whether to hide the command from the help
-  FCheckChatCommand pCheckFunc;
-  void *pUserData;
+  if (bPure) {
+    ChatCommandResultStr strBufferOut = { 0 };
+    bHandled = pPureHandler(strBufferOut, iClient, strArguments.str_String);
+    strOut = strBufferOut;
 
-  union {
-    FEngineChatCommand pEngineHandler;
-    FPureChatCommand pPureHandler;
-  };
+  } else {
+    bHandled = pEngineHandler(strOut, iClient, strArguments);
+  }
 
-  ChatCommand_t() : eAccess(k_EChatCommandAccessLevel_Everyone), bPure(FALSE), bHidden(FALSE),
-    pCheckFunc(NULL), pUserData(NULL), pEngineHandler(NULL) {};
+  _pstrCurrentChatCommand = NULL; // Reset current command
+  return bHandled;
+};
 
-  inline bool operator==(const ChatCommand_t &other) const {
-    return bPure == other.bPure && pEngineHandler == other.pEngineHandler;
-  };
+// Check whether the command is usable by a specific client
+bool ChatCommand_t::CheckCommand(const CTString &strCommand, INDEX iClient) const {
+  // Non-operator tries executing an operator command
+  if (!CActiveClient::IsOperator(iClient) && eAccess == k_EChatCommandAccessLevel_Operator) return false;
 
-  // Execute the command function
-  inline BOOL Execute(const CTString &strCommand, CTString &strOut, INDEX iClient, const CTString &strArguments) const {
-    BOOL bHandled;
+  // Non-admin tries executing an admin command
+  if (!CActiveClient::IsAdmin(iClient) && eAccess == k_EChatCommandAccessLevel_Admin) return false;
+
+  // Check the command using specified callback, if it exists
+  bool bResult = true;
+
+  if (pCheckFunc != NULL) {
     _pstrCurrentChatCommand = &strCommand; // Set current command
-
-    if (bPure) {
-      ChatCommandResultStr strBufferOut = { 0 };
-      bHandled = pPureHandler(strBufferOut, iClient, strArguments.str_String);
-      strOut = strBufferOut;
-
-    } else {
-      bHandled = pEngineHandler(strOut, iClient, strArguments);
-    }
-
+    bResult = !!pCheckFunc(iClient);
     _pstrCurrentChatCommand = NULL; // Reset current command
-    return bHandled;
-  };
+  }
 
-  // Check whether the command is usable by a specific client
-  inline bool CheckCommand(const CTString &strCommand, INDEX iClient) const {
-    // Non-operator tries executing an operator command
-    if (!CActiveClient::IsOperator(iClient) && eAccess == k_EChatCommandAccessLevel_Operator) return false;
-
-    // Non-admin tries executing an admin command
-    if (!CActiveClient::IsAdmin(iClient) && eAccess == k_EChatCommandAccessLevel_Admin) return false;
-
-    // Check the command using specified callback, if it exists
-    bool bResult = true;
-
-    if (pCheckFunc != NULL) {
-      _pstrCurrentChatCommand = &strCommand; // Set current command
-      bResult = !!pCheckFunc(iClient);
-      _pstrCurrentChatCommand = NULL; // Reset current command
-    }
-
-    return bResult;
-  };
+  return bResult;
 };
 
 // List of chat commands
-typedef se1::map<CTString, ChatCommand_t> CChatCommands;
-static CChatCommands _mapChatCommands;
+CChatCommands _mapChatCommands;
 
 // Primary chat command color
 const CTString &GetChatCommandColor(void) {

@@ -31,6 +31,40 @@ CORE_API extern CTString ser_strOperatorPassword;
 CORE_API extern INDEX ser_iChatCommandColor;
 CORE_API extern INDEX ser_iChatCommandColor2;
 
+// Chat command function holder
+struct CORE_API ChatCommand_t {
+  CTString strArgumentList;
+  CTString strDescription;
+  EChatCommandAccessLevel eAccess;
+
+  BOOL bPure;
+  BOOL bHidden; // Whether to hide the command from the help
+  FCheckChatCommand pCheckFunc;
+  void *pUserData;
+
+  union {
+    FEngineChatCommand pEngineHandler;
+    FPureChatCommand pPureHandler;
+  };
+
+  ChatCommand_t() : eAccess(k_EChatCommandAccessLevel_Everyone), bPure(FALSE), bHidden(FALSE),
+    pCheckFunc(NULL), pUserData(NULL), pEngineHandler(NULL) {};
+
+  inline bool operator==(const ChatCommand_t &other) const {
+    return bPure == other.bPure && pEngineHandler == other.pEngineHandler;
+  };
+
+  // Execute the command function
+  BOOL Execute(const CTString &strCommand, CTString &strOut, INDEX iClient, const CTString &strArguments) const;
+
+  // Check whether the command is usable by a specific client
+  bool CheckCommand(const CTString &strCommand, INDEX iClient) const;
+};
+
+// List of chat commands
+typedef se1::map<CTString, ChatCommand_t> CChatCommands;
+CORE_API extern CChatCommands _mapChatCommands;
+
 CORE_API const CTString &GetChatCommandColor(void);  // Primary chat command color
 CORE_API const CTString &GetChatCommandColor2(void); // Secondary chat command color
 CORE_API const CTString &GetVoteMessageColor(void);  // Vote message color
