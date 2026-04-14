@@ -87,7 +87,7 @@ static SQInteger Clone(HSQUIRRELVM v, CPlayerCharacter &val, CPlayerCharacter &v
 };
 
 static SQInteger ToString(HSQUIRRELVM v, CPlayerCharacter &val) {
-  sq_pushstring(v, val.GetNameForPrinting(), -1);
+  sq_pushstring(v, val.GetNameForPrinting().str_String, -1);
   return 1;
 };
 
@@ -1121,6 +1121,78 @@ static SQInteger GetSessionPropByte(HSQUIRRELVM v) {
   return 1;
 };
 
+static SQInteger AddChatCommand(HSQUIRRELVM v) {
+  const SQChar *strCommand;
+  sq_getstring(v, 2, &strCommand);
+
+  Object objClosure(v, (SQInteger)3);
+
+  if (!GetVMClass(v).AddChatCommand(strCommand, objClosure)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "chat command '%s' already exists", strCommand);
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
+};
+
+static SQInteger RemoveChatCommand(HSQUIRRELVM v) {
+  const SQChar *strCommand;
+  sq_getstring(v, 2, &strCommand);
+
+  if (!GetVMClass(v).RemoveChatCommand(strCommand)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "chat command '%s' doesn't exist or doesn't belong to this VM", strCommand);
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
+};
+
+static SQInteger ChatCommandExists(HSQUIRRELVM v) {
+  const SQChar *strCommand;
+  sq_getstring(v, 2, &strCommand);
+
+  sq_pushbool(v, ClassicsChat_CommandExists(strCommand));
+  return 1;
+};
+
+static SQInteger SetChatCommandAccess(HSQUIRRELVM v) {
+  const SQChar *strCommand;
+  sq_getstring(v, 2, &strCommand);
+
+  SQInteger iAccess;
+  sq_getinteger(v, 3, &iAccess);
+
+  SQBool bHidden;
+  sq_getbool(v, 4, &bHidden);
+
+  if (iAccess < 0 || iAccess >= k_EChatCommandAccessLevel_Max) {
+    return sq_throwerror(v, "invalid chat command access level");
+  }
+
+  sq_pushbool(v, ClassicsChat_SetCommandAccess(strCommand, (EChatCommandAccessLevel)iAccess, bHidden));
+  return 1;
+};
+
+static SQInteger SetChatCommandInfo(HSQUIRRELVM v) {
+  const SQChar *strCommand;
+  const SQChar *strArgumentList;
+  const SQChar *strDescription;
+  sq_getstring(v, 2, &strCommand);
+  sq_getstring(v, 3, &strArgumentList);
+  sq_getstring(v, 4, &strDescription);
+
+  // Trim spaces from the argument list and add just one
+  CTString strArgsSet = strArgumentList;
+  strArgsSet.TrimSpacesLeft();
+  strArgsSet.TrimSpacesRight();
+  if (strArgsSet != "") strArgsSet = " " + strArgsSet;
+
+  sq_pushbool(v, ClassicsChat_SetCommandInfo(strCommand, strArgsSet, strDescription));
+  return 1;
+};
+
 }; // namespace
 
 // "Network" namespace functions
@@ -1195,6 +1267,13 @@ static SQRegFunction _aNetworkFuncs[] = {
   { "GetSessionPropBool",   &Network::GetSessionPropBool,   2, ".n" },
   { "GetSessionPropString", &Network::GetSessionPropString, 3, ".nn" },
   { "GetSessionPropByte",   &Network::GetSessionPropByte,   2, ".n" },
+
+  // Chat commands
+  { "AddChatCommand",       &Network::AddChatCommand,       3, ".sc" },
+  { "RemoveChatCommand",    &Network::RemoveChatCommand,    2, ".s" },
+  { "ChatCommandExists",    &Network::ChatCommandExists,    2, ".s" },
+  { "SetChatCommandAccess", &Network::SetChatCommandAccess, 4, ".snb" },
+  { "SetChatCommandInfo",   &Network::SetChatCommandInfo,   4, ".sss" },
 };
 
 void VM::RegisterNetwork(void) {
@@ -1330,6 +1409,17 @@ void VM::RegisterNetwork(void) {
 #undef ADD_SOF
 
   Const().AddEnum("SOF", enSoundFlags);
+
+  // Chat command access levels
+  Enumeration enChatCommandAccess(GetVM());
+
+#define ADD_ACCESS(_FlagName) enChatCommandAccess.RegisterValue(#_FlagName, (SQInteger)k_EChatCommandAccessLevel_##_FlagName)
+  ADD_ACCESS(Everyone);
+  ADD_ACCESS(Admin);
+  ADD_ACCESS(Operator);
+#undef ADD_ACCESS
+
+  Const().AddEnum("ChatCommandAccess", enChatCommandAccess);
 };
 
 }; // namespace

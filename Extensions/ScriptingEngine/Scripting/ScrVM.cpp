@@ -209,6 +209,23 @@ VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false)
 };
 
 VM::~VM() {
+  // Remove chat commands registered by this VM
+  CChatCommands::iterator it = _mapChatCommands.begin();
+
+  while (it != _mapChatCommands.end()) {
+    // Proceed to the next iterator immediately as it may get invalidated after removing the current command
+    CChatCommands::iterator itRemove = it++;
+
+    // Unregister the command if it references this VM
+    if (itRemove->second.pUserData == this) {
+      ClassicsChat_UnregisterCommand(itRemove->first);
+    }
+  }
+
+  // Remove all command objects
+  m_mapChatCommands.clear();
+
+  // Close Squirrel VM itself
   sq_close(m_vm);
 };
 
@@ -571,6 +588,92 @@ void VM::PrintCurrentStack(bool bOnlyCount, const char *strLabel) {
     int iFromBtm = i;
     DebugOut("[%d : %d] " DEBUGOUT_TYPE("%s") " = %s", iFromTop, iFromBtm, sq_gettypename(eType), strObj);
   }
+};
+
+bool VM::ChatCommandReturnValue(VM &vm) {
+  vm.GetString(-1, vm.m_strTempChatCommandResult);
+  return true;
+};
+
+SQRESULT VM::PushChatCommand(VM &vm) {
+  sq_pushroottable(vm);
+  sq_pushinteger(vm, vm.m_iTempChatCommandClient);
+  sq_pushstring(vm, vm.m_strTempChatCommandArgs.str_String, -1);
+  return SQ_OK;
+};
+
+BOOL VM::ScriptChatCommand(CTString &strResult, INDEX iClient, const CTString &strArguments) {
+  // Get the VM for this command
+  const char *strCommand = ClassicsChat_CurrentCommand();
+
+  // Find the VM for this command
+  void *pUserData = ClassicsChat_GetCommandUserData(strCommand);
+  if (pUserData == NULL) return FALSE;
+  VM &vm = *reinterpret_cast<VM *>(pUserData);
+
+  // Find the closure object for this command
+  CScriptChatCommands::const_iterator it = vm.m_mapChatCommands.find(strCommand);
+  if (it == vm.m_mapChatCommands.end()) return FALSE;
+
+  sq_pushobject(vm, it->second.GetObj());
+
+  // Set arguments for the chat command function
+  vm.m_iTempChatCommandClient = iClient;
+  vm.m_strTempChatCommandArgs = strArguments;
+  vm.m_strTempChatCommandResult = "";
+
+  if (!vm.Execute(&PushChatCommand, &ChatCommandReturnValue)) {
+    // Pass execution error
+    sq_throwerror(vm, vm.GetError());
+    CPrintF("^cff0000%s (%s):\n%s\n", strCommand, vm.GetName().str_String, vm.GetError());
+    return TRUE;
+  }
+
+  // Unsuspend, if needed
+  if (vm.IsSuspended()) {
+    // Warn about suspension not being supported
+    CPrintF("^cffff00%s (%s):\n%s\n", strCommand, vm.GetName().str_String,
+      "suspend() function is not supported in custom scripts! Attempting to resume...");
+
+    // Couldn't unsuspend
+    if (!vm.UnsuspendExecution(NULL)) {
+      CPrintF("^cff0000%s (%s):\n%s\n", strCommand, vm.GetName().str_String, vm.GetError());
+      return TRUE;
+    }
+  }
+
+  // If no issues occured, return the command result
+  strResult = vm.m_strTempChatCommandResult;
+  return TRUE;
+};
+
+// Add a new chat command from this VM
+bool VM::AddChatCommand(const char *strCommand, const Object &objClosure) {
+  // Already registered in the patch
+  if (ClassicsChat_CommandExists(strCommand)) return false;
+
+  CScriptChatCommands::iterator it = m_mapChatCommands.find(strCommand);
+  if (it != m_mapChatCommands.end()) return false;
+
+  // Register command in this VM and add it to the patch
+  m_mapChatCommands[strCommand] = objClosure;
+  ClassicsChat_RegisterCommand(strCommand, &ScriptChatCommand);
+  ClassicsChat_SetCommandUserData(strCommand, this); // Reference this VM for this command
+  return true;
+};
+
+// Remove a chat command registered by this VM
+bool VM::RemoveChatCommand(const char *strCommand) {
+  // Not registered in the patch
+  if (!ClassicsChat_CommandExists(strCommand)) return false;
+
+  CScriptChatCommands::iterator it = m_mapChatCommands.find(strCommand);
+  if (it == m_mapChatCommands.end()) return false;
+
+  // Unregister command from this VM and remove it from the patch
+  m_mapChatCommands.erase(it);
+  ClassicsChat_UnregisterCommand(strCommand);
+  return true;
 };
 
 // Clear cached variables to prevent them from executing

@@ -36,6 +36,10 @@ class VM {
     // Should return true if the return value isn't needed anymore and can be popped from the stack
     typedef bool (*FReturnValueCallback)(VM &vm);
 
+    // Map of chat commands registered through a VM
+    // Squirrel object must be a valid closure within that VM
+    typedef se1::map<CTString, Object> CScriptChatCommands;
+
   private:
     HSQUIRRELVM m_vm; // Squirrel VM itself
     CTString m_strName; // Display name of the environment for identification purposes
@@ -45,6 +49,13 @@ class VM {
     bool m_bRuntimeError; // Signifies that there has been at least one runtime error
     INDEX m_iScriptDepth; // Included scripts depth
     int m_ctExecutionArgs; // Amount of arguments passed into Execute() that need to be popped after finishing a suspended execution
+
+    CScriptChatCommands m_mapChatCommands; // Chat commands registered by this VM
+
+    // Temporary arguments for executing chat commands for this VM
+    INDEX m_iTempChatCommandClient;
+    CTString m_strTempChatCommandArgs;
+    CTString m_strTempChatCommandResult;
 
     // Cache for certain functions that need to be executed after the VM finishes running
     CTString m_strStartDemoRec; // Demo file for starting the recording or empty string to ignore
@@ -221,8 +232,28 @@ class VM {
       return bResult;
     };
 
+    // Push closure associated with a specific chat command of this VM on top of the stack
+    bool PushChatCommandClosure(const char *strCommand);
+
     // Display current contents of the stack in console
     void PrintCurrentStack(bool bOnlyCount = false, const char *strLabel = "Current stack");
+
+  // Chat commands
+  private:
+
+    static bool ChatCommandReturnValue(VM &vm);
+    static SQRESULT PushChatCommand(VM &vm);
+
+    // Common chat command function for executing chat commands from scripts
+    static BOOL ScriptChatCommand(CTString &strResult, INDEX iClient, const CTString &strArguments);
+
+  public:
+
+    // Add a new chat command from this VM
+    bool AddChatCommand(const char *strCommand, const Object &objClosure);
+
+    // Remove a chat command registered by this VM
+    bool RemoveChatCommand(const char *strCommand);
 
   // Caching
   public:
