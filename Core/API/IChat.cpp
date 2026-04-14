@@ -47,13 +47,15 @@ struct ChatCommand_t {
   BOOL bPure;
   BOOL bHidden; // Whether to hide the command from the help
   FCheckChatCommand pCheckFunc;
+  void *pUserData;
 
   union {
     FEngineChatCommand pEngineHandler;
     FPureChatCommand pPureHandler;
   };
 
-  ChatCommand_t() : eAccess(k_EChatCommandAccessLevel_Everyone), bPure(FALSE), bHidden(FALSE), pCheckFunc(NULL), pEngineHandler(NULL) {};
+  ChatCommand_t() : eAccess(k_EChatCommandAccessLevel_Everyone), bPure(FALSE), bHidden(FALSE),
+    pCheckFunc(NULL), pUserData(NULL), pEngineHandler(NULL) {};
 
   inline bool operator==(const ChatCommand_t &other) const {
     return bPure == other.bPure && pEngineHandler == other.pEngineHandler;
@@ -304,6 +306,10 @@ BOOL IStockCommands::ListCommands(CTString &strResult, INDEX iClient, const CTSt
 
 void ClassicsChat_RegisterCommand(const char *strName, FEngineChatCommand pFunction)
 {
+  // Already registered under this name
+  CChatCommands::const_iterator itCommand = _mapChatCommands.find(strName);
+  if (itCommand != _mapChatCommands.end()) return;
+
   ChatCommand_t &com = _mapChatCommands[strName];
   com.bPure = FALSE;
   com.pEngineHandler = pFunction;
@@ -315,6 +321,10 @@ void ClassicsChat_RegisterCommand(const char *strName, FEngineChatCommand pFunct
 
 void ClassicsChat_RegisterCommandPure(const char *strName, FPureChatCommand pFunction)
 {
+  // Already registered under this name
+  CChatCommands::const_iterator itCommand = _mapChatCommands.find(strName);
+  if (itCommand != _mapChatCommands.end()) return;
+
   ChatCommand_t &com = _mapChatCommands[strName];
   com.bPure = TRUE;
   com.pPureHandler = pFunction;
@@ -326,10 +336,17 @@ void ClassicsChat_RegisterCommandPure(const char *strName, FPureChatCommand pFun
 
 void ClassicsChat_UnregisterCommand(const char *strName)
 {
+  // Nothing registered under this name
   CChatCommands::const_iterator itCommand = _mapChatCommands.find(strName);
   if (itCommand == _mapChatCommands.end()) return;
 
   _mapChatCommands.remove(*itCommand);
+};
+
+BOOL ClassicsChat_CommandExists(const char *strName)
+{
+  CChatCommands::const_iterator itCommand = _mapChatCommands.find(strName);
+  return itCommand != _mapChatCommands.end();
 };
 
 BOOL ClassicsChat_SetCommandAccess(const char *strName, EChatCommandAccessLevel eAccess, BOOL bHidden)
@@ -365,6 +382,23 @@ const char *ClassicsChat_CurrentCommand(void)
 {
   if (_pstrCurrentChatCommand == NULL) return NULL;
   return _pstrCurrentChatCommand->str_String;
+};
+
+BOOL ClassicsChat_SetCommandUserData(const char *strName, void *pUserData)
+{
+  CChatCommands::iterator itCommand = _mapChatCommands.find(strName);
+  if (itCommand == _mapChatCommands.end()) return FALSE;
+
+  itCommand->second.pUserData = pUserData;
+  return TRUE;
+};
+
+void *ClassicsChat_GetCommandUserData(const char *strName)
+{
+  CChatCommands::iterator itCommand = _mapChatCommands.find(strName);
+  if (itCommand == _mapChatCommands.end()) return NULL;
+
+  return itCommand->second.pUserData;
 };
 
 extern void PrintClientLog(CTString &strResult, INDEX iIdentity, INDEX iCharacter);
