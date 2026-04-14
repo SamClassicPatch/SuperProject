@@ -52,7 +52,8 @@ static void WallWalking(void) {
     }
   #endif
 
-    CPrintF(TRANS("%s^r - wall walking: %s\n"), pen->GetName(), (bDisable ? "^cff0000OFF" : "^c00ff00ON"));
+    CTString strState = (bDisable ? _strColorTagNegative + CTString("OFF") : _strColorTagPositive + CTString("ON"));
+    CPrintF(TRANS("^o%s^r - wall walking: %s\n"), pen->GetName().str_String, strState.str_String);
   }
 };
 
@@ -79,7 +80,8 @@ static void Noclip(void) {
       pen->en_plViewpoint.pl_OrientationAngle = ANGLE3D(0.0f, 0.0f, 0.0f);
     }
 
-    CPrintF(TRANS("%s^r - noclip: %s\n"), pen->GetName(), (bDisable ? "^cff0000OFF" : "^c00ff00ON"));
+    CTString strState = (bDisable ? _strColorTagNegative + CTString("OFF") : _strColorTagPositive + CTString("ON"));
+    CPrintF(TRANS("^o%s^r - noclip: %s\n"), pen->GetName().str_String, strState.str_String);
   }
 };
 
@@ -102,7 +104,7 @@ static void SetHealth(SHELL_FUNC_ARGS) {
     pen->SetHealth(iHealth);
   #endif
 
-    CPrintF(TRANS("Set %s^r health to %d\n"), pen->GetName(), iHealth);
+    CPrintF(TRANS("^oSet %s^r health to %d\n"), pen->GetName().str_String, iHealth);
   }
 };
 
@@ -167,7 +169,7 @@ static void CreateItem(CEntity *penPlayer, const CTString &strClass,
 
   // Report entity name with the type ID instead of the type name with an entity ID
   CTString strClassName = ((const CTFileName &)strClass).FileName();
-  CPrintF(TRANS("%s^r created '%s' item (%u)\n"), penPlayer->GetName(), strClassName, iType);
+  CPrintF(TRANS("^o%s^r created '%s' item (%u)\n"), penPlayer->GetName().str_String, strClassName.str_String, iType);
 
 #else
   // Create weapon item
@@ -192,7 +194,7 @@ static void CreateItem(CEntity *penPlayer, const CTString &strClass,
   ENTITYPROPERTY(penWeapon, pep->ep_slOffset, INDEX) = iType;
   penWeapon->Initialize();
 
-  CPrintF(TRANS("%s^r created '%s' item (%u)\n"), penPlayer->GetName(), strItem, penWeapon->en_ulID);
+  CPrintF(TRANS("^o%s^r created '%s' item (%u)\n"), penPlayer->GetName().str_String, strItem.str_String, penWeapon->en_ulID);
 #endif
 };
 
