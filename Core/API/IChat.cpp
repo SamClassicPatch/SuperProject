@@ -312,10 +312,10 @@ void ClassicsChat_RegisterCommandPure(const char *strName, FPureChatCommand pFun
 void ClassicsChat_UnregisterCommand(const char *strName)
 {
   // Nothing registered under this name
-  CChatCommands::const_iterator itCommand = _mapChatCommands.find(strName);
+  CChatCommands::iterator itCommand = _mapChatCommands.find(strName);
   if (itCommand == _mapChatCommands.end()) return;
 
-  _mapChatCommands.remove(*itCommand);
+  _mapChatCommands.erase(itCommand);
 };
 
 BOOL ClassicsChat_CommandExists(const char *strName)

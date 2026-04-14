@@ -126,10 +126,10 @@ HFuncPatch CreateOpcodePatch(void *pOpcodeToReplace, long iJumpDestinationAddres
 void DestroyPatch(HFuncPatch hPatch)
 {
   // Remove from the storage first
-  CFuncPatches::const_iterator itPatch = _mapFuncPatches.find(hPatch->GetHash());
+  CFuncPatches::iterator itPatch = _mapFuncPatches.find(hPatch->GetHash());
 
   if (itPatch != _mapFuncPatches.end()) {
-    _mapFuncPatches.remove(*itPatch);
+    _mapFuncPatches.erase(itPatch);
   } else {
     ASSERTALWAYS("Cannot find the function patch in the patch storage!");
   }
