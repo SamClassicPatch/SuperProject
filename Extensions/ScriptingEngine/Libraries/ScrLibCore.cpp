@@ -841,6 +841,34 @@ static Method<CDrawPort> _aMethods[] = {
 
 namespace Core {
 
+static SQInteger IsSE105(HSQUIRRELVM v) {
+#if SE1_VER < SE1_107
+  sq_pushbool(v, SQTrue);
+#else
+  sq_pushbool(v, SQFalse);
+#endif
+  return 1;
+};
+
+static SQInteger IsSE107(HSQUIRRELVM v) {
+#if SE1_VER >= SE1_107
+  sq_pushbool(v, SQTrue);
+#else
+  sq_pushbool(v, SQFalse);
+#endif
+  return 1;
+};
+
+static SQInteger IsTFE(HSQUIRRELVM v) {
+  sq_pushbool(v, CHOOSE_FOR_GAME(TRUE, FALSE, FALSE));
+  return 1;
+};
+
+static SQInteger IsTSE(HSQUIRRELVM v) {
+  sq_pushbool(v, CHOOSE_FOR_GAME(FALSE, TRUE, TRUE));
+  return 1;
+};
+
 static SQInteger GetVersion(HSQUIRRELVM v) {
   UBYTE ubRelease, ubUpdate, ubPatch;
   GetVersionNumbers(ClassicsCore_GetVersion(), ubRelease, ubUpdate, ubPatch);
@@ -938,6 +966,10 @@ static SQInteger CompileScript(HSQUIRRELVM v) {
 
 // "Core" namespace functions
 static SQRegFunction _aCoreFuncs[] = {
+  { "IsSE105",           &Core::IsSE105,           1, "." },
+  { "IsSE107",           &Core::IsSE107,           1, "." },
+  { "IsTFE",             &Core::IsTFE,             1, "." },
+  { "IsTSE",             &Core::IsTSE,             1, "." },
   { "GetVersion",        &Core::GetVersion,        1, "." },
   { "GetVersionName",    &Core::GetVersionName,    1, "." },
   { "GetInitTime",       &Core::GetInitTime,       1, "." },
