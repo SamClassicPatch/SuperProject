@@ -187,6 +187,10 @@ class VM {
     // Returns false if a runtime error occurs (use GetError() for more info)
     bool ExecuteString(const CTString &strScript, const SQChar *strSourceName, FReturnValueCallback pReturnCallback);
 
+    // Attempt to fully unsuspend execution of some VM
+    // Returns false if failed to unsuspend it
+    bool UnsuspendExecution(FReturnValueCallback pReturnCallback);
+
     // Convert any object in the stack into a string
     bool GetString(SQInteger idx, CTString &strValue);
 

@@ -207,31 +207,6 @@ static CTString ShellExecuteFile(SHELL_FUNC_ARGS) {
   return _strLastCommandResult;
 };
 
-// Attempt to unsuspend execution of some VM
-// Returns false if failed to unsuspend it
-static bool UnsuspendExecution(sq::VM &vm, const CTString &strFunc, sq::VM::FReturnValueCallback pReturnCallback) {
-  // Not suspended - proceed with business as usual
-  if (!vm.IsSuspended()) return true;
-
-  // Warn about suspension not being supported
-  CPrintF("^cffff00%s (%s):\n%s\n", strFunc, vm.GetName().str_String,
-    "suspend() function is not supported in custom scripts! Attempting to resume...");
-
-  // Try to resume execution for a few times until it works
-  INDEX ctResumeAttempts = 1000;
-
-  while (--ctResumeAttempts >= 0 && vm.IsSuspended()) {
-    if (!vm.Resume(pReturnCallback)) {
-      // Pass execution error
-      sq_throwerror(vm, vm.GetError());
-      CPrintF("^cff0000%s (%s):\n%s\n", strFunc, vm.GetName().str_String, vm.GetError());
-      break;
-    }
-  }
-
-  return !vm.IsSuspended();
-};
-
 // Create a new VM for custom scripts
 inline sq::VM *NewScriptVM(const CTString &strFile) {
   sq::VM *pVM = new sq::VM(true);
@@ -244,12 +219,18 @@ inline sq::VM *NewScriptVM(const CTString &strFile) {
     return NULL;
   }
 
-  // Couldn't unsuspend
-  if (!UnsuspendExecution(*pVM, "Initial preloading", NULL)) {
-    CPrintF("^cff0000Could not load custom script (%s):\n%s\n", strFile.str_String,
-      "Could not resume custom script execution after many attempts, unloading the script...");
-    delete pVM;
-    return NULL;
+  // Unsuspend, if needed
+  if (pVM->IsSuspended()) {
+    // Warn about suspension not being supported
+    CPrintF("^cffff00%s (%s):\n%s\n", "Initial preloading", pVM->GetName().str_String,
+      "suspend() function is not supported in custom scripts! Attempting to resume...");
+
+    // Remove the script altogether if it couldn't get resumed after all of the attempts
+    if (!pVM->UnsuspendExecution(NULL)) {
+      CPrintF("^cff0000Could not load custom script (%s):\n%s\n", strFile.str_String, pVM->GetError());
+      delete pVM;
+      return NULL;
+    }
   }
 
   return pVM;
@@ -335,10 +316,16 @@ void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, s
       continue;
     }
 
+    // Not suspended - proceed with business as usual
+    if (!vm.IsSuspended()) continue;
+
+    // Warn about suspension not being supported
+    CPrintF("^cffff00%s (%s):\n%s\n", strFunc, vm.GetName().str_String,
+      "suspend() function is not supported in custom scripts! Attempting to resume...");
+
     // Remove the script altogether if it couldn't get resumed after all of the attempts
-    if (!UnsuspendExecution(vm, strFunc, pReturnCallback)) {
-      CPrintF("^cff0000%s (%s):\n%s\n", strFunc, vm.GetName().str_String,
-        "Could not resume custom script execution after many attempts, unloading the script...");
+    if (!vm.UnsuspendExecution(pReturnCallback)) {
+      CPrintF("^cff0000%s (%s):\n%s\n", strFunc, vm.GetName().str_String, vm.GetError());
       cToRemove.Add(&vm);
     }
   }

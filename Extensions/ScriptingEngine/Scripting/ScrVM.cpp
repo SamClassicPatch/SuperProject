@@ -499,6 +499,29 @@ bool VM::ExecuteString(const CTString &strScript, const SQChar *strSourceName, F
   return bExecuted;
 };
 
+// Attempt to fully unsuspend execution of some VM
+bool VM::UnsuspendExecution(FReturnValueCallback pReturnCallback) {
+  // Try to resume execution for a few times until it works
+  INDEX ctResumeAttempts = 1000;
+
+  while (--ctResumeAttempts >= 0 && IsSuspended()) {
+    if (!Resume(pReturnCallback)) {
+      // Pass execution error
+      sq_throwerror(m_vm, GetError());
+      return false;
+    }
+  }
+
+  // Failed to unsuspend
+  if (IsSuspended()) {
+    SetError("Could not resume custom script execution after many attempts. Please fix the affected script.");
+    sq_throwerror(m_vm, GetError());
+    return false;
+  }
+
+  return true;
+};
+
 // Convert any object in the stack into a string
 bool VM::GetString(SQInteger idx, CTString &strValue) {
   SQRESULT r;
