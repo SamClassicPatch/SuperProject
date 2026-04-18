@@ -362,7 +362,8 @@ void CInGameMenu::StartMenu(void) {
     gm_mgLabel2.SetText("");
 #endif
 
-  } else {
+  // [Cecil] Display the connection info only when something is running
+  } else if (_gmRunningGameMode != GM_NONE) {
     CTString strConfig;
     strConfig = LOCALIZE("<not adjusted>");
     extern CTString sam_strNetworkSettings;
