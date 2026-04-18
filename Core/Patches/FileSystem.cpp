@@ -221,7 +221,7 @@ static void LoadPackages(const CTString &strDirectory, const CTString &strMatchF
 
   while (bOK) {
     // Add file to the active set if the name matches the mask
-    if (CTString(fdFile.name).Matches(strMatchFiles)) {
+    if (IData::MatchWildcards(fdFile.name, strMatchFiles)) {
       IUnzip::AddArchive(strDirectory + fdFile.name);
     }
 

@@ -190,7 +190,7 @@ bool CExtEntityCreate::Write(CNetworkMessage &nm) {
 
   // If class file matches base classes
   if (fnmCheck.RemovePrefix("Classes\\")) {
-    if (fnmCheck.Matches("*.ecl")) {
+    if (IData::MatchWildcards(fnmCheck, "*.ecl")) {
       fnmCheck = fnmCheck.NoExt();
 
       // Find its index in the dictionary

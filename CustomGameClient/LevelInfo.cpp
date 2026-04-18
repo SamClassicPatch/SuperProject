@@ -202,16 +202,6 @@ void ClearLevelsList(void) {
   }
 }
 
-// [Cecil] Convert all characters to lowercase
-static inline void ToLower(CTString &str) {
-  char *pch = str.str_String;
-
-  while (*pch != '\0') {
-    *pch = tolower(*pch);
-    pch++;
-  }
-};
-
 // [Cecil] Check if a level fits a specific category
 static BOOL LevelFitsCategory(const CLevelInfo &li, INDEX iCategory) {
   // No categories, everything fits in one list
@@ -279,8 +269,8 @@ void FilterLevels(ULONG ulSpawnFlags, INDEX iCategory) {
       if (sam_strLevelTitleFilter != "") {
         CTString strName = li.li_strName.Undecorated();
         CTString strFilter = sam_strLevelTitleFilter;
-        ToLower(strName);
-        ToLower(strFilter);
+        IData::ToLower(strName);
+        IData::ToLower(strFilter);
 
         if (strName.FindSubstr(strFilter) == -1) continue;
       }
@@ -367,7 +357,7 @@ void ListLevels(SHELL_FUNC_ARGS) {
     strFile.RemovePrefix("Levels/");
 
     // Matches the wildcard
-    if (strMatchNames == "" || strFile.Matches(strMatchNames)) {
+    if (strMatchNames == "" || IData::MatchWildcards(strFile, strMatchNames)) {
       CPrintF("%d. %s\n", iLevel, strFile.str_String);
       iLevel++;
     }

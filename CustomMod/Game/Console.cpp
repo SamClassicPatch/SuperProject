@@ -586,18 +586,6 @@ const char *GetHelpForSymbol(const CTString &strSymbol) {
   return strNoDesc;
 };
 
-// [Cecil] Convert a string to lowercase
-inline CTString ToLower(const CTString &str) {
-  CTString strCopy = str;
-  INDEX i = strCopy.Length();
-
-  while (--i >= 0) {
-    strCopy.str_String[i] = tolower(static_cast<UBYTE>(strCopy[i]));
-  }
-
-  return strCopy;
-};
-
 // [Cecil] Pass state of the Ctrl key
 static void Key_Tab(BOOL bCtrl, BOOL bShift)
 {
@@ -641,8 +629,10 @@ static void Key_Tab(BOOL bCtrl, BOOL bShift)
       BOOL bCanBeExpanded;
 
       if (bCtrl) {
-        CTString strSymbolLower = ToLower(strSymbol);
-        CTString strExpandLower = ToLower(strExpandStart);
+        CTString strSymbolLower = strSymbol;
+        CTString strExpandLower = strExpandStart;
+        IData::ToLower(strSymbolLower);
+        IData::ToLower(strExpandLower);
         bCanBeExpanded = (strstr(strSymbolLower, strExpandLower) != NULL);
 
       } else {
@@ -700,8 +690,10 @@ static void Key_Tab(BOOL bCtrl, BOOL bShift)
     BOOL bCanBeExpanded;
 
     if (bCtrl) {
-      CTString strSymbolLower = ToLower(strSymbol);
-      CTString strExpandLower = ToLower(strExpandStart);
+      CTString strSymbolLower = strSymbol;
+      CTString strExpandLower = strExpandStart;
+      IData::ToLower(strSymbolLower);
+      IData::ToLower(strExpandLower);
       bCanBeExpanded = (strstr(strSymbolLower, strExpandLower) != NULL);
 
     } else {

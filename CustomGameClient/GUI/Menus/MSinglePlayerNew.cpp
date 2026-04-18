@@ -18,17 +18,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "MenuStuff.h"
 #include "MSinglePlayerNew.h"
 
-// [Cecil] Convert all characters to uppercase
-static inline void ToUpper(CTString &str) {
-  const INDEX ct = str.Length();
-
-  // Only capitalize decorated characters, ignoring characters in color tags
-  for (INDEX i = 0; i < ct; i++) {
-    char &ch = str.str_String[IData::GetDecoratedChar(str, i)];
-    ch = toupper(ch);
-  }
-};
-
 // [Cecil] Open gameplay customization config
 static void OpenGameplayCustomization(void) {
   static DECLARE_CTFILENAME(fnmConfig, "Scripts\\Menu\\CustomizeSP_ClassicsPatch.cfg");
@@ -65,7 +54,7 @@ void CSinglePlayerNewMenu::Initialize_t(void) {
     // Make name all uppercase and translate both strings
     CTString strName = diff.m_strName;
     CTString strTip = diff.m_strTip;
-    ToUpper(strName);
+    IData::ToUpperDecorated(strName);
 
     // Add new difficulty
     CMGButton &mg = gm_amgDifficulties.Push();
