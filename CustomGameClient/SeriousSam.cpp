@@ -1441,26 +1441,6 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         }
       }
 
-      if (sam_bMenuSave) {
-        sam_bMenuSave = FALSE;
-        StartMenus("save");
-      }
-
-      if (sam_bMenuLoad) {
-        sam_bMenuLoad = FALSE;
-        StartMenus("load");
-      }
-
-      if (sam_bMenuControls) {
-        sam_bMenuControls = FALSE;
-        StartMenus("controls");
-      }
-
-      if (sam_bMenuHiScore) {
-        sam_bMenuHiScore = FALSE;
-        StartMenus("hiscore");
-      }
-
       // interpret console key presses
       if (_iAddonExecState == 0) {
         // [Cecil] Remap controller buttons to keyboard for the computer
@@ -1813,6 +1793,29 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
     // do the main game loop and render screen
     DoGame();
+
+    // [Cecil] Moved here from the message loop to process them after the game
+    {
+      if (sam_bMenuSave) {
+        sam_bMenuSave = FALSE;
+        StartMenus("save");
+      }
+
+      if (sam_bMenuLoad) {
+        sam_bMenuLoad = FALSE;
+        StartMenus("load");
+      }
+
+      if (sam_bMenuControls) {
+        sam_bMenuControls = FALSE;
+        StartMenus("controls");
+      }
+
+      if (sam_bMenuHiScore) {
+        sam_bMenuHiScore = FALSE;
+        StartMenus("hiscore");
+      }
+    }
 
     // limit current frame rate if neeeded
     LimitFrameRate();
