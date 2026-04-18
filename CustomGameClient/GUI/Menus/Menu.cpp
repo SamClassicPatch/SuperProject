@@ -234,11 +234,6 @@ void StopMenus(BOOL bGoToRoot /*=TRUE*/) {
   }
 }
 
-// [Cecil] Check if it's a root menu
-BOOL IsMenuRoot(class CGameMenu *pgm) {
-  return pgm == NULL || pgm == &_pGUIM->gmMainMenu || pgm == &_pGUIM->gmInGameMenu;
-};
-
 // ------------------------ Global menu function implementation
 void InitializeMenus(void) {
   _pGUIM = new CMenuManager();
@@ -858,7 +853,7 @@ void FixupBackButton(CGameMenu *pgm) {
       bResume = TRUE;
 
     // [Cecil] Only remove the back button in root menus
-    } else if (IsMenuRoot(pgm)) {
+    } else if (pgm->IsRootMenu()) {
       bHasBack = FALSE;
     }
   }
@@ -934,7 +929,7 @@ void ChangeToMenu(CGameMenu *pgmNewMenu) {
   ASSERT(pgmNewMenu != NULL);
 
   // [Cecil] Reset visited menus if returning to any root menu, just in case
-  if (IsMenuRoot(pgmNewMenu)) {
+  if (pgmNewMenu->IsRootMenu()) {
     _pGUIM->aVisitedMenus.PopAll();
   }
 

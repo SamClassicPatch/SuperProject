@@ -32,7 +32,15 @@ class CGameMenu : public CNode {
     INDEX gm_iListWantedItem; // item you want to focus initially
     INDEX gm_ctListVisible;
     INDEX gm_ctListTotal;
+
+  public:
     CGameMenu(void);
+
+    // [Cecil] Check if this is a root menu
+    virtual bool IsRootMenu(void) const {
+      return false;
+    };
+
     void ScrollList(INDEX iDir);
     void KillAllFocuses(void);
     virtual void Initialize_t(void);

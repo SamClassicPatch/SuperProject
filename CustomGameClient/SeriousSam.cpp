@@ -1435,7 +1435,7 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
       // if neither menu nor console is running
       if (!bMenuActive && (GetGameAPI()->GetConState() == CS_OFF || GetGameAPI()->GetConState() == CS_TURNINGOFF)) {
         // if current menu is not root
-        if (!IsMenuRoot(pgmCurrentMenu)) {
+        if (pgmCurrentMenu != NULL && !pgmCurrentMenu->IsRootMenu()) {
           // start current menu
           StartMenus();
         }

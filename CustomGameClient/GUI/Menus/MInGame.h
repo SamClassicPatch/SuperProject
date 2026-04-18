@@ -40,6 +40,11 @@ class CInGameMenu : public CGameMenu {
 
     CMGButton gm_mgOCAM; // [Cecil] Observer camera toggle
 
+    // [Cecil] This is a root menu
+    virtual bool IsRootMenu(void) const {
+      return true;
+    };
+
     void Initialize_t(void);
     void StartMenu(void);
 

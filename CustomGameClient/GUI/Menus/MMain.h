@@ -37,6 +37,11 @@ class CMainMenu : public CGameMenu {
 
     CMGButton gm_mgTOTD; // [Cecil] Tip of the day
 
+    // [Cecil] This is a root menu
+    virtual bool IsRootMenu(void) const {
+      return true;
+    };
+
     // [Cecil] Update extras button
     void UpdateExtras(void);
 
