@@ -41,12 +41,112 @@ void P_CPrintF(const char *strFormat, ...) {
   P_CPutString(strBuffer);
 };
 
+// Undecorate a string except for color tags, which are converted to extended colors for Windows terminal
+inline void ConvertColorsForTerminal(CTString &str) {
+  // Simple undecorated text
+  if (_EnginePatches._iColoredTextInServerLog == 1) {
+    str = str.Undecorated();
+    return;
+  }
+
+  CTString strResult = "";
+  const char *pch = str.str_String;
+
+  // Temporary variables for setting colors
+  char strTemp[7];
+  char *pchDummy;
+  COLOR col;
+  UBYTE ubR, ubG, ubB;
+
+  while (*pch != '\0') {
+    // Print regular characters as is
+    if (*pch != '^') {
+      strResult += CTString(0, "%c", *pch);
+      pch++;
+      continue;
+    }
+
+    switch (pch[1]) {
+      // Set color
+      case 'c': {
+        const INDEX ctColor = FindZero((UBYTE *)pch + 2, 6);
+
+        // If it's a full color code
+        if (ctColor == 6) {
+          // Convert code string to color
+          strncpy(strTemp, pch + 2, 6);
+          col = strtoul(strTemp, &pchDummy, 16) << 8;
+
+          // Then set extended foreground color in the terminal
+          ColorToRGB(col, ubR, ubG, ubB);
+          strResult += CTString(0, "\033[38;2;%d;%d;%dm", ubR, ubG, ubB);
+
+          // Set background color based on the overall brightness of the color
+          if (_EnginePatches._iColoredTextInServerLog > 2) {
+            ULONG iGray = (ubR * 0.299 + ubG * 0.587 + ubB * 0.114);
+            strResult += (iGray < 0x18) ? "\033[107m" : "\033[40m"; // Bright white or non-bright black
+          }
+        }
+
+        pch += 2 + ctColor;
+      } break;
+
+      // Reset color
+      case 'r': case 'C': {
+        strResult += "\033[0m";
+        pch += 2;
+      } break;
+
+      // Skip codes
+      case 'a': pch += 2 + FindZero((UBYTE *)pch + 2, 2); break;
+      case 'f': pch += 2 + FindZero((UBYTE *)pch + 2, 1); break;
+      case 'b': case 'i': case 'o':
+      case 'A': case 'F': case 'B': case 'I': pch += 2; break;
+
+      // Print tag character as is
+      case '^':
+        strResult += "^";
+        pch += 2;
+        break;
+
+      // Print unrecognized codes as is
+      default:
+        strResult += CTString(0, "%c", pch[1]);
+        pch += 2;
+        break;
+    }
+  }
+
+  str = strResult;
+};
+
+// Special wrapper for the original function
+inline void PutStringWrapper(const CTString &str) {
+  const BOOL bServer = _bDedicatedServer;
+
+  // If running through a dedicated server and want colored text
+  if (bServer && _EnginePatches._iColoredTextInServerLog > 0) {
+    // Print to the console application our own way
+    CTString strTerminal = str;
+    ConvertColorsForTerminal(strTerminal);
+    printf("%s", strTerminal.str_String);
+
+    // And then temporarily skip printing via printf() in the original function
+    _bDedicatedServer = FALSE;
+    (*pPutString)(str);
+    _bDedicatedServer = bServer;
+
+  } else {
+    (*pPutString)(str);
+  }
+};
+
 // Patched function
 void P_CPutString(const char *strString) {
   // Don't need any timestamps
   if (_bTempIgnoreTimestamps || !_EnginePatches._bLogTimestamps) {
     // Proceed to the original function
-    (*pPutString)(strString);
+    PutStringWrapper(strString);
     return;
   }
 
@@ -88,7 +188,7 @@ void P_CPutString(const char *strString) {
   }
 
   // Proceed to the original function
-  (*pPutString)(strResult);
+  PutStringWrapper(strResult);
 };
 
 INDEX CStringPatch::P_VPrintF(const char *strFormat, va_list arg)

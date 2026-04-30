@@ -39,6 +39,7 @@ class CORE_API ICorePatches {
 
     // Strings
     BOOL _bLogTimestamps;
+    INDEX _iColoredTextInServerLog;
 
     // Unpage streams
     INDEX _bUsePlaceholderResources; // Automatically replace missing resources with placeholders

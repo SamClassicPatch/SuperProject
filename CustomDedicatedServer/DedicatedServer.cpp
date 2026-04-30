@@ -62,6 +62,18 @@ BOOL Init(int argc, char *argv[])
 
   SetConsoleTitleA(argv[1]);
 
+  // [Cecil] Enable virtual terminal processing to allow extended colors
+  {
+    #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+    #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+    #endif
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwConsoleMode;
+    GetConsoleMode(hConsole, &dwConsoleMode);
+    SetConsoleMode(hConsole, dwConsoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+  }
+
   ded_strConfig = CTString("Scripts\\Dedicated\\") + argv[1] + "\\";
 
   if (argc == 2 + 1) {

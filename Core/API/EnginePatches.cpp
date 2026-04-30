@@ -39,6 +39,7 @@ ICorePatches::ICorePatches() {
   _bNoListening = FALSE;
 
   _bLogTimestamps = FALSE;
+  _iColoredTextInServerLog = 2; // 0 - Vanilla behavior; 1 - No colors; 2 - Colors; 3 - Colors with white background for dark text
 
   _eWorldFormat = E_LF_CURRENT;
   _iWantedWorldFormat = -1;
@@ -396,6 +397,7 @@ void ICorePatches::Strings(void) {
 
   // Custom symbols
   _pShell->DeclareSymbol("persistent user INDEX con_bLogTimestamps;", &_EnginePatches._bLogTimestamps);
+  _pShell->DeclareSymbol("user INDEX ded_iColoredText;", &_EnginePatches._iColoredTextInServerLog);
 
 #endif // _PATCHCONFIG_FIX_STRINGS
 };
