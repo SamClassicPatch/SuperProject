@@ -106,7 +106,7 @@ void CGameMenu::ScrollList(INDEX iDir) {
   }
 
   // delete all focuses
-  FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
+  FOREACHNODE(this, CMenuGadget, itmg) {
     itmg->OnKillFocus();
   }
 
@@ -148,7 +148,7 @@ BOOL CGameMenu::OnChar(MSG msg) {
   // find curently active gadget
   CMenuGadget *pmgActive = NULL;
   // for each menu gadget in menu
-  FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
+  FOREACHNODE(this, CMenuGadget, itmg) {
     // if focused
     if (itmg->mg_bFocused) {
       // remember as active
@@ -177,7 +177,7 @@ BOOL CGameMenu::OnKeyDown(PressedMenuButton pmb) {
   // find curently active gadget
   CMenuGadget *pmgActive = NULL;
   // for each menu gadget in menu
-  FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
+  FOREACHNODE(this, CMenuGadget, itmg) {
     // if focused
     if (itmg->mg_bFocused) {
       // remember as active
@@ -196,12 +196,12 @@ BOOL CGameMenu::OnKeyDown(PressedMenuButton pmb) {
   }
 
   // [Cecil] Remember current menu, in case it changes on click
-  CGameMenu *pgmLast = pgmCurrentMenu;
+  CGameMenu *pgmLast = _pGUIM->GetCurrentMenu();
 
   // if active gadget handles it
   if (pmgActive->OnKeyDown(pmb)) {
     // [Cecil] Remember last pressed gadget, if it's still the same menu
-    if (pgmCurrentMenu == pgmLast) {
+    if (_pGUIM->GetCurrentMenu() == pgmLast) {
       _pmgLastPressedGadget = pmgActive;
       _pmbLastPressedButton = pmb;
     }
@@ -314,7 +314,7 @@ BOOL CGameMenu::OnMouseHeld(PressedMenuButton pmb) {
   // Find curently active gadget
   CMenuGadget *pmgActive = NULL;
 
-  FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
+  FOREACHNODE(this, CMenuGadget, itmg) {
     if (itmg->mg_bFocused) {
       pmgActive = &itmg.Current();
     }

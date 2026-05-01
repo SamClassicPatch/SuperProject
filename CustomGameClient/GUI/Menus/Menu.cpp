@@ -58,10 +58,6 @@ void (*_pAfterLevelChosen)(void);
 CGameMenu *_pgmRewindToAfterLevelChosen = NULL; // Sets _pgmRewindTo before calling _pAfterLevelChosen()
 CGameMenu *_pgmRewindTo = NULL;
 
-// functions for init actions
-
-static void FixupBackButton(CGameMenu *pgm);
-
 // mouse cursor position
 PIX _pixCursorPosI = 0;
 PIX _pixCursorPosJ = 0;
@@ -102,9 +98,6 @@ CTextureObject _toMenuArrow;
   ltbmg.SetText(astr[ltbmg.mg_iSelected]);
 
 #define PLACEMENT(x, y, z) CPlacement3D(FLOAT3D(x, y, z), ANGLE3D(0.0f, 0.0f, 0.0f))
-
-// ptr to current menu
-CGameMenu *pgmCurrentMenu = NULL;
 
 // global back button
 CMGButton _mgBack;
@@ -165,54 +158,57 @@ void StartMenus(const char *str) {
 
   // stop all IFeel effects
   IFeel_StopEffect(NULL);
-  if (pgmCurrentMenu == &_pGUIM->gmMainMenu || pgmCurrentMenu == &_pGUIM->gmInGameMenu) {
-    if (_gmRunningGameMode == GM_NONE) {
-      pgmCurrentMenu = &_pGUIM->gmMainMenu;
-    } else {
-      pgmCurrentMenu = &_pGUIM->gmInGameMenu;
-    }
-  }
-
-  // Restore last active menu
-  if (pgmCurrentMenu != NULL) {
-    ChangeToMenu(pgmCurrentMenu);
-
-  } else {
-    // [Cecil] Reset visited menus
-    _pGUIM->aVisitedMenus.PopAll();
-
-    // Start the main menu
-    if (_gmRunningGameMode == GM_NONE) {
-      CMainMenu::ChangeTo();
-    } else {
-      CInGameMenu::ChangeTo();
-    }
-  }
 
   // [Cecil] Replaced individual if blocks with if-else chain
   const CTString strMenu = str;
 
-  if (strMenu == "load") {
-    extern void StartCurrentLoadMenu(void);
-    StartCurrentLoadMenu();
+  // [Cecil] When opening a special menu, discard all the active ones
+  BOOL bSpecialMenu = FALSE;
 
-  } else if (strMenu == "save") {
-    extern void StartCurrentSaveMenu(void);
-    StartCurrentSaveMenu();
-    FixupBackButton(&_pGUIM->gmLoadSaveMenu);
+  if (strMenu != "") {
+    bSpecialMenu = TRUE;
 
-  } else if (strMenu == "controls") {
-    CControlsMenu::ChangeTo();
-    FixupBackButton(&_pGUIM->gmControls);
+    if (strMenu == "load") {
+      extern void StartCurrentLoadMenu(void);
+      StartCurrentLoadMenu();
 
-  } else if (strMenu == "join") {
-    extern void StartJoinServerMenu(void);
-    StartJoinServerMenu();
-    FixupBackButton(&_pGUIM->gmSelectPlayersMenu);
+    } else if (strMenu == "save") {
+      extern void StartCurrentSaveMenu(void);
+      StartCurrentSaveMenu();
 
-  } else if (strMenu == "hiscore") {
-    CHighScoreMenu::ChangeTo();
-    FixupBackButton(&_pGUIM->gmHighScoreMenu);
+    } else if (strMenu == "controls") {
+      CControlsMenu::ChangeTo();
+
+    } else if (strMenu == "join") {
+      extern void StartJoinServerMenu(void);
+      StartJoinServerMenu();
+
+    } else if (strMenu == "hiscore") {
+      CHighScoreMenu::ChangeTo();
+
+    } else {
+      ASSERTALWAYS("No special menu to open for this type!");
+      bSpecialMenu = FALSE;
+    }
+  }
+
+  // Otherwise open a root menu or the last active one
+  if (!bSpecialMenu) {
+    CGameMenu *pgmCurrent = _pGUIM->GetCurrentMenu();
+
+    // If there's no last active menu
+    if (pgmCurrent == NULL) {
+      // Go to the root menu depending on the game state
+      if (_gmRunningGameMode == GM_NONE) {
+        CMainMenu::ChangeTo();
+      } else {
+        CInGameMenu::ChangeTo();
+      }
+
+    // [Cecil] Otherwise reactivate the last menu
+    } else {
+      pgmCurrent->StartMenu();
+    }
   }
 
   bMenuActive = TRUE;
@@ -221,16 +217,18 @@ void StartMenus(const char *str) {
 
 void StopMenus(BOOL bGoToRoot /*=TRUE*/) {
   ClearThumbnail();
-  if (pgmCurrentMenu != NULL && bMenuActive) {
-    pgmCurrentMenu->EndMenu();
+
+  CGameMenu *pgmCurrent = _pGUIM->GetCurrentMenu();
+
+  if (pgmCurrent != NULL && bMenuActive) {
+    pgmCurrent->EndMenu();
   }
+
   bMenuActive = FALSE;
+
   if (bGoToRoot) {
-    if (_gmRunningGameMode == GM_NONE) {
-      pgmCurrentMenu = &_pGUIM->gmMainMenu;
-    } else {
-      pgmCurrentMenu = &_pGUIM->gmInGameMenu;
-    }
+    // [Cecil] Clear all visited menus to open the root one next time
+    _pGUIM->aVisitedMenus.PopAll();
   }
 }
 
@@ -339,8 +337,8 @@ void InitializeMenus(void) {
 }
 
 void DestroyMenus(void) {
+  _pGUIM->aVisitedMenus.PopAll();
   _pGUIM->gmMainMenu.Destroy();
-  pgmCurrentMenu = NULL;
   _pSoundStock->Release(_psdSelect);
   _pSoundStock->Release(_psdPress);
   delete _psoMenuSound;
@@ -351,22 +349,8 @@ void DestroyMenus(void) {
 
 // go to parent menu if possible
 void MenuGoToParent(void) {
-  // [Cecil] No more visited menus
-  if (_pGUIM->aVisitedMenus.Count() == 0) {
-    // if in game
-    if (_gmRunningGameMode != GM_NONE) {
-      // exit menus
-      StopMenus();
-      // if no game is running
-    } else {
-      // go to main menu
-      CMainMenu::ChangeTo();
-    }
-
-  // [Cecil] No next menu - return to the previous menu
-  } else {
-    ChangeToMenu(NULL);
-  }
+  // [Cecil] Return to the previous menu
+  ChangeToMenu(NULL);
 }
 
 void MenuOnKeyDown(PressedMenuButton pmb) {
@@ -386,7 +370,7 @@ void MenuOnKeyDown(PressedMenuButton pmb) {
   // if not a mouse button, or mouse is over some gadget
   if (!_bMouseUsedLast || _pmgUnderCursor != NULL) {
     // ask current menu to handle the key
-    bHandled = pgmCurrentMenu->OnKeyDown(pmb);
+    bHandled = _pGUIM->GetCurrentMenu()->OnKeyDown(pmb);
   }
 
   // if not handled
@@ -402,8 +386,8 @@ void MenuOnKeyDown(PressedMenuButton pmb) {
 // [Cecil] Releasing some button
 void MenuOnKeyUp(PressedMenuButton pmb) {
   // Let the menu handle released buttons
-  if (pgmCurrentMenu != NULL) {
-    const BOOL bHandled = pgmCurrentMenu->OnKeyUp(pmb);
+  if (_pGUIM->GetCurrentMenu() != NULL) {
+    const BOOL bHandled = _pGUIM->GetCurrentMenu()->OnKeyUp(pmb);
     (void)bHandled;
   }
 
@@ -418,7 +402,7 @@ void MenuOnMouseHold(PressedMenuButton pmb) {
   ASSERT(pmb.iKey == VK_LBUTTON || pmb.iKey == VK_RBUTTON || pmb.iKey == VK_MBUTTON);
 
   if (_pmgUnderCursor != NULL) {
-    pgmCurrentMenu->OnMouseHeld(pmb);
+    _pGUIM->GetCurrentMenu()->OnMouseHeld(pmb);
   }
 };
 
@@ -427,7 +411,7 @@ void MenuOnChar(MSG msg) {
   _bMouseUsedLast = FALSE;
 
   // ask current menu to handle the key
-  pgmCurrentMenu->OnChar(msg);
+  _pGUIM->GetCurrentMenu()->OnChar(msg);
 }
 
 void MenuOnMouseMove(PIX pixI, PIX pixJ) {
@@ -441,7 +425,7 @@ void MenuOnMouseMove(PIX pixI, PIX pixJ) {
   _bMouseUsedLast = _eEditingValue == VED_NONE && !_pInput->IsInputEnabled();
 }
 
-void MenuUpdateMouseFocus(void) {
+void MenuUpdateMouseFocus(CGameMenu *pgm) {
   // get real cursor position
   POINT pt;
   GetCursorPos(&pt);
@@ -458,7 +442,7 @@ void MenuUpdateMouseFocus(void) {
 
   CMenuGadget *pmgActive = NULL;
   // for all gadgets in menu
-  FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
+  FOREACHNODE(pgm, CMenuGadget, itmg) {
     CMenuGadget &mg = *itmg;
     // if focused
     if (itmg->mg_bFocused) {
@@ -547,11 +531,15 @@ BOOL DoMenu(CDrawPort *pdp) {
   // [Cecil] Keep trying to disable GameSpy until it falls through
   ICore::DisableGameSpy();
 
+  // [Cecil] No current menu
+  CGameMenu *pgmCurrent = _pGUIM->GetCurrentMenu();
+  if (pgmCurrent == NULL) return FALSE;
+
   pdp->Unlock();
   CDrawPort dpMenu(pdp, TRUE);
   dpMenu.Lock();
 
-  MenuUpdateMouseFocus();
+  MenuUpdateMouseFocus(pgmCurrent);
 
   // if in fullscreen
   CDisplayMode dmCurrent;
@@ -563,14 +551,14 @@ BOOL DoMenu(CDrawPort *pdp) {
     _pixCursorPosJ = Clamp(_pixCursorPosJ, 0L, dpMenu.GetHeight());
   }
 
-  pgmCurrentMenu->Think();
+  pgmCurrent->Think();
 
   TIME tmTickNow = _pTimer->GetRealTimeTick();
 
   while (_tmMenuLastTickDone < tmTickNow) {
     _pTimer->SetCurrentTick(_tmMenuLastTickDone);
     // call think for all gadgets in menu
-    FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
+    FOREACHNODE(pgmCurrent, CMenuGadget, itmg) {
       itmg->Think();
     }
     _tmMenuLastTickDone += _pTimer->TickQuantum;
@@ -607,7 +595,7 @@ BOOL DoMenu(CDrawPort *pdp) {
 
     PIX pixI0, pixJ0, pixI1, pixJ1;
     // put logo(s) to main menu (if logos exist)
-    if (pgmCurrentMenu == &_pGUIM->gmMainMenu) {
+    if (pgmCurrent == &_pGUIM->gmMainMenu) {
       if (_ptoLogoODI != NULL) {
         CTextureData &td = (CTextureData &)*_ptoLogoODI->GetData();
         const INDEX iSize = 50;
@@ -656,7 +644,7 @@ BOOL DoMenu(CDrawPort *pdp) {
         dpMenu.PutTextR(strPatch, pixPatchX, pixPatchY, 0xFFFFFFFF);
       }
 
-    } else if (pgmCurrentMenu->gm_strName == "AudioOptions") {
+    } else if (pgmCurrent->gm_strName == "AudioOptions") {
       if (_ptoLogoEAX != NULL) {
         CTextureData &td = (CTextureData &)*_ptoLogoEAX->GetData();
         const INDEX iSize = 95;
@@ -670,7 +658,7 @@ BOOL DoMenu(CDrawPort *pdp) {
       }
 
     // [Cecil] Classics Patch credits
-    } else if (pgmCurrentMenu == &_pGUIM->gmPatchCredits) {
+    } else if (pgmCurrent == &_pGUIM->gmPatchCredits) {
       // Display patch logo at the top
       FLOAT fResize = Min(dpMenu.GetWidth() / 640.0f, dpMenu.GetHeight() / 480.0f);
       PIX pixSizeI = 192 * fResize;
@@ -710,12 +698,12 @@ BOOL DoMenu(CDrawPort *pdp) {
   }
 
   // if this is popup menu
-  if (pgmCurrentMenu->gm_fPopupSize > 0.0f) { // [Cecil]
+  if (pgmCurrent->gm_fPopupSize > 0.0f) { // [Cecil]
     // [Cecil] Render last visited proper menu
     CGameMenu *pgmLast = NULL;
 
     // Go from the end
-    INDEX iMenu = _pGUIM->aVisitedMenus.Count();
+    INDEX iMenu = _pGUIM->aVisitedMenus.Count() - 1;
 
     while (--iMenu >= 0) {
       CGameMenu *pgmVisited = _pGUIM->aVisitedMenus[iMenu];
@@ -740,7 +728,7 @@ BOOL DoMenu(CDrawPort *pdp) {
     }
 
     // [Cecil] Render popup box in a separate method
-    CGameMenu::RenderPopup(&dpMenu, pgmCurrentMenu->gm_fPopupSize);
+    CGameMenu::RenderPopup(&dpMenu, pgmCurrent->gm_fPopupSize);
   }
 
   BOOL bEditingValue = (_eEditingValue != VED_NONE); // [Cecil]
@@ -758,7 +746,7 @@ BOOL DoMenu(CDrawPort *pdp) {
   // if mouse was not active last
   if (!_bMouseUsedLast) {
     // find focused gadget
-    FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
+    FOREACHNODE(pgmCurrent, CMenuGadget, itmg) {
       CMenuGadget &mg = *itmg;
       // if focused
       if (itmg->mg_bFocused) {
@@ -770,12 +758,12 @@ BOOL DoMenu(CDrawPort *pdp) {
   }
 
   // [Cecil] Render/process menu extras below everything
-  pgmCurrentMenu->PreRender(&dpMenu);
+  pgmCurrent->PreRender(&dpMenu);
 
   BOOL bStilInMenus = FALSE;
-  _pGame->MenuPreRenderMenu(pgmCurrentMenu->gm_strName);
+  _pGame->MenuPreRenderMenu(pgmCurrent->gm_strName);
   // for each menu gadget
-  FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
+  FOREACHNODE(pgmCurrent, CMenuGadget, itmg) {
     // if gadget is visible
     if (itmg->mg_bVisible) {
       bStilInMenus = TRUE;
@@ -793,7 +781,7 @@ BOOL DoMenu(CDrawPort *pdp) {
       }
     }
   }
-  _pGame->MenuPostRenderMenu(pgmCurrentMenu->gm_strName);
+  _pGame->MenuPostRenderMenu(pgmCurrent->gm_strName);
 
   // if mouse was active last
   if (_bMouseUsedLast) {
@@ -810,7 +798,7 @@ BOOL DoMenu(CDrawPort *pdp) {
   }
 
   // [Cecil] Render/process menu extras on top of everything
-  pgmCurrentMenu->PostRender(&dpMenu);
+  pgmCurrent->PostRender(&dpMenu);
 
   // [Cecil] Don't override the tooltip text during key bind editing
   bEditingValue &= (_eEditingValue != VED_KEYBIND);
@@ -840,25 +828,23 @@ void MenuBack(void) {
   MenuGoToParent();
 }
 
-void FixupBackButton(CGameMenu *pgm) {
+static void FixupBackButton(void) {
+  CGameMenu *pgm = _pGUIM->GetCurrentMenu();
+  if (pgm == NULL) return;
+
   BOOL bResume = FALSE;
-  BOOL bHasBack = TRUE;
+  BOOL bHasBack = FALSE;
 
-  if (pgm->gm_fPopupSize > 0.0f) { // [Cecil]
-    bHasBack = FALSE;
+  // [Cecil] Show the back button if there are any menus to return to (or it's a non-root menu; also except for popups)
+  if ((_pGUIM->aVisitedMenus.Count() > 1 || !pgm->IsRootMenu()) && pgm->gm_fPopupSize == 0.0f) {
+    bHasBack = TRUE;
+
+  // [Cecil] Otherwise at least show the resume button if in a game
+  } else if (_gmRunningGameMode != GM_NONE) {
+    bResume = TRUE;
   }
 
-  if (_pGUIM->aVisitedMenus.Count() == 0) {
-    if (_gmRunningGameMode != GM_NONE) {
-      bResume = TRUE;
-
-    // [Cecil] Only remove the back button in root menus
-    } else if (pgm->IsRootMenu()) {
-      bHasBack = FALSE;
-    }
-  }
-
-  if (!bHasBack) {
+  if (!bResume && !bHasBack) {
     _mgBack.Disappear();
     return;
   }
@@ -905,53 +891,76 @@ void ChangeToMenu(CGameMenu *pgmNewMenu) {
 
   // [Cecil] If no new menu specified
   if (pgmNewMenu == NULL) {
-    // Simply return to the previous one
-    ASSERT(_pGUIM->aVisitedMenus.Count() != 0);
-    pgmNewMenu = _pGUIM->aVisitedMenus.Pop();
+    CGameMenu *pgmCurrent = _pGUIM->GetCurrentMenu();
 
-  // Otherwise remember this menu before changing from it
-  } else if (pgmCurrentMenu != NULL && pgmCurrentMenu != pgmNewMenu) {
-    _pGUIM->aVisitedMenus.Add(pgmCurrentMenu);
+    // Just exit if there are no more menus (happens intentionally sometimes)
+    if (pgmCurrent == NULL) return;
+
+    // End the current menu and pop it
+    pgmCurrent->EndMenu();
+    _pGUIM->aVisitedMenus.Pop();
+
+    // Make the previous menu the current one
+    pgmNewMenu = _pGUIM->GetCurrentMenu();
+
+    // If no more menus
+    if (pgmNewMenu == NULL) {
+      // Return to the game
+      if (_gmRunningGameMode != GM_NONE) {
+        StopMenus();
+
+      // Or open the main menu
+      } else {
+        CMainMenu::ChangeTo();
+      }
+
+      return;
+    }
+
+  // Otherwise if some new menu is specified
+  } else {
+    CGameMenu *pgmCurrent = _pGUIM->GetCurrentMenu();
+
+    if (pgmCurrent != NULL) {
+      // End the current menu if the new one isn't a popup
+      if (pgmNewMenu->gm_fPopupSize <= 0.0f) { // [Cecil]
+        pgmCurrent->EndMenu();
+      } else {
+        FOREACHNODE(pgmCurrent, CMenuGadget, itmg) {
+          itmg->OnKillFocus();
+        }
+      }
+    }
 
     // [Cecil] Rewind back a few menus until the specified one, if needed
     if (_pgmRewindTo != NULL) {
       while (_pGUIM->aVisitedMenus.Count() != 0) {
-        CGameMenu *pgmPrev = _pGUIM->aVisitedMenus.Pop();
+        pgmCurrent = _pGUIM->GetCurrentMenu();
 
-        // Popped the menu to rewind to
-        if (pgmPrev == _pgmRewindTo) break;
+        // Got to the menu to rewind to
+        if (pgmCurrent == _pgmRewindTo) break;
+
+        _pGUIM->aVisitedMenus.Pop();
       }
 
       _pgmRewindTo = NULL;
     }
-  }
 
-  ASSERT(pgmNewMenu != NULL);
-
-  // [Cecil] Reset visited menus if returning to any root menu, just in case
-  if (pgmNewMenu->IsRootMenu()) {
-    _pGUIM->aVisitedMenus.PopAll();
-  }
-
-  if (pgmCurrentMenu != NULL) {
-    if (pgmNewMenu->gm_fPopupSize <= 0.0f) { // [Cecil]
-      pgmCurrentMenu->EndMenu();
-    } else {
-      FOREACHNODE(pgmCurrentMenu, CMenuGadget, itmg) {
-        itmg->OnKillFocus();
-      }
+    // Push the new menu to the top (if it's not the same one)
+    if (pgmCurrent != pgmNewMenu) {
+      _pGUIM->aVisitedMenus.Add(pgmNewMenu);
     }
   }
 
+  // Start the new menu
   pgmNewMenu->StartMenu();
 
-  if (pgmNewMenu->gm_pmgSelectedByDefault) {
+  if (pgmNewMenu->gm_pmgSelectedByDefault != NULL) {
     if (_mgBack.mg_bFocused) {
       _mgBack.OnKillFocus();
     }
     pgmNewMenu->gm_pmgSelectedByDefault->OnSetFocus();
   }
 
-  FixupBackButton(pgmNewMenu);
-  pgmCurrentMenu = pgmNewMenu;
+  FixupBackButton();
 }

@@ -208,7 +208,8 @@ void CMGKeyDefinition::Think(void) {
         _pInput->ClearInput();
 
         // refresh all buttons
-        pgmCurrentMenu->FillListItems();
+        CGameMenu *pgmParent = (CGameMenu *)GetParent();
+        pgmParent->FillListItems();
         break;
       }
     }

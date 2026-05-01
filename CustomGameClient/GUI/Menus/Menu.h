@@ -136,7 +136,6 @@ extern void PlayMenuSound(CSoundData *psd, BOOL bOverOtherSounds = TRUE);
 extern CListHead _lhServers;
 extern INDEX _iLocalPlayer;
 extern ERunningGameMode _gmMenuGameMode;
-extern CGameMenu *pgmCurrentMenu;
 
 #include "GameMenu.h"
 

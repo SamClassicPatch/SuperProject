@@ -20,21 +20,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 extern PIX _pixCursorPosI;
 extern PIX _pixCursorPosJ;
 
-inline void SetGadgetOffset(INDEX iOffset) {
-  pgmCurrentMenu->gm_iListOffset = iOffset;
-  pgmCurrentMenu->FillListItems();
+inline void SetGadgetOffset(CGameMenu *pgm, INDEX iOffset) {
+  pgm->gm_iListOffset = iOffset;
+  pgm->FillListItems();
 };
 
-inline INDEX GetGadgetOffset(void) {
-  return pgmCurrentMenu->gm_iListOffset;
+inline INDEX GetGadgetOffset(CGameMenu *pgm) {
+  return pgm->gm_iListOffset;
 };
 
-inline INDEX GetGadgetVisible(void) {
-  return pgmCurrentMenu->gm_ctListVisible;
+inline INDEX GetGadgetVisible(CGameMenu *pgm) {
+  return pgm->gm_ctListVisible;
 };
 
-inline INDEX GetGadgetCount(void) {
-  return pgmCurrentMenu->gm_ctListTotal;
+inline INDEX GetGadgetCount(CGameMenu *pgm) {
+  return pgm->gm_ctListTotal;
 };
 
 // Constructor
@@ -68,7 +68,7 @@ BOOL CMGScrollbar::OnKeyDown(PressedMenuButton pmb) {
   if (mg_bEnabled && pmb.iKey == VK_LBUTTON && mg_vMouseInScrollbarArea != PIX2D(-1, -1)) {
     mg_vMouseScrollbarDrag = mg_vMouseInScrollbarArea;
     mg_bMouseOnScrollbar = (mg_boxScrollbarArea >= mg_vMouseInScrollbarArea);
-    mg_iLastGadgetOffset = GetGadgetOffset();
+    mg_iLastGadgetOffset = GetGadgetOffset((CGameMenu *)GetParent());
     return TRUE;
   }
 
@@ -96,22 +96,23 @@ BOOL CMGScrollbar::OnMouseHeld(PressedMenuButton pmb)
 };
 
 BOOL CMGScrollbar::DragScrollbar(void) {
-  const INDEX ctList = GetGadgetCount();
+  CGameMenu *pgmParent = (CGameMenu *)GetParent();
+  const INDEX ctList = GetGadgetCount(pgmParent);
 
   // All gadgets are already visible
-  if (GetGadgetVisible() >= ctList) return FALSE;
+  if (GetGadgetVisible(pgmParent) >= ctList) return FALSE;
 
   // Can't grab the scrollbar
   if (mg_vMouseScrollbarDrag == PIX2D(-1, -1)) return FALSE;
 
-  const INDEX iLastOffset = (ctList - GetGadgetVisible());
+  const INDEX iLastOffset = (ctList - GetGadgetVisible(pgmParent));
 
   // Move scrollbar to a specific position
   if (!mg_bMouseOnScrollbar) {
     const FLOAT fRatio = Clamp(FLOAT(_pixCursorPosJ - mg_boxScrollArea.Min()(2)) / mg_boxScrollArea.Size()(2), 0.0f, 1.0f);
 
     // Round to the nearest value
-    SetGadgetOffset((INDEX)floorf((FLOAT)iLastOffset * fRatio + 0.5f));
+    SetGadgetOffset(pgmParent, (INDEX)floorf((FLOAT)iLastOffset * fRatio + 0.5f));
     return TRUE;
   }
 
@@ -119,15 +120,17 @@ BOOL CMGScrollbar::DragScrollbar(void) {
   const PIX pixDelta = _pixCursorPosJ - mg_vMouseScrollbarDrag(2);
   const INDEX iWantedValue = mg_iLastGadgetOffset + (ctList * pixDelta) / mg_boxScrollArea.Size()(2);
 
-  SetGadgetOffset(Clamp(iWantedValue, (INDEX)0, iLastOffset));
+  SetGadgetOffset(pgmParent, Clamp(iWantedValue, (INDEX)0, iLastOffset));
   return TRUE;
 };
 
 void CMGScrollbar::Render(CDrawPort *pdp) {
+  CGameMenu *pgmParent = (CGameMenu *)GetParent();
+
   mg_vMouseInScrollbarArea = PIX2D(-1, -1);
   mg_boxScrollbarArea = PIXaabbox2D(PIX2D(0, 0), PIX2D(0, 0));
 
-  const INDEX ctList = GetGadgetCount();
+  const INDEX ctList = GetGadgetCount(pgmParent);
 
   const PIX2D vCursorPos(_pixCursorPosI, _pixCursorPosJ);
   mg_boxScrollArea = FloatBoxToPixBox(pdp, mg_boxOnScreen);
@@ -144,9 +147,9 @@ void CMGScrollbar::Render(CDrawPort *pdp) {
   // Adjust slider for the current values on screen, if it can be scrolled
   if (mg_bEnabled) {
     const FLOAT fScrollH = (FLOAT)vScrollSize(2) / (FLOAT)ctList;
-    vScrollStart(2) += fScrollH * GetGadgetOffset();
+    vScrollStart(2) += fScrollH * GetGadgetOffset(pgmParent);
 
-    vScrollSize(2) *= Clamp((FLOAT)GetGadgetVisible() / (FLOAT)ctList, 0.0f, 1.0f);
+    vScrollSize(2) *= Clamp((FLOAT)GetGadgetVisible(pgmParent) / (FLOAT)ctList, 0.0f, 1.0f);
     vScrollSize(2) = ClampDn(vScrollSize(2), (PIX)1);
   }
 

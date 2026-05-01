@@ -47,8 +47,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 class CMenuManager {
   public:
     // [Cecil] List of previously visited menus
-    // Each time the "Back" button is pressed, it pops the last menu and switches
-    // to it, otherwise returns to the game (if it's active) or to the main menu
+    // Each time the "Back" button is pressed, it switches to the previous menu and
+    // pops the current (last) one, otherwise returns to the game or to the main menu
     CStaticStackArray<CGameMenu *> aVisitedMenus;
 
     CConfirmMenu gmConfirmMenu;
@@ -76,6 +76,15 @@ class CMenuManager {
     CSplitScreenMenu gmSplitScreenMenu;
     CSplitStartMenu gmSplitStartMenu;
     CSelectPlayersMenu gmSelectPlayersMenu;
+
+  public:
+    // Get currently visited menu (the last in the list)
+    CGameMenu *GetCurrentMenu(void) {
+      const INDEX ct = aVisitedMenus.Count();
+      if (ct == 0) return NULL;
+
+      return aVisitedMenus[ct - 1];
+    };
 };
 
 extern CMenuManager *_pGUIM; // TODO: Make singleton!

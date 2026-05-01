@@ -87,9 +87,11 @@ void CMGArrow::Render(CDrawPort *pdp) {
 }
 
 void CMGArrow::OnActivate(void) {
+  CGameMenu *pgmParent = (CGameMenu *)GetParent();
+
   if (mg_adDirection == AD_UP) {
-    pgmCurrentMenu->ScrollList(-3);
+    pgmParent->ScrollList(-3);
   } else if (mg_adDirection == AD_DOWN) {
-    pgmCurrentMenu->ScrollList(+3);
+    pgmParent->ScrollList(+3);
   }
 }

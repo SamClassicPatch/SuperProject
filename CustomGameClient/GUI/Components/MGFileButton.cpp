@@ -183,7 +183,8 @@ void CMGFileButton::OnSetFocus(void) {
     ClearThumbnail();
   }
 
-  pgmCurrentMenu->KillAllFocuses();
+  CGameMenu *pgmParent = (CGameMenu *)GetParent();
+  pgmParent->KillAllFocuses();
   CMGButton::OnSetFocus();
 }
 
