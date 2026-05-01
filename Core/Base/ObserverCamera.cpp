@@ -1550,7 +1550,7 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     const COLOR colGrid = 0xBFBFBFFF;
 
     // Vertical lines
-    pdp->DrawLine(pixGridW+0,   0, pixGridW+1,   pixH, colGrid);
+    pdp->DrawLine(pixGridW+0,   0, pixGridW+0,   pixH, colGrid);
     pdp->DrawLine(pixGridW+1,   0, pixGridW+1,   pixH, colGrid);
 
     pdp->DrawLine(pixGridW*2+0, 0, pixGridW*2+0, pixH, colGrid);
@@ -1562,6 +1562,11 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
 
     pdp->DrawLine(0, pixGridH*2+0, pixW, pixGridH*2+0, colGrid);
     pdp->DrawLine(0, pixGridH*2+1, pixW, pixGridH*2+1, colGrid);
+
+    // Crosshair/dot in the middle of the screen
+    PIX pixDot = ClampDn(PIX(pixH >> 8), (PIX)2); // Height divided by 256
+    pdp->DrawPoint(pixW * 0.5f, pixH * 0.5f, 0x7F, pixDot + 2);
+    pdp->DrawPoint(pixW * 0.5f, pixH * 0.5f, colGrid, pixDot);
   }
 
   if (cam_props.iShowInfo >= 0) {
