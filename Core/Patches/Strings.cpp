@@ -124,6 +124,10 @@ inline void ConvertColorsForTerminal(CTString &str) {
 inline void PutStringWrapper(const CTString &str) {
   const BOOL bServer = _bDedicatedServer;
 
+  // Set output encoding for dedicated servers according to the system locale to support localized strings
+  const UINT uLastEncoding = GetConsoleOutputCP();
+  if (bServer) SetConsoleOutputCP(GetACP());
+
   // If running through a dedicated server and want colored text
   if (bServer && _EnginePatches._iColoredTextInServerLog > 0) {
     // Print to the console application our own way
@@ -139,6 +143,9 @@ inline void PutStringWrapper(const CTString &str) {
   } else {
     (*pPutString)(str);
   }
+
+  // Restore encoding
+  if (bServer) SetConsoleOutputCP(uLastEncoding);
 };
 
 // Patched function
