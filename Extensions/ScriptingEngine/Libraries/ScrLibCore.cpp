@@ -561,6 +561,27 @@ static SQInteger PutTextR(HSQUIRRELVM v, int, CDrawPort &val) {
   return 0;
 };
 
+static SQInteger TextFitsInWidth(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQInteger iMaxWidth;
+  sq_getinteger(v, 2, &iMaxWidth);
+  const SQChar *str;
+  sq_getstring(v, 3, &str);
+
+  sq_pushinteger(v, IData::TextFitsInWidth(&val, iMaxWidth, str));
+  return 1;
+};
+
+static SQInteger FormatStringForWidth(HSQUIRRELVM v, int, CDrawPort &val) {
+  SQInteger iMaxWidth;
+  sq_getinteger(v, 2, &iMaxWidth);
+  const SQChar *str;
+  sq_getstring(v, 3, &str);
+
+  CTString strFormatted = IData::FormatStringForWidth(&val, iMaxWidth, str);
+  sq_pushstring(v, strFormatted.str_String, -1);
+  return 1;
+};
+
 static SQInteger PutTexture(HSQUIRRELVM v, int, CDrawPort &val) {
   VM &vm = GetVMClass(v);
 
@@ -816,6 +837,8 @@ static Method<CDrawPort> _aMethods[] = {
   { "PutTextC",     &PutTextC,     5, ".snnn" },
   { "PutTextCXY",   &PutTextCXY,   5, ".snnn" },
   { "PutTextR",     &PutTextR,     5, ".snnn" },
+  { "TextFitsInWidth",      &TextFitsInWidth,      3, ".ns" },
+  { "FormatStringForWidth", &FormatStringForWidth, 3, ".ns" },
 
   // Textures
   { "PutTexture",          &PutTexture,          5, ".xaan|a" },
@@ -936,7 +959,7 @@ static bool IncludeReturnCallback(sq::VM &) {
 
 // Execute a script from a file in place
 static SQInteger IncludeScript(HSQUIRRELVM v) {
-  const SQChar *strFile = "";
+  const SQChar *strFile;
   sq_getstring(v, 2, &strFile);
 
   VM &vm = GetVMClass(v);
@@ -952,13 +975,443 @@ static SQInteger IncludeScript(HSQUIRRELVM v) {
 
 // Compile a script from a file and return it as a closure
 static SQInteger CompileScript(HSQUIRRELVM v) {
-  const SQChar *strFile = "";
+  const SQChar *strFile;
   sq_getstring(v, 2, &strFile);
 
   VM &vm = GetVMClass(v);
   if (!vm.CompileFromFile(strFile)) return SQ_ERROR;
 
   // Return compiled closure
+  return 1;
+};
+
+static SQInteger StringLength(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTString str(strSQ);
+  sq_pushinteger(v, str.Length());
+  return 1;
+};
+
+static SQInteger StringLengthNaked(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTString str(strSQ);
+  sq_pushinteger(v, str.LengthNaked());
+  return 1;
+};
+
+static SQInteger StringUndecorated(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTString str(strSQ);
+  sq_pushstring(v, str.Undecorated().str_String, -1);
+  return 1;
+};
+
+static SQInteger StringFindSubstr(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  const SQChar *strSub;
+  sq_getstring(v, 3, &strSub);
+
+  CTString str(strSQ);
+  sq_pushinteger(v, str.FindSubstr(strSub));
+  return 1;
+};
+
+static SQInteger StringReplaceSubstr(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  const SQChar *strSub;
+  sq_getstring(v, 3, &strSub);
+  const SQChar *strNewSub;
+  sq_getstring(v, 4, &strNewSub);
+
+  // Separate the string by the old substring
+  CStringStack astr;
+  IData::GetStrings(astr, strSQ, strSub);
+
+  const INDEX ct = astr.Count();
+
+  // Nothing to replace
+  if (ct == 0) {
+    sq_pushstring(v, strSQ, -1);
+    return 1;
+  }
+
+  // Reassemble it with the new substring starting with the first part
+  CTString str = astr[0];
+
+  for (INDEX i = 1; i < ct; i++) {
+    str += strNewSub + astr[i];
+  }
+
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger StringHasPrefix(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  const SQChar *strPrefix;
+  sq_getstring(v, 3, &strPrefix);
+
+  CTString str(strSQ);
+  sq_pushbool(v, str.HasPrefix(strPrefix));
+  return 1;
+};
+
+static SQInteger StringRemovePrefix(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  const SQChar *strPrefix;
+  sq_getstring(v, 3, &strPrefix);
+
+  CTString str(strSQ);
+  str.RemovePrefix(strPrefix); // Unused return value
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger StringTrimLeft(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  SQInteger iCharacters;
+  sq_getinteger(v, 3, &iCharacters);
+
+  CTString str(strSQ);
+  INDEX iCharsRemoved = str.TrimLeft(iCharacters);
+
+  sq_newarray(v, 0);
+  sq_pushstring(v, str.str_String, -1);
+  sq_arrayappend(v, -2);
+  sq_pushinteger(v, iCharsRemoved);
+  sq_arrayappend(v, -2);
+  return 1;
+};
+
+static SQInteger StringTrimRight(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  SQInteger iCharacters;
+  sq_getinteger(v, 3, &iCharacters);
+
+  CTString str(strSQ);
+  INDEX iCharsRemoved = str.TrimRight(iCharacters);
+
+  sq_newarray(v, 0);
+  sq_pushstring(v, str.str_String, -1);
+  sq_arrayappend(v, -2);
+  sq_pushinteger(v, iCharsRemoved);
+  sq_arrayappend(v, -2);
+  return 1;
+};
+
+static SQInteger StringTrimSpacesLeft(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTString str(strSQ);
+  INDEX iCharsRemoved = str.TrimSpacesLeft();
+
+  sq_newarray(v, 0);
+  sq_pushstring(v, str.str_String, -1);
+  sq_arrayappend(v, -2);
+  sq_pushinteger(v, iCharsRemoved);
+  sq_arrayappend(v, -2);
+  return 1;
+};
+
+static SQInteger StringTrimSpacesRight(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTString str(strSQ);
+  INDEX iCharsRemoved = str.TrimSpacesRight();
+
+  sq_newarray(v, 0);
+  sq_pushstring(v, str.str_String, -1);
+  sq_arrayappend(v, -2);
+  sq_pushinteger(v, iCharsRemoved);
+  sq_arrayappend(v, -2);
+  return 1;
+};
+
+static SQInteger StringGetHash(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTString str(strSQ);
+  sq_pushinteger(v, str.GetHash());
+  return 1;
+};
+
+static SQInteger StringOnlyFirstLine(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTString str(strSQ);
+  str.OnlyFirstLine();
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger StringMatches(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  const SQChar *strOther;
+  sq_getstring(v, 3, &strOther);
+
+  CTString str(strSQ);
+  sq_pushbool(v, IData::MatchWildcards(str, strOther));
+  return 1;
+};
+
+static SQInteger StringSplit(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  SQInteger iPos;
+  sq_getinteger(v, 3, &iPos);
+
+  CTString str(strSQ);
+  CTString str1, str2;
+  str.Split(iPos, str1, str2);
+
+  sq_newarray(v, 0);
+  sq_pushstring(v, str1.str_String, -1);
+  sq_arrayappend(v, -2);
+  sq_pushstring(v, str2.str_String, -1);
+  sq_arrayappend(v, -2);
+  return 1;
+};
+
+static SQInteger StringInsertChar(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  SQInteger iPos, iChar;
+  sq_getinteger(v, 3, &iPos);
+  sq_getinteger(v, 4, &iChar);
+
+  CTString str(strSQ);
+  str.InsertChar(iPos, iChar);
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger StringDeleteChar(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  SQInteger iPos;
+  sq_getinteger(v, 3, &iPos);
+
+  CTString str(strSQ);
+  str.DeleteChar(iPos);
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger StringLoad(HSQUIRRELVM v) {
+  const SQChar *strFile;
+  sq_getstring(v, 2, &strFile);
+
+  CTString str;
+
+  try {
+    str.Load_t(CTString(strFile));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger StringSave(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  const SQChar *strFile;
+  sq_getstring(v, 3, &strFile);
+
+  CTString str(strSQ);
+
+  try {
+    str.Save_t(CTString(strFile));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
+};
+
+static SQInteger StringReplaceChar(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  SQInteger iOld, iNew;
+  sq_getinteger(v, 3, &iOld);
+  sq_getinteger(v, 4, &iNew);
+
+  CTString str(strSQ);
+  IData::ReplaceChar(str.str_String, iOld, iNew);
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger StringFindChar(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+  SQInteger iChar, iFrom;
+  sq_getinteger(v, 3, &iChar);
+  sq_getinteger(v, 4, &iFrom);
+
+  ULONG ulFrom = (ULONG)(INDEX)iFrom; // Trim to 32 bits and make it unsigned
+
+  CTString str(strSQ);
+  INDEX iResult = IData::FindChar(str.str_String, iChar, ulFrom); // Make result signed
+  sq_pushinteger(v, iResult);
+  return 1;
+};
+
+static SQInteger StringCountChar(HSQUIRRELVM v) {
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+  SQInteger iChar, iFrom;
+  sq_getinteger(v, 3, &iChar);
+  sq_getinteger(v, 4, &iFrom);
+
+  ULONG ulFrom = (ULONG)(INDEX)iFrom; // Trim to 32 bits and make it unsigned
+  sq_pushinteger(v, IData::CountChar(str, iChar, ulFrom));
+  return 1;
+};
+
+static SQInteger StringExtractSubstr(HSQUIRRELVM v) {
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+  SQInteger iFrom, iChars;
+  sq_getinteger(v, 3, &iFrom);
+  sq_getinteger(v, 4, &iChars);
+
+  ULONG ulFrom = (ULONG)(INDEX)iFrom; // Trim to 32 bits and make it unsigned
+  ULONG ulChars = (ULONG)(INDEX)iChars; // Trim to 32 bits and make it unsigned
+  CTString strSub = IData::ExtractSubstr(str, ulFrom, ulChars);
+  sq_pushstring(v, strSub.str_String, -1);
+  return 1;
+};
+
+static SQInteger StringSeparateByChar(HSQUIRRELVM v) {
+  const SQChar *strIn;
+  sq_getstring(v, 2, &strIn);
+  SQInteger iDelimiter;
+  sq_getinteger(v, 3, &iDelimiter);
+
+  CStringStack astr;
+  IData::GetStrings(astr, strIn, (char)iDelimiter);
+
+  sq_newarray(v, 0);
+
+  // Fill the array with strings separated by a character
+  const INDEX ct = astr.Count();
+
+  for (INDEX i = 0; i < ct; i++) {
+    sq_pushstring(v, astr[i], -1);
+    sq_arrayappend(v, -2);
+  }
+  return 1;
+};
+
+static SQInteger StringSeparateByString(HSQUIRRELVM v) {
+  const SQChar *strIn;
+  sq_getstring(v, 2, &strIn);
+  const SQChar *strDelimiter;
+  sq_getstring(v, 3, &strDelimiter);
+
+  CStringStack astr;
+  IData::GetStrings(astr, strIn, strDelimiter);
+
+  sq_newarray(v, 0);
+
+  // Fill the array with strings separated by a string
+  const INDEX ct = astr.Count();
+
+  for (INDEX i = 0; i < ct; i++) {
+    sq_pushstring(v, astr[i], -1);
+    sq_arrayappend(v, -2);
+  }
+  return 1;
+};
+
+static SQInteger StringGetDecoratedChar(HSQUIRRELVM v) {
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+  SQInteger iChar;
+  sq_getinteger(v, 3, &iChar);
+
+  sq_pushinteger(v, IData::GetDecoratedChar(str, iChar));
+  return 1;
+};
+
+static SQInteger StringMatchesMask(HSQUIRRELVM v) {
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+  const SQChar *strMask;
+  sq_getstring(v, 3, &strMask);
+
+  sq_pushbool(v, IData::MatchesMask(str, strMask));
+  return 1;
+};
+
+static SQInteger StringFileDir(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTFileName fnm = CTString(strSQ);
+  sq_pushstring(v, fnm.FileDir().str_String, -1);
+  return 1;
+};
+
+static SQInteger StringFileName(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTFileName fnm = CTString(strSQ);
+  sq_pushstring(v, fnm.FileName().str_String, -1);
+  return 1;
+};
+
+static SQInteger StringFileExt(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTFileName fnm = CTString(strSQ);
+  sq_pushstring(v, fnm.FileExt().str_String, -1);
+  return 1;
+};
+
+static SQInteger StringNoExt(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTFileName fnm = CTString(strSQ);
+  sq_pushstring(v, fnm.NoExt().str_String, -1);
+  return 1;
+};
+
+static SQInteger StringRemoveAppPath(HSQUIRRELVM v) {
+  const SQChar *strSQ;
+  sq_getstring(v, 2, &strSQ);
+
+  CTFileName fnm = CTString(strSQ);
+
+  try {
+    fnm.RemoveApplicationPath_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, fnm.str_String, -1);
   return 1;
 };
 
@@ -986,6 +1439,44 @@ static SQRegFunction _aCoreFuncs[] = {
 static SQRegFunction _aGlobalFuncs[] = {
   { "IncludeScript", &Core::IncludeScript, 2, ".s" },
   { "CompileScript", &Core::CompileScript, 2, ".s" },
+
+  // Engine string methods
+  { "StringLength",          &Core::StringLength,          2, ".s" },
+  { "StringLengthNaked",     &Core::StringLengthNaked,     2, ".s" },
+  { "StringUndecorated",     &Core::StringUndecorated,     2, ".s" },
+  { "StringFindSubstr",      &Core::StringFindSubstr,      3, ".ss" },
+  { "StringReplaceSubstr",   &Core::StringReplaceSubstr,   4, ".sss" },
+  { "StringHasPrefix",       &Core::StringHasPrefix,       3, ".ss" },
+  { "StringRemovePrefix",    &Core::StringRemovePrefix,    3, ".ss" },
+  { "StringTrimLeft",        &Core::StringTrimLeft,        3, ".sn" },
+  { "StringTrimRight",       &Core::StringTrimRight,       3, ".sn" },
+  { "StringTrimSpacesLeft",  &Core::StringTrimSpacesLeft,  2, ".s" },
+  { "StringTrimSpacesRight", &Core::StringTrimSpacesRight, 2, ".s" },
+  { "StringGetHash",         &Core::StringGetHash,         2, ".s" },
+  { "StringOnlyFirstLine",   &Core::StringOnlyFirstLine,   2, ".s" },
+  { "StringMatches",         &Core::StringMatches,         3, ".ss" },
+  { "StringSplit",           &Core::StringSplit,           3, ".sn" },
+  { "StringInsertChar",      &Core::StringInsertChar,      4, ".snn" },
+  { "StringDeleteChar",      &Core::StringDeleteChar,      3, ".sn" },
+  { "StringLoad",            &Core::StringLoad,            2, ".s" },
+  { "StringSave",            &Core::StringSave,            3, ".ss" },
+
+  // IData interface methods
+  { "StringReplaceChar",      &Core::StringReplaceChar,      4, ".snn" },
+  { "StringFindChar",         &Core::StringFindChar,         4, ".snn" },
+  { "StringCountChar",        &Core::StringCountChar,        4, ".snn" },
+  { "StringExtractSubstr",    &Core::StringExtractSubstr,    4, ".snn" },
+  { "StringSeparateByChar",   &Core::StringSeparateByChar,   3, ".sn" },
+  { "StringSeparateByString", &Core::StringSeparateByString, 3, ".ss" },
+  { "StringGetDecoratedChar", &Core::StringGetDecoratedChar, 3, ".sn" },
+  { "StringMatchesMask",      &Core::StringMatchesMask,      3, ".ss" },
+
+  // Engine filename methods
+  { "StringFileDir",       &Core::StringFileDir,       2, ".s" },
+  { "StringFileName",      &Core::StringFileName,      2, ".s" },
+  { "StringFileExt",       &Core::StringFileExt,       2, ".s" },
+  { "StringNoExt",         &Core::StringNoExt,         2, ".s" },
+  { "StringRemoveAppPath", &Core::StringRemoveAppPath, 2, ".s" },
 };
 
 void VM::RegisterCore(void) {
