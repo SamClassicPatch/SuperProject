@@ -70,10 +70,12 @@ BOOL CClientIdentity::AddNewCharacter(const CPlayerCharacter &pc) {
 };
 
 // Write client identity data
-void CClientIdentity::Write(CTStream *strm) {
+void CClientIdentity::Write_t(CTStream *strm) {
   INDEX i, ct;
 
   // Addresses
+  strm->WriteID_t(CChunkID("ADDR"));
+
   ct = aAddresses.Count();
   *strm << ct;
 
@@ -82,37 +84,67 @@ void CClientIdentity::Write(CTStream *strm) {
   }
 
   // Characters
+  strm->WriteID_t(CChunkID("CHAR"));
+
   ct = aCharacters.Count();
   *strm << ct;
 
   for (i = 0; i < ct; i++) {
     *strm << aCharacters[i];
   }
+
+  // Restrictions
+  strm->WriteID_t(CChunkID("RSTR"));
+  crRestrictions.Write_t(strm);
 };
 
 // Read client identity data
-void CClientIdentity::Read(CTStream *strm) {
-  INDEX i, ct;
+void CClientIdentity::Read_t(CTStream *strm, ULONG ulVersion) {
+  switch (ulVersion) {
+    case 1: {
+      // Addresses
+      strm->ExpectID_t(CChunkID("ADDR"));
+      ReadAddresses_t(strm);
 
-  // Addresses
-  *strm >> ct;
+      // Characters
+      strm->ExpectID_t(CChunkID("CHAR"));
+      ReadCharacters_t(strm);
 
-  if (ct != 0) {
-    SClientAddress *aNewAddresses = aAddresses.Push(ct);
+      // Restrictions
+      strm->ExpectID_t(CChunkID("RSTR"));
+      crRestrictions.Read_t(strm);
+    } return;
 
-    for (i = 0; i < ct; i++) {
-      aNewAddresses[i].Read(strm);
-    }
+    // Old format (0)
+    default: {
+      ReadAddresses_t(strm);
+      ReadCharacters_t(strm);
+    } return;
   }
+};
 
-  // Characters
+// Read client identity addresses
+void CClientIdentity::ReadAddresses_t(CTStream *strm) {
+  INDEX i, ct;
   *strm >> ct;
+  if (ct == 0) return;
 
-  if (ct != 0) {
-    CPlayerCharacter *aNewChars = aCharacters.Push(ct);
+  SClientAddress *aNewAddresses = aAddresses.Push(ct);
 
-    for (i = 0; i < ct; i++) {
-      *strm >> aNewChars[i];
-    }
+  for (i = 0; i < ct; i++) {
+    aNewAddresses[i].Read(strm);
+  }
+};
+
+// Read client identity characters
+void CClientIdentity::ReadCharacters_t(CTStream *strm) {
+  INDEX i, ct;
+  *strm >> ct;
+  if (ct == 0) return;
+
+  CPlayerCharacter *aNewChars = aCharacters.Push(ct);
+
+  for (i = 0; i < ct; i++) {
+    *strm >> aNewChars[i];
   }
 };

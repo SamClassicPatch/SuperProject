@@ -55,13 +55,20 @@ class CORE_API CClientIdentity {
     inline void Clear(void) {
       aAddresses.Clear();
       aCharacters.Clear();
+      crRestrictions.Clear();
     };
 
     // Write client identity data
-    void Write(CTStream *strm);
+    void Write_t(CTStream *strm);
 
     // Read client identity data
-    void Read(CTStream *strm);
+    void Read_t(CTStream *strm, ULONG ulVersion);
+
+    // Read client identity addresses
+    void ReadAddresses_t(CTStream *strm);
+
+    // Read client identity characters
+    void ReadCharacters_t(CTStream *strm);
 };
 
 // Identities of every logged client

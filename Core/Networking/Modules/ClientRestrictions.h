@@ -30,6 +30,18 @@ class CORE_API CClientRestriction {
     // Default constructor
     CClientRestriction() : llBanExpiration(0), llMuteExpiration(0) {};
 
+    // Clear the restrictions
+    inline void Clear(void) {
+      llBanExpiration = 0;
+      llMuteExpiration = 0;
+    };
+
+    // Write restrictions
+    void Write_t(CTStream *strm);
+
+    // Read restrictions
+    void Read_t(CTStream *strm);
+
   // Ban methods
   public:
 

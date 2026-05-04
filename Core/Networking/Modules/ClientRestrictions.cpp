@@ -35,6 +35,18 @@ static __int64 SecondsSinceEpoch(void) {
   return (__int64)(ullEpoch100ns / Ticks_t(10000000));
 };
 
+// Write restrictions
+void CClientRestriction::Write_t(CTStream *strm) {
+  strm->Write_t(&llBanExpiration, sizeof(llBanExpiration));
+  strm->Write_t(&llMuteExpiration, sizeof(llMuteExpiration));
+};
+
+// Read restrictions
+void CClientRestriction::Read_t(CTStream *strm) {
+  strm->Read_t(&llBanExpiration, sizeof(llBanExpiration));
+  strm->Read_t(&llMuteExpiration, sizeof(llMuteExpiration));
+};
+
 // Set new ban time
 void CClientRestriction::SetBanTime(__int64 llSeconds) {
   // Indefinite ban

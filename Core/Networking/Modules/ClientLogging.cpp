@@ -109,6 +109,8 @@ INDEX IClientLogging::FindByCharacter(INDEX &iClient, const CPlayerCharacter &pc
 
 // Client log file
 static const CTString _strClientLogFile = "Data\\ClassicsPatch\\ClientLog.dat";
+static const CChunkID _cidClientLog("CLGV"); // Client LoG Version
+static const ULONG _ulClientLogVersion = 1; // Current version of the client log format
 
 // Save client log
 void IClientLogging::SaveLog(void) {
@@ -119,7 +121,9 @@ void IClientLogging::SaveLog(void) {
     CTFileStream strm;
     strm.Create_t(_strClientLogFile);
 
-    strm.WriteID_t("CLLG"); // CLient LoG
+    // Write client log version
+    strm.WriteID_t(_cidClientLog);
+    strm << _ulClientLogVersion;
 
     // Write clients
     const INDEX ctClients = _aClientIdentities.Count();
@@ -127,7 +131,7 @@ void IClientLogging::SaveLog(void) {
 
     for (INDEX i = 0; i < ctClients; i++) {
       CClientIdentity &ci = _aClientIdentities[i];
-      ci.Write(&strm);
+      ci.Write_t(&strm);
     }
 
     strm.Close();
@@ -146,7 +150,22 @@ void IClientLogging::LoadLog(void) {
     CTFileStream strm;
     strm.Open_t(_strClientLogFile);
 
-    strm.ExpectID_t("CLLG"); // CLient LoG
+    ULONG ulVersion;
+
+    // CLient LoG (old format)
+    if (strm.PeekID_t() == CChunkID("CLLG")) {
+      strm.ExpectID_t(CChunkID("CLLG"));
+      ulVersion = 0; // Old format
+
+    } else {
+      strm.ExpectID_t(_cidClientLog);
+      strm >> ulVersion;
+    }
+
+    // Unsupported new version
+    if (ulVersion > _ulClientLogVersion) {
+      ThrowF_t(TRANS("Unknown client log version %u"), ulVersion);
+    }
 
     // Read clients
     INDEX ctClients;
@@ -160,7 +179,7 @@ void IClientLogging::LoadLog(void) {
     CClientIdentity *aci = _aClientIdentities.Push(ctClients);
 
     for (INDEX i = 0; i < ctClients; i++) {
-      aci[i].Read(&strm);
+      aci[i].Read_t(&strm, ulVersion);
     }
 
     strm.Close();
