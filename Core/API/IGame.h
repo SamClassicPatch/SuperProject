@@ -49,6 +49,19 @@ class CORE_API CGameAPI : public IClassicsGame {
     };
 
   public:
+    // Extra game menu customization
+    CTString strMenuLogoTextureA;
+    CTString strMenuLogoTextureB;
+    CTString strMenuFontSmall;
+    CTString strMenuFontMedium;
+    CTString strMenuFontBig;
+    CTString strMenuFontTitle;
+
+    FLOAT fMenuFontAspectSmall;
+    FLOAT fMenuFontAspectMedium;
+    FLOAT fMenuFontAspectBig;
+    FLOAT fMenuFontAspectTitle;
+
     // Session properties
     CStaticArray<INDEX> sp_aiGameModes; // Game mode indices
 
@@ -110,6 +123,9 @@ class CORE_API CGameAPI : public IClassicsGame {
 
     // Get observer camera
     CObserverCamera &GetCamera(void);
+
+    // Reset menu resources to the default values
+    void ResetMenuResources(void);
 
   // Shell symbol wrappers
   public:

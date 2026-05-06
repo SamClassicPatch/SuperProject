@@ -109,6 +109,7 @@ void SetThumbnail(CTFileName fn);
 // remove thumbnail
 void ClearThumbnail(void);
 
+void ReloadMenuResources(void); // [Cecil] Reload menu resources in case they have been updated
 void InitializeMenus(void);
 void DestroyMenus(void);
 void MenuGoToParent(void); // [Cecil] Declared here

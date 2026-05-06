@@ -88,6 +88,14 @@ static CTextureObject _toPatchLogo2;
 // [Cecil] Scrollbar arrow texture
 CTextureObject _toMenuArrow;
 
+// [Cecil] Last set resources for extra menu customization
+static CTString _strLastMenuLogoTextureA = "";
+static CTString _strLastMenuLogoTextureB = "";
+static CTString _strLastMenuFontSmall = "";
+static CTString _strLastMenuFontMedium = "";
+static CTString _strLastMenuFontBig = "";
+static CTString _strLastMenuFontTitle = "";
+
 // -------------- All possible menu entities
 #define BIG_BUTTONS_CT 6
 
@@ -232,43 +240,89 @@ void StopMenus(BOOL bGoToRoot /*=TRUE*/) {
   }
 }
 
+// [Cecil] Reload menu resources in case they have been updated
+void ReloadMenuResources(void) {
+  const CTString &strLogoTextureA = GetGameAPI()->strMenuLogoTextureA;
+  const CTString &strLogoTextureB = GetGameAPI()->strMenuLogoTextureB;
+  const CTString &strFontSmall    = GetGameAPI()->strMenuFontSmall;
+  const CTString &strFontMedium   = GetGameAPI()->strMenuFontMedium;
+  const CTString &strFontBig      = GetGameAPI()->strMenuFontBig;
+  const CTString &strFontTitle    = GetGameAPI()->strMenuFontTitle;
+
+  try {
+    // Reload logo textures
+    if (_strLastMenuLogoTextureA != strLogoTextureA) {
+      _strLastMenuLogoTextureA = strLogoTextureA;
+
+      _toLogoMenuA.SetData_t(_strLastMenuLogoTextureA);
+      ((CTextureData *)_toLogoMenuA.GetData())->Force(TEX_CONSTANT);
+    }
+
+    if (_strLastMenuLogoTextureB != strLogoTextureB) {
+      _strLastMenuLogoTextureB = strLogoTextureB;
+
+      _toLogoMenuB.SetData_t(_strLastMenuLogoTextureB);
+      ((CTextureData *)_toLogoMenuB.GetData())->Force(TEX_CONSTANT);
+    }
+
+    // Reload fonts
+    if (_strLastMenuFontSmall != strFontSmall) {
+      _strLastMenuFontSmall = strFontSmall;
+
+      _fdSmall.Load_t(_strLastMenuFontSmall);
+
+      // [Cecil] Old unused settings
+      //_fdSmall.SetCharSpacing(-1);
+      //_fdSmall.SetLineSpacing(0);
+      //_fdSmall.SetSpaceWidth(0.4f);
+
+      // [Cecil] Same settings as for _pfdDisplayFont
+      _fdSmall.SetCharSpacing( 0);
+      _fdSmall.SetLineSpacing(+1);
+    }
+
+    if (_strLastMenuFontMedium != strFontMedium) {
+      _strLastMenuFontMedium = strFontMedium;
+
+      _fdMedium.Load_t(_strLastMenuFontMedium);
+      _fdMedium.SetCharSpacing(+1);
+      _fdMedium.SetLineSpacing(0);
+      _fdMedium.SetSpaceWidth(0.4f);
+    }
+
+    if (_strLastMenuFontBig != strFontBig) {
+      _strLastMenuFontBig = strFontBig;
+
+      _fdBig.Load_t(_strLastMenuFontBig);
+      _fdBig.SetCharSpacing(+1);
+      _fdBig.SetLineSpacing(0);
+    }
+
+    if (_strLastMenuFontTitle != strFontTitle) {
+      _strLastMenuFontTitle = strFontTitle;
+
+      _fdTitle.Load_t(_strLastMenuFontTitle);
+      _fdTitle.SetCharSpacing(+1);
+      _fdTitle.SetLineSpacing(0);
+    }
+
+  } catch (char *strError) {
+    FatalError("%s", strError);
+  }
+};
+
 // ------------------------ Global menu function implementation
 void InitializeMenus(void) {
   _pGUIM = new CMenuManager();
 
+  // [Cecil] Load initial menu resources through a separate method
+  ReloadMenuResources();
+
   try {
-    // initialize and load corresponding fonts
-  #if SE1_GAME != SS_REV
-    _fdSmall.Load_t( CTFILENAME("Fonts\\Display3-narrow.fnt"));
-    _fdMedium.Load_t(CTFILENAME("Fonts\\Display3-normal.fnt"));
-    _fdBig.Load_t(   CTFILENAME("Fonts\\Display3-caps.fnt"));
-    _fdTitle.Load_t( CTFILENAME("Fonts\\Title2.fnt"));
-  #else
-    _fdSmall.Load_t( CTFILENAME("Fonts\\Asap.fnt"));
-    _fdMedium.Load_t(CTFILENAME("Fonts\\AsapBig.fnt"));
-    _fdBig.Load_t(   CTFILENAME("Fonts\\AsapBig.fnt"));
-    _fdTitle.Load_t( CTFILENAME("Fonts\\Modern\\Cabin.fnt"));
-  #endif
-
-    _fdSmall.SetCharSpacing(-1);
-    _fdSmall.SetLineSpacing(0);
-    _fdSmall.SetSpaceWidth(0.4f);
-    _fdMedium.SetCharSpacing(+1);
-    _fdMedium.SetLineSpacing(0);
-    _fdMedium.SetSpaceWidth(0.4f);
-    _fdBig.SetCharSpacing(+1);
-    _fdBig.SetLineSpacing(0);
-    _fdTitle.SetCharSpacing(+1);
-    _fdTitle.SetLineSpacing(0);
-
     // load menu sounds
     _psdSelect = _pSoundStock->Obtain_t(CTFILENAME("Sounds\\Menu\\Select.wav"));
     _psdPress = _pSoundStock->Obtain_t(CTFILENAME("Sounds\\Menu\\Press.wav"));
     _psoMenuSound = new CSoundObject;
-
-    // initialize and load menu textures
-    _toLogoMenuA.SetData_t(CTFILENAME("Textures\\Logo\\sam_menulogo256a.tex"));
-    _toLogoMenuB.SetData_t(CTFILENAME("Textures\\Logo\\sam_menulogo256b.tex"));
 
     // [Cecil] Classics Patch logo
     _toPatchLogo1.SetData_t(CTFILENAME("TexturesPatch\\General\\PatchLogo1.tex"));
@@ -278,12 +332,8 @@ void InitializeMenus(void) {
     _toMenuArrow.SetData_t(CTFILENAME("TexturesPatch\\General\\MenuArrow.tex"));
 
   } catch (char *strError) {
-    FatalError(strError);
+    FatalError("%s", strError);
   }
-
-  // force logo textures to be of maximal size
-  ((CTextureData *)_toLogoMenuA.GetData())->Force(TEX_CONSTANT);
-  ((CTextureData *)_toLogoMenuB.GetData())->Force(TEX_CONSTANT);
 
   // [Cecil] Classics Patch logo
   ((CTextureData *)_toPatchLogo1.GetData())->Force(TEX_CONSTANT);
@@ -292,13 +342,13 @@ void InitializeMenus(void) {
   // [Cecil] Scrollbar arrow texture
   ((CTextureData *)_toMenuArrow.GetData())->Force(TEX_CONSTANT);
 
-  try {
-    TRANSLATERADIOARRAY(astrNoYes);
-    TRANSLATERADIOARRAY(astrComputerInvoke);
-    TRANSLATERADIOARRAY(astrDisplayPrefsRadioTexts);
-    TRANSLATERADIOARRAY(astrWeapon);
-    TRANSLATERADIOARRAY(astrSplitScreenRadioTexts);
+  TRANSLATERADIOARRAY(astrNoYes);
+  TRANSLATERADIOARRAY(astrComputerInvoke);
+  TRANSLATERADIOARRAY(astrDisplayPrefsRadioTexts);
+  TRANSLATERADIOARRAY(astrWeapon);
+  TRANSLATERADIOARRAY(astrSplitScreenRadioTexts);
 
+  try {
     // initialize game type strings table
     InitGameTypes();
 
@@ -332,7 +382,7 @@ void InitializeMenus(void) {
     _pGUIM->gmPatchCredits.Initialize_t();
 
   } catch (char *strError) {
-    FatalError("Cannot initialize game menus:\n", strError);
+    FatalError("Cannot initialize game menus:\n%s", strError);
   }
 }
 

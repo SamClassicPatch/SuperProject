@@ -35,6 +35,8 @@ CGameAPI::CGameAPI() : pctrlCommon(NULL)
   // Initialize camera
   _pObserverCam = new CObserverCamera;
   _pObserverCam->Init();
+
+  ResetMenuResources();
 };
 
 // Destructor
@@ -159,6 +161,29 @@ BOOL CGameAPI::NewGame(const CTString &strSession, const CTFileName &fnmWorld, C
 // Get observer camera
 CObserverCamera &CGameAPI::GetCamera(void) {
   return *_pObserverCam;
+};
+
+// Reset menu resources to the default values
+void CGameAPI::ResetMenuResources(void) {
+  strMenuLogoTextureA = "Textures\\Logo\\sam_menulogo256a.tex";
+  strMenuLogoTextureB = "Textures\\Logo\\sam_menulogo256b.tex";
+
+#if SE1_GAME != SS_REV
+  strMenuFontSmall  = "Fonts\\Display3-narrow.fnt"; // [Cecil] NOTE: Same as _pfdDisplayFont by default
+  strMenuFontMedium = "Fonts\\Display3-normal.fnt";
+  strMenuFontBig    = "Fonts\\Display3-caps.fnt";
+  strMenuFontTitle  = "Fonts\\Title2.fnt";
+#else
+  strMenuFontSmall  = "Fonts\\Asap.fnt";
+  strMenuFontMedium = "Fonts\\AsapBig.fnt";
+  strMenuFontBig    = "Fonts\\AsapBig.fnt";
+  strMenuFontTitle  = "Fonts\\Modern\\Cabin.fnt";
+#endif
+
+  fMenuFontAspectSmall  = 1.0f;
+  fMenuFontAspectMedium = 0.75f;
+  fMenuFontAspectBig    = 1.0f;
+  fMenuFontAspectTitle  = 1.0f;
 };
 
 // Get name of a specific gamemode

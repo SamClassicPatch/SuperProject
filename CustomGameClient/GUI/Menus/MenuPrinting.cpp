@@ -296,7 +296,11 @@ static __forceinline FLOAT BaseScaling(CDrawPort *pdp) {
   return IConfig::mod[k_EModDataProps_MenuTextScale].GetFloat() * ((FLOAT)pdp->GetWidth() / 640.0f) * pdp->dp_fWideAdjustment;
 };
 
+extern CFontData _fdSmall;
+extern CFontData _fdBig;
+extern CFontData _fdMedium;
 extern CFontData _fdTitle;
+
 void SetFontTitle(CDrawPort *pdp) {
   pdp->SetFont(&_fdTitle);
 
@@ -305,11 +309,8 @@ void SetFontTitle(CDrawPort *pdp) {
 
   // [Cecil] Use height instead of width for text scaling
   pdp->SetTextScaling(fRelScale * 1.25f * BaseScaling(pdp));
-  pdp->SetTextAspect(1.0f);
+  pdp->SetTextAspect(GetGameAPI()->fMenuFontAspectTitle); // [Cecil] Adjustable aspect
 }
-
-extern CFontData _fdBig;
-extern CFontData _fdMedium;
 
 // [Cecil] Added text scale
 void SetFontBig(CDrawPort *pdp, FLOAT fScale) {
@@ -320,7 +321,7 @@ void SetFontBig(CDrawPort *pdp, FLOAT fScale) {
 
   // [Cecil] Use height instead of width for text scaling
   pdp->SetTextScaling(fRelScale * fScale * BaseScaling(pdp));
-  pdp->SetTextAspect(1.0f);
+  pdp->SetTextAspect(GetGameAPI()->fMenuFontAspectBig); // [Cecil] Adjustable aspect
 }
 
 // [Cecil] Added text scale
@@ -332,12 +333,13 @@ void SetFontMedium(CDrawPort *pdp, FLOAT fScale) {
 
   // [Cecil] Use height instead of width for text scaling
   pdp->SetTextScaling(fRelScale * fScale * BaseScaling(pdp));
-  pdp->SetTextAspect(0.75f);
+  pdp->SetTextAspect(GetGameAPI()->fMenuFontAspectMedium); // [Cecil] Adjustable aspect
 }
 
 // [Cecil] Added text scale
 void SetFontSmall(CDrawPort *pdp, FLOAT fScale) {
+  // [Cecil] NOTE: Must remain as _pfdConsoleFont instead of _fdSmall for compatibility with vanilla
   pdp->SetFont(_pfdConsoleFont);
   pdp->SetTextScaling(fScale);
-  pdp->SetTextAspect(1.0f);
+  pdp->SetTextAspect(GetGameAPI()->fMenuFontAspectSmall); // [Cecil] Adjustable aspect
 }

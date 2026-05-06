@@ -1791,6 +1791,9 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     // notify game whether menu is active
     GetGameAPI()->SetMenuState(!!bMenuActive);
 
+    // [Cecil] Reload menu resources if they've been changed at any point
+    ReloadMenuResources();
+
     // do the main game loop and render screen
     DoGame();
 

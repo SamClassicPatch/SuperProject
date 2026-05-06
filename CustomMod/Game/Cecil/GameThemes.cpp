@@ -162,6 +162,21 @@ void CGameTheme::Load(const CTString &strFile, BOOL bNewTheme) {
   SET_COLOR(CompText);
   SET_COLOR(CompClouds);
   SET_COLOR(CompFloor);
+
+  // Extra game menu customization
+  GetGameAPI()->ResetMenuResources();
+
+  GetGameAPI()->strMenuLogoTextureA = _pini->GetValue("Textures", "LogoTexA", GetGameAPI()->strMenuLogoTextureA);
+  GetGameAPI()->strMenuLogoTextureB = _pini->GetValue("Textures", "LogoTexB", GetGameAPI()->strMenuLogoTextureB);
+  //GetGameAPI()->strMenuFontSmall    = _pini->GetValue("Fonts", "FontSmall",  GetGameAPI()->strMenuFontSmall);
+  GetGameAPI()->strMenuFontMedium   = _pini->GetValue("Fonts", "FontMedium", GetGameAPI()->strMenuFontMedium);
+  GetGameAPI()->strMenuFontBig      = _pini->GetValue("Fonts", "FontBig",    GetGameAPI()->strMenuFontBig);
+  GetGameAPI()->strMenuFontTitle    = _pini->GetValue("Fonts", "FontTitle",  GetGameAPI()->strMenuFontTitle);
+
+  GetGameAPI()->fMenuFontAspectSmall  = _pini->GetDoubleValue("Fonts", "FontSmallAspect",  GetGameAPI()->fMenuFontAspectSmall);
+  GetGameAPI()->fMenuFontAspectMedium = _pini->GetDoubleValue("Fonts", "FontMediumAspect", GetGameAPI()->fMenuFontAspectMedium);
+  GetGameAPI()->fMenuFontAspectBig    = _pini->GetDoubleValue("Fonts", "FontBigAspect",    GetGameAPI()->fMenuFontAspectBig);
+  GetGameAPI()->fMenuFontAspectTitle  = _pini->GetDoubleValue("Fonts", "FontTitleAspect",  GetGameAPI()->fMenuFontAspectTitle);
 };
 
 // Load new game themes when needed
