@@ -1178,9 +1178,7 @@ void CGame::InitInternal( void)
   _pShell->DeclareSymbol("user FLOAT ctl_afAddViewRotation[3];", &ctl_aav.afViewRotation);
 
   // [Cecil] Use bigger font in computer
-  extern INDEX cmp_bBigFont;
   extern FLOAT cmp_fBigFontScale;
-  _pShell->DeclareSymbol("persistent user INDEX cmp_bBigFont;", &cmp_bBigFont);
   _pShell->DeclareSymbol("persistent user FLOAT cmp_fBigFontScale;", &cmp_fBigFontScale);
 
   // [Cecil] Customizable fade time

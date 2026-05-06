@@ -48,6 +48,9 @@ CTString sam_strVersion = _SE_VER_STRING; // Use version string
 // Temporary password for connecting to some server
 CTString cli_strConnectPassword = "";
 
+// Global setting for toggling bigger font in any computer
+INDEX cmp_bBigFont = TRUE;
+
 // Current values of input axes
 FLOAT inp_afAxisValues[MAX_OVERALL_AXES];
 
@@ -330,6 +333,8 @@ void Core(void) {
 
     _pShell->DeclareSymbol("persistent user CTString cli_strConnectPassword;", &cli_strConnectPassword);
   }
+
+  _pShell->DeclareSymbol("persistent user INDEX cmp_bBigFont;", &cmp_bBigFont); // Used to be custom mod exclusive near cmp_fBigFontScale
 
   _pShell->DeclareSymbol("user void IncludeScript(CTString);", &IncludeScript);
   _pShell->DeclareSymbol("user void ClearConsole(void);", &ClearConsole);

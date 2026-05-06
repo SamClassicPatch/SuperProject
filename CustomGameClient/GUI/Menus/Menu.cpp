@@ -71,7 +71,7 @@ BOOL _bThumbnailOn = FALSE;
 
 CFontData _fdBig;
 CFontData _fdMedium;
-CFontData _fdSmall;
+CFontData _fdSmall; // [Cecil] NOTE: Only used when forcing big fonts for computer
 CFontData _fdTitle;
 
 CSoundData *_psdSelect = NULL;

@@ -36,6 +36,9 @@ CORE_API extern CTString sam_strVersion;
 // Temporary password for connecting to some server
 CORE_API extern CTString cli_strConnectPassword;
 
+// Global setting for toggling bigger font in any computer
+CORE_API extern INDEX cmp_bBigFont;
+
 // Current values of input axes
 CORE_API extern FLOAT inp_afAxisValues[MAX_OVERALL_AXES];
 

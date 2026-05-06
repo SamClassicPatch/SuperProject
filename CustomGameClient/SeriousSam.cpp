@@ -993,7 +993,30 @@ void DoGame(void) {
       _pGame->GameRedrawView(_pdpMenu, (GetGameAPI()->GetConState() != CS_OFF) ? 0 : GRV_SHOWEXTRAS);
 
       _pdpMenu->Lock();
-      _pGame->ComputerRender(_pdpMenu);
+
+      // [Cecil] Hijack the small computer font by substituting it with a higher resolution one for text that utilizes it
+      {
+        extern CFontData _fdSmall;
+        CFontData *pfdConsoleLast = _pfdConsoleFont;
+        const BOOL bFixed = _fdSmall.fd_bFixedWidth;
+        const PIX pixSpacing = _fdSmall.fd_pixCharSpacing;
+
+        // Replace the console font if needed and the custom mod isn't active (as it replaces the font itself)
+        const BOOL bReplaceFont = cmp_bBigFont && !ClassicsCore_IsCustomModActive();
+
+        // Prepare the font for replacement
+        _fdSmall.fd_bFixedWidth = TRUE;
+        _fdSmall.fd_pixCharSpacing = -4;
+
+        // Temporarily replace the font for the duration of the computer rendering
+        if (bReplaceFont) _pfdConsoleFont = &_fdSmall;
+        _pGame->ComputerRender(_pdpMenu);
+        if (bReplaceFont) _pfdConsoleFont = pfdConsoleLast;
+
+        // Restore the font for replacement
+        _fdSmall.fd_bFixedWidth = bFixed;
+        _fdSmall.fd_pixCharSpacing = pixSpacing;
+      }
 
       // [Cecil] Call API after redrawing the game
       IHooks::OnPostDraw(_pdpMenu);

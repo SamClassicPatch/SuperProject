@@ -95,7 +95,6 @@ static COLOR _colDark;
 static COLOR _colBoxes;
 
 // [Cecil] Use bigger font in computer
-INDEX cmp_bBigFont = TRUE;
 FLOAT cmp_fBigFontScale = 1.0f;
 
 static void SetFont1(CDrawPort *pdp)

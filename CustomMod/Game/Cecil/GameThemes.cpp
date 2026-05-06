@@ -168,6 +168,7 @@ void CGameTheme::Load(const CTString &strFile, BOOL bNewTheme) {
 
   GetGameAPI()->strMenuLogoTextureA = _pini->GetValue("Textures", "LogoTexA", GetGameAPI()->strMenuLogoTextureA);
   GetGameAPI()->strMenuLogoTextureB = _pini->GetValue("Textures", "LogoTexB", GetGameAPI()->strMenuLogoTextureB);
+  // [Cecil] TODO: Maybe implement this later, although this font is currently used only for making computer text bigger in *vanilla* game, not even custom mod
   //GetGameAPI()->strMenuFontSmall    = _pini->GetValue("Fonts", "FontSmall",  GetGameAPI()->strMenuFontSmall);
   GetGameAPI()->strMenuFontMedium   = _pini->GetValue("Fonts", "FontMedium", GetGameAPI()->strMenuFontMedium);
   GetGameAPI()->strMenuFontBig      = _pini->GetValue("Fonts", "FontBig",    GetGameAPI()->strMenuFontBig);
