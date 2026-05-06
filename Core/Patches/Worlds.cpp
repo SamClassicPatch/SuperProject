@@ -15,9 +15,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
 #include "Worlds.h"
+
+#if _PATCHCONFIG_ENGINEPATCHES
 
 #include <Engine/Templates/Stock_CEntityClass.h>
 #include <Core/Interfaces/ResourceFunctions.h>

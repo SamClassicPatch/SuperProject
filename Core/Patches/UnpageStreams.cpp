@@ -15,10 +15,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
 #include "UnpageStreams.h"
 #include "FileSystem.h"
+
+#if _PATCHCONFIG_ENGINEPATCHES
 
 #include <Engine/Base/Unzip.h>
 

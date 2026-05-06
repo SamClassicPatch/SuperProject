@@ -15,14 +15,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "Strings.h"
+
 // Temporarily suppress timestamp printing
 BOOL _bTempIgnoreTimestamps = FALSE;
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
-#include "Strings.h"
-
-#if _PATCHCONFIG_FIX_STRINGS
+#if _PATCHCONFIG_FIX_STRINGS && _PATCHCONFIG_ENGINEPATCHES
 
 // Original function pointer
 void (*pPutString)(const char *) = NULL;
@@ -267,5 +265,3 @@ CTString CStringPatch::P_Undecorated(void) const {
 };
 
 #endif // _PATCHCONFIG_FIX_STRINGS
-
-#endif // _PATCHCONFIG_ENGINEPATCHES

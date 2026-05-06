@@ -15,9 +15,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#if _PATCHCONFIG_FIX_LOGICTIMERS && _PATCHCONFIG_ENGINEPATCHES
-
 #include "LogicTimers.h"
+
+#if _PATCHCONFIG_FIX_LOGICTIMERS && _PATCHCONFIG_ENGINEPATCHES
 
 // Set next timer event to occur after some time
 void CRationalEntityTimerPatch::P_SetTimerAfter(TIME tmDelta) {

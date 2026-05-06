@@ -15,12 +15,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
 #include "Textures.h"
 
-#include <Engine/Graphics/TextureEffects.h>
+#if _PATCHCONFIG_ENGINEPATCHES
 
+#include <Engine/Graphics/TextureEffects.h>
 #include <Core/Definitions/BaseDefs.h>
 
 #if _PATCHCONFIG_EXTEND_TEXTURES

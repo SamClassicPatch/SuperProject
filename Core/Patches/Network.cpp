@@ -15,9 +15,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
 #include "Network.h"
+
+#if _PATCHCONFIG_ENGINEPATCHES
 
 #include <Core/Query/QueryManager.h>
 #include <Core/Networking/NetworkFunctions.h>

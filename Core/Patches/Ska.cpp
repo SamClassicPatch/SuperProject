@@ -15,11 +15,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
 #include "Ska.h"
 
-#if _PATCHCONFIG_FIX_SKA
+#if _PATCHCONFIG_FIX_SKA && _PATCHCONFIG_ENGINEPATCHES
 
 // [Cecil] TODO: Make SKA patches work in Debug
 // SKA models are only usable since 1.07
@@ -184,5 +182,3 @@ void P_shaSetLightColor(COLOR colAmbient, COLOR colLight) {
 #endif
 
 #endif // _PATCHCONFIG_FIX_SKA
-
-#endif // _PATCHCONFIG_ENGINEPATCHES

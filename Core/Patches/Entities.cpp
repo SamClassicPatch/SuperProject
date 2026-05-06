@@ -15,9 +15,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
-#if _PATCHCONFIG_EXTEND_ENTITIES && _PATCHCONFIG_ENGINEPATCHES
-
 #include "Entities.h"
+
+#if _PATCHCONFIG_EXTEND_ENTITIES && _PATCHCONFIG_ENGINEPATCHES
 
 #include <Core/Interfaces/ResourceFunctions.h>
 

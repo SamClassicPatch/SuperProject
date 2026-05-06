@@ -15,14 +15,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "Rendering.h"
+
 // Force lens flares to render instantaneously
 BOOL _bLensFlaresFullFade = FALSE;
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
-#include "Rendering.h"
-
-#if _PATCHCONFIG_FIX_RENDERING
+#if _PATCHCONFIG_FIX_RENDERING && _PATCHCONFIG_ENGINEPATCHES
 
 // Original function pointers
 void (*pRenderView)(CWorld &, CEntity &, CAnyProjection3D &, CDrawPort &) = NULL;
@@ -331,5 +329,3 @@ void CRendererPatch::P_RenderLensFlares(void) {
 };
 
 #endif // _PATCHCONFIG_FIX_RENDERING
-
-#endif // _PATCHCONFIG_ENGINEPATCHES
