@@ -61,6 +61,15 @@ struct CORE_API SClientAddress {
       return strHost;
     };
 
+    // Get IP address as a string
+    inline CTString GetIPAsString(void) {
+      ULONG ulA = (ulIP & 0xFF000000) >> 24;
+      ULONG ulB = (ulIP & 0xFF0000) >> 16;
+      ULONG ulC = (ulIP & 0xFF00) >> 8;
+      ULONG ulD = (ulIP & 0xFF);
+      return CTString(0, "%u.%u.%u.%u", ulA, ulB, ulC, ulD);
+    };
+
   public:
     // Set a new IP address
     inline void SetIP(ULONG ulSetIP) {

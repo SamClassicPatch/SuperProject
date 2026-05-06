@@ -400,7 +400,7 @@ static void ClientLogDelete(SHELL_FUNC_ARGS) {
   INDEX iCharacter = NEXT_ARG(INDEX);
 
   if (iIdentity < 0 || iIdentity >= _aClientIdentities.Count()) {
-    CPutString("Invalid client index!\n");
+    CPutString(TRANS("Invalid client index!\n"));
     return;
   }
 
@@ -413,7 +413,7 @@ static void ClientLogDelete(SHELL_FUNC_ARGS) {
   }
 
   if (iCharacter <= 0 || iCharacter > ci.aCharacters.Count()) {
-    CPutString("Invalid character index!\n");
+    CPutString(TRANS("Invalid character index!\n"));
     return;
   }
 
@@ -440,7 +440,7 @@ static void ClientLogBan(SHELL_FUNC_ARGS) {
   FLOAT fTime = NEXT_ARG(FLOAT);
 
   if (iIdentity < 0 || iIdentity >= _aClientIdentities.Count()) {
-    CPutString("Invalid client index!\n");
+    CPutString(TRANS("Invalid client index!\n"));
     return;
   }
 
@@ -454,11 +454,51 @@ static void ClientLogMute(SHELL_FUNC_ARGS) {
   FLOAT fTime = NEXT_ARG(FLOAT);
 
   if (iIdentity < 0 || iIdentity >= _aClientIdentities.Count()) {
-    CPutString("Invalid client index!\n");
+    CPutString(TRANS("Invalid client index!\n"));
     return;
   }
 
   CClientRestriction::MuteClient(iIdentity, fTime);
+};
+
+// Add a new address to a specific identity
+static void ClientLogAddHost(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  INDEX iIdentity = NEXT_ARG(INDEX);
+  const CTString &strHost = *NEXT_ARG(CTString *);
+
+  if (iIdentity < 0 || iIdentity >= _aClientIdentities.Count()) {
+    CPutString(TRANS("Invalid client index!\n"));
+    return;
+  }
+
+  CClientIdentity &ci = _aClientIdentities[iIdentity];
+  ci.AddNewAddress(SClientAddress(strHost));
+};
+
+// Remove an address from a specific identity
+static void ClientLogRemoveHost(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  INDEX iIdentity = NEXT_ARG(INDEX);
+  const CTString &strHost = *NEXT_ARG(CTString *);
+
+  if (iIdentity < 0 || iIdentity >= _aClientIdentities.Count()) {
+    CPutString(TRANS("Invalid client index!\n"));
+    return;
+  }
+
+  CClientIdentity &ci = _aClientIdentities[iIdentity];
+
+  SClientAddress addr(strHost);
+  const INDEX iAddress = ci.FindAddress(addr);
+
+  if (iAddress != -1) {
+    ci.aAddresses.Delete(&ci.aAddresses[iAddress]);
+
+  } else {
+    CTString strAddress = "'" + addr.GetHost() + "' (" + addr.GetIPAsString() + ")";
+    CPrintF(TRANS("Host address %s not found in client %d\n"), strAddress.str_String, iIdentity);
+  }
 };
 
 void Chat(void) {
@@ -534,6 +574,8 @@ void Chat(void) {
   _pShell->DeclareSymbol("user void ClientLogLoad(void);", &ClientLogLoad);
   _pShell->DeclareSymbol("user void ClientLogBan(INDEX, FLOAT);", &ClientLogBan);
   _pShell->DeclareSymbol("user void ClientLogMute(INDEX, FLOAT);", &ClientLogMute);
+  _pShell->DeclareSymbol("user void ClientLogAddHost(INDEX, CTString);", &ClientLogAddHost);
+  _pShell->DeclareSymbol("user void ClientLogRemoveHost(INDEX, CTString);", &ClientLogRemoveHost);
 
   _pShell->DeclareSymbol("persistent user INDEX ser_bAutoSaveClientLog;", &ser_bAutoSaveClientLog);
 };

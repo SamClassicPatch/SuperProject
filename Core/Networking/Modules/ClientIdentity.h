@@ -47,6 +47,9 @@ class CORE_API CClientIdentity {
     // Find character index of this client
     INDEX FindCharacter(const CPlayerCharacter &pc) const;
 
+    // Add a new address to the client
+    BOOL AddNewAddress(const SClientAddress &addr);
+
     // Add a new character to the client
     BOOL AddNewCharacter(const CPlayerCharacter &pc);
 

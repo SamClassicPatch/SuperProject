@@ -52,21 +52,24 @@ INDEX CClientIdentity::FindCharacter(const CPlayerCharacter &pc) const {
   return -1;
 };
 
+// Add a new address to the client
+BOOL CClientIdentity::AddNewAddress(const SClientAddress &addr) {
+  // Address already exists
+  if (FindAddress(addr) != -1) return FALSE;
+
+  // Add a new address
+  aAddresses.Push() = addr;
+  return TRUE;
+};
+
 // Add a new character to the client
 BOOL CClientIdentity::AddNewCharacter(const CPlayerCharacter &pc) {
-  // Find this character
-  INDEX iChar = FindCharacter(pc);
-
-  // Add it if it's not found
-  if (iChar == -1) {
-    aCharacters.Push() = pc;
-
-    // Added a new character
-    return TRUE;
-  }
-
   // Character already exists
-  return FALSE;
+  if (FindCharacter(pc) != -1) return FALSE;
+
+  // Add a new character
+  aCharacters.Push() = pc;
+  return TRUE;
 };
 
 // Write client identity data
