@@ -99,36 +99,20 @@ void CHud::RenderVitals(void) {
   }
 };
 
-void CHud::RenderCurrentWeapon(SIconTexture **pptoWantedWeapon, SIconTexture **pptoCurrentAmmo) {
+SIconTexture *CHud::RenderCurrentWeapon(void) {
   // Prepare and draw ammo and weapon info
+  SIconTexture *ptoWeapon = NULL;
   SIconTexture *ptoAmmo = NULL;
-  SIconTexture *ptoCurrent = NULL;
-  SIconTexture *ptoWanted = NULL;
-  INDEX iCurrentWeapon = _penWeapons->m_iCurrentWeapon;
-  INDEX iWantedWeapon  = _penWeapons->m_iWantedWeapon;
 
   // Determine corresponding ammo and weapon texture component
-  HudWeapon *pWeaponInfo = NULL;
+  HudWeapon *pWeaponInfo = GetWeaponInfo(_penWeapons->m_iCurrentWeapon);
 
-  if (GetWeaponInfo(&pWeaponInfo, iCurrentWeapon)) {
-    ptoCurrent = pWeaponInfo->ptoWeapon;
+  if (pWeaponInfo != NULL) {
+    ptoWeapon = pWeaponInfo->ptoWeapon;
 
     if (pWeaponInfo->paiAmmo != NULL) {
       ptoAmmo = pWeaponInfo->paiAmmo->ptoAmmo;
     }
-  }
-
-  if (GetWeaponInfo(&pWeaponInfo, iWantedWeapon)) {
-    ptoWanted = pWeaponInfo->ptoWeapon;
-  }
-
-  // Borrow icons
-  if (pptoCurrentAmmo != NULL) {
-    *pptoCurrentAmmo = ptoAmmo;
-  }
-
-  if (pptoWantedWeapon != NULL) {
-    *pptoWantedWeapon = ptoWanted;
   }
 
   FLOAT fCol = 320;
@@ -159,7 +143,7 @@ void CHud::RenderCurrentWeapon(SIconTexture **pptoWantedWeapon, SIconTexture **p
     fCol -= units.fAdv + units.fChar * 1.5f - units.fHalf;
 
     DrawBorder(fCol + fMoverX, fRow + fMoverY, units.fOne, units.fOne, _colBorder);
-    DrawIcon(fCol + fMoverX, fRow + fMoverY, *ptoCurrent, _colIconStd, fNormValue, !bDrawAmmoIcon);
+    DrawIcon(fCol + fMoverX, fRow + fMoverY, *ptoWeapon, _colIconStd, fNormValue, !bDrawAmmoIcon);
 
     fCol += units.fAdv + units.fChar * 1.5f - units.fHalf;
     DrawBorder(fCol, fRow, units.fChar * 3, units.fOne, _colBorder);
@@ -172,10 +156,13 @@ void CHud::RenderCurrentWeapon(SIconTexture **pptoWantedWeapon, SIconTexture **p
     }
 
   // Draw weapons without ammo
-  } else if (ptoCurrent != NULL) {
+  } else if (ptoWeapon != NULL) {
     DrawBorder(fCol, fRow, units.fOne, units.fOne, _colBorder);
-    DrawIcon(fCol, fRow, *ptoCurrent, _colIconStd, 1.0f, FALSE);
+    DrawIcon(fCol, fRow, *ptoWeapon, _colIconStd, 1.0f, FALSE);
   }
+
+  // Return current ammo icon
+  return ptoAmmo;
 };
 
 void CHud::RenderActiveArsenal(SIconTexture *ptoAmmo) {
@@ -323,32 +310,40 @@ void CHud::RenderActiveArsenal(SIconTexture *ptoAmmo) {
 #endif
 };
 
-void CHud::RenderWeaponSelection(SIconTexture *ptoWeapon) {
+void CHud::RenderWeaponSelection(void) {
   // Weapon change isn't in progress
   static CSymbolPtr pfWeapons("hud_tmWeaponsOnScreen");
   if (_tmNow - _penWeapons->m_tmWeaponChangeRequired >= pfWeapons.GetFloat()) return;
 
+  // Get wanted weapon icon
+  const HudWeapon *pWeaponInfo = GetWeaponInfo(_penWeapons->m_iWantedWeapon);
+  SIconTexture *ptoWanted = (pWeaponInfo != NULL) ? pWeaponInfo->ptoWeapon : NULL;
+
+  INDEX i;
+  const HudArsenal::WeaponStack &aWeapons = GetWeapons();
+  const INDEX ct = aWeapons.Count();
+
   // Determine amount of available weapons
   INDEX ctWeapons = 0;
 
-  for (INDEX iCount = 1; iCount < GetWeapons().Count(); iCount++) {
-    if (GetWeapons()[iCount].iWeapon != WEAPON_NONE && GetWeapons()[iCount].iWeapon != WEAPON_DOUBLECOLT
-      && GetWeapons()[iCount].bHasWeapon) {
-      ctWeapons++;
-    }
+  for (i = 1; i < ct; i++) {
+    const HudWeapon &wiInfo = aWeapons[i];
+
+    // Skip if no weapon
+    if (wiInfo.bSkipInList || !wiInfo.bHasWeapon) continue;
+
+    ctWeapons++;
   }
 
   FLOAT fCol = 320.0f - (ctWeapons * units.fAdv - units.fOne) * 0.5f;
   FLOAT fRow = _vpixBR(2) - units.fHalf - units.fNext * 3;
 
   // Display all available weapons
-  for (INDEX iWeapon = 0; iWeapon < GetWeapons().Count(); iWeapon++) {
-    HudWeapon &wiInfo = GetWeapons()[iWeapon];
+  for (i = 0; i < ct; i++) {
+    const HudWeapon &wiInfo = aWeapons[i];
 
     // Skip if no weapon
-    if (wiInfo.iWeapon == WEAPON_NONE || wiInfo.iWeapon == WEAPON_DOUBLECOLT || !wiInfo.bHasWeapon) {
-      continue;
-    }
+    if (wiInfo.bSkipInList || !wiInfo.bHasWeapon) continue;
 
     // Display weapon icon
     COLOR colBorder = COL_WeaponBorder();
@@ -359,7 +354,7 @@ void CHud::RenderWeaponSelection(SIconTexture *ptoWeapon) {
       colBorder = colIcon = COL_WeaponNoAmmo();
 
     // Selected weapon
-    } else if (ptoWeapon == wiInfo.ptoWeapon) {
+    } else if (ptoWanted == wiInfo.ptoWeapon) {
       colBorder = colIcon = COL_WeaponWanted();
     }
 

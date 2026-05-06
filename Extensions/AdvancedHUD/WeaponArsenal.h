@@ -45,17 +45,19 @@ struct HudWeapon {
   INDEX iWeapon;
   SIconTexture *ptoWeapon;
   HudAmmo *paiAmmo;
+  BOOL bSkipInList;
   BOOL bHasWeapon;
 
   HudWeapon() : iWeapon(0),
-    ptoWeapon(NULL), paiAmmo(NULL), bHasWeapon(FALSE)
+    ptoWeapon(NULL), paiAmmo(NULL), bSkipInList(FALSE), bHasWeapon(FALSE)
   {
   };
 
-  inline void Setup(INDEX iSetWeapon, SIconTexture *ptoSet, HudAmmo *pSetAmmo = NULL) {
+  inline void Setup(INDEX iSetWeapon, BOOL bSkip, SIconTexture *ptoSet, HudAmmo *pSetAmmo = NULL) {
     iWeapon = iSetWeapon;
     ptoWeapon = ptoSet;
     paiAmmo = pSetAmmo;
+    bSkipInList = bSkip;
   };
 };
 

@@ -319,7 +319,8 @@ void CHud::DrawCorrectTexture(CTextureObject *pto, FLOAT fX, FLOAT fY, FLOAT fWi
 
 // Draw sniper mask
 void CHud::DrawSniperMask(const CPlayer *penOwner) {
-  CPlayerWeapons &enMyWeapons = (CPlayerWeapons &)*penOwner->m_penWeapons;
+  // Not the same as _penWeapons
+  const CPlayerWeapons &enMyWeapons = (const CPlayerWeapons &)*penOwner->m_penWeapons;
   if (enMyWeapons.m_iCurrentWeapon != WEAPON_SNIPER || !enMyWeapons.m_bSniping) return;
 
   // Determine location

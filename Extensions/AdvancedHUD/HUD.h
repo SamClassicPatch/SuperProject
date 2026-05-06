@@ -170,15 +170,14 @@ class CHud {
     };
 
     // Find weapon info from weapon type
-    BOOL GetWeaponInfo(HudWeapon **ppInfo, INDEX iWeapon) {
+    HudWeapon *GetWeaponInfo(INDEX iWeapon) {
       for (INDEX i = 0; i < GetWeapons().Count(); i++) {
         if (GetWeapons()[i].iWeapon == iWeapon) {
-          *ppInfo = &GetWeapons()[i];
-          return TRUE;
+          return &GetWeapons()[i];
         }
       }
 
-      return FALSE;
+      return NULL;
     };
 
     // Reset scaling and unit sizes
@@ -287,9 +286,9 @@ class CHud {
     } _eGameMode;
 
     void RenderVitals(void);
-    void RenderCurrentWeapon(SIconTexture **pptoWantedWeapon, SIconTexture **pptoCurrentAmmo);
+    SIconTexture *RenderCurrentWeapon(void);
     void RenderActiveArsenal(SIconTexture *ptoAmmo);
-    void RenderWeaponSelection(SIconTexture *ptoWeapon);
+    void RenderWeaponSelection(void);
     void RenderBars(void);
     void RenderGameModeInfo(void);
     void RenderLatency(void);

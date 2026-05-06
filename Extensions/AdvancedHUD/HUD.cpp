@@ -210,17 +210,14 @@ void CHud::DrawHUD(const CPlayer *penCurrent, BOOL bSnooping, const CPlayer *pen
   ResetScale(_fHudScaling);
 
   // Render parts of the interface
-  SIconTexture *ptoWantedWeapon = NULL;
-  SIconTexture *ptoCurrentAmmo = NULL;
-
   RenderVitals();
-  RenderCurrentWeapon(&ptoWantedWeapon, &ptoCurrentAmmo);
+  SIconTexture *ptoAmmo = RenderCurrentWeapon();
 
   Rescale(0.8f);
-  RenderActiveArsenal(ptoCurrentAmmo);
+  RenderActiveArsenal(ptoAmmo);
   ResetScale(_fHudScaling);
 
-  RenderWeaponSelection(ptoWantedWeapon);
+  RenderWeaponSelection();
 
   Rescale(0.7f);
   RenderBars();
@@ -454,25 +451,25 @@ void CHud::Initialize(void) {
   NEW_AMMO(&tex.toAIronBall);
 
   // Added in order of appearance instead of using 'aiWeaponRemap'
-  NEW_WEAPON(WEAPON_NONE,            NULL);
-  NEW_WEAPON(WEAPON_KNIFE,           &tex.toWKnife);
+  NEW_WEAPON(WEAPON_NONE,            TRUE,  NULL);
+  NEW_WEAPON(WEAPON_KNIFE,           FALSE, &tex.toWKnife);
 #if SE1_GAME != SS_TFE
-  NEW_WEAPON(WEAPON_CHAINSAW,        &tex.toWChainsaw, NULL);
+  NEW_WEAPON(WEAPON_CHAINSAW,        FALSE, &tex.toWChainsaw);
 #endif
-  NEW_WEAPON(WEAPON_COLT,            &tex.toWColt);
-  NEW_WEAPON(WEAPON_DOUBLECOLT,      &tex.toWColt);
-  NEW_WEAPON(WEAPON_SINGLESHOTGUN,   &tex.toWSingleShotgun,   &aAmmo[0]);
-  NEW_WEAPON(WEAPON_DOUBLESHOTGUN,   &tex.toWDoubleShotgun,   &aAmmo[0]);
-  NEW_WEAPON(WEAPON_TOMMYGUN,        &tex.toWTommygun,        &aAmmo[1]);
-  NEW_WEAPON(WEAPON_MINIGUN,         &tex.toWMinigun,         &aAmmo[1]);
-  NEW_WEAPON(WEAPON_ROCKETLAUNCHER,  &tex.toWRocketLauncher,  &aAmmo[2]);
-  NEW_WEAPON(WEAPON_GRENADELAUNCHER, &tex.toWGrenadeLauncher, &aAmmo[3]);
+  NEW_WEAPON(WEAPON_COLT,            FALSE, &tex.toWColt);
+  NEW_WEAPON(WEAPON_DOUBLECOLT,      TRUE,  &tex.toWColt);
+  NEW_WEAPON(WEAPON_SINGLESHOTGUN,   FALSE, &tex.toWSingleShotgun,   &aAmmo[0]);
+  NEW_WEAPON(WEAPON_DOUBLESHOTGUN,   FALSE, &tex.toWDoubleShotgun,   &aAmmo[0]);
+  NEW_WEAPON(WEAPON_TOMMYGUN,        FALSE, &tex.toWTommygun,        &aAmmo[1]);
+  NEW_WEAPON(WEAPON_MINIGUN,         FALSE, &tex.toWMinigun,         &aAmmo[1]);
+  NEW_WEAPON(WEAPON_ROCKETLAUNCHER,  FALSE, &tex.toWRocketLauncher,  &aAmmo[2]);
+  NEW_WEAPON(WEAPON_GRENADELAUNCHER, FALSE, &tex.toWGrenadeLauncher, &aAmmo[3]);
 #if SE1_GAME != SS_TFE
-  NEW_WEAPON(WEAPON_FLAMER,          &tex.toWFlamer,          &aAmmo[4]);
-  NEW_WEAPON(WEAPON_SNIPER,          &tex.toWSniper,          &aAmmo[5]);
+  NEW_WEAPON(WEAPON_FLAMER,          FALSE, &tex.toWFlamer,          &aAmmo[4]);
+  NEW_WEAPON(WEAPON_SNIPER,          FALSE, &tex.toWSniper,          &aAmmo[5]);
 #endif
-  NEW_WEAPON(WEAPON_LASER,           &tex.toWLaser,           &aAmmo[6]);
-  NEW_WEAPON(WEAPON_IRONCANNON,      &tex.toWIronCannon,      &aAmmo[7]);
+  NEW_WEAPON(WEAPON_LASER,           FALSE, &tex.toWLaser,           &aAmmo[6]);
+  NEW_WEAPON(WEAPON_IRONCANNON,      FALSE, &tex.toWIronCannon,      &aAmmo[7]);
 };
 
 // Clean everything up before disabling the plugin
