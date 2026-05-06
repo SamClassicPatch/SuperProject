@@ -73,22 +73,22 @@ int CompareSessions(const void *pv0, const void *pv1) {
   const CNetworkSession &ns0 = **(const CNetworkSession **)pv0;
   const CNetworkSession &ns1 = **(const CNetworkSession **)pv1;
 
+  // [Cecil] Compare specifically undercorated strings as to not have tag symbols affect the order
   int iResult = 0;
   switch (_iSort) {
-    case 0: iResult = stricmp(ns0.ns_strSession, ns1.ns_strSession); break;
-    case 1: iResult = stricmp(ns0.ns_strWorld, ns1.ns_strWorld); break;
+    case 0: iResult = stricmp(ns0.ns_strSession.Undecorated(), ns1.ns_strSession.Undecorated()); break;
+    case 1: iResult = stricmp(ns0.ns_strWorld.Undecorated(), ns1.ns_strWorld.Undecorated()); break;
     case 2: iResult = Sgn(ns0.ns_tmPing - ns1.ns_tmPing); break;
     case 3: iResult = Sgn(ns0.ns_ctPlayers - ns1.ns_ctPlayers); break;
-    case 4: iResult = stricmp(ns0.ns_strGameType, ns1.ns_strGameType); break;
+    case 4: iResult = stricmp(ns0.ns_strGameType.Undecorated(), ns1.ns_strGameType.Undecorated()); break;
   #if SE1_GAME != SS_REV
-    case 5: iResult = stricmp(ns0.ns_strMod, ns1.ns_strMod); break;
+    case 5: iResult = stricmp(ns0.ns_strMod.Undecorated(), ns1.ns_strMod.Undecorated()); break;
   #endif
-    case 6: iResult = stricmp(ns0.ns_strVer, ns1.ns_strVer); break;
+    case 6: iResult = stricmp(ns0.ns_strVer.Undecorated(), ns1.ns_strVer.Undecorated()); break;
   }
 
   if (iResult == 0) { // make sure we always have unique order when resorting
     return stricmp(ns0.ns_strAddress, ns1.ns_strAddress);
-    ;
   }
 
   return _bSortDown ? -iResult : iResult;
