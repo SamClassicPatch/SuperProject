@@ -420,6 +420,7 @@ static void ClientLogDelete(SHELL_FUNC_ARGS) {
   // Delete character
   CPlayerCharacter &pc = ci.aCharacters[iCharacter - 1];
   ci.aCharacters.Delete(&pc);
+  CPrintF(TRANS("Removed character %d from client %d\n"), iCharacter, iIdentity);
 };
 
 // Resave client log
@@ -444,7 +445,7 @@ static void ClientLogBan(SHELL_FUNC_ARGS) {
     return;
   }
 
-  CClientRestriction::BanClient(iIdentity, fTime);
+  CPutString(CClientRestriction::BanClient(iIdentity, fTime) + "\n");
 };
 
 // Mute client under a specific identity for the specified amount of time
@@ -458,7 +459,7 @@ static void ClientLogMute(SHELL_FUNC_ARGS) {
     return;
   }
 
-  CClientRestriction::MuteClient(iIdentity, fTime);
+  CPutString(CClientRestriction::MuteClient(iIdentity, fTime) + "\n");
 };
 
 // Add a new address to a specific identity
@@ -473,7 +474,14 @@ static void ClientLogAddHost(SHELL_FUNC_ARGS) {
   }
 
   CClientIdentity &ci = _aClientIdentities[iIdentity];
-  ci.AddNewAddress(SClientAddress(strHost));
+
+  SClientAddress addr(strHost);
+  const BOOL bAdded = ci.AddNewAddress(addr);
+
+  if (!bAdded) {
+    CTString strAddress = "'" + addr.GetHost() + "' (" + addr.GetIPAsString() + ")";
+    CPrintF(TRANS("Host address %s already exists in client %d\n"), strAddress.str_String, iIdentity);
+  }
 };
 
 // Remove an address from a specific identity
