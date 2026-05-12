@@ -917,6 +917,15 @@ CModelObject *CObserverCamera::GetPoseModel(CEntity *penPlayer, CModelObject *pm
   return &cam_moPose;
 };
 
+// Get mask of the current viewer player entity
+ULONG CObserverCamera::GetViewerPlayerMask(void) {
+  // Inactive, no viewer or not a player
+  if (!IsActive() || cam_penViewer == NULL || !IsDerivedFromID(cam_penViewer, CPlayerEntity_ClassID)) return 0;
+
+  CPlayerEntity *penPlayer = (CPlayerEntity *)(CEntity *)cam_penViewer;
+  return 1 << penPlayer->GetMyPlayerIndex();
+};
+
 // Free fly camera control using direct button input
 void CObserverCamera::UpdateControls(void) {
   // Toggle the camera itself

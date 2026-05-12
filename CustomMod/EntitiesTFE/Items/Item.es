@@ -72,8 +72,13 @@ functions:
     }
 
     BOOL bFlare = TRUE;
+
+    // [Cecil] When viewing through OCAM, retrieve rendering mask from the camera entity
+    const ULONG ulOCAMViewerMask = GetGameAPI()->GetCamera().GetViewerPlayerMask();
+    const ULONG ulRenderingMask = (ulOCAMViewerMask != 0 ? ulOCAMViewerMask : _ulPlayerRenderingMask);
+
     // if current player has already picked this item
-    if (_ulPlayerRenderingMask&m_ulPickedMask) {
+    if (ulRenderingMask & m_ulPickedMask) {
       // if picked items are not rendered
       extern INDEX plr_bRenderPicked;
       if (!plr_bRenderPicked) {
@@ -94,8 +99,12 @@ functions:
   // check whether should render particles for this item
   BOOL ShowItemParticles(void)
   {
+    // [Cecil] When viewing through OCAM, retrieve rendering mask from the camera entity
+    const ULONG ulOCAMViewerMask = GetGameAPI()->GetCamera().GetViewerPlayerMask();
+    const ULONG ulRenderingMask = (ulOCAMViewerMask != 0 ? ulOCAMViewerMask : _ulPlayerRenderingMask);
+
     // if current player has already picked this item
-    if (_ulPlayerRenderingMask&m_ulPickedMask) {
+    if (ulRenderingMask & m_ulPickedMask) {
       // if picked item particles are not rendered
       extern INDEX plr_bRenderPickedParticles;
       if (!plr_bRenderPickedParticles) {

@@ -201,6 +201,9 @@ class CORE_API CObserverCamera {
     // Retrieve a photo mode model for some player entity
     CModelObject *GetPoseModel(CEntity *penPlayer, CModelObject *pmoOriginalAppearance);
 
+    // Get mask of the current viewer player entity
+    ULONG GetViewerPlayerMask(void);
+
   private:
     // Setup pose model in photo mode for the original player appearance
     BOOL SetupPoseModel(CModelObject *pmoOriginal);
