@@ -1500,7 +1500,7 @@ functions:
 
       if (pHudTheme.Exists()) {
         switch (pHudTheme.GetIndex()) {
-          case 0: colMessage = C_GREEN; break; // TFE
+          case 0: colMessage = C_lGREEN; break; // TFE
           case 3: colMessage = 0xAD896900; break; // SSR
         }
       }
@@ -1521,7 +1521,8 @@ functions:
       const FLOAT fMax = Max( Max( vRayHit(1), vRayHit(2)), vRayHit(3));
       const FLOAT fMin = Min( Min( vRayHit(1), vRayHit(2)), vRayHit(3));
       if( fMax<+100000 && fMin>-100000) {
-        strCoords.PrintF( "%.0f,%.0f,%.0f", vRayHit(1), vRayHit(2), vRayHit(3));
+        // [Cecil] Display up to 2 decimal places, if needed
+        strCoords.PrintF((hud_bShowCoords > 1 ? "%.2f, %.2f, %.2f" : "%.0f, %.0f, %.0f"), vRayHit(1), vRayHit(2), vRayHit(3));
         pdp->PutTextC( strCoords, slDPWidth*0.5f, slDPHeight*0.10f, C_WHITE|CT_OPAQUE);
       }
     }

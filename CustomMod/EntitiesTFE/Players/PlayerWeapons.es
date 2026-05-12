@@ -1312,7 +1312,7 @@ functions:
 
       // [Cecil] Pick color based on the Advanced HUD theme
       static CSymbolPtr pHudTheme("ahud_iTheme");
-      COLOR colMessage = C_GREEN; // Default TFE
+      COLOR colMessage = C_lGREEN; // Default TFE
 
       if (pHudTheme.Exists()) {
         switch (pHudTheme.GetIndex()) {
@@ -1322,7 +1322,7 @@ functions:
         }
       }
 
-      pdp->PutTextC( m_strLastTarget, slDPWidth*0.5f, slDPHeight*0.75f, C_lGREEN|ulA);
+      pdp->PutTextC( m_strLastTarget, slDPWidth*0.5f, slDPHeight*0.75f, colMessage|ulA);
     }
 
     // printout crosshair world coordinates if needed
@@ -1338,7 +1338,8 @@ functions:
       const FLOAT fMax = Max( Max( vRayHit(1), vRayHit(2)), vRayHit(3));
       const FLOAT fMin = Min( Min( vRayHit(1), vRayHit(2)), vRayHit(3));
       if( fMax<+100000 && fMin>-100000) {
-        strCoords.PrintF( "%.0f,%.0f,%.0f", vRayHit(1), vRayHit(2), vRayHit(3));
+        // [Cecil] Display up to 2 decimal places, if needed
+        strCoords.PrintF((hud_bShowCoords > 1 ? "%.2f, %.2f, %.2f" : "%.0f, %.0f, %.0f"), vRayHit(1), vRayHit(2), vRayHit(3));
         pdp->PutTextC( strCoords, slDPWidth*0.5f, slDPHeight*0.10f, C_WHITE|CT_OPAQUE);
       }
     }
