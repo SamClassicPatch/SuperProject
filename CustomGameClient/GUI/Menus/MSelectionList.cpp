@@ -18,7 +18,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "MenuStuff.h"
 #include "MSelectionList.h"
 
+// [Cecil] For filtering entries by display name
+static CTString _strListEntryFilter = "";
+static CTString _strLastFilter = "";
+static BOOL _bPreserveFilter = FALSE;
+
 void CSelectListMenu::Initialize_t(void) {
+  gm_strName = "SelectListMenu";
+  gm_pmgSelectedByDefault = &gm_amgButton[0];
+
   gm_mgTitle.mg_boxOnScreen = BoxTitle();
   AddChild(&gm_mgTitle);
 
@@ -45,7 +53,9 @@ void CSelectListMenu::Initialize_t(void) {
   }
 
   gm_mgArrowUp.SetupForMenu(this, AD_UP, &gm_amgButton[0]);
+  gm_mgArrowUp.mg_pmgDown = &gm_mgTitleFilter;
   gm_mgArrowDn.SetupForMenu(this, AD_DOWN, &gm_amgButton[SELECTLIST_BUTTONS_CT - 1]);
+  gm_mgArrowDn.mg_pmgUp = &gm_mgTitleFilter;
 
   // [Cecil] Scrollbar between the arrows
   gm_mgScrollbar.mg_pmgUp = &gm_mgArrowUp;
@@ -57,16 +67,45 @@ void CSelectListMenu::Initialize_t(void) {
   gm_pmgArrowDn = &gm_mgArrowDn;
   gm_pmgListTop = &gm_amgButton[0];
   gm_pmgListBottom = &gm_amgButton[SELECTLIST_BUTTONS_CT - 1];
+
+  // [Cecil] Entry filter
+  gm_mgFiltersLabel.SetText(TRANS("FILTERING"));
+  gm_mgFiltersLabel.mg_bfsFontSize = BFS_MEDIUM;
+  gm_mgFiltersLabel.mg_boxOnScreen = BoxLeftColumn(0.0f);
+  gm_mgFiltersLabel.mg_iCenterI = -1;
+  gm_mgFiltersLabel.mg_bEnabled = FALSE;
+  gm_mgFiltersLabel.mg_bLabel = TRUE;
+  AddChild(&gm_mgFiltersLabel);
+
+  gm_mgTitleFilter.mg_strTip = TRANS("entry name filter");
+  gm_mgTitleFilter.mg_bfsFontSize = BFS_MEDIUM;
+  gm_mgTitleFilter.mg_boxOnScreen = BoxLeftColumn(1.0f);
+  gm_mgTitleFilter.mg_iCenterI = -1;
+
+  gm_mgTitleFilter.mg_pmgRight = &gm_amgButton[0];
+  gm_mgTitleFilter.mg_pmgUp = &gm_mgArrowUp;
+  gm_mgTitleFilter.mg_pmgDown = &gm_mgArrowDn;
+  gm_mgTitleFilter.mg_pstrToChange = &_strListEntryFilter;
+  AddChild(&gm_mgTitleFilter);
 };
 
 void CSelectListMenu::StartMenu(void) {
+  // [Cecil] Reset filtering
+  if (!_bPreserveFilter) {
+    _strListEntryFilter = "";
+    _strLastFilter = "";
+    gm_mgTitleFilter.SetText("");
+  }
+
+  _bPreserveFilter = FALSE;
+
   // Delete all file infos
   FORDELETELIST(CFileInfo, fi_lnNode, gm_lhFileInfos, itfi) {
     delete &itfi.Current();
   }
 
   // Create new buttons with file infos
-  CreateButtons();
+  CreateButtons(_strListEntryFilter);
 
   // Set default parameters for the list
   gm_iListOffset = 0;
@@ -123,7 +162,7 @@ void CSelectListMenu::FillListItems(void) {
     if (iLabel >= gm_iListOffset && iLabel < gm_iListOffset + SELECTLIST_BUTTONS_CT) {
       bHasFirst |= (iLabel == 0);
       bHasLast |= (iLabel == ctLabels - 1);
-      
+
       gm_amgButton[iInMenu].mg_iInList = iLabel;
       gm_amgButton[iInMenu].mg_strDes = fi.fi_strName;
       gm_amgButton[iInMenu].mg_fnm = fi.fi_fnFile;
@@ -142,4 +181,18 @@ void CSelectListMenu::FillListItems(void) {
 
   // [Cecil] Disable scrollbar if can't scroll in either direction
   gm_mgScrollbar.UpdateScrollbar(gm_mgArrowUp.mg_bEnabled || gm_mgArrowDn.mg_bEnabled);
+};
+
+// [Cecil] Update entry list
+void CSelectListMenu::Think(void) {
+  // Reload menu upon changing the entry filter
+  if (_strLastFilter != _strListEntryFilter) {
+    _strLastFilter = _strListEntryFilter;
+
+    // Preserve the filter when reloading the menu
+    _bPreserveFilter = TRUE;
+
+    EndMenu();
+    StartMenu();
+  }
 };

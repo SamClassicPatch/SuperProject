@@ -48,13 +48,17 @@ class CSelectListMenu : public CGameMenu {
     CMGArrow gm_mgArrowDn;
     CMGScrollbar gm_mgScrollbar; // [Cecil]
 
+    CMGButton gm_mgFiltersLabel; // [Cecil] Filters label
+    CMGEdit gm_mgTitleFilter; // [Cecil] Entry name filter
+
     void Initialize_t(void);
     void StartMenu(void);
     void EndMenu(void);
     void FillListItems(void);
+    void Think(void); // [Cecil]
 
     // Create new buttons with file infos
-    virtual void CreateButtons(void) {};
+    virtual void CreateButtons(const CTString &strFilter) {};
 };
 
 #endif /* include-once check. */

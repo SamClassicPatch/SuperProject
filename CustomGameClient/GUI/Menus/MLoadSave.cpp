@@ -19,48 +19,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "MLoadSave.h"
 
 void CLoadSaveMenu::Initialize_t(void) {
+  // [Cecil] Initialize the base menu and then rename it
+  CSelectListMenu::Initialize_t();
   gm_strName = "LoadSave";
-  gm_pmgSelectedByDefault = &gm_amgButton[0];
-
-  gm_mgTitle.mg_boxOnScreen = BoxTitle();
-  AddChild(&gm_mgTitle);
-
-  gm_mgNotes.mg_boxOnScreen = BoxMediumRow(10.0);
-  gm_mgNotes.mg_bfsFontSize = BFS_MEDIUM;
-  gm_mgNotes.mg_iCenterI = -1;
-  gm_mgNotes.mg_bEnabled = FALSE;
-  gm_mgNotes.mg_bLabel = TRUE;
-  AddChild(&gm_mgNotes);
-
-  for (INDEX iLabel = 0; iLabel < SELECTLIST_BUTTONS_CT; iLabel++) {
-    INDEX iPrev = (SELECTLIST_BUTTONS_CT + iLabel - 1) % SELECTLIST_BUTTONS_CT;
-    INDEX iNext = (iLabel + 1) % SELECTLIST_BUTTONS_CT;
-    // initialize label gadgets
-    gm_amgButton[iLabel].mg_pmgUp = &gm_amgButton[iPrev];
-    gm_amgButton[iLabel].mg_pmgDown = &gm_amgButton[iNext];
-    gm_amgButton[iLabel].mg_boxOnScreen = BoxSaveLoad(iLabel);
-    gm_amgButton[iLabel].mg_pActivatedFunction = NULL; // never called!
-    gm_amgButton[iLabel].mg_iCenterI = -1;
-    AddChild(&gm_amgButton[iLabel]);
-  }
-
-  gm_mgArrowUp.SetupForMenu(this, AD_UP, &gm_amgButton[0]);
-  gm_mgArrowDn.SetupForMenu(this, AD_DOWN, &gm_amgButton[SELECTLIST_BUTTONS_CT - 1]);
-
-  // [Cecil] Scrollbar between the arrows
-  gm_mgScrollbar.mg_pmgUp = &gm_mgArrowUp;
-  gm_mgScrollbar.mg_pmgDown = &gm_mgArrowDn;
-  AddChild(&gm_mgScrollbar);
-
-  gm_ctListVisible = SELECTLIST_BUTTONS_CT;
-  gm_pmgArrowUp = &gm_mgArrowUp;
-  gm_pmgArrowDn = &gm_mgArrowDn;
-  gm_pmgListTop = &gm_amgButton[0];
-  gm_pmgListBottom = &gm_amgButton[SELECTLIST_BUTTONS_CT - 1];
-}
+};
 
 // Create new buttons with file infos
-void CLoadSaveMenu::CreateButtons(void) {
+void CLoadSaveMenu::CreateButtons(const CTString &strFilter) {
   // List the directory
   CFileList afnmDir;
   ListGameFiles(afnmDir, gm_fnmDirectory, "", gm_ulListFlags);
@@ -75,6 +40,16 @@ void CLoadSaveMenu::CreateButtons(void) {
 
     if (ParseFile(fnm, strName))
     {
+      // [Cecil] Optional filtering
+      if (strFilter != "") {
+        CTString strNameLower = strName.Undecorated();
+        CTString strFilterLower = strFilter;
+        IData::ToLower(strNameLower);
+        IData::ToLower(strFilterLower);
+
+        if (strNameLower.FindSubstr(strFilterLower) == -1) continue;
+      }
+
       // Create new info for that file
       CFileInfo *pfi = new CFileInfo;
       pfi->fi_fnFile = fnm;
@@ -125,7 +100,7 @@ void CLoadSaveMenu::CreateButtons(void) {
     gm_lhFileInfos.AddHead(pfi->fi_lnNode);
   }
 
-  CSelectListMenu::CreateButtons();
+  CSelectListMenu::CreateButtons(strFilter);
 };
 
 void CLoadSaveMenu::FillListItems(void) {

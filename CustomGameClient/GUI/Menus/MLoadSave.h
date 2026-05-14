@@ -58,7 +58,7 @@ class CLoadSaveMenu : public CSelectListMenu {
     BOOL ParseFile(const CTFileName &fnm, CTString &strName);
 
     // Create new buttons with file infos
-    void CreateButtons(void);
+    void CreateButtons(const CTString &strFilter);
 };
 
 #endif /* include-once check. */
