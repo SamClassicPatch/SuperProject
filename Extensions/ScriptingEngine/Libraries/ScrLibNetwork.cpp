@@ -1388,6 +1388,61 @@ void VM::RegisterNetwork(void) {
 
   Const().AddEnum("PSF", enPlayerSettingsFlags);
 
+  // Session property offsets
+  Enumeration enSessionProps(GetVM());
+  SQInteger iSPOffset = 0;
+
+#define ADD_SP(_PropName, _Offset) enSessionProps.RegisterValue(_PropName, (SQInteger)iSPOffset); iSPOffset += _Offset
+  // [Cecil] FIXME: This doesn't support session properties from SSR for its configuration
+  ADD_SP("ctMaxPlayers", 4);
+  ADD_SP("bWaitAllPlayers", 4);
+  ADD_SP("bQuickTest", 4);
+  ADD_SP("bCooperative", 4);
+  ADD_SP("bSinglePlayer", 4);
+  ADD_SP("bUseFrags", 4);
+  ADD_SP("gmGameMode", 4);
+  ADD_SP("gdGameDifficulty", 4);
+  ADD_SP("ulSpawnFlags", 4);
+  ADD_SP("bMental", 4);
+  ADD_SP("iScoreLimit", 4);
+  ADD_SP("iFragLimit", 4);
+  ADD_SP("iTimeLimit", 4);
+  ADD_SP("bTeamPlay", 4);
+  ADD_SP("bFriendlyFire", 4);
+  ADD_SP("bWeaponsStay", 4);
+  ADD_SP("bAmmoStays", 4);
+  ADD_SP("bHealthArmorStays", 4);
+  ADD_SP("bPlayEntireGame", 4);
+  ADD_SP("bAllowHealth", 4);
+  ADD_SP("bAllowArmor", 4);
+  ADD_SP("bInfiniteAmmo", 4);
+#if SE1_GAME != SS_TFE
+  ADD_SP("bRespawnInPlace", 4);
+#endif
+  ADD_SP("fEnemyMovementSpeed", 4);
+  ADD_SP("fEnemyAttackSpeed", 4);
+  ADD_SP("fDamageStrength", 4);
+  ADD_SP("fAmmoQuantity", 4);
+  ADD_SP("fManaTransferFactor", 4);
+  ADD_SP("iInitialMana", 4);
+  ADD_SP("fExtraEnemyStrength", 4);
+  ADD_SP("fExtraEnemyStrengthPerPlayer", 4);
+  ADD_SP("ctCredits", 4);
+  ADD_SP("ctCreditsLeft", 4);
+  ADD_SP("tmSpawnInvulnerability", 4);
+  ADD_SP("iBlood", 4);
+  ADD_SP("bGibs", 4);
+  ADD_SP("bEndOfGame", 4);
+  ADD_SP("ulLevelsMask", 4);
+#if SE1_GAME != SS_TFE
+  ADD_SP("bUseExtraEnemies", 4);
+#else
+  ADD_SP("bRespawnInPlace", 4);
+#endif
+#undef ADD_SP
+
+  Const().AddEnum("VanillaSP", enSessionProps);
+
   // Sound flags
   Enumeration enSoundFlags(GetVM());
 
