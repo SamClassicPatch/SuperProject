@@ -1573,9 +1573,13 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     pdp->DrawLine(0, pixGridH*2+1, pixW, pixGridH*2+1, colGrid);
 
     // Crosshair/dot in the middle of the screen
-    PIX pixDot = ClampDn(PIX(pixH >> 8), (PIX)2); // Height divided by 256
-    pdp->DrawPoint(pixW * 0.5f, pixH * 0.5f, 0x7F, pixDot + 2);
-    pdp->DrawPoint(pixW * 0.5f, pixH * 0.5f, colGrid, pixDot);
+    const PIX pixDot = ClampDn(PIX(pixH >> 8), (PIX)2); // Height divided by 256
+    const PIX pixDotHalf = pixDot >> 1;
+    const PIX pixHalfW = pixW >> 1;
+    const PIX pixHalfH = pixH >> 1;
+
+    pdp->Fill(pixHalfW - pixDotHalf-1, pixHalfH - pixDotHalf-1, pixDot+2, pixDot+2, 0x7F);
+    pdp->Fill(pixHalfW - pixDotHalf-0, pixHalfH - pixDotHalf-0, pixDot+0, pixDot+0, colGrid);
   }
 
   if (cam_props.iShowInfo >= 0) {
