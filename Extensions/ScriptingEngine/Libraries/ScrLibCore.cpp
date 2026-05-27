@@ -23,7 +23,10 @@ namespace sq {
 namespace SqBuffer {
 
 static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CRawDataBuffer &val) {
-  SQInteger iBytes;
+  // Ignore constructor arguments
+  if (GetVMClass(v).GetArgumentBypass()) return 0;
+
+  SQInteger iBytes = 0;
 
   if (ctArgs != 1 || SQ_FAILED(sq_getinteger(v, 2, &iBytes))) {
     return sq_throwerror(v, "expected amount of bytes in argument 1");

@@ -160,7 +160,8 @@ SQInteger VM::HandlerRuntimeError(HSQUIRRELVM v) {
   return SQ_OK;
 };
 
-VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDepth(0), m_ctExecutionArgs(0)
+VM::VM(bool bRegisterEngineInterfaces) : m_bDebug(false), m_bRuntimeError(false), m_iScriptDepth(0), m_ctExecutionArgs(0),
+  m_bArgumentBypass(false)
 {
   // Create a new VM and bind this wrapper class to it
   m_vm = sq_open(1024);

@@ -57,6 +57,8 @@ class VM {
     CTString m_strTempChatCommandArgs;
     CTString m_strTempChatCommandResult;
 
+    bool m_bArgumentBypass; // Temporary bypass of certain arguments when calling specific functions
+
     // Cache for certain functions that need to be executed after the VM finishes running
     CTString m_strStartDemoRec; // Demo file for starting the recording or empty string to ignore
     bool m_bStopDemoRec; // Whether to stop recording a demo
@@ -254,6 +256,16 @@ class VM {
 
     // Remove a chat command registered by this VM
     bool RemoveChatCommand(const char *strCommand);
+
+    // Toggle argument bypass
+    void SetArgumentBypass(bool bState) {
+      m_bArgumentBypass = bState;
+    };
+
+    // Get argument bypass state
+    bool GetArgumentBypass(void) const {
+      return m_bArgumentBypass;
+    };
 
   // Caching
   public:
