@@ -15,6 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include "RawDataBuffer.h"
+
 namespace sq {
 
 // CFontData class methods
@@ -309,6 +311,763 @@ static Method<CTextureObject> _aMethods[] = {
 
 }; // namespace
 
+// CTFileStream class methods
+namespace SqStream {
+
+struct Stream {
+  CTFileStream strm;
+  bool bOpen; // Whether the stream is currently open
+  bool bWriting; // Whether writing or reading
+
+  Stream() : bOpen(false), bWriting(false) {};
+};
+
+static SQInteger Create(HSQUIRRELVM v, int, Stream &val) {
+  const SQChar *strPath;
+
+  if (SQ_FAILED(sq_getstring(v, 2, &strPath))) {
+    return sq_throwerror(v, "expected a path to a file in argument 1");
+  }
+
+  if (val.bOpen) {
+    return sq_throwerror(v, val.bWriting ? "stream is already open for writing" : "stream is already open for reading");
+  }
+
+  try {
+    val.strm.Create_t(CTString(strPath));
+    val.bOpen = true;
+    val.bWriting = true;
+
+  } catch(char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
+};
+
+static SQInteger Open(HSQUIRRELVM v, int, Stream &val) {
+  const SQChar *strPath;
+
+  if (SQ_FAILED(sq_getstring(v, 2, &strPath))) {
+    return sq_throwerror(v, "expected a path to a file in argument 1");
+  }
+
+  if (val.bOpen) {
+    return sq_throwerror(v, val.bWriting ? "stream is already open for writing" : "stream is already open for reading");
+  }
+
+  try {
+    val.strm.Open_t(CTString(strPath));
+    val.bOpen = true;
+    val.bWriting = false;
+
+  } catch(char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
+};
+
+static SQInteger Close(HSQUIRRELVM v, int, Stream &val) {
+  if (!val.bOpen) return 0;
+
+  val.strm.Close();
+  val.bOpen = false;
+  return 0;
+};
+
+static SQInteger IsOpen(HSQUIRRELVM v, int, Stream &val) {
+  sq_pushbool(v, val.bOpen);
+  return 1;
+};
+
+#define ASSERT_OPEN      { if (!val.bOpen) return sq_throwerror(v, "stream isn't open"); }
+#define ASSERT_CAN_WRITE { if (!val.bOpen || !val.bWriting) return sq_throwerror(v, "stream isn't open for writing"); }
+#define ASSERT_CAN_READ  { if (!val.bOpen ||  val.bWriting) return sq_throwerror(v, "stream isn't open for reading"); }
+
+static SQInteger GetDescription(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  sq_pushstring(v, val.strm.GetDescription().str_String, -1);
+  return 1;
+};
+
+static SQInteger Seek(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+
+  SQInteger iOffset, iSeekDir;
+  sq_getinteger(v, 2, &iOffset);
+  sq_getinteger(v, 3, &iSeekDir);
+
+  try {
+    val.strm.Seek_t(iOffset, (CTStream::SeekDir)iSeekDir);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger SetPos(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+
+  SQInteger iPosition;
+  sq_getinteger(v, 2, &iPosition);
+
+  try {
+    val.strm.SetPos_t(iPosition);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger GetPos(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  SLONG slPos;
+
+  try {
+    slPos = val.strm.GetPos_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, slPos);
+  return 1;
+};
+
+static SQInteger AtEOF(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  sq_pushbool(v, val.strm.AtEOF());
+  return 1;
+};
+
+static SQInteger GetSize(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  sq_pushinteger(v, val.strm.GetStreamSize());
+  return 1;
+};
+
+static SQInteger GetCRC32(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  ULONG ulCRC;
+
+  try {
+    ulCRC = val.strm.GetStreamCRC32_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, ulCRC);
+  return 1;
+};
+
+static SQInteger WriteFloat(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+
+  try {
+    val.strm << (FLOAT)f;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteDouble(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQFloat f;
+  sq_getfloat(v, 2, &f);
+
+  try {
+    val.strm << (DOUBLE)f;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteU8(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  try {
+    val.strm << (UBYTE)i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteU16(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  try {
+    val.strm << (UWORD)i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteU32(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  try {
+    val.strm << (ULONG)i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteU64(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  unsigned __int64 iU64 = i;
+
+  try {
+    val.strm.Write_t(&iU64, sizeof(iU64));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteS8(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  try {
+    val.strm << (SBYTE)i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteS16(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  try {
+    val.strm << (SWORD)i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteS32(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  try {
+    val.strm << (SLONG)i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteS64(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQInteger i;
+  sq_getinteger(v, 2, &i);
+
+  __int64 iS64 = i;
+
+  try {
+    val.strm.Write_t(&iS64, sizeof(iS64));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteBool(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  SQBool b;
+  sq_getbool(v, 2, &b);
+
+  try {
+    val.strm << (BOOL)b;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteString(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+
+  try {
+    val.strm << CTString(str);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteStringNull(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+
+  try {
+    val.strm.Write_t(str, strlen(str) + 1);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteFilename(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+
+  try {
+    val.strm << CTFileName(CTString(str));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteBuffer(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  GetInstanceValueVerify(CRawDataBuffer, pbuf, v, 2);
+
+  try {
+    val.strm.Write_t(pbuf->aData.sa_Array, pbuf->aData.Count());
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger ReadFloat(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  FLOAT f;
+
+  try {
+    val.strm >> f;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushfloat(v, f);
+  return 1;
+};
+
+static SQInteger ReadDouble(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  DOUBLE f;
+
+  try {
+    val.strm >> f;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushfloat(v, f);
+  return 1;
+};
+
+static SQInteger ReadU8(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  UBYTE i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadU16(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  UWORD i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadU32(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  ULONG i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadU64(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  unsigned __int64 i;
+
+  try {
+    val.strm.Read_t(&i, sizeof(i));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadS8(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  SBYTE i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadS16(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  SWORD i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadS32(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  SLONG i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadS64(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  __int64 i;
+
+  try {
+    val.strm.Read_t(&i, sizeof(i));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadBool(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  BOOL b;
+
+  try {
+    val.strm >> b;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushbool(v, b);
+  return 1;
+};
+
+static SQInteger ReadString(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  CTString str;
+
+  try {
+    val.strm >> str;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger ReadStringNull(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  UBYTE ub;
+  SLONG slPos, slLen;
+  CTString str = "";
+
+  try {
+    slPos = val.strm.GetPos_t();
+
+    do {
+      val.strm >> ub;
+    } while (ub != 0);
+
+    slLen = val.strm.GetPos_t() - slPos;
+    val.strm.SetPos_t(slPos);
+
+    char *pBuffer = (char *)AllocMemory(slLen);
+    val.strm.Read_t(pBuffer, slLen);
+    str = pBuffer;
+    FreeMemory(pBuffer);
+
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger ReadFilename(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  CTFileName fnm;
+
+  try {
+    val.strm >> fnm;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, fnm.str_String, -1);
+  return 1;
+};
+
+static SQInteger ReadBuffer(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  SQInteger ct;
+  sq_getinteger(v, 2, &ct);
+
+  VM &vm = GetVMClass(v);
+
+  vm.SetArgumentBypass(true);
+  PushNewInstance(CRawDataBuffer, pbuf, vm.Root(), "CRawDataBuffer");
+  vm.SetArgumentBypass(false);
+
+  pbuf->New(ct);
+
+  try {
+    val.strm.Read_t(pbuf->aData.sa_Array, ct);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 1;
+};
+
+static SQInteger PutLine(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+
+  try {
+    val.strm.PutLine_t(str);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger PutString(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+
+  try {
+    val.strm.PutString_t(str);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger GetLine(HSQUIRRELVM v, int ctArgs, Stream &val) {
+  ASSERT_CAN_READ;
+
+  SQInteger iDelimiter = '\n';
+  if (ctArgs > 0) sq_getinteger(v, 2, &iDelimiter);
+
+  CTString str;
+
+  try {
+    val.strm.GetLine_t(str, (char)(UBYTE)iDelimiter);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger ExpectKeyword(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+
+  try {
+    val.strm.ExpectKeyword_t(str);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger WriteID(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_WRITE;
+
+  const SQChar *strID;
+  sq_getstring(v, 2, &strID);
+
+  try {
+    val.strm.WriteID_t(CChunkID(strID));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger ExpectID(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+
+  const SQChar *strID;
+  sq_getstring(v, 2, &strID);
+
+  try {
+    val.strm.ExpectID_t(CChunkID(strID));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger PeekID(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  CChunkID cid;
+
+  try {
+    cid = val.strm.PeekID_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, cid.cid_ID, 4);
+  return 1;
+};
+
+static SQInteger GetID(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  CChunkID cid;
+
+  try {
+    cid = val.strm.GetID_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, cid.cid_ID, 4);
+  return 1;
+};
+
+static Method<Stream> _aMethods[] = {
+  { "Create", &Create, 2, ".s" },
+  { "Open",   &Open,   2, ".s" },
+  { "Close",  &Close,  1, "." },
+  { "IsOpen", &IsOpen, 1, "." },
+  { "GetDescription", &GetDescription, 1, "." },
+
+  // Stream navigation
+  { "Seek",     &Seek,     3, ".nn" },
+  { "SetPos",   &SetPos,   2, ".n" },
+  { "GetPos",   &GetPos,   1, "." },
+  { "AtEOF",    &AtEOF,    1, "." },
+  { "GetSize",  &GetSize,  1, "." },
+  { "GetCRC32", &GetCRC32, 1, "." },
+
+  // Binary writing
+  { "WriteFloat",      &WriteFloat,      2, ".n" },
+  { "WriteDouble",     &WriteDouble,     2, ".n" },
+  { "WriteU8",         &WriteU8,         2, ".n" },
+  { "WriteU16",        &WriteU16,        2, ".n" },
+  { "WriteU32",        &WriteU32,        2, ".n" },
+  { "WriteU64",        &WriteU64,        2, ".n" },
+  { "WriteS8",         &WriteS8,         2, ".n" },
+  { "WriteS16",        &WriteS16,        2, ".n" },
+  { "WriteS32",        &WriteS32,        2, ".n" },
+  { "WriteS64",        &WriteS64,        2, ".n" },
+  { "WriteBool",       &WriteBool,       2, ".b" },
+  { "WriteString",     &WriteString,     2, ".s" },
+  { "WriteStringNull", &WriteStringNull, 2, ".s" },
+  { "WriteFilename",   &WriteFilename,   2, ".s" },
+  { "WriteBuffer",     &WriteBuffer,     2, ".x" },
+
+  // Binary reading
+  { "ReadFloat",      &ReadFloat,      1, "." },
+  { "ReadDouble",     &ReadDouble,     1, "." },
+  { "ReadU8",         &ReadU8,         1, "." },
+  { "ReadU16",        &ReadU16,        1, "." },
+  { "ReadU32",        &ReadU32,        1, "." },
+  { "ReadU64",        &ReadU64,        1, "." },
+  { "ReadS8",         &ReadS8,         1, "." },
+  { "ReadS16",        &ReadS16,        1, "." },
+  { "ReadS32",        &ReadS32,        1, "." },
+  { "ReadS64",        &ReadS64,        1, "." },
+  { "ReadBool",       &ReadBool,       1, "." },
+  { "ReadString",     &ReadString,     1, "." },
+  { "ReadStringNull", &ReadStringNull, 1, "." },
+  { "ReadFilename",   &ReadFilename,   1, "." },
+  { "ReadBuffer",     &ReadBuffer,     2, ".n" },
+
+  // Text
+  { "PutLine",       &PutLine,       2, ".s" },
+  { "PutString",     &PutString,     2, ".s" },
+  { "GetLine",       &GetLine,      -1, ".n" },
+  { "ExpectKeyword", &ExpectKeyword, 2, ".s" },
+
+  // Chunk IDs
+  { "WriteID",  &WriteID,  2, ".s" },
+  { "ExpectID", &ExpectID, 2, ".s" },
+  { "PeekID",   &PeekID,   1, "." },
+  { "GetID",    &GetID,    1, "." },
+};
+
+}; // namespace
+
 namespace FileSystem {
 
 }; // namespace
@@ -342,6 +1101,16 @@ void VM::RegisterFileSystem(void) {
 
     Root().AddClass(sqcTexture);
   }
+  {
+    Class<SqStream::Stream> sqcWriter(GetVM(), "Stream", NULL);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqStream::_aMethods); i++) {
+      sqcWriter.RegisterMethod(SqStream::_aMethods[i]);
+    }
+
+    sqtFileSystem.AddClass(sqcWriter);
+  }
 
   // Animation flags
   Enumeration enAnimFlags(GetVM());
@@ -354,6 +1123,17 @@ void VM::RegisterFileSystem(void) {
 #undef ADD_AOF
 
   Const().AddEnum("AOF", enAnimFlags);
+
+  // Seek directions
+  Enumeration enSeekDir(GetVM());
+
+#define ADD_SEEKDIR(_DirName) enSeekDir.RegisterValue(#_DirName, (SQInteger)SEEK_##_DirName)
+  ADD_SEEKDIR(SET);
+  ADD_SEEKDIR(CUR);
+  ADD_SEEKDIR(END);
+#undef ADD_SEEKDIR
+
+  Const().AddEnum("SEEK", enSeekDir);
 };
 
 }; // namespace
