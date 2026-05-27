@@ -333,8 +333,12 @@ static SQInteger Create(HSQUIRRELVM v, int, Stream &val) {
     return sq_throwerror(v, val.bWriting ? "stream is already open for writing" : "stream is already open for reading");
   }
 
+  // Make sure the directory exists
+  CTString fnm = strPath;
+  IDir::CreateDir(fnm);
+
   try {
-    val.strm.Create_t(CTString(strPath));
+    val.strm.Create_t(fnm);
     val.bOpen = true;
     val.bWriting = true;
 
