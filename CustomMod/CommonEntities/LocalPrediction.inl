@@ -23,6 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "LocalPrediction.h"
 
 static INDEX gam_bDisableLocalPrediction = -1; // Auto
+static FLOAT gam_fPredictionToggleThreshold = 50; // 50-55 ms is the usual threshold
 
 // Check if local prediction should be disabled (determine latency from player)
 BOOL DisableLocalPrediction(const CEntity *penPlayer)
@@ -31,7 +32,7 @@ BOOL DisableLocalPrediction(const CEntity *penPlayer)
     ASSERT(IsDerivedFromID(const_cast<CEntity *>(penPlayer), CPlayerEntity_ClassID));
 
     TIME tmLatency = ((const CPlayerEntity *)penPlayer)->en_tmPing * 1000.0;
-    return tmLatency <= 50;
+    return tmLatency <= gam_fPredictionToggleThreshold;
   }
 
   return gam_bDisableLocalPrediction > 0;

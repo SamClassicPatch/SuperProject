@@ -35,6 +35,7 @@ INDEX gfx_bAdjustModelHolderMipFactor = TRUE;
 void DeclareCommonEntitiesSymbols(void)
 {
   _pShell->DeclareSymbol("persistent user INDEX gam_bDisableLocalPrediction;", &gam_bDisableLocalPrediction);
+  _pShell->DeclareSymbol("persistent user FLOAT gam_fPredictionToggleThreshold;", &gam_fPredictionToggleThreshold);
   _pShell->DeclareSymbol("persistent user INDEX hud_bCrosshairGradualColoring;", &hud_bCrosshairGradualColoring);
   _pShell->DeclareSymbol("persistent user INDEX gfx_bAdjustModelHolderMipFactor;", &gfx_bAdjustModelHolderMipFactor);
 
