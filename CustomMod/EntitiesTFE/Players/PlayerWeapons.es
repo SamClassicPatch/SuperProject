@@ -834,8 +834,15 @@ functions:
       pen->m_bLastWeaponMirrored = bMirrorState;
     }
 
-    // flare attachment
-    ControlFlareAttachment();
+    // [Cecil] Update flare attachments only once per game tick
+    static TIME _tmLastFlareTick = 0;
+
+    if (_tmLastFlareTick != _pTimer->CurrentTick()) {
+      _tmLastFlareTick = _pTimer->CurrentTick();
+
+      // flare attachment
+      ControlFlareAttachment();
+    }
 
     if( !bRender || m_iCurrentWeapon==WEAPON_NONE
      || GetPlayer()->GetSettings()->ps_ulFlags&PSF_HIDEWEAPON) { return; }
@@ -1402,7 +1409,7 @@ functions:
       // add flare
       if (pen->m_iSecondFlare==FLARE_ADD) {
         pen->m_iSecondFlare = FLARE_REMOVE;
-        ShowFlare(m_moWeaponSecond, COLT_ATTACHMENT_COLT, COLTMAIN_ATTACHMENT_FLARE, 1.0f);
+        ShowFlare(m_moWeaponSecond, COLT_ATTACHMENT_COLT, COLTMAIN_ATTACHMENT_FLARE, 0.75f); // [Cecil] 1.0f -> 0.75f
       // remove flare
       } else if (pen->m_iSecondFlare==FLARE_REMOVE) {
         HideFlare(m_moWeaponSecond, COLT_ATTACHMENT_COLT, COLTMAIN_ATTACHMENT_FLARE);
