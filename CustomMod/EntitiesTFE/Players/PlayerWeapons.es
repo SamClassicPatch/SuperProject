@@ -571,6 +571,9 @@ properties:
 
   // [Cecil] Weapon mirroring
   BOOL m_bLastWeaponMirrored;
+
+  // [Cecil] For updating flare attachments per game tick
+  TIME m_tmLastFlareTick;
 }
 
 components:
@@ -746,8 +749,8 @@ components:
 functions:
   // [Cecil] Constructor
   void CPlayerWeapons(void) {
-    // Weapon mirroring
     m_bLastWeaponMirrored = FALSE;
+    m_tmLastFlareTick = 0;
   };
 
   // [Cecil] Copy constructor
@@ -756,6 +759,7 @@ functions:
     CPlayerWeapons *penOther = (CPlayerWeapons *)&enOther;
 
     m_bLastWeaponMirrored = penOther->m_bLastWeaponMirrored;
+    m_tmLastFlareTick = penOther->m_tmLastFlareTick;
   };
 
   // [Cecil] Reset last mirror state
@@ -835,13 +839,11 @@ functions:
     }
 
     // [Cecil] Update flare attachments only once per game tick
-    static TIME _tmLastFlareTick = 0;
-
-    if (_tmLastFlareTick != _pTimer->CurrentTick()) {
-      _tmLastFlareTick = _pTimer->CurrentTick();
+    if (pen->m_tmLastFlareTick != _pTimer->CurrentTick()) {
+      pen->m_tmLastFlareTick = _pTimer->CurrentTick();
 
       // flare attachment
-      ControlFlareAttachment();
+      pen->ControlFlareAttachment();
     }
 
     if( !bRender || m_iCurrentWeapon==WEAPON_NONE
@@ -1497,6 +1499,7 @@ functions:
         AddAttachmentToModel(this, mo, COLTMAIN_ATTACHMENT_FLARE, MODEL_FLARE01, TEXTURE_FLARE01, 0, 0, 0); }
         m_moWeaponSecond.StretchModel(FLOAT3D(-1,1,1));
         m_moWeaponSecond.PlayAnim(COLT_ANIM_WAIT1, 0);
+        HideFlare(m_moWeaponSecond, COLT_ATTACHMENT_COLT, COLTMAIN_ATTACHMENT_FLARE); // [Cecil]
       case WEAPON_COLT: {
         SetComponents(this, m_moWeapon, MODEL_COLT, TEXTURE_HAND, 0, 0, 0);
         AddAttachmentToModel(this, m_moWeapon, COLT_ATTACHMENT_BULLETS, MODEL_COLTBULLETS, TEXTURE_COLTBULLETS, TEX_REFL_LIGHTBLUEMETAL01, TEX_SPEC_MEDIUM, 0);
@@ -1505,6 +1508,7 @@ functions:
         CModelObject &mo = m_moWeapon.GetAttachmentModel(COLT_ATTACHMENT_COLT)->amo_moModelObject;
         AddAttachmentToModel(this, mo, COLTMAIN_ATTACHMENT_FLARE, MODEL_FLARE01, TEXTURE_FLARE01, 0, 0, 0);
         m_moWeapon.PlayAnim(COLT_ANIM_WAIT1, 0);
+        HideFlare(m_moWeapon, COLT_ATTACHMENT_COLT, COLTMAIN_ATTACHMENT_FLARE); // [Cecil]
         break; }
       case WEAPON_SINGLESHOTGUN: {
         SetComponents(this, m_moWeapon, MODEL_SINGLESHOTGUN, TEXTURE_HAND, 0, 0, 0);
@@ -1514,6 +1518,7 @@ functions:
         CModelObject &mo = m_moWeapon.GetAttachmentModel(SINGLESHOTGUN_ATTACHMENT_BARRELS)->amo_moModelObject;
         AddAttachmentToModel(this, mo, BARRELS_ATTACHMENT_FLARE, MODEL_FLARE01, TEXTURE_FLARE01, 0, 0, 0);
         m_moWeapon.PlayAnim(SINGLESHOTGUN_ANIM_WAIT1, 0);
+        HideFlare(m_moWeapon, SINGLESHOTGUN_ATTACHMENT_BARRELS, BARRELS_ATTACHMENT_FLARE); // [Cecil]
         break; }
       case WEAPON_DOUBLESHOTGUN: {
         SetComponents(this, m_moWeapon, MODEL_DOUBLESHOTGUN, TEXTURE_HAND, 0, 0, 0);
@@ -1526,6 +1531,7 @@ functions:
         AddAttachmentToModel(this, mo, DSHOTGUNBARRELS_ATTACHMENT_FLARE, MODEL_FLARE01, TEXTURE_FLARE01, 0, 0, 0);
         m_moWeaponSecond.StretchModel(FLOAT3D(0, 0, 0)); // [Cecil] Hide the hand
         m_moWeapon.PlayAnim(DOUBLESHOTGUN_ANIM_WAIT1, 0);
+        HideFlare(m_moWeapon, DOUBLESHOTGUN_ATTACHMENT_BARRELS, DSHOTGUNBARRELS_ATTACHMENT_FLARE); // [Cecil]
         break; }
       case WEAPON_TOMMYGUN: {
         SetComponents(this, m_moWeapon, MODEL_TOMMYGUN, TEXTURE_HAND, 0, 0, 0);
@@ -1533,6 +1539,7 @@ functions:
         AddAttachmentToModel(this, m_moWeapon, TOMMYGUN_ATTACHMENT_SLIDER, MODEL_TG_SLIDER, TEXTURE_TG_BODY, 0, TEX_SPEC_MEDIUM, 0);
         CModelObject &mo = m_moWeapon.GetAttachmentModel(TOMMYGUN_ATTACHMENT_BODY)->amo_moModelObject;
         AddAttachmentToModel(this, mo, BODY_ATTACHMENT_FLARE, MODEL_FLARE01, TEXTURE_FLARE01, 0, 0, 0);
+        HideFlare(m_moWeapon, TOMMYGUN_ATTACHMENT_BODY, BODY_ATTACHMENT_FLARE); // [Cecil]
         break; }
       case WEAPON_MINIGUN: {
         SetComponents(this, m_moWeapon, MODEL_MINIGUN, TEXTURE_HAND, 0, 0, 0);
@@ -1541,6 +1548,7 @@ functions:
         AddAttachmentToModel(this, m_moWeapon, MINIGUN_ATTACHMENT_ENGINE, MODEL_MG_ENGINE, TEXTURE_MG_BARRELS, TEX_REFL_LIGHTMETAL01, TEX_SPEC_MEDIUM, 0);
         CModelObject &mo = m_moWeapon.GetAttachmentModel(MINIGUN_ATTACHMENT_BODY)->amo_moModelObject;
         AddAttachmentToModel(this, mo, BODY_ATTACHMENT_FLARE, MODEL_FLARE01, TEXTURE_FLARE01, 0, 0, 0);
+        HideFlare(m_moWeapon, MINIGUN_ATTACHMENT_BODY, BODY_ATTACHMENT_FLARE); // [Cecil]
         break; }
       case WEAPON_ROCKETLAUNCHER:
         SetComponents(this, m_moWeapon, MODEL_ROCKETLAUNCHER, TEXTURE_RL_BODY, 0, 0, 0);
