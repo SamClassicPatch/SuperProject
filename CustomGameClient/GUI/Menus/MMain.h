@@ -48,9 +48,6 @@ class CMainMenu : public CGameMenu {
     void Initialize_t(void);
     void StartMenu(void);
 
-    // [Cecil] Menu update
-    virtual void Think(void);
-
     // [Cecil] Change to the menu
     static void ChangeTo(void);
 };

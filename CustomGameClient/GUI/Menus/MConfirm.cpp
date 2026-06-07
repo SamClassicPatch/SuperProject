@@ -26,21 +26,23 @@ static void ResetPopup(CConfirmMenu *pgm, FLOAT fHeight) {
 static void ConfirmYes(void) {
   CConfirmMenu &gmCurrent = _pGUIM->gmConfirmMenu;
 
-  if (gmCurrent._pConfirmedYes != NULL) {
-    gmCurrent._pConfirmedYes();
+  if (gmCurrent.gm_pConfirmedYes != NULL) {
+    gmCurrent.gm_pConfirmedYes();
   }
 
-  MenuGoToParent();
+  // [Cecil] Don't return to the parent menu if not needed
+  if (!gmCurrent.gm_bNoReturnAfterYes) MenuGoToParent();
 };
 
 static void ConfirmNo(void) {
   CConfirmMenu &gmCurrent = _pGUIM->gmConfirmMenu;
 
-  if (gmCurrent._pConfirmedNo != NULL) {
-    gmCurrent._pConfirmedNo();
+  if (gmCurrent.gm_pConfirmedNo != NULL) {
+    gmCurrent.gm_pConfirmedNo();
   }
 
-  MenuGoToParent();
+  // [Cecil] Don't return to the parent menu if not needed
+  if (!gmCurrent.gm_bNoReturnAfterNo) MenuGoToParent();
 };
 
 void CConfirmMenu::Initialize_t(void) {
@@ -67,8 +69,8 @@ void CConfirmMenu::Initialize_t(void) {
   gm_mgConfirmNo.mg_iCenterI = -1;
   gm_mgConfirmNo.mg_bfsFontSize = BFS_LARGE;
 
-  _pConfirmedYes = NULL;
-  _pConfirmedNo = NULL;
+  gm_pConfirmedYes = NULL;
+  gm_pConfirmedNo = NULL;
 
   ResetPopup(this, fHeight);
   SetText("");
@@ -144,8 +146,10 @@ void CConfirmMenu::ChangeTo(const CTString &strLabel, CConfirmFunc pFuncYes, CCo
 {
   CConfirmMenu &gm = _pGUIM->gmConfirmMenu;
 
-  gm._pConfirmedYes = pFuncYes;
-  gm._pConfirmedNo = pFuncNo;
+  gm.gm_pConfirmedYes = pFuncYes;
+  gm.gm_pConfirmedNo = pFuncNo;
+  gm.gm_bNoReturnAfterYes = FALSE; // [Cecil] Reset
+  gm.gm_bNoReturnAfterNo = FALSE; // [Cecil] Reset
   gm.SetText(strLabel, strYes, strNo);
 
   if (bBigLabel) {

@@ -33,11 +33,15 @@ class CConfirmMenu : public CGameMenu {
     CMGButton gm_mgConfirmYes;
     CMGButton gm_mgConfirmNo;
 
-    CConfirmFunc _pConfirmedYes;
-    CConfirmFunc _pConfirmedNo;
+    CConfirmFunc gm_pConfirmedYes;
+    CConfirmFunc gm_pConfirmedNo;
+
+    // [Cecil] Don't return to the previous menu after choosing either button
+    BOOL gm_bNoReturnAfterYes;
+    BOOL gm_bNoReturnAfterNo;
 
     // [Cecil] Constructor
-    CConfirmMenu() : CGameMenu(), _pConfirmedYes(NULL), _pConfirmedNo(NULL)
+    CConfirmMenu() : CGameMenu(), gm_pConfirmedYes(NULL), gm_pConfirmedNo(NULL), gm_bNoReturnAfterYes(FALSE), gm_bNoReturnAfterNo(FALSE)
     {
     };
 

@@ -125,7 +125,6 @@ void ExitConfirm(void) {
 };
 
 static CStringStack _astrTOTD;
-static BOOL _bForceTOTD = FALSE;
 
 static void DisplayTOTD(void);
 
@@ -137,8 +136,9 @@ static void NextTOTD(void) {
   // Get next tip
   sam_iCurrentTOTD = (sam_iCurrentTOTD + 1) % _astrTOTD.Count();
 
-  // Display a new tip again when returning to the main menu
-  _bForceTOTD = TRUE;
+  // Display a new tip again
+  MenuGoToParent();
+  DisplayTOTD();
 };
 
 // [Cecil] Display the tip of the day on screen
@@ -158,6 +158,7 @@ void DisplayTOTD(void) {
   }
 
   CConfirmMenu::ChangeTo(TRANS("Did you know?") + CTString("\n\n") + *pstrTip, &NextTOTD, NULL, FALSE, TRANS("NEXT TIP"), TRANS("SERIOUSLY AWESOME!"), 0.4f);
+  _pGUIM->gmConfirmMenu.gm_bNoReturnAfterYes = TRUE; // [Cecil] For reloading the tip
 };
 
 void CMainMenu::Initialize_t(void) {
@@ -326,15 +327,6 @@ void CMainMenu::StartMenu(void) {
 
   CGameMenu::StartMenu();
 }
-
-// [Cecil] Menu update
-void CMainMenu::Think(void) {
-  // Show another tip, if needed
-  if (_bForceTOTD) {
-    _bForceTOTD = FALSE;
-    DisplayTOTD();
-  }
-};
 
 // [Cecil] Change to the menu
 void CMainMenu::ChangeTo(void) {
