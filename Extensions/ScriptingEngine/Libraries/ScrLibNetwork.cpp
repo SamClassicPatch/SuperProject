@@ -698,7 +698,13 @@ static SQInteger GetPlayerEntity(HSQUIRRELVM v) {
   SQInteger iPlayer;
   sq_getinteger(v, 2, &iPlayer);
 
-  CPlayerTarget &plt = _pNetwork->ga_sesSessionState.ses_apltPlayers[iPlayer];
+  CStaticArray<CPlayerTarget> &aplt = _pNetwork->ga_sesSessionState.ses_apltPlayers;
+
+  if (iPlayer < 0 || iPlayer >= aplt.Count()) {
+    return sq_throwerror(v, "player index is out of bounds");
+  }
+
+  CPlayerTarget &plt = aplt[iPlayer];
 
   if (!plt.IsActive()) {
     SQChar strError[256];

@@ -634,7 +634,8 @@ void IProcessPacket::OnCharacterChangeRequest(INDEX iClient, CNetworkMessage &nm
   CServer &srv = _pNetwork->ga_srvServer;
 
   // Invalid player
-  if (iPlayer < 0 || iPlayer > srv.srv_aplbPlayers.Count() ) {
+  // [Cecil] Fixed the boundary check from > to >=
+  if (iPlayer < 0 || iPlayer >= srv.srv_aplbPlayers.Count()) {
     return;
   }
 

@@ -834,28 +834,34 @@ static SQInteger ReadStringNull(HSQUIRRELVM v, int, Stream &val) {
   ASSERT_CAN_READ;
   UBYTE ub;
   SLONG slPos, slLen;
-  CTString str = "";
+  char *str = NULL;
 
   try {
     slPos = val.strm.GetPos_t();
 
     do {
       val.strm >> ub;
-    } while (ub != 0);
+    } while (ub != 0 && !val.strm.AtEOF());
 
     slLen = val.strm.GetPos_t() - slPos;
     val.strm.SetPos_t(slPos);
 
-    char *pBuffer = (char *)AllocMemory(slLen);
-    val.strm.Read_t(pBuffer, slLen);
-    str = pBuffer;
-    FreeMemory(pBuffer);
+    str = (char *)AllocMemory(slLen);
+    val.strm.Read_t(str, slLen);
+    str[slLen - 1] = '\0'; // Safety
 
   } catch (char *strError) {
+    // Free string bytes on error
+    if (str != NULL) FreeMemory(str);
     return sq_throwerror(v, strError);
   }
 
-  sq_pushstring(v, str.str_String, -1);
+  // Fail-safe
+  if (str == NULL) return sq_throwerror(v, "no string has been created after reading");
+
+  sq_pushstring(v, str, -1);
+  FreeMemory(str);
+
   return 1;
 };
 
@@ -958,8 +964,12 @@ static SQInteger WriteID(HSQUIRRELVM v, int, Stream &val) {
   const SQChar *strID;
   sq_getstring(v, 2, &strID);
 
+  // Pad the ID with extra spaces, if it's too short
+  CTString strLongID = "    ";
+  memcpy(strLongID.str_String, strID, Min(strlen(strID), (size_t)4));
+
   try {
-    val.strm.WriteID_t(CChunkID(strID));
+    val.strm.WriteID_t(CChunkID(strLongID));
   } catch (char *strError) {
     return sq_throwerror(v, strError);
   }
@@ -972,8 +982,12 @@ static SQInteger ExpectID(HSQUIRRELVM v, int, Stream &val) {
   const SQChar *strID;
   sq_getstring(v, 2, &strID);
 
+  // Pad the ID with extra spaces, if it's too short
+  CTString strLongID = "    ";
+  memcpy(strLongID.str_String, strID, Min(strlen(strID), (size_t)4));
+
   try {
-    val.strm.ExpectID_t(CChunkID(strID));
+    val.strm.ExpectID_t(CChunkID(strLongID));
   } catch (char *strError) {
     return sq_throwerror(v, strError);
   }
