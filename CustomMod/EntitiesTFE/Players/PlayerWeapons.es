@@ -1264,8 +1264,15 @@ functions:
       fDistance    = 100.0f;
     }
 
+    BOOL bFixed = hud_bCrosshairFixed;
+
+    // [Cecil] Prevent crosshair from getting centered when using static third person camera angle
+    if (!plr_bStaticThirdPersonAngle) {
+      bFixed |= (GetPlayer()->m_iViewState == PVT_3RDPERSONVIEW);
+    }
+
     // if croshair should be of fixed position
-    if( hud_bCrosshairFixed || GetPlayer()->m_iViewState == PVT_3RDPERSONVIEW) {
+    if (bFixed) {
       // reset it to screen center
       vOnScreen(1) = (FLOAT)pdp->GetWidth()  *0.5f;
       vOnScreen(2) = (FLOAT)pdp->GetHeight() *0.5f;

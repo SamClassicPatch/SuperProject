@@ -25,6 +25,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "LocalPrediction.h"
 #include "WeaponCustomization.h"
 
+// Static third person camera angle
+extern INDEX plr_bStaticThirdPersonAngle;
+
 // Gradual crosshair coloring
 extern INDEX hud_bCrosshairGradualColoring;
 

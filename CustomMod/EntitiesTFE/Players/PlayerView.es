@@ -187,6 +187,16 @@ functions:
     fDistance = ClampDn(fDistance - fBack, 0.0f);
     vBase += vFront * fDistance;
 
+    // [Cecil] Don't follow the crosshair and slightly tilt the camera upwards instead
+    if (plr_bStaticThirdPersonAngle) {
+      bFollowCrossHair = FALSE;
+
+      FLOATmatrix3D mRot, mAdd;
+      MakeRotationMatrixFast(mRot, pl.pl_OrientationAngle);
+      MakeRotationMatrixFast(mAdd, ANGLE3D(0, 10, 0));
+      DecomposeRotationMatrixNoSnap(pl.pl_OrientationAngle, mRot * mAdd);
+    }
+
     CPlayerWeapons *ppw = penPlayer->GetPlayerWeapons();
 
     if (bFollowCrossHair) {

@@ -25,6 +25,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "LocalPrediction.inl"
 #include "WeaponCustomization.inl"
 
+// Static third person camera angle
+INDEX plr_bStaticThirdPersonAngle = FALSE;
+
 // Gradual crosshair coloring
 INDEX hud_bCrosshairGradualColoring = FALSE;
 
@@ -36,6 +39,7 @@ void DeclareCommonEntitiesSymbols(void)
 {
   _pShell->DeclareSymbol("persistent user INDEX gam_bDisableLocalPrediction;", &gam_bDisableLocalPrediction);
   _pShell->DeclareSymbol("persistent user FLOAT gam_fPredictionToggleThreshold;", &gam_fPredictionToggleThreshold);
+  _pShell->DeclareSymbol("persistent user INDEX plr_bStaticThirdPersonAngle;", &plr_bStaticThirdPersonAngle);
   _pShell->DeclareSymbol("persistent user INDEX hud_bCrosshairGradualColoring;", &hud_bCrosshairGradualColoring);
   _pShell->DeclareSymbol("persistent user INDEX gfx_bAdjustModelHolderMipFactor;", &gfx_bAdjustModelHolderMipFactor);
 
