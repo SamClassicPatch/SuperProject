@@ -4941,6 +4941,7 @@ functions:
  ************************************************************/
 
   // [Cecil] Adjust angle according to sharp turning to compensate for "input lag"
+  // [Cecil] Moved this code from underneath the PVT_PLAYEREYES block in GetLerpedAbsoluteViewPlacement()
   void CompensateForSharpTurning(CPlacement3D &plView, CPlacement3D &plPos) {
     // Get prediction tail
     CPlayer *pen = (CPlayer *)GetPredictionTail();
@@ -5000,6 +5001,14 @@ functions:
     // lerp player viewpoint
     plView.Lerp(en_plLastViewpoint, en_plViewpoint, _pTimer->GetLerpFactor());
 
+    // Current player placement
+    CPlacement3D plPosLerped = GetLerpedPlacement();
+
+    // [Cecil] Adjust view rotation for sharp turning beforehand
+    if (bSharpTurning) {
+      CompensateForSharpTurning(plView, plPosLerped);
+    }
+
     // [Cecil] This is done by SetupView(), so it shouldn't be called again when
     // simply calculating the original viewpoint regardless of third person view
     if (!_bDiscard3rdView) {
@@ -5009,25 +5018,12 @@ functions:
       ((CPlayerAnimator&)*m_penAnimator).BodyAndHeadOrientation(plView);
     }
 
-    // Current player placement
-    CPlacement3D plPosLerped = GetLerpedPlacement();
-
     // return player eyes view
     if (m_iViewState == PVT_PLAYEREYES || _bDiscard3rdView) {
-      if (bSharpTurning) {
-        // [Cecil] Moved all code out of this block into the function
-        CompensateForSharpTurning(plView, plPosLerped);
-      }
-
       plView.RelativeToAbsoluteSmooth(plPosLerped);
 
     // 3rd person view
     } else if (m_iViewState == PVT_3RDPERSONVIEW) {
-      // [Cecil] Adjust third person view for sharp turning
-      if (bSharpTurning) {
-        CompensateForSharpTurning(plView, plPosLerped);
-      }
-
       // [Cecil] Calculate camera placement immediately for this frame instead of using camera's physical lerped placement
       FLOATmatrix3D mDummy;
       ((CPlayerView &)*m_pen3rdPersonView).CalcCameraPosition(this, plPosLerped, plView, mDummy);
@@ -5035,10 +5031,12 @@ functions:
     // camera view for player auto actions
     } else if (m_iViewState == PVT_PLAYERAUTOVIEW) {
       plView = m_penView->GetLerpedPlacement();
+
     // camera view for stored sequences
     } else {
       ASSERTALWAYS("Unknown player view");
     }
+
     _bDiscard3rdView=FALSE;
   };
 
