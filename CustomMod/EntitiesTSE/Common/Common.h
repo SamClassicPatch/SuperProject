@@ -184,6 +184,7 @@ struct DECL_DLL PlayerStats {
 
 // get info position for entity
 DECL_DLL void GetEntityInfoPosition(CEntity *pen, FLOAT *pf, FLOAT3D &vPos);
+DECL_DLL void GetEntityInfoPosition(const CPlacement3D &pl, FLOAT *pf, FLOAT3D &vPos); // [Cecil] Alternative based on any placement
 // get source and target positions for ray cast
 DECL_DLL void GetPositionCastRay(CEntity *penSource, CEntity *penTarget, FLOAT3D &vSource, FLOAT3D &vTarget);
 

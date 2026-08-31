@@ -90,13 +90,26 @@ struct WorldChange _SwcWorldChange;
 
 // get info position for entity
 void GetEntityInfoPosition(CEntity *pen, FLOAT *pf, FLOAT3D &vPos) {
-  ASSERT(pen!=NULL);
+  ASSERT(pen != NULL);
 
-  vPos = pen->GetPlacement().pl_PositionVector;
+  CPlacement3D pl = pen->GetPlacement();
+  vPos = pl.pl_PositionVector;
+
   if (pf != NULL) {
     FLOATmatrix3D mRotation;
-    MakeRotationMatrixFast(mRotation, pen->GetPlacement().pl_OrientationAngle);
-    vPos += FLOAT3D(pf[0], pf[1], pf[2])*mRotation;
+    MakeRotationMatrixFast(mRotation, pl.pl_OrientationAngle);
+    vPos += FLOAT3D(pf[0], pf[1], pf[2]) * mRotation;
+  }
+};
+
+// [Cecil] Alternative based on any placement
+void GetEntityInfoPosition(const CPlacement3D &pl, FLOAT *pf, FLOAT3D &vPos) {
+  vPos = pl.pl_PositionVector;
+
+  if (pf != NULL) {
+    FLOATmatrix3D mRotation;
+    MakeRotationMatrixFast(mRotation, pl.pl_OrientationAngle);
+    vPos += FLOAT3D(pf[0], pf[1], pf[2]) * mRotation;
   }
 };
 

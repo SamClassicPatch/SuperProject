@@ -100,11 +100,31 @@ functions:
     }
   }
 
-  void SetCameraPosition() 
+  // [Cecil] Separate function for setting camera position for this entity (akin to vanilla SetCameraPosition)
+  void SetCameraPosition(void) {
+    // Prepare data for the calculation of the physical position
+    CPlayer *penPlayer = (CPlayer *)(CEntity *)m_penOwner;
+    CPlacement3D plPlayer = penPlayer->GetPlacement();
+    CPlacement3D plView = penPlayer->en_plViewpoint; // Base viewpoint that will be transformed into new camera position
+    FLOATmatrix3D m; // Precalculated rotation from plView.pl_OrientationAngle
+
+    // Retreive the calculated view placement and the rotation matrix (as well as setting camera distance)
+    m_fDistance = CalcCameraPosition(penPlayer, plPlayer, plView, m);
+
+    SetPlacement_internal(plView, m, TRUE); // TRUE = Try to optimize for small movements
+  };
+
+  // [Cecil] Reworked SetCameraPosition() function that can calculate camera position for any purpose
+  // Takes player entity with its placement and viewpoint as input and outputs camera placement into the same viewpoint variable
+  FLOAT CalcCameraPosition(CPlayer *penPlayer, const CPlacement3D &plPlayer, CPlacement3D &plView, FLOATmatrix3D &m)
   {
+    // [Cecil] Origin view placement from the player eyes
+    CPlacement3D plEyesView = plView;
+    plEyesView.RelativeToAbsoluteSmooth(plPlayer);
+
     // 3rd person view
     FLOAT fDistance = 1.0f;
-    CPlacement3D pl = ((CPlayerEntity&) *m_penOwner).en_plViewpoint;
+    CPlacement3D &pl = plView; // [Cecil] Base view placement on the passed placement
     BOOL bFollowCrossHair;
 
     if (m_iViewType == VT_3RDPERSONVIEW) {
@@ -122,14 +142,13 @@ functions:
     pl.pl_OrientationAngle(3) = 0.0f;
 
     // transform rotation angle
-    pl.RelativeToAbsolute(m_penOwner->GetPlacement());
+    pl.RelativeToAbsoluteSmooth(plPlayer);
     // make base placement to back out from
     FLOAT3D vBase;
-    EntityInfo *pei= (EntityInfo*) (m_penOwner->GetEntityInfo());
-    GetEntityInfoPosition(m_penOwner, pei->vSourceCenter, vBase);
+    EntityInfo *pei= (EntityInfo *)penPlayer->GetEntityInfo();
+    GetEntityInfoPosition(plPlayer, pei->vSourceCenter, vBase); // [Cecil] Based on the placement
 
     // create a set of rays to test
-    FLOATmatrix3D m;
     MakeRotationMatrixFast(m, pl.pl_OrientationAngle);
     FLOAT3D vRight = m.GetColumn(1);
     FLOAT3D vUp    = m.GetColumn(2);
@@ -146,7 +165,7 @@ functions:
     // for each ray
     for (INDEX i=0; i<5; i++) {
       // cast a ray to find if any brush is hit
-      CCastRay crRay( m_penOwner, vBase, vDest[i]);
+      CCastRay crRay(penPlayer, vBase, vDest[i]);
       crRay.cr_bHitTranslucentPortals = FALSE;
       crRay.cr_ttHitModels = CCastRay::TT_COLLISIONBOX;
       GetWorld()->CastRay(crRay);
@@ -163,15 +182,16 @@ functions:
           fBack = Max(fBack, fD);
         }
       }
-
     }
-    fDistance = ClampDn(fDistance-fBack, 0.0f);
-    m_fDistance = fDistance;
-    vBase += vFront*fDistance;
 
-    CPlayerWeapons *ppw = ((CPlayer&) *m_penOwner).GetPlayerWeapons();
+    fDistance = ClampDn(fDistance - fBack, 0.0f);
+    vBase += vFront * fDistance;
+
+    CPlayerWeapons *ppw = penPlayer->GetPlayerWeapons();
+
     if (bFollowCrossHair) {
-      FLOAT3D vTarget = vBase-ppw->m_vRayHit;
+      // [Cecil] Retrieve real ray hit position instead of using precalculated physics-based m_vRayHit
+      FLOAT3D vTarget = vBase - ppw->CalcTargetPosition(plEyesView);
       FLOAT fLen = vTarget.Length();
       if (fLen>0.01) {
         vTarget/=fLen;
@@ -203,61 +223,15 @@ functions:
     if (m_bFixed) {
       pl.pl_PositionVector = GetPlacement().pl_PositionVector;
       pl.pl_OrientationAngle = ANGLE3D(0,-90, 0);
-      m_fDistance = (pl.pl_PositionVector-m_penOwner->GetPlacement().pl_PositionVector).Length();
+      fDistance = (pl.pl_PositionVector - plPlayer.pl_PositionVector).Length();
       MakeRotationMatrixFast(m, pl.pl_OrientationAngle);
     } else {
       pl.pl_PositionVector = vBase;
     }
 
-    // set camera placement
-    SetPlacement_internal(pl, m, TRUE); // TRUE = try to optimize for small movements
+    // [Cecil] Return calculated distance
+    return fDistance;
   };
-
-  /*void SetCameraPosition() 
-  {
-    // 3rd person view
-    FLOAT fDistance = 1.0f;
-    CPlacement3D pl = ((CPlayerEntity&) *m_penOwner).en_plViewpoint;
-    
-    pl.pl_PositionVector += FLOAT3D(tmp_af[4],tmp_af[5],tmp_af[6]);
-    pl.pl_OrientationAngle = ANGLE3D(0.0f, tmp_af[1], 0.0f);
-    fDistance = tmp_af[5];
-
-    // transform rotation angle
-    pl.RelativeToAbsolute(m_penOwner->GetPlacement());
-  
-    // create a set ray to test
-    FLOATmatrix3D m;
-    MakeRotationMatrixFast(m, pl.pl_OrientationAngle);
-    FLOAT3D vRight = m.GetColumn(1);
-    FLOAT3D vUp    = m.GetColumn(2);
-    FLOAT3D vFront = m.GetColumn(3);
-
-    FLOAT3D vDest;
-    vDest = vFront*fDistance;
-
-    //FLOAT fBack = 0;
-    /*    
-    // cast a ray to find if any brush is hit
-    CCastRay crRay( m_penOwner, pl.pl_PositionVector, vDest);
-    crRay.cr_bHitTranslucentPortals = FALSE;
-    crRay.cr_ttHitModels = CCastRay::TT_NONE;
-    GetWorld()->CastRay(crRay);
-    
-    // if hit something
-    if (crRay.cr_penHit!=NULL) {
-      // clamp distance
-      fDistance = Min(fDistance, crRay.cr_fHitDistance-0.5f);      
-    }
-    //pl.pl_PositionVector += FLOAT3D(0.0f, m_fDistance, 0.0f)*m;
-    */
-    /*
-    m_fDistance = fDistance;
-        
-    // set camera placement
-    SetPlacement_internal(pl, m, TRUE); // TRUE = try to optimize for small movements
-  };*/
-
 
 procedures:
 

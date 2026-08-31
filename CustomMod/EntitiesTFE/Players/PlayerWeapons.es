@@ -1644,30 +1644,33 @@ functions:
    *  >>>---  SUPPORT (COMMON) FUNCTIONS  ---<<<
    */
 
+  // [Cecil] Common function for regular position offset calculations
+  void CalcCommonWeaponPositionOffset(FLOAT3D vPos, CPlacement3D &plPos, BOOL bResetZ) {
+    // Weapon handle
+    if (!m_bMirrorFire) {
+      plPos.pl_PositionVector = FLOAT3D(wpn_fX[m_iCurrentWeapon], wpn_fY[m_iCurrentWeapon], wpn_fZ[m_iCurrentWeapon]);
+    } else {
+      plPos.pl_PositionVector = FLOAT3D(-wpn_fX[m_iCurrentWeapon], wpn_fY[m_iCurrentWeapon], wpn_fZ[m_iCurrentWeapon]);
+    }
+
+    // Weapon offset
+    plPos.RelativeToAbsoluteSmooth(CPlacement3D(vPos, ANGLE3D(0, 0, 0)));
+
+    const FLOAT fFOVOffset = SinFast(wpn_fFOV[m_iCurrentWeapon] / 2) / SinFast(45.0f);
+    plPos.pl_PositionVector(1) *= fFOVOffset;
+    plPos.pl_PositionVector(2) *= fFOVOffset;
+
+    if (!bResetZ) {
+      plPos.pl_PositionVector(3) *= fFOVOffset;
+    } else {
+      plPos.pl_PositionVector(3) = 0.0f;
+    }
+  };
+
   // calc weapon position for 3rd person view
   void CalcWeaponPosition3rdPersonView(FLOAT3D vPos, CPlacement3D &plPos, BOOL bResetZ) {
     plPos.pl_OrientationAngle = ANGLE3D(0, 0, 0);
-    // weapon handle
-    if (!m_bMirrorFire) {
-      plPos.pl_PositionVector = FLOAT3D( wpn_fX[m_iCurrentWeapon], wpn_fY[m_iCurrentWeapon],
-                                         wpn_fZ[m_iCurrentWeapon]);
-    } else {
-      plPos.pl_PositionVector = FLOAT3D( -wpn_fX[m_iCurrentWeapon], wpn_fY[m_iCurrentWeapon],
-                                          wpn_fZ[m_iCurrentWeapon]);
-    }
-    // weapon offset
-    if (!m_bMirrorFire) {
-      plPos.RelativeToAbsolute(CPlacement3D(vPos, ANGLE3D(0, 0, 0)));
-    } else {
-      plPos.RelativeToAbsolute(CPlacement3D(vPos, ANGLE3D(0, 0, 0)));
-    }
-    plPos.pl_PositionVector(1) *= SinFast(wpn_fFOV[m_iCurrentWeapon]/2) / SinFast(90.0f/2);
-    plPos.pl_PositionVector(2) *= SinFast(wpn_fFOV[m_iCurrentWeapon]/2) / SinFast(90.0f/2);
-    plPos.pl_PositionVector(3) *= SinFast(wpn_fFOV[m_iCurrentWeapon]/2) / SinFast(90.0f/2);
-
-    if (bResetZ) {
-      plPos.pl_PositionVector(3) = 0.0f;
-    }
+    CalcCommonWeaponPositionOffset(vPos, plPos, bResetZ); // [Cecil] Unified functionality
 
     // player view and absolute position
     CPlacement3D plView = ((CPlayer &)*m_penPlayer).en_plViewpoint;
@@ -1679,27 +1682,7 @@ functions:
   // calc weapon position
   void CalcWeaponPosition(FLOAT3D vPos, CPlacement3D &plPos, BOOL bResetZ) {
     plPos.pl_OrientationAngle = ANGLE3D(0, 0, 0);
-    // weapon handle
-    if (!m_bMirrorFire) {
-      plPos.pl_PositionVector = FLOAT3D( wpn_fX[m_iCurrentWeapon], wpn_fY[m_iCurrentWeapon],
-                                         wpn_fZ[m_iCurrentWeapon]);
-    } else {
-      plPos.pl_PositionVector = FLOAT3D( -wpn_fX[m_iCurrentWeapon], wpn_fY[m_iCurrentWeapon],
-                                          wpn_fZ[m_iCurrentWeapon]);
-    }
-    // weapon offset
-    if (!m_bMirrorFire) {
-      plPos.RelativeToAbsolute(CPlacement3D(vPos, ANGLE3D(0, 0, 0)));
-    } else {
-      plPos.RelativeToAbsolute(CPlacement3D(vPos, ANGLE3D(0, 0, 0)));
-    }
-    plPos.pl_PositionVector(1) *= SinFast(wpn_fFOV[m_iCurrentWeapon]/2) / SinFast(90.0f/2);
-    plPos.pl_PositionVector(2) *= SinFast(wpn_fFOV[m_iCurrentWeapon]/2) / SinFast(90.0f/2);
-    plPos.pl_PositionVector(3) *= SinFast(wpn_fFOV[m_iCurrentWeapon]/2) / SinFast(90.0f/2);
-
-    if (bResetZ) {
-      plPos.pl_PositionVector(3) = 0.0f;
-    }
+    CalcCommonWeaponPositionOffset(vPos, plPos, bResetZ); // [Cecil] Unified functionality
 
     // player view and absolute position
     CPlacement3D plView = ((CPlayer &)*m_penPlayer).en_plViewpoint;
@@ -1707,6 +1690,32 @@ functions:
       m_fEyesYOffset;
     plPos.RelativeToAbsolute(plView);
     plPos.RelativeToAbsolute(m_penPlayer->GetPlacement());
+  };
+
+  // [Cecil] Calculate crosshair hit position in real time from some origin point (e.g. eye-level viewpoint)
+  FLOAT3D CalcTargetPosition(const CPlacement3D &plOrigin) {
+    // Get weapon firing position
+    FLOAT3D vFirePos(0, 0, 0);
+
+    if (GetPlayer()->m_iViewState != PVT_3RDPERSONVIEW) {
+      vFirePos(1) = wpn_fFX[m_iCurrentWeapon];
+      vFirePos(2) = wpn_fFY[m_iCurrentWeapon];
+    }
+
+    // Calculate firing placement relative to the origin placement
+    CPlacement3D plCrosshair;
+    plCrosshair.pl_OrientationAngle = ANGLE3D(0, 0, 0);
+    CalcCommonWeaponPositionOffset(vFirePos, plCrosshair, FALSE);
+    plCrosshair.RelativeToAbsoluteSmooth(plOrigin);
+
+    // Fire a ray from there and return the hit point
+    CCastRay crRay(m_penPlayer, plCrosshair);
+    crRay.cr_bHitTranslucentPortals = FALSE;
+    crRay.cr_bPhysical = FALSE;
+    crRay.cr_ttHitModels = CCastRay::TT_COLLISIONBOX;
+    GetWorld()->CastRay(crRay);
+
+    return crRay.cr_vHit;
   };
 
   // setup 3D sound parameters

@@ -4940,6 +4940,50 @@ functions:
  *                 END OF PLAYER ACTIONS                    *
  ************************************************************/
 
+  // [Cecil] Adjust angle according to sharp turning to compensate for "input lag"
+  void CompensateForSharpTurning(CPlacement3D &plView, CPlacement3D &plPos) {
+    // Get prediction tail
+    CPlayer *pen = (CPlayer *)GetPredictionTail();
+
+    // Add local rotation
+    if (m_ulFlags & PLF_ISZOOMING) {
+      FLOAT fRotationDamping = ((CPlayerWeapons &)*m_penWeapons).m_fSniperFOV / ((CPlayerWeapons &)*m_penWeapons).m_fSniperMaxFOV;
+      plView.pl_OrientationAngle = pen->en_plViewpoint.pl_OrientationAngle + (pen->m_aLocalRotation - pen->m_aLastRotation) * fRotationDamping;
+    } else {
+      plView.pl_OrientationAngle = pen->en_plViewpoint.pl_OrientationAngle + (pen->m_aLocalRotation - pen->m_aLastRotation);
+    }
+
+    // Make sure it stays within bounds
+    RoundViewAngle(plView.pl_OrientationAngle(2), PITCH_MAX);
+    RoundViewAngle(plView.pl_OrientationAngle(3), BANKING_MAX);
+
+    // Compensate for other rotations that are applied to the player, e.g. rotating brushes, weird gravities (these need to be lerped)
+    ANGLE3D aCurr = pen->GetPlacement().pl_OrientationAngle;
+    ANGLE3D aLast = pen->en_plLastPlacement.pl_OrientationAngle;
+    ANGLE3D aDesired = pen->en_aDesiredRotationRelative * _pTimer->TickQuantum;
+
+    FLOATmatrix3D mCurr;    MakeRotationMatrixFast(mCurr, aCurr);
+    FLOATmatrix3D mLast;    MakeRotationMatrixFast(mLast, aLast);
+    FLOATmatrix3D mDesired; MakeRotationMatrixFast(mDesired, aDesired);
+    mDesired = en_mRotation * (mDesired * !en_mRotation);
+
+    FLOATmatrix3D mForced = !mDesired * mCurr * !mLast; // = aCurr - aLast - aDesired;
+    ANGLE3D aForced; DecomposeRotationMatrixNoSnap(aForced, mForced);
+
+    if (aForced.MaxNorm() < 1E-2) {
+      aForced = ANGLE3D(0, 0, 0);
+    }
+
+    FLOATquat3D qForced; qForced.FromEuler(aForced);
+    FLOATquat3D qZero;   qZero.FromEuler(ANGLE3D(0, 0, 0));
+    FLOATquat3D qLerped = Slerp(_pTimer->GetLerpFactor(), qZero, qForced);
+
+    FLOATmatrix3D m;
+    qLerped.ToMatrix(m);
+    m = m * mDesired * mLast;
+
+    DecomposeRotationMatrixNoSnap(plPos.pl_OrientationAngle, m);
+  };
 
   // Get current placement that the player views from in absolute space.
   void GetLerpedAbsoluteViewPlacement(CPlacement3D &plView) {
@@ -4949,63 +4993,45 @@ functions:
       return;
     }
 
-    BOOL bSharpTurning = 
+    const BOOL bSharpTurning = 
       (GetSettings()->ps_ulFlags&PSF_SHARPTURNING) &&
       _pNetwork->IsPlayerLocal((CPlayer*)GetPredictionTail());
 
     // lerp player viewpoint
-    FLOAT fLerpFactor = _pTimer->GetLerpFactor();
-    plView.Lerp(en_plLastViewpoint, en_plViewpoint, fLerpFactor);
+    plView.Lerp(en_plLastViewpoint, en_plViewpoint, _pTimer->GetLerpFactor());
 
-    // moving banking and soft eyes
-    ((CPlayerAnimator&)*m_penAnimator).ChangeView(plView);
-    // body and head attachment animation
-    ((CPlayerAnimator&)*m_penAnimator).BodyAndHeadOrientation(plView);
+    // [Cecil] This is done by SetupView(), so it shouldn't be called again when
+    // simply calculating the original viewpoint regardless of third person view
+    if (!_bDiscard3rdView) {
+      // moving banking and soft eyes
+      ((CPlayerAnimator&)*m_penAnimator).ChangeView(plView);
+      // body and head attachment animation
+      ((CPlayerAnimator&)*m_penAnimator).BodyAndHeadOrientation(plView);
+    }
+
+    // Current player placement
+    CPlacement3D plPosLerped = GetLerpedPlacement();
 
     // return player eyes view
     if (m_iViewState == PVT_PLAYEREYES || _bDiscard3rdView) {
-      CPlacement3D plPosLerped = GetLerpedPlacement();
       if (bSharpTurning) {
-        // get your prediction tail
-        CPlayer *pen = (CPlayer*)GetPredictionTail();
-        // add local rotation
-        if (m_ulFlags&PLF_ISZOOMING) {
-          FLOAT fRotationDamping = ((CPlayerWeapons &)*m_penWeapons).m_fSniperFOV/((CPlayerWeapons &)*m_penWeapons).m_fSniperMaxFOV;
-          plView.pl_OrientationAngle = pen->en_plViewpoint.pl_OrientationAngle + (pen->m_aLocalRotation-pen->m_aLastRotation)*fRotationDamping;
-        } else {
-          plView.pl_OrientationAngle = pen->en_plViewpoint.pl_OrientationAngle + (pen->m_aLocalRotation-pen->m_aLastRotation);
-        }
-        // make sure it doesn't go out of limits
-        RoundViewAngle(plView.pl_OrientationAngle(2), PITCH_MAX);
-        RoundViewAngle(plView.pl_OrientationAngle(3), BANKING_MAX);
-
-        // compensate for rotations that happen to the player without his/hers will
-        // (rotating brushes, weird gravities...)
-        // (these need to be lerped)
-        ANGLE3D aCurr = pen->GetPlacement().pl_OrientationAngle;
-        ANGLE3D aLast = pen->en_plLastPlacement.pl_OrientationAngle;
-        ANGLE3D aDesired = pen->en_aDesiredRotationRelative*_pTimer->TickQuantum;
-        FLOATmatrix3D mCurr;      MakeRotationMatrixFast(mCurr, aCurr);
-        FLOATmatrix3D mLast;      MakeRotationMatrixFast(mLast, aLast);
-        FLOATmatrix3D mDesired;   MakeRotationMatrixFast(mDesired, aDesired);
-        mDesired = en_mRotation*(mDesired*!en_mRotation);
-        FLOATmatrix3D mForced = !mDesired*mCurr*!mLast; // = aCurr-aLast-aDesired;
-        ANGLE3D aForced; DecomposeRotationMatrixNoSnap(aForced, mForced);
-        if (aForced.MaxNorm()<1E-2) {
-          aForced = ANGLE3D(0,0,0);
-        }
-        FLOATquat3D qForced; qForced.FromEuler(aForced);
-        FLOATquat3D qZero;   qZero.FromEuler(ANGLE3D(0,0,0));
-        FLOATquat3D qLerped = Slerp(fLerpFactor, qZero, qForced);
-        FLOATmatrix3D m;
-        qLerped.ToMatrix(m);
-        m=m*mDesired*mLast;
-        DecomposeRotationMatrixNoSnap(plPosLerped.pl_OrientationAngle, m);
+        // [Cecil] Moved all code out of this block into the function
+        CompensateForSharpTurning(plView, plPosLerped);
       }
+
       plView.RelativeToAbsoluteSmooth(plPosLerped);
+
     // 3rd person view
     } else if (m_iViewState == PVT_3RDPERSONVIEW) {
-      plView = m_pen3rdPersonView->GetLerpedPlacement();
+      // [Cecil] Adjust third person view for sharp turning
+      if (bSharpTurning) {
+        CompensateForSharpTurning(plView, plPosLerped);
+      }
+
+      // [Cecil] Calculate camera placement immediately for this frame instead of using camera's physical lerped placement
+      FLOATmatrix3D mDummy;
+      ((CPlayerView &)*m_pen3rdPersonView).CalcCameraPosition(this, plPosLerped, plView, mDummy);
+
     // camera view for player auto actions
     } else if (m_iViewState == PVT_PLAYERAUTOVIEW) {
       plView = m_penView->GetLerpedPlacement();
