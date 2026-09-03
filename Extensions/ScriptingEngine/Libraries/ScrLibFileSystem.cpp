@@ -311,9 +311,7 @@ static Method<CTextureObject> _aMethods[] = {
 
 }; // namespace
 
-// CTFileStream class methods
-namespace SqStream {
-
+// CTFileStream wrapper
 struct Stream {
   CTFileStream strm;
   bool bOpen; // Whether the stream is currently open
@@ -322,7 +320,18 @@ struct Stream {
   Stream() : bOpen(false), bWriting(false) {};
 };
 
-static SQInteger Create(HSQUIRRELVM v, int, Stream &val) {
+const CTString _strStreamLocalDir = "Temp\\CustomSquirrelData\\";
+
+#define ASSERT_OPEN      { if (!val.bOpen) return sq_throwerror(v, "stream isn't open"); }
+#define ASSERT_CAN_WRITE { if (!val.bOpen || !val.bWriting) return sq_throwerror(v, "stream isn't open for writing"); }
+#define ASSERT_CAN_READ  { if (!val.bOpen ||  val.bWriting) return sq_throwerror(v, "stream isn't open for reading"); }
+
+// CTFileStream class methods for reading
+namespace SqReader {
+
+// [Cecil] TODO: Documentation entry to add later:
+// `OpenLocal(path)` | Opens an existing file using the specified path inside `Temp/CustomSquirrelData/` relative to the game directory either from disk or from any loaded GRO archive for reading data.
+static SQInteger OpenLocal(HSQUIRRELVM v, int, Stream &val) {
   const SQChar *strPath;
 
   if (SQ_FAILED(sq_getstring(v, 2, &strPath))) {
@@ -333,14 +342,15 @@ static SQInteger Create(HSQUIRRELVM v, int, Stream &val) {
     return sq_throwerror(v, val.bWriting ? "stream is already open for writing" : "stream is already open for reading");
   }
 
-  // Make sure the directory exists
+  // Take provided path and append it to the local directory with custom Squirrel data
   CTString fnm = strPath;
-  IDir::CreateDir(fnm);
+  IFiles::StripRelativePaths(fnm);
+  fnm = _strStreamLocalDir + fnm; // Always relative
 
   try {
-    val.strm.Create_t(fnm);
+    val.strm.Open_t(fnm);
     val.bOpen = true;
-    val.bWriting = true;
+    val.bWriting = false;
 
   } catch(char *strError) {
     return sq_throwerror(v, strError);
@@ -360,8 +370,25 @@ static SQInteger Open(HSQUIRRELVM v, int, Stream &val) {
     return sq_throwerror(v, val.bWriting ? "stream is already open for writing" : "stream is already open for reading");
   }
 
+  CTString fnm = strPath;
+
+  // Make sure the path is within the game folder
+  CTFileName fnmExpandedCheck;
+
+  if (ExpandFilePath(EFP_READ, fnm, fnmExpandedCheck) == EFP_FILE) {
+    // Just in case ExpandFilePath() didn't do it for some reason
+    IFiles::SetAbsolutePath(fnmExpandedCheck);
+
+    // Path for reading doesn't start with the game directory
+    if (!fnmExpandedCheck.HasPrefix(IDir::AppPath())) {
+      SQChar strError[256];
+      scsprintf(strError, 256, LOCALIZE("Cannot open file `%s' (%s)"), fnm.str_String, "Path is outside the game directory");
+      return sq_throwerror(v, strError);
+    }
+  }
+
   try {
-    val.strm.Open_t(CTString(strPath));
+    val.strm.Open_t(fnm);
     val.bOpen = true;
     val.bWriting = false;
 
@@ -385,9 +412,503 @@ static SQInteger IsOpen(HSQUIRRELVM v, int, Stream &val) {
   return 1;
 };
 
-#define ASSERT_OPEN      { if (!val.bOpen) return sq_throwerror(v, "stream isn't open"); }
-#define ASSERT_CAN_WRITE { if (!val.bOpen || !val.bWriting) return sq_throwerror(v, "stream isn't open for writing"); }
-#define ASSERT_CAN_READ  { if (!val.bOpen ||  val.bWriting) return sq_throwerror(v, "stream isn't open for reading"); }
+static SQInteger GetDescription(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  sq_pushstring(v, val.strm.GetDescription().str_String, -1);
+  return 1;
+};
+
+static SQInteger Seek(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+
+  SQInteger iOffset, iSeekDir;
+  sq_getinteger(v, 2, &iOffset);
+  sq_getinteger(v, 3, &iSeekDir);
+
+  try {
+    val.strm.Seek_t(iOffset, (CTStream::SeekDir)iSeekDir);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger SetPos(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+
+  SQInteger iPosition;
+  sq_getinteger(v, 2, &iPosition);
+
+  try {
+    val.strm.SetPos_t(iPosition);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger GetPos(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  SLONG slPos;
+
+  try {
+    slPos = val.strm.GetPos_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, slPos);
+  return 1;
+};
+
+static SQInteger AtEOF(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  sq_pushbool(v, val.strm.AtEOF());
+  return 1;
+};
+
+static SQInteger GetSize(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  sq_pushinteger(v, val.strm.GetStreamSize());
+  return 1;
+};
+
+static SQInteger GetCRC32(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_OPEN;
+  ULONG ulCRC;
+
+  try {
+    ulCRC = val.strm.GetStreamCRC32_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, ulCRC);
+  return 1;
+};
+
+static SQInteger ReadFloat(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  FLOAT f;
+
+  try {
+    val.strm >> f;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushfloat(v, f);
+  return 1;
+};
+
+static SQInteger ReadDouble(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  DOUBLE f;
+
+  try {
+    val.strm >> f;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushfloat(v, f);
+  return 1;
+};
+
+static SQInteger ReadU8(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  UBYTE i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadU16(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  UWORD i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadU32(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  ULONG i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadU64(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  unsigned __int64 i;
+
+  try {
+    val.strm.Read_t(&i, sizeof(i));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadS8(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  SBYTE i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadS16(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  SWORD i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadS32(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  SLONG i;
+
+  try {
+    val.strm >> i;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadS64(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  __int64 i;
+
+  try {
+    val.strm.Read_t(&i, sizeof(i));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushinteger(v, i);
+  return 1;
+};
+
+static SQInteger ReadBool(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  BOOL b;
+
+  try {
+    val.strm >> b;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushbool(v, b);
+  return 1;
+};
+
+static SQInteger ReadString(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  CTString str;
+
+  try {
+    val.strm >> str;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger ReadStringNull(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  UBYTE ub;
+  SLONG slPos, slLen;
+  char *str = NULL;
+
+  try {
+    slPos = val.strm.GetPos_t();
+
+    do {
+      val.strm >> ub;
+    } while (ub != 0 && !val.strm.AtEOF());
+
+    slLen = val.strm.GetPos_t() - slPos;
+    val.strm.SetPos_t(slPos);
+
+    str = (char *)AllocMemory(slLen);
+    val.strm.Read_t(str, slLen);
+    str[slLen - 1] = '\0'; // Safety
+
+  } catch (char *strError) {
+    // Free string bytes on error
+    if (str != NULL) FreeMemory(str);
+    return sq_throwerror(v, strError);
+  }
+
+  // Fail-safe
+  if (str == NULL) return sq_throwerror(v, "no string has been created after reading");
+
+  sq_pushstring(v, str, -1);
+  FreeMemory(str);
+
+  return 1;
+};
+
+static SQInteger ReadFilename(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  CTFileName fnm;
+
+  try {
+    val.strm >> fnm;
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, fnm.str_String, -1);
+  return 1;
+};
+
+static SQInteger ReadBuffer(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  SQInteger ct;
+  sq_getinteger(v, 2, &ct);
+
+  VM &vm = GetVMClass(v);
+
+  vm.SetArgumentBypass(true);
+  PushNewInstance(CRawDataBuffer, pbuf, vm.Root(), "CRawDataBuffer");
+  vm.SetArgumentBypass(false);
+
+  pbuf->New(ct);
+
+  try {
+    val.strm.Read_t(pbuf->aData.sa_Array, ct);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 1;
+};
+
+static SQInteger GetLine(HSQUIRRELVM v, int ctArgs, Stream &val) {
+  ASSERT_CAN_READ;
+
+  SQInteger iDelimiter = '\n';
+  if (ctArgs > 0) sq_getinteger(v, 2, &iDelimiter);
+
+  CTString str;
+
+  try {
+    val.strm.GetLine_t(str, (char)(UBYTE)iDelimiter);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, str.str_String, -1);
+  return 1;
+};
+
+static SQInteger ExpectKeyword(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+
+  const SQChar *str;
+  sq_getstring(v, 2, &str);
+
+  try {
+    val.strm.ExpectKeyword_t(str);
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger ExpectID(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+
+  const SQChar *strID;
+  sq_getstring(v, 2, &strID);
+
+  // Pad the ID with extra spaces, if it's too short
+  CTString strLongID = "    ";
+  memcpy(strLongID.str_String, strID, Min(strlen(strID), (size_t)4));
+
+  try {
+    val.strm.ExpectID_t(CChunkID(strLongID));
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger PeekID(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  CChunkID cid;
+
+  try {
+    cid = val.strm.PeekID_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, cid.cid_ID, 4);
+  return 1;
+};
+
+static SQInteger GetID(HSQUIRRELVM v, int, Stream &val) {
+  ASSERT_CAN_READ;
+  CChunkID cid;
+
+  try {
+    cid = val.strm.GetID_t();
+  } catch (char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, cid.cid_ID, 4);
+  return 1;
+};
+
+static Method<Stream> _aMethods[] = {
+  // [Cecil] TEMP: Only implement this if implementing FileSystem.Writer class
+  //{ "OpenLocal",   &OpenLocal,   2, ".s" },
+  { "Open",   &Open,   2, ".s" },
+  { "Close",  &Close,  1, "." },
+  { "IsOpen", &IsOpen, 1, "." },
+  { "GetDescription", &GetDescription, 1, "." },
+
+  // Stream navigation
+  { "Seek",     &Seek,     3, ".nn" },
+  { "SetPos",   &SetPos,   2, ".n" },
+  { "GetPos",   &GetPos,   1, "." },
+  { "AtEOF",    &AtEOF,    1, "." },
+  { "GetSize",  &GetSize,  1, "." },
+  { "GetCRC32", &GetCRC32, 1, "." },
+
+  // Binary reading
+  { "ReadFloat",      &ReadFloat,      1, "." },
+  { "ReadDouble",     &ReadDouble,     1, "." },
+  { "ReadU8",         &ReadU8,         1, "." },
+  { "ReadU16",        &ReadU16,        1, "." },
+  { "ReadU32",        &ReadU32,        1, "." },
+  { "ReadU64",        &ReadU64,        1, "." },
+  { "ReadS8",         &ReadS8,         1, "." },
+  { "ReadS16",        &ReadS16,        1, "." },
+  { "ReadS32",        &ReadS32,        1, "." },
+  { "ReadS64",        &ReadS64,        1, "." },
+  { "ReadBool",       &ReadBool,       1, "." },
+  { "ReadString",     &ReadString,     1, "." },
+  { "ReadStringNull", &ReadStringNull, 1, "." },
+  { "ReadFilename",   &ReadFilename,   1, "." },
+  { "ReadBuffer",     &ReadBuffer,     2, ".n" },
+
+  // Text
+  { "GetLine",       &GetLine,      -1, ".n" },
+  { "ExpectKeyword", &ExpectKeyword, 2, ".s" },
+
+  // Chunk IDs
+  { "ExpectID", &ExpectID, 2, ".s" },
+  { "PeekID",   &PeekID,   1, "." },
+  { "GetID",    &GetID,    1, "." },
+};
+
+}; // namespace
+
+// CTFileStream class methods for writing
+namespace SqWriter {
+
+static SQInteger CreateLocal(HSQUIRRELVM v, int, Stream &val) {
+  const SQChar *strPath;
+
+  if (SQ_FAILED(sq_getstring(v, 2, &strPath))) {
+    return sq_throwerror(v, "expected a path to a file in argument 1");
+  }
+
+  if (val.bOpen) {
+    return sq_throwerror(v, val.bWriting ? "stream is already open for writing" : "stream is already open for reading");
+  }
+
+  // Take provided path and append it to the local directory with custom Squirrel data
+  CTString fnm = strPath;
+  IFiles::StripRelativePaths(fnm);
+  fnm = IDir::AppPath() + _strStreamLocalDir + fnm; // Always absolute
+
+  // Make sure the path is within the game folder
+  /*CTFileName fnmExpandedCheck;
+
+  if (ExpandFilePath(EFP_WRITE, fnm, fnmExpandedCheck) == EFP_FILE) {
+    // Just in case ExpandFilePath() didn't do it for some reason
+    IFiles::SetAbsolutePath(fnmExpandedCheck);
+
+    // Path for writing doesn't start with the game directory
+    if (!fnmExpandedCheck.HasPrefix(IDir::AppPath())) {
+      SQChar strError[256];
+      scsprintf(strError, 256, LOCALIZE("Cannot create file `%s' (%s)"), fnm.str_String, "Path is outside the game directory");
+      return sq_throwerror(v, strError);
+    }
+  }*/
+
+  // Make sure the directory exists
+  IDir::CreateDir(fnm);
+
+  try {
+    val.strm.Create_t(fnm);
+    val.bOpen = true;
+    val.bWriting = true;
+
+  } catch(char *strError) {
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
+};
+
+static SQInteger Close(HSQUIRRELVM v, int, Stream &val) {
+  if (!val.bOpen) return 0;
+
+  val.strm.Close();
+  val.bOpen = false;
+  return 0;
+};
+
+static SQInteger IsOpen(HSQUIRRELVM v, int, Stream &val) {
+  sq_pushbool(v, val.bOpen);
+  return 1;
+};
 
 static SQInteger GetDescription(HSQUIRRELVM v, int, Stream &val) {
   ASSERT_OPEN;
@@ -662,244 +1183,6 @@ static SQInteger WriteBuffer(HSQUIRRELVM v, int, Stream &val) {
   return 0;
 };
 
-static SQInteger ReadFloat(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  FLOAT f;
-
-  try {
-    val.strm >> f;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushfloat(v, f);
-  return 1;
-};
-
-static SQInteger ReadDouble(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  DOUBLE f;
-
-  try {
-    val.strm >> f;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushfloat(v, f);
-  return 1;
-};
-
-static SQInteger ReadU8(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  UBYTE i;
-
-  try {
-    val.strm >> i;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushinteger(v, i);
-  return 1;
-};
-
-static SQInteger ReadU16(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  UWORD i;
-
-  try {
-    val.strm >> i;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushinteger(v, i);
-  return 1;
-};
-
-static SQInteger ReadU32(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  ULONG i;
-
-  try {
-    val.strm >> i;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushinteger(v, i);
-  return 1;
-};
-
-static SQInteger ReadU64(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  unsigned __int64 i;
-
-  try {
-    val.strm.Read_t(&i, sizeof(i));
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushinteger(v, i);
-  return 1;
-};
-
-static SQInteger ReadS8(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  SBYTE i;
-
-  try {
-    val.strm >> i;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushinteger(v, i);
-  return 1;
-};
-
-static SQInteger ReadS16(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  SWORD i;
-
-  try {
-    val.strm >> i;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushinteger(v, i);
-  return 1;
-};
-
-static SQInteger ReadS32(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  SLONG i;
-
-  try {
-    val.strm >> i;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushinteger(v, i);
-  return 1;
-};
-
-static SQInteger ReadS64(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  __int64 i;
-
-  try {
-    val.strm.Read_t(&i, sizeof(i));
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushinteger(v, i);
-  return 1;
-};
-
-static SQInteger ReadBool(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  BOOL b;
-
-  try {
-    val.strm >> b;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushbool(v, b);
-  return 1;
-};
-
-static SQInteger ReadString(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  CTString str;
-
-  try {
-    val.strm >> str;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushstring(v, str.str_String, -1);
-  return 1;
-};
-
-static SQInteger ReadStringNull(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  UBYTE ub;
-  SLONG slPos, slLen;
-  char *str = NULL;
-
-  try {
-    slPos = val.strm.GetPos_t();
-
-    do {
-      val.strm >> ub;
-    } while (ub != 0 && !val.strm.AtEOF());
-
-    slLen = val.strm.GetPos_t() - slPos;
-    val.strm.SetPos_t(slPos);
-
-    str = (char *)AllocMemory(slLen);
-    val.strm.Read_t(str, slLen);
-    str[slLen - 1] = '\0'; // Safety
-
-  } catch (char *strError) {
-    // Free string bytes on error
-    if (str != NULL) FreeMemory(str);
-    return sq_throwerror(v, strError);
-  }
-
-  // Fail-safe
-  if (str == NULL) return sq_throwerror(v, "no string has been created after reading");
-
-  sq_pushstring(v, str, -1);
-  FreeMemory(str);
-
-  return 1;
-};
-
-static SQInteger ReadFilename(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  CTFileName fnm;
-
-  try {
-    val.strm >> fnm;
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushstring(v, fnm.str_String, -1);
-  return 1;
-};
-
-static SQInteger ReadBuffer(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  SQInteger ct;
-  sq_getinteger(v, 2, &ct);
-
-  VM &vm = GetVMClass(v);
-
-  vm.SetArgumentBypass(true);
-  PushNewInstance(CRawDataBuffer, pbuf, vm.Root(), "CRawDataBuffer");
-  vm.SetArgumentBypass(false);
-
-  pbuf->New(ct);
-
-  try {
-    val.strm.Read_t(pbuf->aData.sa_Array, ct);
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-  return 1;
-};
-
 static SQInteger PutLine(HSQUIRRELVM v, int, Stream &val) {
   ASSERT_CAN_WRITE;
   const SQChar *str;
@@ -926,38 +1209,6 @@ static SQInteger PutString(HSQUIRRELVM v, int, Stream &val) {
   return 0;
 };
 
-static SQInteger GetLine(HSQUIRRELVM v, int ctArgs, Stream &val) {
-  ASSERT_CAN_READ;
-
-  SQInteger iDelimiter = '\n';
-  if (ctArgs > 0) sq_getinteger(v, 2, &iDelimiter);
-
-  CTString str;
-
-  try {
-    val.strm.GetLine_t(str, (char)(UBYTE)iDelimiter);
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushstring(v, str.str_String, -1);
-  return 1;
-};
-
-static SQInteger ExpectKeyword(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-
-  const SQChar *str;
-  sq_getstring(v, 2, &str);
-
-  try {
-    val.strm.ExpectKeyword_t(str);
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-  return 0;
-};
-
 static SQInteger WriteID(HSQUIRRELVM v, int, Stream &val) {
   ASSERT_CAN_WRITE;
 
@@ -976,55 +1227,8 @@ static SQInteger WriteID(HSQUIRRELVM v, int, Stream &val) {
   return 0;
 };
 
-static SQInteger ExpectID(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-
-  const SQChar *strID;
-  sq_getstring(v, 2, &strID);
-
-  // Pad the ID with extra spaces, if it's too short
-  CTString strLongID = "    ";
-  memcpy(strLongID.str_String, strID, Min(strlen(strID), (size_t)4));
-
-  try {
-    val.strm.ExpectID_t(CChunkID(strLongID));
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-  return 0;
-};
-
-static SQInteger PeekID(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  CChunkID cid;
-
-  try {
-    cid = val.strm.PeekID_t();
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushstring(v, cid.cid_ID, 4);
-  return 1;
-};
-
-static SQInteger GetID(HSQUIRRELVM v, int, Stream &val) {
-  ASSERT_CAN_READ;
-  CChunkID cid;
-
-  try {
-    cid = val.strm.GetID_t();
-  } catch (char *strError) {
-    return sq_throwerror(v, strError);
-  }
-
-  sq_pushstring(v, cid.cid_ID, 4);
-  return 1;
-};
-
 static Method<Stream> _aMethods[] = {
-  { "Create", &Create, 2, ".s" },
-  { "Open",   &Open,   2, ".s" },
+  { "CreateLocal", &CreateLocal, 2, ".s" },
   { "Close",  &Close,  1, "." },
   { "IsOpen", &IsOpen, 1, "." },
   { "GetDescription", &GetDescription, 1, "." },
@@ -1054,34 +1258,12 @@ static Method<Stream> _aMethods[] = {
   { "WriteFilename",   &WriteFilename,   2, ".s" },
   { "WriteBuffer",     &WriteBuffer,     2, ".x" },
 
-  // Binary reading
-  { "ReadFloat",      &ReadFloat,      1, "." },
-  { "ReadDouble",     &ReadDouble,     1, "." },
-  { "ReadU8",         &ReadU8,         1, "." },
-  { "ReadU16",        &ReadU16,        1, "." },
-  { "ReadU32",        &ReadU32,        1, "." },
-  { "ReadU64",        &ReadU64,        1, "." },
-  { "ReadS8",         &ReadS8,         1, "." },
-  { "ReadS16",        &ReadS16,        1, "." },
-  { "ReadS32",        &ReadS32,        1, "." },
-  { "ReadS64",        &ReadS64,        1, "." },
-  { "ReadBool",       &ReadBool,       1, "." },
-  { "ReadString",     &ReadString,     1, "." },
-  { "ReadStringNull", &ReadStringNull, 1, "." },
-  { "ReadFilename",   &ReadFilename,   1, "." },
-  { "ReadBuffer",     &ReadBuffer,     2, ".n" },
-
   // Text
   { "PutLine",       &PutLine,       2, ".s" },
   { "PutString",     &PutString,     2, ".s" },
-  { "GetLine",       &GetLine,      -1, ".n" },
-  { "ExpectKeyword", &ExpectKeyword, 2, ".s" },
 
   // Chunk IDs
   { "WriteID",  &WriteID,  2, ".s" },
-  { "ExpectID", &ExpectID, 2, ".s" },
-  { "PeekID",   &PeekID,   1, "." },
-  { "GetID",    &GetID,    1, "." },
 };
 
 }; // namespace
@@ -1120,15 +1302,26 @@ void VM::RegisterFileSystem(void) {
     Root().AddClass(sqcTexture);
   }
   {
-    Class<SqStream::Stream> sqcWriter(GetVM(), "Stream", NULL);
+    Class<Stream> sqcReader(GetVM(), "Reader", NULL);
 
     // Methods
-    for (i = 0; i < ARRAYCOUNT(SqStream::_aMethods); i++) {
-      sqcWriter.RegisterMethod(SqStream::_aMethods[i]);
+    for (i = 0; i < ARRAYCOUNT(SqReader::_aMethods); i++) {
+      sqcReader.RegisterMethod(SqReader::_aMethods[i]);
+    }
+
+    sqtFileSystem.AddClass(sqcReader);
+  }
+  // [Cecil] TEMP: Implement this later?
+  /*{
+    Class<Stream> sqcWriter(GetVM(), "Writer", NULL);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqWriter::_aMethods); i++) {
+      sqcWriter.RegisterMethod(SqWriter::_aMethods[i]);
     }
 
     sqtFileSystem.AddClass(sqcWriter);
-  }
+  }*/
 
   // Animation flags
   Enumeration enAnimFlags(GetVM());
