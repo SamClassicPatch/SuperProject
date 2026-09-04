@@ -818,10 +818,19 @@ BOOL SetPlayerAppearance(CModelObject *pmo, CPlayerCharacter *ppc, CTString &str
   DECLARE_CTFILENAME(fnmDefault, "Models\\Player\\SeriousSam.amc");
 #endif
 
+  // [Cecil] Fallback default player appearance that won't be overwritten by mods
+  DECLARE_CTFILENAME(fnmFallback, "ModelsPatch\\Player\\DefaultSkin.amc");
+
   // if no character, or player models are disabled
   if (ppc==NULL) {
     // set default appearance
     BOOL bSucceeded = SetPlayerAppearance_internal(pmo, fnmDefault, strName, bPreview);
+
+    // [Cecil] Try the fallback model if the default one fails
+    if (!bSucceeded) {
+      bSucceeded = SetPlayerAppearance_internal(pmo, fnmFallback, strName, bPreview);
+    }
+
     if (!bSucceeded) {
       FatalError(LOCALIZE("Cannot load default player model!"));
     }
@@ -842,9 +851,13 @@ BOOL SetPlayerAppearance(CModelObject *pmo, CPlayerCharacter *ppc, CTString &str
     return TRUE;
   } else if (SetPlayerAppearance_internal(pmo, fnmDefault, strName, bPreview)) {  // HAVE TO SET DEFAULT HERE!
     return TRUE;
-  } else {
-    return FALSE;
+
+  // [Cecil] Try the fallback model if the default one fails
+  } else if (SetPlayerAppearance_internal(pmo, fnmFallback, strName, bPreview)) {
+    return TRUE;
   }
+
+  return FALSE;
 }
 
 
