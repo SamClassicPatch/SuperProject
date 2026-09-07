@@ -1072,6 +1072,9 @@ static Method<CEntityPointer> _aMethods[] = {
 // CEntityProperty class methods
 namespace SqProp {
 
+// Make sure the property in the pointer exists
+#define ASSERT_PROPERTY { if (val == NULL) return sq_throwerror(v, "Entities.Property is NULL"); }
+
 static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CEntityProperty *&val) {
   val = NULL;
 
@@ -1084,36 +1087,43 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CEntityProperty *&val) {
 };
 
 static SQInteger GetPropType(HSQUIRRELVM v, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
   sq_pushinteger(v, val->ep_eptType);
   return 1;
 };
 
 static SQInteger GetPropID(HSQUIRRELVM v, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
   sq_pushinteger(v, val->ep_ulID);
   return 1;
 };
 
 static SQInteger GetPropOffset(HSQUIRRELVM v, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
   sq_pushinteger(v, val->ep_slOffset);
   return 1;
 };
 
 static SQInteger GetPropName(HSQUIRRELVM v, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
   sq_pushstring(v, val->ep_strName, -1);
   return 1;
 };
 
 static SQInteger GetPropFlags(HSQUIRRELVM v, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
   sq_pushinteger(v, val->ep_ulFlags);
   return 1;
 };
 
 static SQInteger GetPropShortcut(HSQUIRRELVM v, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
   sq_pushinteger(v, val->ep_chShortcut);
   return 1;
 };
 
 static SQInteger GetPropColor(HSQUIRRELVM v, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
   sq_pushinteger(v, val->ep_colColor);
   return 1;
 };
@@ -1132,6 +1142,8 @@ static SQInteger Equal(HSQUIRRELVM v, int, CEntityProperty *&val) {
 };
 
 static SQInteger GetEnumValueCount(HSQUIRRELVM v, int, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
+
   if (val->ep_pepetEnumType == NULL) {
     return sq_throwerror(v, "entity property does not point to any enum type");
   }
@@ -1141,6 +1153,8 @@ static SQInteger GetEnumValueCount(HSQUIRRELVM v, int, CEntityProperty *&val) {
 };
 
 static SQInteger GetEnumValues(HSQUIRRELVM v, int, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
+
   if (val->ep_pepetEnumType == NULL) {
     return sq_throwerror(v, "entity property does not point to any enum type");
   }
@@ -1167,6 +1181,7 @@ static SQInteger GetEnumValues(HSQUIRRELVM v, int, CEntityProperty *&val) {
 };
 
 static SQInteger GetValue(HSQUIRRELVM v, int, CEntityProperty *&val) {
+  ASSERT_PROPERTY;
   GetInstanceValueVerify(CEntityPointer, ppen, v, 2);
   if (*ppen == NULL) return sq_throwerror(v, "CEntityPointer is NULL in argument 2");
   return PushPropValue(v, *val, *ppen);
@@ -1845,13 +1860,13 @@ void VM::RegisterEntities(void) {
       sqcProp.RegisterMethod(SqProp::_aMethods[i]);
     }
 
-    sqcProp.RegisterVar("type",     &SqProp::GetPropType,     NULL);
-    sqcProp.RegisterVar("id",       &SqProp::GetPropID,       NULL);
-    sqcProp.RegisterVar("offset",   &SqProp::GetPropOffset,   NULL);
-    sqcProp.RegisterVar("name",     &SqProp::GetPropName,     NULL);
-    sqcProp.RegisterVar("flags",    &SqProp::GetPropFlags,    NULL);
-    sqcProp.RegisterVar("shortcut", &SqProp::GetPropShortcut, NULL);
-    sqcProp.RegisterVar("color",    &SqProp::GetPropColor,    NULL);
+    sqcProp.RegisterVar("eptType",    &SqProp::GetPropType,     NULL);
+    sqcProp.RegisterVar("ulID",       &SqProp::GetPropID,       NULL);
+    sqcProp.RegisterVar("slOffset",   &SqProp::GetPropOffset,   NULL);
+    sqcProp.RegisterVar("strName",    &SqProp::GetPropName,     NULL);
+    sqcProp.RegisterVar("ulFlags",    &SqProp::GetPropFlags,    NULL);
+    sqcProp.RegisterVar("chShortcut", &SqProp::GetPropShortcut, NULL);
+    sqcProp.RegisterVar("colColor",   &SqProp::GetPropColor,    NULL);
 
     sqtEntities.AddClass(sqcProp);
   }
