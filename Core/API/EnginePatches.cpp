@@ -17,8 +17,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include <Core/Base/Unzip.h>
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
 // Empty method
 static void DummyVoidFunc(void) { NOTHING; };
 
@@ -41,10 +39,14 @@ ICorePatches::ICorePatches() {
   _bLogTimestamps = FALSE;
   _iColoredTextInServerLog = 2; // 0 - Vanilla behavior; 1 - No colors; 2 - Colors; 3 - Colors with white background for dark text
 
+  _bUsePlaceholderResources = 0;
+
   _eWorldFormat = E_LF_CURRENT;
   _iWantedWorldFormat = -1;
   _strWorldConverters = "";
 };
+
+#if _PATCHCONFIG_ENGINEPATCHES
 
 // Apply core patches (called after Core initialization!)
 void ICorePatches::CorePatches(void) {

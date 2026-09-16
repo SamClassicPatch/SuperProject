@@ -22,8 +22,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include <Core/Base/GameDirectories.h>
 
-#if _PATCHCONFIG_ENGINEPATCHES
-
 // Available engine patches
 class CORE_API ICorePatches {
   public:
@@ -54,6 +52,8 @@ class CORE_API ICorePatches {
   public:
     // Constructor
     ICorePatches();
+
+#if _PATCHCONFIG_ENGINEPATCHES
 
     // Clean up on Core shutdown (only for patches set by CorePatches() method)
     void Cleanup(void);
@@ -102,11 +102,11 @@ class CORE_API ICorePatches {
 
     // Don't use memory paging in streams
     void UnpageStreams(void);
+
+#endif // _PATCHCONFIG_ENGINEPATCHES
 };
 
 // Singleton for patching
 CORE_API extern ICorePatches _EnginePatches;
-
-#endif // _PATCHCONFIG_ENGINEPATCHES
 
 #endif
