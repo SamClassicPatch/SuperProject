@@ -1968,6 +1968,9 @@ static void PrintStats( CDrawPort *pdpDrawPort)
     fTextScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
   }
 
+  // [Cecil] Consistent font size
+  fTextScale *= 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+
   // display resolution info (if needed)
   if( hud_bShowResolution) {
     CTString strRes;
@@ -2520,7 +2523,7 @@ void CGame::GameRedrawView( CDrawPort *pdpDrawPort, ULONG ulFlags)
           // setup font
           dpMsg.SetFont(_pfdDisplayFont);
           dpMsg.SetTextAspect(1.0f);
-          dpMsg.SetTextScaling(1.0f);
+          dpMsg.SetTextScaling(16.0f / (FLOAT)_pfdDisplayFont->GetHeight()); // [Cecil] Consistent font size
           dpMsg.PutTextCXY(strIndicator, dpMsg.GetWidth() * 0.5f, dpMsg.GetHeight() * 0.4f, SE_COL_BLUEGREEN_LT|192);
         }
       }
@@ -2529,7 +2532,7 @@ void CGame::GameRedrawView( CDrawPort *pdpDrawPort, ULONG ulFlags)
       if (_pNetwork->IsRecordingDemo()) {
         // setup font
         dpMsg.SetFont( _pfdDisplayFont);
-        dpMsg.SetTextScaling( 1.0f);
+        dpMsg.SetTextScaling(16.0f / (FLOAT)_pfdDisplayFont->GetHeight()); // [Cecil] Consistent font size
         dpMsg.SetTextAspect( 1.0f);
         dpMsg.PutText( LOCALIZE("Recording"), 
         dpMsg.GetWidth()*0.1f, 
@@ -2548,6 +2551,7 @@ void CGame::GameRedrawView( CDrawPort *pdpDrawPort, ULONG ulFlags)
         // print the message
         strMessage.PrintF("%.2fs", _pNetwork->ga_fDemoTimer);
         dpMsg.SetFont( _pfdDisplayFont);
+        dpMsg.SetTextScaling(16.0f / (FLOAT)_pfdDisplayFont->GetHeight()); // [Cecil] Consistent font size
         dpMsg.SetTextAspect( 1.0f);
         dpMsg.PutText( strMessage, 20, 20);
       }

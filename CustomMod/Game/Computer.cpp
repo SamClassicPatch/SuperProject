@@ -48,6 +48,7 @@ static PIX _pixMarginJ = 1;
 // general geometry data
 static FLOAT _fScaling = 1;
 static FLOAT _fScaling2 = 1;
+static FLOAT _fDisplayFontScale = 1.0f; // [Cecil] For consistent font scale
 static PIX _pixSizeI=0;
 static PIX _pixSizeJ=0;
 static PIXaabbox2D _boxTitle;
@@ -106,8 +107,11 @@ static void SetFont1(CDrawPort *pdp)
 
 static void SetFont2(CDrawPort *pdp)
 {
+  // [Cecil] Consistent font scale (regardless of _fDisplayFontScale)
+  const FLOAT fFontScale = 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+
   pdp->SetFont(_pfdDisplayFont);
-  pdp->SetTextScaling(_fScaling2);
+  pdp->SetTextScaling(_fScaling2 * fFontScale);
   pdp->SetTextAspect(1.0f);
 }
 
@@ -122,8 +126,8 @@ static void SetMessageFont(CDrawPort *pdp) {
     _pfdDisplayFont->SetFixedWidth();
     pdp->SetFont(_pfdDisplayFont);
 
-    pdp->SetTextScaling(_fScaling2);
-    pdp->SetTextCharSpacing(-5.0f * _fScaling2);
+    pdp->SetTextScaling(_fScaling2 * _fDisplayFontScale);
+    pdp->SetTextCharSpacing(-5.0f * _fScaling2 / _fDisplayFontScale);
     pdp->SetTextAspect(1.0f);
 
   } else {
@@ -482,6 +486,7 @@ static void UpdateSize(CDrawPort *pdp)
   // determine scaling
   _fScaling = 1.0f;
   _fScaling2 = 1.0f;
+  _fDisplayFontScale = 1.0f; // [Cecil]
   _fSliderWidthMul = 1.0f;
 
   CFontData *pfd = _pfdConsoleFont;
@@ -491,6 +496,7 @@ static void UpdateSize(CDrawPort *pdp)
   if (pixSizeJ<384) {
     _fScaling = 1.0f;
     _fScaling2 = pixSizeJ/480.0f;
+    _fDisplayFontScale = 1.0f; // [Cecil]
 
   // [Cecil] Too big
   } else if (UseBigFont()) {
@@ -500,12 +506,13 @@ static void UpdateSize(CDrawPort *pdp)
     FLOAT fMul = (pixSizeJ / 720.0f) * Clamp(cmp_fBigFontScale, 0.1f, 3.0f);
     _fScaling *= fMul;
     _fScaling2 *= fMul;
+    _fDisplayFontScale = 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
     _fSliderWidthMul = 1.5f;
   }
 
   // [Cecil] Message font sizes
-  _pixCharSizeI = (pfd->fd_pixCharWidth  + pfd->fd_pixCharSpacing) * _fScaling;
-  _pixCharSizeJ = (pfd->fd_pixCharHeight + pfd->fd_pixLineSpacing - iSubHeight) * _fScaling;
+  _pixCharSizeI = (pfd->fd_pixCharWidth  + pfd->fd_pixCharSpacing) * _fScaling * _fDisplayFontScale;
+  _pixCharSizeJ = (pfd->fd_pixCharHeight + pfd->fd_pixLineSpacing - iSubHeight) * _fScaling * _fDisplayFontScale;
 
   // [Cecil] Other computer text sizes
   pfd = _pfdConsoleFont;

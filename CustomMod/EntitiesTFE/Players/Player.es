@@ -2143,6 +2143,9 @@ functions:
         fScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
       }
 
+      // [Cecil] Consistent font size
+      fScale *= 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+
       pdp->SetFont( _pfdDisplayFont);
       pdp->SetTextScaling( fScale);
       pdp->SetTextAspect( 1.0f);
@@ -2225,6 +2228,9 @@ functions:
     if (pfTextScaling.Exists()) {
       fScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
     }
+
+    // [Cecil] Consistent font size
+    fScale *= 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
 
     // [Cecil] Determine vertical screen edge offset
     static CSymbolPtr piScreenEdge("ahud_iScreenEdgeY");
@@ -2347,6 +2353,9 @@ functions:
       if (pfTextScaling.Exists()) {
         fScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
       }
+
+      // [Cecil] Consistent font size
+      fScale *= 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
 
       pdp->SetFont( _pfdDisplayFont);
       pdp->SetTextScaling( fScale);

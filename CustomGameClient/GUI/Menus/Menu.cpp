@@ -736,8 +736,11 @@ BOOL DoMenu(CDrawPort *pdp) {
         dpMenu.PutTexture(&_toThumbnail, PIXaabbox2D(PIX2D(pixI0, pixJ0), PIX2D(pixI1, pixJ1)), C_WHITE | 255);
         dpMenu.DrawBorder(pixI0, pixJ0, THUMBW * fThumbScaleW, THUMBH * fScale, _pGame->LCDGetColor(C_mdGREEN | 255, "thumbnail border"));
       } else {
+        // [Cecil] Consistent font size
+        const FLOAT fDisplayFontScale = 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+
         dpMenu.SetFont(_pfdDisplayFont);
-        dpMenu.SetTextScaling(fScale);
+        dpMenu.SetTextScaling(fScale * fDisplayFontScale);
         dpMenu.SetTextAspect(1.0f);
         dpMenu.PutTextCXY(LOCALIZE("no thumbnail"), (pixI0 + pixI1) / 2, (pixJ0 + pixJ1) / 2, _pGame->LCDGetColor(C_GREEN | 255, "no thumbnail"));
       }

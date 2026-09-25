@@ -273,9 +273,12 @@ BOOL RenderMap( CDrawPort *pdp, ULONG ulLevelMask, CProgressHookInfo *pphi)
 
   if( pphi != NULL)
   {
+    // [Cecil] Consistent font size
+    const FLOAT fDisplayFontScale = 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+
     // set font
     pdp->SetFont( _pfdDisplayFont);
-    pdp->SetTextScaling( fStretch);
+    pdp->SetTextScaling(fStretch * fDisplayFontScale);
     pdp->SetTextAspect( 1.0f);
     
     INDEX iPosX, iPosY;

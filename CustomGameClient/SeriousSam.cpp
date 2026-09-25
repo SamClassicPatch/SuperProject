@@ -904,9 +904,12 @@ void PrintDisplayModeInfo(void) {
     strRes += LOCALIZE("Last mode set failed!");
   }
 
+  // [Cecil] Consistent font size
+  const FLOAT fDisplayFontScale = 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+
   // print it all
   _pdpMenu->SetFont(_pfdDisplayFont);
-  _pdpMenu->SetTextScaling(fTextScale);
+  _pdpMenu->SetTextScaling(fTextScale * fDisplayFontScale);
   _pdpMenu->SetTextAspect(1.0f);
   _pdpMenu->PutText(strRes, slDPWidth * 0.05f, slDPHeight * 0.85f, _pGame->LCDGetColor(C_GREEN | 255, "display mode"));
 }

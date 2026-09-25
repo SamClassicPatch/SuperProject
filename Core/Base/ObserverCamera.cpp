@@ -96,9 +96,13 @@ void PrintCustomPose(CObserverCamera &ocam, CDrawPort *pdp) {
   const PIX pixW = pdp->GetWidth();
   PIX pixY = 4 * fScaling;
 
+  // Consistent font size
+  const PIX pixDisplayFontHeight = 16;
+  const FLOAT fDisplayFontScale = (FLOAT)pixDisplayFontHeight / (FLOAT)_pfdDisplayFont->GetHeight();
+
   const FLOAT fAnimInfoScaling = fScaling * 0.55f;
-  const PIX pixAnimH = _pfdDisplayFont->GetHeight() * fAnimInfoScaling + fAnimInfoScaling + 1;
-  pdp->SetTextScaling(fAnimInfoScaling);
+  const PIX pixAnimH = pixDisplayFontHeight * fAnimInfoScaling + fAnimInfoScaling + 1;
+  pdp->SetTextScaling(fAnimInfoScaling * fDisplayFontScale);
 
   const ANGLE3D &aBody = _poseCustom.aBody;
   pdp->PutTextR(CTString(0, "ocam_fPoseBodyH/P/B: [%g, %g, %g]", aBody(1), aBody(2), aBody(3)), pixW - 16 * fScaling, pixY, 0xFFFFFFFF);
@@ -1049,7 +1053,7 @@ void CObserverCamera::UpdateControls(void) {
 // Observer camera info
 //================================================================================================//
 
-const FLOAT _fInfoScale = 0.8f;
+static FLOAT _fInfoScale = 0.8f;
 
 __forceinline PIX GetFontHeight(CDrawPort *pdp) {
   return pdp->dp_FontData->GetHeight() * pdp->dp_fTextScaling + pdp->dp_fTextScaling + 1;
@@ -1113,8 +1117,12 @@ void CObserverCamera::PrintCameraInfo(CDrawPort *pdp) {
     pdp->Fill(0, 0, 160 * fScaling, 480 * fScaling, 0x7F, 0x00, 0x7F, 0x00);
   }
 
+  // Consistent font size
+  const FLOAT fDisplayFontScale = 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+  _fInfoScale = 0.8f * fDisplayFontScale;
+
   pdp->SetFont(_pfdDisplayFont);
-  pdp->SetTextScaling(fScaling);
+  pdp->SetTextScaling(fScaling * fDisplayFontScale);
 
   // Info header
   PIX pixInfoY = 8 * fScaling;
@@ -1559,18 +1567,12 @@ BOOL CObserverCamera::Update(CEntity *pen, CDrawPort *pdp) {
     const COLOR colGrid = 0xBFBFBFFF;
 
     // Vertical lines
-    pdp->DrawLine(pixGridW+0,   0, pixGridW+0,   pixH, colGrid);
-    pdp->DrawLine(pixGridW+1,   0, pixGridW+1,   pixH, colGrid);
-
-    pdp->DrawLine(pixGridW*2+0, 0, pixGridW*2+0, pixH, colGrid);
-    pdp->DrawLine(pixGridW*2+1, 0, pixGridW*2+1, pixH, colGrid);
+    pdp->DrawLine(pixGridW,   0, pixGridW,   pixH, colGrid);
+    pdp->DrawLine(pixGridW*2, 0, pixGridW*2, pixH, colGrid);
 
     // Horizontal lines
-    pdp->DrawLine(0, pixGridH+0,   pixW, pixGridH+0,   colGrid);
-    pdp->DrawLine(0, pixGridH+1,   pixW, pixGridH+1,   colGrid);
-
-    pdp->DrawLine(0, pixGridH*2+0, pixW, pixGridH*2+0, colGrid);
-    pdp->DrawLine(0, pixGridH*2+1, pixW, pixGridH*2+1, colGrid);
+    pdp->DrawLine(0, pixGridH,   pixW, pixGridH,   colGrid);
+    pdp->DrawLine(0, pixGridH*2, pixW, pixGridH*2, colGrid);
 
     // Crosshair/dot in the middle of the screen
     const PIX pixDot = ClampDn(PIX(pixH >> 8), (PIX)2); // Height divided by 256

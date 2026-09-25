@@ -77,7 +77,10 @@ static void SetConsoleFont(CDrawPort *pdp, BOOL bLastLines) {
       pdp->SetTextCharSpacing(-4.0f * fScaling);
     }
 
-    pdp->SetTextScaling(fScaling);
+    // Consistent font size
+    const FLOAT fDisplayFontScale = 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+
+    pdp->SetTextScaling(fScaling * fDisplayFontScale);
   }
 };
 

@@ -1313,6 +1313,9 @@ functions:
       fTextScale *= Clamp(pfTextScaling.GetFloat(), 0.05f, 2.0f);
     }
 
+    // [Cecil] Consistent font size
+    fTextScale *= 16.0f / (FLOAT)_pfdDisplayFont->GetHeight();
+
     // if there is still time
     TIME tmDelta = m_tmLastTarget - tmNow;
     if( tmDelta>0) {
