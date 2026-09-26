@@ -519,7 +519,7 @@ void Particles_ViewerLocal(CEntity *penView)
     CTextureData *ptdTerrainMap;
 
     // [Cecil] Ignore boundaries for TFE rain to make it cover the entire level
-    if (_EnginePatches._eWorldFormat == E_LF_TFE || boxViewer.HasContactWith(boxViewTreshold)) {
+    if (_EnginePatches.GetWorldFormat() == E_LF_TFE || boxViewer.HasContactWith(boxViewTreshold)) {
       switch (eph->m_eptType) {
         
       case EPTH_GROWTH:

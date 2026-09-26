@@ -31,7 +31,7 @@ void (CRenderer::*pRenderLensFlares)(void) = NULL;
 void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDrawPort &dp)
 {
   // Set wide adjustment based on current aspect ratio
-  if (IConfig::mod[k_EModDataProps_AdjustAR] && _EnginePatches._bAdjustForAspectRatio) {
+  if (IConfig::mod[k_EModDataProps_AdjustAR] && _EnginePatches.AdjustForAR()) {
     dp.dp_fWideAdjustment = ((FLOAT)dp.GetHeight() / (FLOAT)dp.GetWidth()) * (4.0f / 3.0f);
   } else {
     dp.dp_fWideAdjustment = 1.0f;
@@ -66,17 +66,17 @@ void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDr
     // Set custom FOV if not zooming in
     if (fNewFOV > 80.0f) {
       // Set different FOV for the third person view
-      if (bView && _EnginePatches._fThirdPersonFOV > 0.0f) {
-        fNewFOV = Clamp(_EnginePatches._fThirdPersonFOV, 60.0f, 110.0f);
+      if (bView && _EnginePatches.GetThirdPersonFOV() > 0.0f) {
+        fNewFOV = Clamp(_EnginePatches.GetThirdPersonFOV(), 60.0f, 110.0f);
 
       // Set first person view FOV
-      } else if (_EnginePatches._fCustomFOV > 0.0f) {
-        fNewFOV = Clamp(_EnginePatches._fCustomFOV, 60.0f, 110.0f);
+      } else if (_EnginePatches.GetCustomFOV() > 0.0f) {
+        fNewFOV = Clamp(_EnginePatches.GetCustomFOV(), 60.0f, 110.0f);
       }
     }
 
     // Display current FOV values
-    if (_EnginePatches._bCheckFOV) {
+    if (_EnginePatches.DoFOVCheck()) {
       FLOAT fCheckFOV = fNewFOV;
 
       // Starting horizontal FOV
@@ -89,7 +89,7 @@ void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDr
       CPrintF("View VFOV: %.2f\n", fVFOV);
 
       // FOV patch
-      if (_EnginePatches._bUseVerticalFOV) {
+      if (_EnginePatches.VerticalFOVMode() != 0) {
         IRender::AdjustHFOV(vScreen, fCheckFOV);
       }
 
@@ -103,10 +103,8 @@ void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDr
       CPrintF("New VFOV:  %.2f\n", fVFOV);
     }
 
-    _EnginePatches._bCheckFOV = FALSE;
-
   // Unpatch FOV when viewing through any other entity during the game
-  } else if (GetGameAPI()->IsGameOn() && IConfig::mod[k_EModDataProps_AdjustFOV] && _EnginePatches._bUseVerticalFOV > 1) {
+  } else if (GetGameAPI()->IsGameOn() && IConfig::mod[k_EModDataProps_AdjustFOV] && _EnginePatches.VerticalFOVMode() > 1) {
     fNewFOV = ATan(Tan(fNewFOV * 0.5f) * fOppositeAspectRatio / ppr.pr_AspectRatio) * 2.0f;
   }
 
@@ -118,7 +116,7 @@ void P_RenderView(CWorld &woWorld, CEntity &enViewer, CAnyProjection3D &apr, CDr
     ocam.cam_ctl.fFOV = fNewFOV;
 
     // Adjust FOV to match the adjusted projection of the player view
-    if (_EnginePatches._bUseVerticalFOV > 1) {
+    if (_EnginePatches.VerticalFOVMode() > 1) {
       IRender::AdjustHFOV(vScreen, ocam.cam_ctl.fFOV);
     }
   }
@@ -230,7 +228,7 @@ void CProjectionPatch::P_Prepare(void) {
     ANGLE aHalfVer;
 
     // Adjust FOV for wider resolutions (preserve vertical FOV instead of horizontal)
-    if (IConfig::mod[k_EModDataProps_AdjustFOV] && _EnginePatches._bUseVerticalFOV) {
+    if (IConfig::mod[k_EModDataProps_AdjustFOV] && _EnginePatches.VerticalFOVMode() != 0) {
       // Calculate VFOV from HFOV on 4:3 resolution (e.g. 90 -> ~73.74)
       aHalfVer = ATan(Tan(ppr_FOVWidth * 0.5f) * 3.0f * pr_AspectRatio / 4.0f);
 
@@ -303,7 +301,7 @@ void CProjectionPatch::P_Prepare(void) {
   pr_fDepthBufferAdd = pr_fDepthBufferNear;
 
   // Fix mip distances
-  if (IConfig::mod[k_EModDataProps_AdjustFOV] && _EnginePatches._bUseVerticalFOV) {
+  if (IConfig::mod[k_EModDataProps_AdjustFOV] && _EnginePatches.VerticalFOVMode() != 0) {
     // Rely on height ratio instead of width ratio
     ppr_fMipRatio = pr_ScreenBBox.Size()(2) / (ppr_PerspectiveRatios(2) * 480.0f);
 

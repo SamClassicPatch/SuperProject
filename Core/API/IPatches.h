@@ -24,7 +24,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // Available engine patches
 class CORE_API ICorePatches {
-  public:
+  private:
     // Rendering
     INDEX _bAdjustForAspectRatio;
     INDEX _bUseVerticalFOV;
@@ -58,8 +58,34 @@ class CORE_API ICorePatches {
     // Clean up on Core shutdown (only for patches set by CorePatches() method)
     void Cleanup(void);
 
-    // Apply core patches (called after Core initialization!)
+    // Apply appropriate core patches from below based on the running application
     void CorePatches(void);
+
+  public:
+    inline bool AdjustForAR(void) { return !!_bAdjustForAspectRatio; };
+    inline INDEX VerticalFOVMode(void) { return _bUseVerticalFOV; };
+    inline FLOAT GetCustomFOV(void) { return _fCustomFOV; };
+    inline FLOAT GetThirdPersonFOV(void) { return _fThirdPersonFOV; };
+
+    inline BOOL DoFOVCheck(void) {
+      BOOL bCheck = _bCheckFOV;
+      _bCheckFOV = FALSE;
+      return bCheck;
+    };
+
+    inline bool GetNoListening(void) { return !!_bNoListening; };
+    inline void SetNoListening(bool bState) { _bNoListening = bState; };
+
+    inline bool LogTimestamps(void) { return !!_bLogTimestamps; };
+    inline INDEX GetColoredTextInServerLog(void) { return _iColoredTextInServerLog; };
+
+    inline INDEX GetPlaceholderResources(void) { return _bUsePlaceholderResources; };
+
+    inline ELevelFormat GetWorldFormat(void) { return _eWorldFormat; };
+    inline void SetWorldFormat(ELevelFormat eFormat) { _eWorldFormat = eFormat; };
+    inline ELevelFormat GetWantedWorldFormat(void) { return (ELevelFormat)_iWantedWorldFormat; };
+
+    inline const CTString &GetWorldConverters(void) { return _strWorldConverters; };
 
   // Patches after Serious Engine and Core initializations
   private:

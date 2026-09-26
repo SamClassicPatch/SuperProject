@@ -858,7 +858,7 @@ functions:
 
       // [Cecil] Projectiles from Revolution
       case PRT_WATERMAN_BIG: case PRT_WATERMAN_LARGE: case PRT_WATERMAN_SMALL:
-        if (_EnginePatches._eWorldFormat == E_LF_SSR) {
+        if (_EnginePatches.GetWorldFormat() == E_LF_SSR) {
           lsNew.ls_colColor = C_dBLUE;
           lsNew.ls_rFallOff = 5.0f;
           lsNew.ls_plftLensFlare = &_lftCatmanFireGlow;
@@ -867,7 +867,7 @@ functions:
 
       // [Cecil] Projectiles from Revolution
       case PRT_PLASMA: case PRT_RAILBOLT: case PRT_RAILBOLT_SPRAY:
-        if (_EnginePatches._eWorldFormat == E_LF_SSR) {
+        if (_EnginePatches.GetWorldFormat() == E_LF_SSR) {
           lsNew.ls_colColor = C_dRED;
           lsNew.ls_rFallOff = 1.5f;
           lsNew.ls_plftLensFlare = NULL;
@@ -978,7 +978,7 @@ functions:
       case PRT_BEAST_BIG_PROJECTILE:
         // [Cecil] No after burner particles in TFE
         Particles_BeastBigProjectileTrail(this, 4.0f, 0.25f, 0.0f, 64);
-        if (_EnginePatches._eWorldFormat != E_LF_TFE) {
+        if (_EnginePatches.GetWorldFormat() != E_LF_TFE) {
           Particles_AfterBurner(this, m_fStartTime, 1.0f);
         }
         break;
@@ -2327,7 +2327,7 @@ void BeastBigProjectile(void) {
   SetModelMainTexture(TEXTURE_BEAST_BIG_FIRE);
 
   // [Cecil] Smaller projectile in TFE
-  if (_EnginePatches._eWorldFormat == E_LF_TFE) {
+  if (_EnginePatches.GetWorldFormat() == E_LF_TFE) {
     GetModelObject()->StretchModel(FLOAT3D(1.5f, 1.5f, 1.5f));
   } else {
     GetModelObject()->StretchModel(FLOAT3D(2.5f, 2.5f, 2.5f));
@@ -2350,7 +2350,7 @@ void BeastBigProjectile(void) {
   m_aRotateSpeed = 100.0f;
 
   // [Cecil] Different properties in TFE
-  if (_EnginePatches._eWorldFormat == E_LF_TFE) {
+  if (_EnginePatches.GetWorldFormat() == E_LF_TFE) {
     m_bCanBeDestroyed = TRUE;
     m_pmtMove = PMT_GUIDED;
     SetHealth(11.0f);
@@ -3542,7 +3542,7 @@ void ProjectileTouch(CEntityPointer penHit)
   }
 
   // [Cecil] Check for air projectiles from Revolution
-  const BOOL bAirProjectile = (_EnginePatches._eWorldFormat == E_LF_SSR)
+  const BOOL bAirProjectile = (_EnginePatches.GetWorldFormat() == E_LF_SSR)
     && (m_prtType == PRT_AIRMAN_LARGE || m_prtType == PRT_AIRMAN_BIG || m_prtType == PRT_AIRMAN_SMALL);
 
   // spawn flame
@@ -4274,7 +4274,7 @@ procedures:
 
       // [Cecil] Projectiles from Revolution
       case PRT_PLASMA: case PRT_RAILBOLT: case PRT_RAILBOLT_SPRAY:
-        if (_EnginePatches._eWorldFormat == E_LF_SSR) {
+        if (_EnginePatches.GetWorldFormat() == E_LF_SSR) {
           Particles_FirecrackerTrail_Prepare(this);
         }
         break;
@@ -4332,7 +4332,7 @@ procedures:
 
       default: {
         // [Cecil] Projectiles from Revolution
-        if (_EnginePatches._eWorldFormat == E_LF_SSR) {
+        if (_EnginePatches.GetWorldFormat() == E_LF_SSR) {
           switch (m_prtType) {
             case PRT_WATERMAN_OLD: WaterDropProjectile(); break;
             case PRT_WATERMAN_BIG: WaterManPlasmaBig(); break;
@@ -4385,7 +4385,7 @@ procedures:
 
       // [Cecil] Huanman projectile explodes in SSR
       case PRT_HUANMAN_FIRE:
-        if (_EnginePatches._eWorldFormat == E_LF_SSR) {
+        if (_EnginePatches.GetWorldFormat() == E_LF_SSR) {
           HuanmanProjectileExplosion();
         }
         break;
@@ -4410,7 +4410,7 @@ procedures:
 
       // [Cecil] Projectiles from Revolution
       default: {
-        if (_EnginePatches._eWorldFormat == E_LF_SSR) {
+        if (_EnginePatches.GetWorldFormat() == E_LF_SSR) {
           switch (m_prtType) {
             case PRT_WATERMAN_BIG: WaterManPlasmaBigExplosion(); break;
             case PRT_WATERMAN_LARGE: WaterManPlasmaLargeExplosion(); break;

@@ -119,7 +119,7 @@ functions:
   void Write_t(CTStream *istr) {
     CEntity::Write_t(istr);
 
-    if (_EnginePatches._eWorldFormat == E_LF_SSR && !ClassicsCore_IsEditorApp())
+    if (_EnginePatches.GetWorldFormat() == E_LF_SSR && !ClassicsCore_IsEditorApp())
     {
       istr->WriteID_t(TOGGLED_LIGHTS_CHUNK);
 
@@ -133,7 +133,7 @@ functions:
   void Read_t(CTStream *ostr) {
     CEntity::Read_t(ostr);
 
-    if (_EnginePatches._eWorldFormat == E_LF_SSR)
+    if (_EnginePatches.GetWorldFormat() == E_LF_SSR)
     {
       CChunkID cid = ostr->PeekID_t();
 

@@ -25,8 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 // [Cecil] Determine world format before loading the world itself
 void CWorldPatch::DetermineWorldFormat(const CTFileName &fnmWorld, CTFileStream &strmFile) {
   // Loading from the current game directory
-  ELevelFormat &eWorld = _EnginePatches._eWorldFormat;
-  eWorld = E_LF_CURRENT;
+  ELevelFormat eWorld = E_LF_CURRENT;
 
 #if CLASSIC_TSE_FUSION_MODE
   // Check if the level is being loaded from TFE
@@ -57,11 +56,13 @@ void CWorldPatch::DetermineWorldFormat(const CTFileName &fnmWorld, CTFileStream 
   }
 
   // Force a specific format
-  const ELevelFormat eWanted = (ELevelFormat)_EnginePatches._iWantedWorldFormat;
+  const ELevelFormat eWanted = _EnginePatches.GetWantedWorldFormat();
 
   if (eWanted >= 0 && eWanted < E_LF_FORMATCOUNT) {
     eWorld = eWanted;
   }
+
+  _EnginePatches.SetWorldFormat(eWorld);
 };
 
 void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
@@ -72,8 +73,8 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
   strmFile.Open_t(fnmWorld);
 
   // [Cecil] Determine world format
-  ELevelFormat &eWorld = _EnginePatches._eWorldFormat;
   DetermineWorldFormat(fnmWorld, strmFile);
+  ELevelFormat eWorld = _EnginePatches.GetWorldFormat();
 
   // [Cecil] Set converter for the world format and reset it
   static HPatchPlugin hConverters = ClassicsExtensions_GetExtensionByName("PATCH_EXT_wldconverters");
@@ -84,7 +85,8 @@ void CWorldPatch::P_Load(const CTFileName &fnmWorld) {
   // Prepare world converter before using it
   if (bConverter) {
     // Pass converters from the command
-    convData.pData = _EnginePatches._strWorldConverters.str_String;
+    CTString strConverters = _EnginePatches.GetWorldConverters();
+    convData.pData = strConverters.str_String;
     ClassicsExtensions_CallSignal(hConverters, "PrepareConverter", NULL, &convData);
   }
 
@@ -172,7 +174,7 @@ void CWorldPatch::P_ReadInfo(CTStream *strm, BOOL bMaybeDescription) {
         strm->ExpectID_t("LDRB");
         *strm >> strLeaderboard;
 
-        _EnginePatches._eWorldFormat = E_LF_SSR;
+        _EnginePatches.SetWorldFormat(E_LF_SSR);
       }
 
       // Read unknown values
@@ -182,7 +184,7 @@ void CWorldPatch::P_ReadInfo(CTStream *strm, BOOL bMaybeDescription) {
         *strm >> aulExtra[1];
         *strm >> aulExtra[2];
 
-        _EnginePatches._eWorldFormat = E_LF_SSR;
+        _EnginePatches.SetWorldFormat(E_LF_SSR);
       }
 
       // Set default or read values
@@ -203,7 +205,7 @@ void CWorldPatch::P_ReadInfo(CTStream *strm, BOOL bMaybeDescription) {
     // [Cecil] Rev: Read special gamemode chunk
     if (strm->PeekID_t() == CChunkID("SpGM")) {
       strm->ExpectID_t("SpGM");
-      _EnginePatches._eWorldFormat = E_LF_SSR;
+      _EnginePatches.SetWorldFormat(E_LF_SSR);
 
     } else {
       // Otherwise remove some flags

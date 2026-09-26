@@ -264,7 +264,7 @@ procedures:
             // [Cecil] Shift TFE keys to fit into original bits
             INDEX iKeyType = m_kitKey;
 
-            if (_EnginePatches._eWorldFormat != E_LF_TSE && iKeyType >= KIT_ANKHWOOD) {
+            if (_EnginePatches.GetWorldFormat() != E_LF_TSE && iKeyType >= KIT_ANKHWOOD) {
               iKeyType -= KIT_ANKHWOOD;
             }
 

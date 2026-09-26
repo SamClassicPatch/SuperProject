@@ -238,7 +238,7 @@ functions:
     }
 
     // [Cecil] TFE keys
-    if (_EnginePatches._eWorldFormat != E_LF_TSE && m_kitType >= KIT_ANKHWOOD) {
+    if (_EnginePatches.GetWorldFormat() != E_LF_TSE && m_kitType >= KIT_ANKHWOOD) {
       switch (m_kitType) {
         case KIT_ANKHWOOD:
         case KIT_ANKHROCK:
@@ -353,7 +353,7 @@ functions:
     GetModelObject()->StretchModel(FLOAT3D(m_fSize, m_fSize, m_fSize));
 
     // [Cecil] Bigger TFE keys
-    if (_EnginePatches._eWorldFormat != E_LF_TSE
+    if (_EnginePatches.GetWorldFormat() != E_LF_TSE
      && (m_kitType == KIT_SPHINX1 || m_kitType == KIT_SPHINX2 || m_kitType == KIT_AMONGOLD)) {
       StretchItem(FLOAT3D(2, 2, 2) * m_fSize);
     }

@@ -42,7 +42,7 @@ void P_CPrintF(const char *strFormat, ...) {
 // Undecorate a string except for color tags, which are converted to extended colors for Windows terminal
 inline void ConvertColorsForTerminal(CTString &str) {
   // Simple undecorated text
-  if (_EnginePatches._iColoredTextInServerLog == 1) {
+  if (_EnginePatches.GetColoredTextInServerLog() == 1) {
     str = str.Undecorated();
     return;
   }
@@ -80,7 +80,7 @@ inline void ConvertColorsForTerminal(CTString &str) {
           strResult += CTString(0, "\033[38;2;%d;%d;%dm", ubR, ubG, ubB);
 
           // Set background color based on the overall brightness of the color
-          if (_EnginePatches._iColoredTextInServerLog > 2) {
+          if (_EnginePatches.GetColoredTextInServerLog() > 2) {
             ULONG iGray = (ubR * 0.299 + ubG * 0.587 + ubB * 0.114);
             strResult += (iGray < 0x18) ? "\033[107m" : "\033[40m"; // Bright white or non-bright black
           }
@@ -127,7 +127,7 @@ inline void PutStringWrapper(const CTString &str) {
   if (bServer) SetConsoleOutputCP(GetACP());
 
   // If running through a dedicated server and want colored text
-  if (bServer && _EnginePatches._iColoredTextInServerLog > 0) {
+  if (bServer && _EnginePatches.GetColoredTextInServerLog() > 0) {
     // Print to the console application our own way
     CTString strTerminal = str;
     ConvertColorsForTerminal(strTerminal);
@@ -149,7 +149,7 @@ inline void PutStringWrapper(const CTString &str) {
 // Patched function
 void P_CPutString(const char *strString) {
   // Don't need any timestamps
-  if (_bTempIgnoreTimestamps || !_EnginePatches._bLogTimestamps) {
+  if (_bTempIgnoreTimestamps || !_EnginePatches.LogTimestamps()) {
     // Proceed to the original function
     PutStringWrapper(strString);
     return;

@@ -3537,7 +3537,7 @@ functions:
       }
 
       // [Cecil] Shift TFE keys to fit into original bits
-      const BOOL bNonTSE = (_EnginePatches._eWorldFormat != E_LF_TSE);
+      const BOOL bNonTSE = (_EnginePatches.GetWorldFormat() != E_LF_TSE);
       INDEX iKeyType = ((EKey &)ee).kitType;
 
       if (bNonTSE && iKeyType >= KIT_ANKHWOOD) {
@@ -3591,7 +3591,7 @@ functions:
         return TRUE;
       case PUIT_SPEED:
         // [Cecil] Set flags or clear them if time has expired
-        if (_EnginePatches._eWorldFormat != E_LF_TSE) {
+        if (_EnginePatches.GetWorldFormat() != E_LF_TSE) {
           if (tmNow > m_tmSeriousSpeed) {
             m_ulFlags &= ~(PLF_SERIOUSSPEED | PLF_SERIOUSJUMP);
           }
@@ -3615,7 +3615,7 @@ functions:
 
       // [Cecil] Rev: New powerup
       case PUIT_JUMP:
-        if (_EnginePatches._eWorldFormat != E_LF_TSE) {
+        if (_EnginePatches.GetWorldFormat() != E_LF_TSE) {
           // [Cecil] Set flags or clear them if time has expired
           if (tmNow > m_tmSeriousSpeed) {
             m_ulFlags &= ~(PLF_SERIOUSSPEED | PLF_SERIOUSJUMP);
@@ -4223,7 +4223,7 @@ functions:
     const TIME tmDelta = m_tmSeriousSpeed - _pTimer->CurrentTick();
     if( tmDelta>0 && m_fAutoSpeed==0.0f) { 
       // [Cecil] If using Serious Speed or Serious Jump on non-TSE maps
-      if (_EnginePatches._eWorldFormat != E_LF_TSE) {
+      if (_EnginePatches.GetWorldFormat() != E_LF_TSE) {
         if (m_ulFlags & PLF_SERIOUSJUMP) {
           vTranslation(2) *= 2.5f;
         }

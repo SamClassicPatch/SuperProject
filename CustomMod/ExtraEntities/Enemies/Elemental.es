@@ -1114,7 +1114,7 @@ procedures:
  ************************************************************/
   Main(EVoid) {
     // [Cecil] Non-lava elementals can only be used on Revolution levels
-    if (_EnginePatches._eWorldFormat != E_LF_SSR && m_EetType != ELT_LAVA) {
+    if (_EnginePatches.GetWorldFormat() != E_LF_SSR && m_EetType != ELT_LAVA) {
       m_EetType = ELT_LAVA;
     }
 

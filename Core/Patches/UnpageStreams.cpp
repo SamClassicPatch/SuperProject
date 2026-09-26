@@ -105,7 +105,7 @@ void CFileStreamPatch::P_Open(const CTFileName &fnFileName, CTStream::OpenMode o
   INDEX iFile = ExpandFilePath(ulOpenFlags, fnFileName, fnmFullFileName);
 
   // [Cecil] Substitute missing resources with placeholders
-  INDEX iPlaceholders = _EnginePatches._bUsePlaceholderResources;
+  INDEX iPlaceholders = _EnginePatches.GetPlaceholderResources();
 
   // [Cecil] Replace every resource for fun or only the ones that weren't found
   if (iPlaceholders >= 2 || (iPlaceholders > 0 && iFile == EFP_NONE)) {

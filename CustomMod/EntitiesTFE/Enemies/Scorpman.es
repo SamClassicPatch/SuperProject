@@ -540,7 +540,7 @@ procedures:
  ************************************************************/
   Main(EVoid) {
     // [Cecil] Rev: Allow Monster type to be used
-    if (_EnginePatches._eWorldFormat != E_LF_SSR && m_smtType == SMT_MONSTER) {
+    if (_EnginePatches.GetWorldFormat() != E_LF_SSR && m_smtType == SMT_MONSTER) {
       m_smtType=SMT_GENERAL;
     }
 

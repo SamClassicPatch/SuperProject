@@ -462,7 +462,7 @@ functions:
 
       // [Cecil] Effect from Revolution
       case BET_PLASMA:
-        if (_EnginePatches._eWorldFormat == E_LF_SSR) {
+        if (_EnginePatches.GetWorldFormat() == E_LF_SSR) {
           lsNew.ls_colColor = RGBToColor(0, 0, 100);
           lsNew.ls_rHotSpot = 2.0f;
           lsNew.ls_rFallOff = 10.0f;
@@ -1611,7 +1611,7 @@ procedures:
 
       // [Cecil] Effect from Revolution
       case BET_PLASMA:
-        if (_EnginePatches._eWorldFormat == E_LF_SSR) {
+        if (_EnginePatches.GetWorldFormat() == E_LF_SSR) {
           PlasmaExplosion();
         }
         break;

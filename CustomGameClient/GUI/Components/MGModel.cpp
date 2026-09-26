@@ -50,7 +50,7 @@ void CMGModel::Render(CDrawPort *pdp) {
 #if _PATCHCONFIG_ENGINEPATCHES
 
   // [Cecil] Adjust FOV for the player model
-  if (IConfig::mod[k_EModDataProps_AdjustFOV] && _EnginePatches._bUseVerticalFOV) {
+  if (IConfig::mod[k_EModDataProps_AdjustFOV] && _EnginePatches.VerticalFOVMode() != 0) {
     // Use screen ratio set in BoxPlayerModel() as the size
     IRender::AdjustVFOV(FLOAT2D(285, 545), pr.FOVL());
 

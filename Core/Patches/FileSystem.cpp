@@ -526,7 +526,7 @@ INDEX P_ExpandFilePath(EXPAND_PATH_ARGS(ULONG ulType, const CTFileName &fnmFile,
 
   #else
     // [Cecil] Reading resources from Revolution worlds
-    const BOOL bRevWorld = (_EnginePatches._eWorldFormat == E_LF_SSR);
+    const BOOL bRevWorld = (_EnginePatches.GetWorldFormat() == E_LF_SSR);
 
     // [Cecil] Fix formatting of Revolution paths
     if (bRevWorld) {

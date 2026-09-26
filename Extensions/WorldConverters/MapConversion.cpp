@@ -466,7 +466,7 @@ int IWorldConverter::ReplaceClass(void *pEclData) {
 #if SE1_GAME != SS_REV
 
   // Not a Revolution map
-  if (_EnginePatches._eWorldFormat != E_LF_SSR) return FALSE;
+  if (_EnginePatches.GetWorldFormat() != E_LF_SSR) return FALSE;
 
   // Replace some vanilla entities with those from ExtraEntities library
   static ClassReplacementPair aRevEntities[] = {
