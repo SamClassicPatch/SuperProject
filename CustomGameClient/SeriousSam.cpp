@@ -988,7 +988,7 @@ void DoGame(void) {
 
     #if _PATCHCONFIG_ENGINEPATCHES
       // [Cecil] Don't listen to in-game sounds if rendering the game in the menu
-      _EnginePatches.SetNoListening(bMenuActive);
+      _EnginePatches.SetNoListening(!!bMenuActive);
     #endif
 
       // handle pretouching of textures and shadowmaps

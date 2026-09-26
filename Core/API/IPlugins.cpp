@@ -255,7 +255,7 @@ void *CPluginAPI::LoadGameGuiLib(const char *strSettingsFile) {
   return (void *)pGameGUI;
 };
 
-CPluginModule *CPluginAPI::LoadGamePlugin(void) {
+HPatchPlugin CPluginAPI::LoadGamePlugin(void) {
   // Return existing plugin
   if (m_pGamePlugin != NULL) return m_pGamePlugin;
 
@@ -277,7 +277,7 @@ CPluginModule *CPluginAPI::LoadGamePlugin(void) {
   return m_pGamePlugin;
 };
 
-CPluginModule *CPluginAPI::LoadGameGuiPlugin(void) {
+HPatchPlugin CPluginAPI::LoadGameGuiPlugin(void) {
   // Return existing plugin
   if (m_pGameGuiPlugin != NULL) return m_pGameGuiPlugin;
 
@@ -363,7 +363,7 @@ void CPluginAPI::ReleasePlugins(ULONG ulUtilityFlags, BOOL bForce) {
 };
 
 // Obtain pointer to a plugin module of specific utility types
-CPluginModule *CPluginAPI::ObtainPlugin_t(const CTFileName &fnmModule, ULONG ulUtilityFlags)
+HPatchPlugin CPluginAPI::ObtainPlugin_t(const CTFileName &fnmModule, ULONG ulUtilityFlags)
 {
   // Obtain info from the plugin
   CPluginModule *pPlugin = _pPluginStock->Obtain_t(fnmModule);
@@ -375,19 +375,16 @@ CPluginModule *CPluginAPI::ObtainPlugin_t(const CTFileName &fnmModule, ULONG ulU
   BOOL bVersion = (info.m_ulAPI <= CLASSICSPATCH_INTERFACE_VERSION);
   BOOL bUtility = (info.m_ulFlags & ulUtilityFlags) != 0;
 
-  // Warn about loading cancelling
+  CTString strError;
+
+  // Release the plugin and warn about loading cancellation, if cannot load it for some reason
   if (!bVersion) {
-    CPrintF(TRANS("'%s' loading cancelled: API version is too new (%u)\n"), strFileName, info.m_ulAPI);
-  } else if (!bUtility) {
-    CPrintF(TRANS("'%s' loading cancelled: Mismatching utility flags (0x%X)\n"), strFileName, info.m_ulFlags);
-  }
-
-  // If cannot load some plugin
-  if (!bVersion || !bUtility) {
-    // Release it
     _pPluginStock->Release(pPlugin);
+    ThrowF_t(TRANS("'%s' loading cancelled: API version is too new (%u)"), strFileName, info.m_ulAPI);
 
-    return NULL;
+  } else if (!bUtility) {
+    _pPluginStock->Release(pPlugin);
+    ThrowF_t(TRANS("'%s' loading cancelled: Mismatching utility flags (0x%X)"), strFileName, info.m_ulFlags);
   }
 
   // Initialize the plugin and return it
@@ -397,7 +394,7 @@ CPluginModule *CPluginAPI::ObtainPlugin_t(const CTFileName &fnmModule, ULONG ulU
 };
 
 // Load plugin module without safety checks
-CPluginModule *CPluginAPI::LoadPlugin_t(const CTFileName &fnmModule)
+HPatchPlugin CPluginAPI::LoadPlugin_t(const CTFileName &fnmModule)
 {
   CPluginModule *pPlugin = _pPluginStock->Obtain_t(fnmModule);
   pPlugin->Initialize();

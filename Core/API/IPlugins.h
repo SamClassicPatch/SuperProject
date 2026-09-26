@@ -43,22 +43,13 @@ class CORE_API CPluginAPI : public IClassicsPlugins {
     void *LoadGameGuiLib(const char *strSettingsFile);
 
     // Set metadata for the Game plugin
-    CPluginModule *LoadGamePlugin(void);
+    HPatchPlugin LoadGamePlugin(void);
 
     // Set metadata for the GameGUI plugin
-    CPluginModule *LoadGameGuiPlugin(void);
-
-    // Load all user plugins of specific utility types (EPluginFlags)
-    void LoadPlugins(ULONG ulUtilityFlags);
-
-    // Release all user plugins of specific utility types (EPluginFlags)
-    void ReleasePlugins(ULONG ulUtilityFlags, BOOL bForce = FALSE);
-
-    // Obtain pointer to a plugin module of specific utility types
-    CPluginModule *ObtainPlugin_t(const CTFileName &fnmModule, ULONG ulUtilityFlags);
+    HPatchPlugin LoadGameGuiPlugin(void);
 
     // Load plugin module without safety checks
-    CPluginModule *LoadPlugin_t(const CTFileName &fnmModule);
+    HPatchPlugin LoadPlugin_t(const CTFileName &fnmModule);
 
     // Retrieve loaded plugins
     CDynamicContainer<CPluginModule> &GetPlugins(void);
@@ -66,6 +57,10 @@ class CORE_API CPluginAPI : public IClassicsPlugins {
     // Overridden API methods
     virtual void RegisterSymbol(PluginSymbol_t &ps, const char *strSymbolName, const char *strDefaultValue);
     virtual void RegisterMethod(bool bUser, const char *strReturnType, const char *strFunctionName, const char *strArgumentTypes, void *pFunction);
+
+    virtual void LoadPlugins(ULONG ulUtilityFlags);
+    virtual void ReleasePlugins(ULONG ulUtilityFlags, BOOL bForce = FALSE);
+    virtual HPatchPlugin ObtainPlugin_t(const CTFileName &fnmModule, ULONG ulUtilityFlags);
 };
 
 // Full interface getter
