@@ -58,8 +58,14 @@ class CORE_API ICorePatches {
     // Clean up on Core shutdown (only for patches set by CorePatches() method)
     void Cleanup(void);
 
+    // Apply appropriate pre-initialization patches based on the category name
+    int ApplyPreInit(CTString str);
+
+    // Apply appropriate post-initialization patches based on the category name
+    int ApplyPostInit(CTString str);
+
     // Apply appropriate core patches from below based on the running application
-    void CorePatches(void);
+    int CorePatches(void);
 
   public:
     inline bool AdjustForAR(void) { return !!_bAdjustForAspectRatio; };
@@ -91,43 +97,40 @@ class CORE_API ICorePatches {
   private:
 
     // Enhance entities usage
-    void Entities(void);
+    int Entities(void);
 
     // Fix timers for entity logic
-    void LogicTimers(void);
+    int LogicTimers(void);
 
     // Enhance network library usage
-    void Network(void);
+    int Network(void);
 
     // Enhance rendering
-    void Rendering(void);
+    int Rendering(void);
 
     // Enhance sound library usage
-    void SoundLibrary(void);
+    int SoundLibrary(void);
 
     // Enhance strings usage
-    void Strings(void);
+    int Strings(void);
 
     // Enhance texture usage
-    void Textures(void);
+    int Textures(void);
 
     // Enhance worlds
-    void Worlds(void);
+    int Worlds(void);
 
   // Patches before Serious Engine and Core initializations
   public:
 
     // Customize core file handling in the engine
-    void FileSystem(void);
+    int FileSystem(void);
 
-  // [Cecil] TODO: Make SKA patches work in Debug
-  #if SE1_VER >= SE1_107 && defined(NDEBUG)
     // Fix SKA models
-    void Ska(void);
-  #endif
+    int Ska(void);
 
     // Don't use memory paging in streams
-    void UnpageStreams(void);
+    int UnpageStreams(void);
 
 #endif // _PATCHCONFIG_ENGINEPATCHES
 };

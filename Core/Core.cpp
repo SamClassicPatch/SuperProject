@@ -298,6 +298,22 @@ void ClassicsPatch_Shutdown(void)
   delete _pSteamAPI;  _pSteamAPI  = NULL;
 };
 
+int ClassicsPatch_PreInitPatches(const char *strEnginePatchesCategory) {
+#if _PATCHCONFIG_ENGINEPATCHES
+  return _EnginePatches.ApplyPreInit(strEnginePatchesCategory);
+#else
+  return -1;
+#endif
+};
+
+int ClassicsPatch_PostInitPatches(const char *strEnginePatchesCategory) {
+#if _PATCHCONFIG_ENGINEPATCHES
+  return _EnginePatches.ApplyPostInit(strEnginePatchesCategory);
+#else
+  return -1;
+#endif
+};
+
 // Internal API with all the interfaces
 class CInternalClassicsPatchAPI : public IClassicsPatchAPI {
   public:

@@ -49,7 +49,7 @@ ICorePatches::ICorePatches() {
 #if _PATCHCONFIG_ENGINEPATCHES
 
 // Apply core patches (called after Core initialization!)
-void ICorePatches::CorePatches(void) {
+int ICorePatches::CorePatches(void) {
   const bool bGame = ClassicsCore_IsGameApp();
   const bool bServer = ClassicsCore_IsServerApp();
   const bool bEditor = ClassicsCore_IsEditorApp();
@@ -69,11 +69,7 @@ void ICorePatches::CorePatches(void) {
   // Visual patches
   if (bGame || bEditor) {
     Rendering();
-
-  // [Cecil] TODO: Make SKA patches work in Debug
-  #if SE1_VER >= SE1_107 && defined(NDEBUG)
     Ska();
-  #endif
   }
 
   // Game client patches
@@ -85,11 +81,13 @@ void ICorePatches::CorePatches(void) {
 #if _PATCHCONFIG_FIX_STREAMPAGING
   _pShell->DeclareSymbol("user INDEX sam_bUsePlaceholderResources;", &_EnginePatches._bUsePlaceholderResources);
 #endif
+
+  return 0;
 };
 
 #include "Patches/Entities.h"
 
-void ICorePatches::Entities(void) {
+int ICorePatches::Entities(void) {
 #if _PATCHCONFIG_EXTEND_ENTITIES
 
   // CEntity
@@ -179,23 +177,29 @@ void ICorePatches::Entities(void) {
   }
 #endif // _PATCHCONFIG_ENTITY_FORCE
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_EXTEND_ENTITIES
 };
 
 #include "Patches/LogicTimers.h"
 
-void ICorePatches::LogicTimers(void) {
+int ICorePatches::LogicTimers(void) {
 #if _PATCHCONFIG_FIX_LOGICTIMERS
 
   void (CRationalEntity::*pSetTimerAfter)(TIME) = &CRationalEntity::SetTimerAfter;
   CreatePatch(pSetTimerAfter, &CRationalEntityTimerPatch::P_SetTimerAfter, "CRationalEntity::SetTimerAfter(...)");
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_FIX_LOGICTIMERS
 };
 
 #include "Patches/Network.h"
 
-void ICorePatches::Network(void) {
+int ICorePatches::Network(void) {
 #if _PATCHCONFIG_EXTEND_NETWORK
 
   // CCommunicationInterface
@@ -298,12 +302,15 @@ void ICorePatches::Network(void) {
 
 #endif // _PATCHCONFIG_GUID_MASKING
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_EXTEND_NETWORK
 };
 
 #include "Patches/Rendering.h"
 
-void ICorePatches::Rendering(void) {
+int ICorePatches::Rendering(void) {
 #if _PATCHCONFIG_FIX_RENDERING
 
   extern void (*pRenderView)(CWorld &, CEntity &, CAnyProjection3D &, CDrawPort &);
@@ -329,6 +336,9 @@ void ICorePatches::Rendering(void) {
   _pShell->DeclareSymbol("persistent user FLOAT sam_fThirdPersonFOV;", &_EnginePatches._fThirdPersonFOV);
   _pShell->DeclareSymbol("           user INDEX sam_bCheckFOV;",       &_EnginePatches._bCheckFOV);
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_FIX_RENDERING
 };
 
@@ -337,13 +347,13 @@ void ICorePatches::Rendering(void) {
 
 #include "Patches/Ska.h"
 
-void ICorePatches::Ska(void) {
+int ICorePatches::Ska(void) {
 #if _PATCHCONFIG_FIX_SKA
 
   // SKA models have been patched
   static BOOL _bSkaPatched = FALSE;
 
-  if (_bSkaPatched) return;
+  if (_bSkaPatched) return -1;
   _bSkaPatched = TRUE;
 
   void (*pFogHazeFunc)(BOOL) = &RM_DoFogAndHaze;
@@ -364,24 +374,35 @@ void ICorePatches::Ska(void) {
   pModelInstanceCopyFunc = &CModelInstance::Copy;
   CreatePatch(pModelInstanceCopyFunc, &CModelInstancePatch::P_Copy, "CModelInstance::Copy(...)");
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_FIX_SKA
+};
+
+#else
+
+int ICorePatches::Ska(void) {
+  return -1;
 };
 
 #endif
 
 #include "Patches/SoundLibrary.h"
 
-void ICorePatches::SoundLibrary(void) {
+int ICorePatches::SoundLibrary(void) {
   void (CSoundLibrary::*pListen)(CSoundListener &) = &CSoundLibrary::Listen;
   CreatePatch(pListen, &CSoundLibPatch::P_Listen, "CSoundLibrary::Listen(...)");
 
   void (CSoundObject::*pUpdate3DEffects)(void) = &CSoundObject::Update3DEffects;
   CreatePatch(pUpdate3DEffects, &CSoundObjPatch::P_Update3DEffects, "CSoundObject::Update3DEffects()");
+
+  return 0;
 };
 
 #include "Patches/Strings.h"
 
-void ICorePatches::Strings(void) {
+int ICorePatches::Strings(void) {
 #if _PATCHCONFIG_FIX_STRINGS
 
   void (*pPrintF)(const char *, ...) = &CPrintF;
@@ -401,12 +422,15 @@ void ICorePatches::Strings(void) {
   _pShell->DeclareSymbol("persistent user INDEX con_bLogTimestamps;", &_EnginePatches._bLogTimestamps);
   _pShell->DeclareSymbol("user INDEX ded_iColoredText;", &_EnginePatches._iColoredTextInServerLog);
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_FIX_STRINGS
 };
 
 #include "Patches/Textures.h"
 
-void ICorePatches::Textures(void) {
+int ICorePatches::Textures(void) {
 #if _PATCHCONFIG_EXTEND_TEXTURES
 
   void (CTextureData::*pCreateTex)(const CImageInfo *, MEX, INDEX, int) = &CTextureData::Create_t;
@@ -425,12 +449,15 @@ void ICorePatches::Textures(void) {
   void (*pCreateTexture)(const CTFileName &, MEX, INDEX, int) = &CreateTexture_t;
   CreatePatch(pCreateTexture, &P_CreateTexture, "CreateTexture_t(...)");
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_EXTEND_TEXTURES
 };
 
 #include "Patches/Worlds.h"
 
-void ICorePatches::Worlds(void) {
+int ICorePatches::Worlds(void) {
   void (CWorld::*pWorldLoad)(const CTFileName &) = &CWorld::Load_t;
   CreatePatch(pWorldLoad, &CWorldPatch::P_Load, "CWorld::Load_t(...)");
 
@@ -446,6 +473,8 @@ void ICorePatches::Worlds(void) {
   // Custom symbols
   _pShell->DeclareSymbol("user INDEX sam_iWantedWorldFormat;", &_EnginePatches._iWantedWorldFormat);
   _pShell->DeclareSymbol("user CTString sam_strWorldConverters;", &_EnginePatches._strWorldConverters);
+
+  return 0;
 };
 
 #include "Patches/UnpageStreams.h"
@@ -480,13 +509,13 @@ static void PatchStreams(void) {
 #endif // _PATCHCONFIG_FIX_STREAMPAGING
 };
 
-void ICorePatches::UnpageStreams(void) {
+int ICorePatches::UnpageStreams(void) {
 #if _PATCHCONFIG_FIX_STREAMPAGING
 
   // Streams have been unpaged
   static BOOL _bStreamsUnpaged = FALSE;
 
-  if (_bStreamsUnpaged) return;
+  if (_bStreamsUnpaged) return -1;
   _bStreamsUnpaged = TRUE;
 
   PatchStreams();
@@ -526,22 +555,25 @@ void ICorePatches::UnpageStreams(void) {
   void (CSessionState::*pForgetOldLevels)(void) = &CSessionState::ForgetOldLevels;
   CreatePatch(pForgetOldLevels, &CRemLevelPatch::P_ForgetOldLevels, "CSessionState::ForgetOldLevels()");
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_FIX_STREAMPAGING
 };
 
 #include "Patches/FileSystem.h"
 
-void ICorePatches::FileSystem(void) {
+int ICorePatches::FileSystem(void) {
 #if _PATCHCONFIG_EXTEND_FILESYSTEM
 
   // File system has been extended
   static BOOL _bFileSystemExtended = FALSE;
 
-  if (_bFileSystemExtended) return;
+  if (_bFileSystemExtended) return -1;
   _bFileSystemExtended = TRUE;
 
   // Don't patch file system
-  if (!IConfig::global[k_EConfigProps_ExtendedFileSystem]) return;
+  if (!IConfig::global[k_EConfigProps_ExtendedFileSystem]) return -1;
 
   PatchStreams();
 
@@ -582,6 +614,9 @@ void ICorePatches::FileSystem(void) {
   CreatePatch(pExpandFilePath, &P_ExpandFilePath, "::ExpandFilePath(...)");
 #endif
 
+  return 0;
+#else
+  return -1;
 #endif // _PATCHCONFIG_EXTEND_FILESYSTEM
 };
 
@@ -589,5 +624,45 @@ void ICorePatches::FileSystem(void) {
 void ICorePatches::Cleanup(void)
 {
 };
+
+#define APPLY_PATCH(_FunctionName) if (str == #_FunctionName) { return _FunctionName(); }
+
+// Apply appropriate pre-initialization patches based on the category name
+int ICorePatches::ApplyPreInit(CTString str) {
+  APPLY_PATCH(FileSystem)
+  else
+  APPLY_PATCH(Ska)
+  else
+  APPLY_PATCH(UnpageStreams)
+
+  return -1;
+};
+
+// Apply appropriate post-initialization patches based on the category name
+int ICorePatches::ApplyPostInit(CTString str) {
+  APPLY_PATCH(CorePatches)
+  else
+  APPLY_PATCH(Entities)
+  else
+  APPLY_PATCH(LogicTimers)
+  else
+  APPLY_PATCH(Network)
+  else
+  APPLY_PATCH(Rendering)
+  else
+  APPLY_PATCH(Ska)
+  else
+  APPLY_PATCH(SoundLibrary)
+  else
+  APPLY_PATCH(Strings)
+  else
+  APPLY_PATCH(Textures)
+  else
+  APPLY_PATCH(Worlds)
+
+  return -1;
+};
+
+#undef APPLY_PATCH
 
 #endif // _PATCHCONFIG_ENGINEPATCHES
