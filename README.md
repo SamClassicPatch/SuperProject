@@ -23,8 +23,10 @@ This super project gathers everything together under a single solution for prope
   - [`TSE107/Mods/ClassicsPatchMod`](../../../ModShell) - Shell of a special mod that includes resources necessary for properly running it.
 - `Docs` - Up-to-date contents of the [wiki](../../wiki) for any specific release.
 - `Extras` - Global dependencies that the projects utilize.
+  - [`cJSON`](https://github.com/DaveGamble/cJSON) - Library for working with the JSON format.
   - [`SDL`](https://libsdl.org/) - Cross-platform abstraction library for implementing proper support of game controllers.
   - [`squirrel3`](http://squirrel-lang.org/) - Static library that implements Squirrel scripting language.
+  - [`stb`](https://github.com/nothings/stb) - Public domain single-file libraries.
   - [`Steamworks`](https://partner.steamgames.com/) - SDK for enabling extended interactions with the Steam client.
   - [`XGizmo`](../../../XGizmo) - Headers with a variety of convenient classes and functions for Serious Engine 1.
   - [`zlib`](https://zlib.net/) - Static library for working with ZIP archives.
@@ -52,7 +54,9 @@ This project is licensed under GNU GPL v2 (see LICENSE file).
 
 Some of the code included with the SDK may not be licensed under the GNU GPL v2:
 
+- cJSON (located in `Extras/cJSON/`) by Dave Gamble and cJSON contributors
 - Simple DirectMedia Layer (located in `Extras/SDL/`) from https://libsdl.org/
 - Squirrel (located in `Extras/squirrel3/`) by Alberto Demichelis
+- stb (located in `Extras/stb/`) by Sean Barrett
 - Steamworks SDK (located in `Extras/Steamworks/`) by Valve Corporation
 - zlib (located in `Extras/zlib/`) by Jean-loup Gailly and Mark Adler
