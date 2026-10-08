@@ -1766,7 +1766,7 @@ DISABLE_EXT_PACKET_FUNC(InflictBoxDamage);
 // "Entities" namespace functions
 static SQRegFunction _aEntitiesFuncs[] = {
   { "Create",              &Entities::Create,              3, ".sx" },
-  { "Delete",              &Entities::Delete,              3, ".nn" },
+  { "Delete",              &Entities::Delete,              3, ".nb" },
   { "Copy",                &Entities::Copy,                3, ".nn" },
   { "SendEvent",           &Entities::SendEvent,           3, ".nx" },
   { "ReceiveItem",         &Entities::ReceiveItem,         3, ".nx" },

@@ -15,6 +15,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdH.h"
 
+#include <Extras/cJSON/cJSON.h>
+
 // Link Squirrel
 #pragma comment(lib, "squirrel.lib")
 #pragma comment(lib, "sqstdlib.lib")
@@ -37,6 +39,15 @@ CLASSICSPATCH_EXTENSION_SIGNALS_BEGIN {
 } CLASSICSPATCH_EXTENSION_SIGNALS_END;
 
 static CTCriticalSection _csScripts;
+
+// Custom memory management for cJSON
+static void *CJSON_CDECL JSONAlloc(size_t ctBytes) {
+  return AllocMemory((SLONG)ctBytes);
+};
+
+static void CJSON_CDECL JSONFree(void *pMemory) {
+  FreeMemory(pMemory);
+};
 
 // Permanent script VMs
 static sq::VM *_pSignalVM = NULL;
@@ -342,6 +353,12 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
   _csScripts.cs_iIndex = -1;
 
+  // Register cJSON memory management hooks
+  cJSON_Hooks hooks;
+  hooks.malloc_fn = &JSONAlloc;
+  hooks.free_fn = &JSONFree;
+  cJSON_InitHooks(&hooks);
+
   // Register plugin events
   events.m_processing->OnStep  = &IProcessingEvents_OnStep;
   events.m_processing->OnFrame = &IProcessingEvents_OnFrame;
@@ -397,4 +414,7 @@ CLASSICSPATCH_PLUGIN_SHUTDOWN(HIniConfig props)
 {
   // Free custom scripts
   ClearCustomScripts();
+
+  // Reset cJSON memory management hooks
+  cJSON_InitHooks(NULL);
 };

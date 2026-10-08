@@ -16,6 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "StdH.h"
 
 #include "RawDataBuffer.h"
+#include <Extras/cJSON/cJSON.h>
 
 namespace sq {
 
@@ -335,7 +336,7 @@ static SQInteger SetTestType(HSQUIRRELVM v, RayHolder &val, SQInteger idxValue) 
 
   val.cr.cr_ttHitModels = (CCastRay::TestType)i;
   return 1;
-}
+};
 
 static SQInteger GetPlacement(HSQUIRRELVM v, int, RayHolder &val) {
   SQ_RESTRICT(v);
@@ -865,6 +866,821 @@ static Method<CDrawPort> _aMethods[] = {
 
 }; // namespace
 
+// Local storage class methods
+namespace SqLocalStorage {
+
+struct LocalStorage {
+  CTString strName;
+  CTString strFile;
+  cJSON *pJSON;
+
+  LocalStorage() : pJSON(NULL) {};
+
+  ~LocalStorage() {
+    if (pJSON != NULL) cJSON_Delete(pJSON);
+  };
+};
+
+// Get JSON parsing error message
+static const char *GetParseError(int iCode) {
+  switch (iCode) {
+    case cJSON_ParseCode_OK: return "OK";
+    case cJSON_ParseCode_Empty: return "String buffer contents are empty";
+    case cJSON_ParseCode_MemoryFail: return "Failed to allocate memory";
+    case cJSON_ParseCode_ParseFail: return "Failed to parse a value";
+    case cJSON_ParseCode_NotNullTerminated: return "String buffer isn't null-terminated";
+  }
+
+  return "Unknown error code";
+};
+
+// Resolve a directory-like path to access the last possible object, returning the last key instead of accessing a value under it
+static cJSON *FindLastObject(cJSON *pObject, const char *strPath, BOOL bCreateNew, CTString &strLastKey) {
+  // Split the path into keys
+  CStringStack aKeys;
+  IData::GetStrings(aKeys, strPath, '/');
+
+  const INDEX iLast = aKeys.Count() - 1; // Go until the last key instead of the end of the array
+
+  // Nothing
+  if (iLast == -1) {
+    strLastKey = "";
+    return NULL;
+  }
+
+  // Make sure none of the keys are empty, otherwise it's an invalid path
+  for (INDEX iCheck = 0; iCheck < iLast; iCheck++) {
+    if (aKeys[iCheck] == "") return NULL;
+  }
+
+  cJSON *pValue = pObject;
+
+  // Get the next value inside the series of nested objects
+  for (INDEX i = 0; i < iLast; i++) {
+    const CTString &strKey = aKeys[i];
+
+    cJSON *pPrev = pValue;
+    pValue = cJSON_GetObjectItem(pPrev, strKey);
+
+    // It must always be an object in order to keep going
+    if (!cJSON_IsObject(pValue)) {
+      // Create a new one, if needed
+      if (bCreateNew) {
+        cJSON_DeleteItemFromObject(pPrev, strKey);
+        pValue = cJSON_AddObjectToObject(pPrev, strKey);
+
+      } else {
+        strLastKey = "";
+        return NULL;
+      }
+    }
+  }
+
+  // Return last object that should contain the last key
+  strLastKey = aKeys[iLast];
+  return pValue;
+};
+
+// Access a specific value inside a JSON object using a directory-like path
+static cJSON *ResolvePath(cJSON *pObject, const char *strPath) {
+  CTString strLastKey;
+  cJSON *pLastObject = FindLastObject(pObject, strPath, FALSE, strLastKey);
+
+  // No object or no key in order to return the last value
+  if (pLastObject == NULL || strLastKey == "") return NULL;
+
+  return cJSON_GetObjectItem(pLastObject, strLastKey);
+};
+
+// Create a new boolean value at the specified directory-like path
+static SQBool CreateBool(cJSON *pObject, const char *strPath, SQBool bValue) {
+  CTString strLastKey;
+  cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
+  if (pLastObject == NULL || strLastKey == "") return FALSE; // No object or no key
+
+  // Delete last value
+  if (cJSON_GetObjectItem(pLastObject, strLastKey) != NULL) cJSON_DeleteItemFromObject(pLastObject, strLastKey);
+
+  return cJSON_AddBoolToObject(pLastObject, strLastKey, bValue) != NULL;
+};
+
+// Create a new null value at the specified directory-like path
+static SQBool CreateNull(cJSON *pObject, const char *strPath) {
+  CTString strLastKey;
+  cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
+  if (pLastObject == NULL || strLastKey == "") return FALSE; // No object or no key
+
+  // Delete last value
+  if (cJSON_GetObjectItem(pLastObject, strLastKey) != NULL) cJSON_DeleteItemFromObject(pLastObject, strLastKey);
+
+  return cJSON_AddNullToObject(pLastObject, strLastKey) != NULL;
+};
+
+// Create a new number value at the specified directory-like path
+static SQBool CreateNumber(cJSON *pObject, const char *strPath, SQFloat fValue) {
+  CTString strLastKey;
+  cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
+  if (pLastObject == NULL || strLastKey == "") return FALSE; // No object or no key
+
+  // Delete last value
+  if (cJSON_GetObjectItem(pLastObject, strLastKey) != NULL) cJSON_DeleteItemFromObject(pLastObject, strLastKey);
+
+  return cJSON_AddNumberToObject(pLastObject, strLastKey, fValue) != NULL;
+};
+
+// Create a new string value at the specified directory-like path
+static SQBool CreateString(cJSON *pObject, const char *strPath, const SQChar *strValue) {
+  CTString strLastKey;
+  cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
+  if (pLastObject == NULL || strLastKey == "") return FALSE; // No object or no key
+
+  // Delete last value
+  if (cJSON_GetObjectItem(pLastObject, strLastKey) != NULL) cJSON_DeleteItemFromObject(pLastObject, strLastKey);
+
+  return cJSON_AddStringToObject(pLastObject, strLastKey, strValue) != NULL;
+};
+
+// Create a new array value at the specified directory-like path
+static cJSON *CreateArray(cJSON *pObject, const char *strPath) {
+  CTString strLastKey;
+  cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
+  if (pLastObject == NULL || strLastKey == "") return NULL; // No object or no key
+
+  // Delete last value
+  if (cJSON_GetObjectItem(pLastObject, strLastKey) != NULL) cJSON_DeleteItemFromObject(pLastObject, strLastKey);
+
+  return cJSON_AddArrayToObject(pLastObject, strLastKey);
+};
+
+// Create a new object value at the specified directory-like path
+static cJSON *CreateObject(cJSON *pObject, const char *strPath) {
+  CTString strLastKey;
+  cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
+  if (pLastObject == NULL || strLastKey == "") return NULL; // No object or no key
+
+  // Delete last value
+  if (cJSON_GetObjectItem(pLastObject, strLastKey) != NULL) cJSON_DeleteItemFromObject(pLastObject, strLastKey);
+
+  return cJSON_AddObjectToObject(pLastObject, strLastKey);
+};
+
+// Make sure local storage contains a usable JSON object
+#define ASSERT_JSON { if (val.pJSON == NULL || !cJSON_IsObject(val.pJSON)) return sq_throwerror(v, "local storage instance isn't a JSON object"); }
+
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, LocalStorage &val) {
+  const SQChar *str;
+
+  if (ctArgs == 0 || SQ_FAILED(sq_getstring(v, 2, &str))) {
+    return sq_throwerror(v, "expected storage name in argument 1");
+  }
+
+  // Convert storage name into only alphanumeric characters, underscores and spaces
+  val.strName = str;
+  char *pch = val.strName.str_String;
+
+  while (*pch != '\0') {
+    if (!isalnum((UBYTE)*pch) && *pch != '_' && *pch != ' ') {
+      *pch = '_';
+    }
+    pch++;
+  }
+
+  // Compose path to the storage file
+  val.strFile = "Data\\ClassicsPatch\\SquirrelLocalStorage\\" + val.strName + ".json";
+
+  // Try to load the contents of existing storage
+  if (FileExists(val.strFile)) {
+    char *strBuffer = NULL;
+    SLONG slSize = 0;
+
+    // Read contents of the file into a buffer
+    try {
+      CTFileStream strm;
+      strm.Open_t(val.strFile);
+
+      slSize = strm.GetStreamSize();
+      strBuffer = (char *)AllocMemory(slSize + 1);
+
+      strm.Read_t(strBuffer, slSize);
+      strBuffer[slSize] = '\0';
+
+    } catch(char *strError) {
+      if (strBuffer != NULL) FreeMemory(strBuffer);
+
+      SQChar strPrintError[256];
+      scsprintf(strPrintError, 256, "cannot load existing local storage '%s': %s", val.strName.str_String, strError);
+      return sq_throwerror(v, strPrintError);
+    }
+
+    // Couldn't read the contents for some reason but otherwise didn't fail
+    if (strBuffer == NULL) {
+      SQChar strError[256];
+      scsprintf(strError, 256, "cannot load existing local storage '%s': %s", val.strName.str_String, "Empty buffer contents");
+      return sq_throwerror(v, strError);
+    }
+
+    // Parse buffer contents as JSON
+    const char *pchParseEnd = NULL;
+    int iErrorCode;
+
+    val.pJSON = cJSON_ParseWithOpts(strBuffer, &pchParseEnd, TRUE, &iErrorCode);
+
+    const SLONG slOffset = (pchParseEnd != NULL) ? (pchParseEnd - strBuffer) + 1 : 0;
+    FreeMemory(strBuffer);
+
+    // Failed
+    if (val.pJSON == NULL) {
+      SQChar strError[256];
+      scsprintf(strError, 256, "cannot parse local storage '%s' at character %d: %s", val.strName.str_String, slOffset, GetParseError(iErrorCode));
+      return sq_throwerror(v, strError);
+    }
+
+    // Not an object
+    if (!cJSON_IsObject(val.pJSON)) {
+      SQChar strError[256];
+      scsprintf(strError, 256, "cannot load existing local storage '%s': %s", val.strName.str_String, "Not a JSON object");
+      return sq_throwerror(v, strError);
+    }
+
+  // Create a new JSON structure
+  } else {
+    val.pJSON = cJSON_CreateObject();
+
+    // Failed
+    if (val.pJSON == NULL) {
+      SQChar strError[256];
+      scsprintf(strError, 256, "cannot create new local storage '%s'", val.strName.str_String);
+      return sq_throwerror(v, strError);
+    }
+  }
+
+  return 0;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, LocalStorage &val) {
+  ASSERT_JSON;
+  char *strPrint = cJSON_Print(val.pJSON);
+
+  if (strPrint == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot convert local storage '%s' to string", val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, strPrint, -1);
+  cJSON_free(strPrint); // Free printed JSON
+  return 1;
+};
+
+static SQInteger Save(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+  char *strPrint = cJSON_PrintUnformatted(val.pJSON);
+
+  if (strPrint == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot convert local storage '%s' to string", val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  // Create directories to the local storage file
+  IDir::CreateDir(val.strFile);
+
+  // Write local storage to disk
+  try {
+    CTFileStream strm;
+    strm.Create_t(val.strFile);
+    strm.PutString_t(strPrint);
+
+  } catch (char *strError) {
+    cJSON_free(strPrint); // Free printed JSON
+
+    SQChar strPrintError[256];
+    scsprintf(strPrintError, 256, "cannot save local storage '%s': %s", val.strName.str_String, strError);
+    return sq_throwerror(v, strPrintError);
+  }
+
+  cJSON_free(strPrint); // Free printed JSON
+  return 0;
+};
+
+static SQInteger Clear(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  // Recreate the entire object
+  cJSON_Delete(val.pJSON);
+  val.pJSON = cJSON_CreateObject();
+
+  // Failed
+  if (val.pJSON == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot create new local storage '%s'", val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger KeyExists(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  sq_pushbool(v, (pValue != NULL) ? SQTrue : SQFalse);
+  return 1;
+};
+
+static SQInteger DeleteKey(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  CTString strLastKey;
+  cJSON *pLastObject = FindLastObject(val.pJSON, strPath, FALSE, strLastKey);
+
+  cJSON_DeleteItemFromObject(pLastObject, strLastKey);
+  return 0;
+};
+
+#define LOCALSTORAGE_CHECK_TYPE(_FuncName) \
+  static SQInteger _FuncName(HSQUIRRELVM v, int, LocalStorage &val) { \
+    ASSERT_JSON; \
+    const SQChar *strPath; \
+    sq_getstring(v, 2, &strPath); \
+    cJSON *pValue = ResolvePath(val.pJSON, strPath); \
+    sq_pushbool(v, cJSON_##_FuncName(pValue) ? SQTrue : SQFalse); \
+    return 1; \
+  }
+
+// All of these will simply return false if the key cannot be found at the specified path
+LOCALSTORAGE_CHECK_TYPE(IsFalse);
+LOCALSTORAGE_CHECK_TYPE(IsTrue);
+LOCALSTORAGE_CHECK_TYPE(IsBool);
+LOCALSTORAGE_CHECK_TYPE(IsNull);
+LOCALSTORAGE_CHECK_TYPE(IsNumber);
+LOCALSTORAGE_CHECK_TYPE(IsString);
+LOCALSTORAGE_CHECK_TYPE(IsArray);
+LOCALSTORAGE_CHECK_TYPE(IsObject);
+
+#undef LOCALSTORAGE_CHECK_TYPE
+
+static SQInteger SetBool(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+  SQBool bValue;
+  sq_getbool(v, 3, &bValue);
+
+  sq_pushbool(v, CreateBool(val.pJSON, strPath, bValue));
+  return 1;
+};
+
+static SQInteger SetNull(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  sq_pushbool(v, CreateNull(val.pJSON, strPath));
+  return 1;
+};
+
+static SQInteger SetNumber(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+  SQFloat fValue;
+  sq_getfloat(v, 3, &fValue);
+
+  sq_pushbool(v, CreateNumber(val.pJSON, strPath, fValue));
+  return 1;
+};
+
+static SQInteger SetString(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+  const SQChar *strValue;
+  sq_getstring(v, 3, &strValue);
+
+  sq_pushbool(v, CreateString(val.pJSON, strPath, strValue));
+  return 1;
+};
+
+static SQInteger PopulateJSONArray(HSQUIRRELVM v, SQInteger idxArray, cJSON *pArray);
+static SQInteger PopulateJSONObject(HSQUIRRELVM v, SQInteger idxObject, cJSON *pObject);
+
+SQInteger PopulateJSONArray(HSQUIRRELVM v, SQInteger idxArray, cJSON *pArray) {
+  // Iterate through the object
+  sq_pushnull(v); // Null iterator
+
+  // Shift the top index because of the null iterator
+  if (idxArray < 0) idxArray--;
+
+  while (SQ_SUCCEEDED(sq_next(v, idxArray))) {
+    switch (sq_gettype(v, -1))
+    {
+      case OT_NULL: {
+        cJSON_AddItemToArray(pArray, cJSON_CreateNull());
+      } break;
+
+      case OT_INTEGER: {
+        SQInteger i;
+        sq_getinteger(v, -1, &i);
+        cJSON_AddItemToArray(pArray, cJSON_CreateNumber(i));
+      } break;
+
+      case OT_FLOAT: {
+        SQFloat f;
+        sq_getfloat(v, -1, &f);
+        cJSON_AddItemToArray(pArray, cJSON_CreateNumber(f));
+      } break;
+
+      case OT_BOOL: {
+        SQBool b;
+        sq_getbool(v, -1, &b);
+        cJSON_AddItemToArray(pArray, cJSON_CreateBool(b));
+      } break;
+
+      case OT_STRING: {
+        const SQChar *str;
+        sq_getstring(v, -1, &str);
+        cJSON_AddItemToArray(pArray, cJSON_CreateString(str));
+      } break;
+
+      case OT_ARRAY: {
+        cJSON *pNewArray = cJSON_CreateArray();
+        PopulateJSONArray(v, -1, pNewArray);
+        cJSON_AddItemToArray(pArray, pNewArray);
+      } break;
+
+      case OT_TABLE: {
+        cJSON *pNewObject = cJSON_CreateObject();
+        PopulateJSONObject(v, -1, pNewObject);
+        cJSON_AddItemToArray(pArray, pNewObject);
+      } break;
+
+      //case OT_INSTANCE:
+
+      default: return sq_throwerror(v, "unsupported Squirrel type for JSON");
+    }
+
+    sq_pop(v, 2); // Pop key and value before the next iteration
+  }
+
+  sq_poptop(v); // Null iterator
+  return 0;
+};
+
+SQInteger PopulateJSONObject(HSQUIRRELVM v, SQInteger idxObject, cJSON *pObject) {
+  // Iterate through the object
+  sq_pushnull(v); // Null iterator
+
+  // Shift the top index because of the null iterator
+  if (idxObject < 0) idxObject--;
+
+  while (SQ_SUCCEEDED(sq_next(v, idxObject))) {
+    CTString strKey;
+    {
+      sq_tostring(v, -2); // Push key as a string
+
+      const SQChar *strKeyName;
+      sq_getstring(v, -1, &strKeyName);
+      strKey = strKeyName;
+
+      sq_poptop(v); // Pop key as a string
+    }
+
+    switch (sq_gettype(v, -1))
+    {
+      case OT_NULL: {
+        cJSON_AddNullToObject(pObject, strKey);
+      } break;
+
+      case OT_INTEGER: {
+        SQInteger i;
+        sq_getinteger(v, -1, &i);
+        cJSON_AddNumberToObject(pObject, strKey, i);
+      } break;
+
+      case OT_FLOAT: {
+        SQFloat f;
+        sq_getfloat(v, -1, &f);
+        cJSON_AddNumberToObject(pObject, strKey, f);
+      } break;
+
+      case OT_BOOL: {
+        SQBool b;
+        sq_getbool(v, -1, &b);
+        cJSON_AddBoolToObject(pObject, strKey, b);
+      } break;
+
+      case OT_STRING: {
+        const SQChar *str;
+        sq_getstring(v, -1, &str);
+        cJSON_AddStringToObject(pObject, strKey, str);
+      } break;
+
+      case OT_ARRAY: {
+        cJSON *pNewArray = cJSON_AddArrayToObject(pObject, strKey);
+        PopulateJSONArray(v, -1, pNewArray);
+      } break;
+
+      case OT_TABLE: {
+        cJSON *pNewObject = cJSON_AddObjectToObject(pObject, strKey);
+        PopulateJSONObject(v, -1, pNewObject);
+      } break;
+
+      //case OT_INSTANCE:
+
+      default: return sq_throwerror(v, "unsupported Squirrel type for JSON");
+    }
+
+    sq_pop(v, 2); // Pop key and value before the next iteration
+  }
+
+  sq_poptop(v); // Null iterator
+  return 0;
+};
+
+static SQInteger SetArray(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pArray = CreateArray(val.pJSON, strPath);
+
+  if (pArray == NULL || SQ_FAILED(PopulateJSONArray(v, 3, pArray))) {
+    sq_pushbool(v, SQFalse);
+    return 1;
+  }
+
+  sq_pushbool(v, SQTrue);
+  return 1;
+};
+
+static SQInteger SetObject(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pObject = CreateObject(val.pJSON, strPath);
+
+  if (pObject == NULL || SQ_FAILED(PopulateJSONObject(v, 3, pObject))) {
+    sq_pushbool(v, SQFalse);
+    return 1;
+  }
+
+  sq_pushbool(v, SQTrue);
+  return 1;
+};
+
+static SQInteger SetValue(HSQUIRRELVM v, int ctArgs, LocalStorage &val) {
+  switch (sq_gettype(v, 3)) {
+    case OT_NULL:   return SetNull(v, ctArgs, val);
+    case OT_INTEGER:
+    case OT_FLOAT:  return SetNumber(v, ctArgs, val);
+    case OT_BOOL:   return SetBool(v, ctArgs, val);
+    case OT_STRING: return SetString(v, ctArgs, val);
+    case OT_ARRAY:  return SetArray(v, ctArgs, val);
+    case OT_TABLE:  return SetObject(v, ctArgs, val);
+    //case OT_INSTANCE:
+  }
+
+  sq_pushbool(v, SQFalse);
+  return 1;
+};
+
+static SQInteger GetBool(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (!cJSON_IsBool(pValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve boolean value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushbool(v, cJSON_IsTrue(pValue));
+  return 1;
+};
+
+static SQInteger GetNull(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (!cJSON_IsNull(pValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve null value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushnull(v);
+  return 1;
+};
+
+static SQInteger GetNumber(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (!cJSON_IsNumber(pValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve number value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushfloat(v, pValue->valuedouble);
+  return 1;
+};
+
+static SQInteger GetString(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (!cJSON_IsString(pValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve string value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  sq_pushstring(v, pValue->valuestring, -1);
+  return 1;
+};
+
+static SQInteger PushJSONArray(HSQUIRRELVM v, cJSON *pArray);
+static SQInteger PushJSONObject(HSQUIRRELVM v, cJSON *pObject);
+
+static SQInteger PushJSONValue(HSQUIRRELVM v, cJSON *pValue) {
+  if (cJSON_IsNull(pValue)) {
+    sq_pushnull(v);
+  } else if (cJSON_IsBool(pValue)) {
+    sq_pushbool(v, cJSON_IsTrue(pValue));
+  } else if (cJSON_IsNumber(pValue)) {
+    sq_pushfloat(v, pValue->valuedouble);
+  } else if (cJSON_IsString(pValue)) {
+    sq_pushstring(v, pValue->valuestring, -1);
+  } else if (cJSON_IsArray(pValue)) {
+    return PushJSONArray(v, pValue);
+  } else if (cJSON_IsObject(pValue)) {
+    return PushJSONObject(v, pValue);
+  } else {
+    return sq_throwerror(v, "unsupported JSON value type");
+  }
+
+  return 1;
+};
+
+SQInteger PushJSONArray(HSQUIRRELVM v, cJSON *pArray) {
+  cJSON *pElement;
+  INDEX i = 0;
+  sq_newarray(v, 0);
+
+  cJSON_ArrayForEach(pElement, pArray) {
+    // Push value
+    if (SQ_FAILED(PushJSONValue(v, pElement))) {
+      SQChar strError[256];
+      scsprintf(strError, 256, "unsupported JSON value type in array element %d", i);
+      return sq_throwerror(v, strError);
+    }
+
+    // Add value to the array
+    sq_arrayappend(v, -2);
+    i++;
+  }
+
+  return 1;
+};
+
+SQInteger PushJSONObject(HSQUIRRELVM v, cJSON *pObject) {
+  cJSON *pElement;
+  sq_newtable(v);
+
+  cJSON_ArrayForEach(pElement, pObject) {
+    // Push key
+    sq_pushstring(v, pElement->string, -1);
+
+    // Push value
+    if (SQ_FAILED(PushJSONValue(v, pElement))) {
+      SQChar strError[256];
+      scsprintf(strError, 256, "unsupported JSON value type in object pair '%s'", pElement->string);
+      return sq_throwerror(v, strError);
+    }
+
+    // Add pair to the table
+    sq_rawset(v, -3);
+  }
+
+  return 1;
+};
+
+static SQInteger GetArray(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (!cJSON_IsArray(pValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve array value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  return PushJSONArray(v, pValue);
+};
+
+static SQInteger GetObject(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (!cJSON_IsObject(pValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve object value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  return PushJSONObject(v, pValue);
+};
+
+static SQInteger GetValue(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (pValue == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  return PushJSONValue(v, pValue);
+};
+
+static Method<LocalStorage> _aMethods[] = {
+  { "Save",  &Save,  1, "." },
+  { "Clear", &Clear, 1, "." },
+
+  { "KeyExists", &KeyExists, 2, ".s" },
+  { "DeleteKey", &DeleteKey, 2, ".s" },
+
+  { "IsFalse",  &IsFalse,  2, ".s" },
+  { "IsTrue",   &IsTrue,   2, ".s" },
+  { "IsBool",   &IsBool,   2, ".s" },
+  { "IsNull",   &IsNull,   2, ".s" },
+  { "IsNumber", &IsNumber, 2, ".s" },
+  { "IsString", &IsString, 2, ".s" },
+  { "IsArray",  &IsArray,  2, ".s" },
+  { "IsObject", &IsObject, 2, ".s" },
+
+  { "SetBool",   &SetBool,   3, ".sb" },
+  { "SetNull",   &SetNull,   2, ".s" },
+  { "SetNumber", &SetNumber, 3, ".sn" },
+  { "SetString", &SetString, 3, ".ss" },
+  { "SetArray",  &SetArray,  3, ".sa" },
+  { "SetObject", &SetObject, 3, ".st" },
+  { "SetValue",  &SetValue,  3, ".sb|o|n|s|a|t" },
+
+  { "GetBool",   &GetBool,   2, ".s" },
+  { "GetNull",   &GetNull,   2, ".s" },
+  { "GetNumber", &GetNumber, 2, ".s" },
+  { "GetString", &GetString, 2, ".s" },
+  { "GetArray",  &GetArray,  2, ".s" },
+  { "GetObject", &GetObject, 2, ".s" },
+  { "GetValue",  &GetValue,  2, ".s" },
+};
+
+}; // namespace
+
 namespace Core {
 
 static SQInteger IsSE105(HSQUIRRELVM v) {
@@ -886,12 +1702,12 @@ static SQInteger IsSE107(HSQUIRRELVM v) {
 };
 
 static SQInteger IsTFE(HSQUIRRELVM v) {
-  sq_pushbool(v, CHOOSE_FOR_GAME(TRUE, FALSE, FALSE));
+  sq_pushbool(v, CHOOSE_FOR_GAME(SQTrue, SQFalse, SQFalse));
   return 1;
 };
 
 static SQInteger IsTSE(HSQUIRRELVM v) {
-  sq_pushbool(v, CHOOSE_FOR_GAME(FALSE, TRUE, TRUE));
+  sq_pushbool(v, CHOOSE_FOR_GAME(SQFalse, SQTrue, SQTrue));
   return 1;
 };
 
@@ -1541,6 +2357,19 @@ void VM::RegisterCore(void) {
     }
 
     Root().AddClass(sqcDrawPort);
+  }
+  {
+    Class<SqLocalStorage::LocalStorage> sqcLocalStorage(GetVM(), "LocalStorage", &SqLocalStorage::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqLocalStorage::_aMethods); i++) {
+      sqcLocalStorage.RegisterMethod(SqLocalStorage::_aMethods[i]);
+    }
+
+    // Metamethods
+    sqcLocalStorage.RegisterMetamethod(E_MM_TOSTRING, &SqLocalStorage::ToString);
+
+    sqtCore.AddClass(sqcLocalStorage);
   }
 
   // Register functions

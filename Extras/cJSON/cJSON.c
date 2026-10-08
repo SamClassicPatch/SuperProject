@@ -1128,7 +1128,7 @@ static parse_buffer *skip_utf8_bom(parse_buffer * const buffer)
     return buffer;
 }
 
-CJSON_PUBLIC(cJSON *) cJSON_ParseWithOpts(const char *value, const char **return_parse_end, cJSON_bool require_null_terminated)
+CJSON_PUBLIC(cJSON *) cJSON_ParseWithOpts(const char *value, const char **return_parse_end, cJSON_bool require_null_terminated, int *error_code)
 {
     size_t buffer_length;
 
@@ -1140,11 +1140,11 @@ CJSON_PUBLIC(cJSON *) cJSON_ParseWithOpts(const char *value, const char **return
     /* Adding null character size due to require_null_terminated. */
     buffer_length = strlen(value) + sizeof("");
 
-    return cJSON_ParseWithLengthOpts(value, buffer_length, return_parse_end, require_null_terminated);
+    return cJSON_ParseWithLengthOpts(value, buffer_length, return_parse_end, require_null_terminated, error_code);
 }
 
 /* Parse an object - create a new root, and populate. */
-CJSON_PUBLIC(cJSON *) cJSON_ParseWithLengthOpts(const char *value, size_t buffer_length, const char **return_parse_end, cJSON_bool require_null_terminated)
+CJSON_PUBLIC(cJSON *) cJSON_ParseWithLengthOpts(const char *value, size_t buffer_length, const char **return_parse_end, cJSON_bool require_null_terminated, int *error_code)
 {
     parse_buffer buffer = { 0, 0, 0, 0, { 0, 0, 0 } };
     cJSON *item = NULL;
@@ -1153,8 +1153,14 @@ CJSON_PUBLIC(cJSON *) cJSON_ParseWithLengthOpts(const char *value, size_t buffer
     global_error.json = NULL;
     global_error.position = 0;
 
+    /* [Cecil] Default error code */
+    if (error_code != NULL) *error_code = cJSON_ParseCode_OK;
+
     if (value == NULL || 0 == buffer_length)
     {
+        /* [Cecil] Set error code */
+        if (error_code != NULL) *error_code = cJSON_ParseCode_Empty;
+
         goto fail;
     }
 
@@ -1166,11 +1172,17 @@ CJSON_PUBLIC(cJSON *) cJSON_ParseWithLengthOpts(const char *value, size_t buffer
     item = cJSON_New_Item(&global_hooks);
     if (item == NULL) /* memory fail */
     {
+        /* [Cecil] Set error code */
+        if (error_code != NULL) *error_code = cJSON_ParseCode_MemoryFail;
+
         goto fail;
     }
 
     if (!parse_value(item, buffer_skip_whitespace(skip_utf8_bom(&buffer))))
     {
+        /* [Cecil] Set error code */
+        if (error_code != NULL) *error_code = cJSON_ParseCode_ParseFail;
+
         /* parse failure. ep is set. */
         goto fail;
     }
@@ -1181,6 +1193,9 @@ CJSON_PUBLIC(cJSON *) cJSON_ParseWithLengthOpts(const char *value, size_t buffer
         buffer_skip_whitespace(&buffer);
         if ((buffer.offset >= buffer.length) || buffer_at_offset(&buffer)[0] != '\0')
         {
+            /* [Cecil] Set error code */
+            if (error_code != NULL) *error_code = cJSON_ParseCode_NotNullTerminated;
+
             goto fail;
         }
     }
@@ -1226,12 +1241,12 @@ fail:
 /* Default options for cJSON_Parse */
 CJSON_PUBLIC(cJSON *) cJSON_Parse(const char *value)
 {
-    return cJSON_ParseWithOpts(value, 0, 0);
+    return cJSON_ParseWithOpts(value, 0, 0, NULL);
 }
 
 CJSON_PUBLIC(cJSON *) cJSON_ParseWithLength(const char *value, size_t buffer_length)
 {
-    return cJSON_ParseWithLengthOpts(value, buffer_length, 0, 0);
+    return cJSON_ParseWithLengthOpts(value, buffer_length, 0, 0, NULL);
 }
 
 #define cjson_min(a, b) (((a) < (b)) ? (a) : (b))
