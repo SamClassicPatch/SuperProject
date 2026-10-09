@@ -1252,28 +1252,17 @@ static BOOL VerifyVector(cJSON *pArray, FLOAT3D *pvValue) {
 static BOOL VerifyPlane(cJSON *pArray, FLOATplane3D *pplValue) {
   if (!cJSON_IsArray(pArray)) return FALSE;
 
-  // Should have exactly 4 values
-  if (cJSON_GetArraySize(pArray) != 4) return FALSE;
+  // Should have exactly 2 values
+  if (cJSON_GetArraySize(pArray) != 2) return FALSE;
 
-  // All values must be numbers
-  cJSON *p0 = cJSON_GetArrayItem(pArray, 0);
-  if (!cJSON_IsNumber(p0)) return FALSE;
+  // Values must be a vector followed by a number
+  FLOAT3D *pvVector = (pplValue != NULL ? (FLOAT3D *)pplValue : NULL);
+  if (!VerifyVector(cJSON_GetArrayItem(pArray, 0), pvVector)) return FALSE;
 
-  cJSON *p1 = cJSON_GetArrayItem(pArray, 1);
-  if (!cJSON_IsNumber(p1)) return FALSE;
-
-  cJSON *p2 = cJSON_GetArrayItem(pArray, 2);
-  if (!cJSON_IsNumber(p2)) return FALSE;
-
-  cJSON *pDist = cJSON_GetArrayItem(pArray, 3);
+  cJSON *pDist = cJSON_GetArrayItem(pArray, 1);
   if (!cJSON_IsNumber(pDist)) return FALSE;
+  if (pplValue != NULL) pplValue->Distance() = cJSON_GetNumberValue(pDist);
 
-  if (pplValue != NULL) {
-    (*pplValue)(1) = cJSON_GetNumberValue(p0);
-    (*pplValue)(2) = cJSON_GetNumberValue(p1);
-    (*pplValue)(3) = cJSON_GetNumberValue(p2);
-    pplValue->Distance() = cJSON_GetNumberValue(pDist);
-  }
   return TRUE;
 };
 
@@ -1324,16 +1313,33 @@ static BOOL VerifyMatrix(cJSON *pArray, FLOATmatrix3D *pmValue) {
 static BOOL VerifyAABB(cJSON *pArray, FLOATaabbox3D *pboxValue) {
   if (!cJSON_IsArray(pArray)) return FALSE;
 
-  // Should have exactly 2 values
-  if (cJSON_GetArraySize(pArray) != 2) return FALSE;
+  // Should have exactly 6 values
+  if (cJSON_GetArraySize(pArray) != 6) return FALSE;
 
-  // All values must be vectors
-  FLOAT3D *pvMin = (pboxValue != NULL ? &pboxValue->minvect : NULL);
-  if (!VerifyVector(cJSON_GetArrayItem(pArray, 0), pvMin)) return FALSE;
+  // All values must be numbers
+  cJSON *pMin1 = cJSON_GetArrayItem(pArray, 0);
+  if (!cJSON_IsNumber(pMin1)) return FALSE;
+  cJSON *pMin2 = cJSON_GetArrayItem(pArray, 1);
+  if (!cJSON_IsNumber(pMin2)) return FALSE;
+  cJSON *pMin3 = cJSON_GetArrayItem(pArray, 2);
+  if (!cJSON_IsNumber(pMin3)) return FALSE;
 
-  FLOAT3D *pvMax = (pboxValue != NULL ? &pboxValue->maxvect : NULL);
-  if (!VerifyVector(cJSON_GetArrayItem(pArray, 1), pvMax)) return FALSE;
+  cJSON *pMax1 = cJSON_GetArrayItem(pArray, 3);
+  if (!cJSON_IsNumber(pMax1)) return FALSE;
+  cJSON *pMax2 = cJSON_GetArrayItem(pArray, 4);
+  if (!cJSON_IsNumber(pMax2)) return FALSE;
+  cJSON *pMax3 = cJSON_GetArrayItem(pArray, 5);
+  if (!cJSON_IsNumber(pMax3)) return FALSE;
 
+  if (pboxValue != NULL) {
+    pboxValue->minvect(1) = cJSON_GetNumberValue(pMin1);
+    pboxValue->minvect(2) = cJSON_GetNumberValue(pMin2);
+    pboxValue->minvect(3) = cJSON_GetNumberValue(pMin3);
+
+    pboxValue->maxvect(1) = cJSON_GetNumberValue(pMax1);
+    pboxValue->maxvect(2) = cJSON_GetNumberValue(pMax2);
+    pboxValue->maxvect(3) = cJSON_GetNumberValue(pMax3);
+  }
   return TRUE;
 };
 
@@ -1753,12 +1759,10 @@ BOOL ConvertPlaneToJSONArray(const FLOATplane3D &pl, cJSON *pArray) {
 
   cJSON *pNew = NULL;
 
-  pNew = cJSON_CreateNumber(pl(1));
-  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
-  pNew = cJSON_CreateNumber(pl(2));
-  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
-  pNew = cJSON_CreateNumber(pl(3));
-  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateArray();
+  if (!ConvertVectorToJSONArray(pl, pNew)
+   || !cJSON_AddItemToArray(pArray, pNew)) goto failure;
+
   pNew = cJSON_CreateNumber(pl.Distance());
   if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
 
@@ -1805,21 +1809,9 @@ failure:
 BOOL ConvertAABBToJSONArray(const FLOATaabbox3D &box, cJSON *pArray) {
   if (pArray == NULL) return FALSE;
 
-  const FLOAT aMin[3] = { box.Min()(1), box.Min()(2), box.Min()(3) };
-  cJSON *pMin = cJSON_CreateFloatArray(aMin, 3);
-
-  if (!cJSON_AddItemToArray(pArray, pMin)) {
-    if (pMin != NULL) cJSON_Delete(pMin);
-    return FALSE;
-  }
-
-  const FLOAT aMax[3] = { box.Max()(1), box.Max()(2), box.Max()(3) };
-  cJSON *pMax = cJSON_CreateFloatArray(aMax, 3);
-
-  if (!cJSON_AddItemToArray(pArray, pMax)) {
-    if (pMax != NULL) cJSON_Delete(pMax);
-    return FALSE;
-  }
+  // Append values of both vectors to the same array
+  if (!ConvertVectorToJSONArray(box.Min(), pArray)) return FALSE;
+  if (!ConvertVectorToJSONArray(box.Max(), pArray)) return FALSE;
 
   return TRUE;
 };
@@ -1827,23 +1819,21 @@ BOOL ConvertAABBToJSONArray(const FLOATaabbox3D &box, cJSON *pArray) {
 BOOL ConvertPlacementToJSONArray(const CPlacement3D &pl, cJSON *pArray) {
   if (pArray == NULL) return FALSE;
 
-  const FLOAT aPos[3] = { pl.pl_PositionVector(1), pl.pl_PositionVector(2), pl.pl_PositionVector(3) };
-  cJSON *pPos = cJSON_CreateFloatArray(aPos, 3);
+  cJSON *pNew = NULL;
 
-  if (!cJSON_AddItemToArray(pArray, pPos)) {
-    if (pPos != NULL) cJSON_Delete(pPos);
-    return FALSE;
-  }
+  pNew = cJSON_CreateArray();
+  if (!ConvertVectorToJSONArray(pl.pl_PositionVector, pNew)
+   || !cJSON_AddItemToArray(pArray, pNew)) goto failure;
 
-  const FLOAT aRot[3] = { pl.pl_OrientationAngle(1), pl.pl_OrientationAngle(2), pl.pl_OrientationAngle(3) };
-  cJSON *pRot = cJSON_CreateFloatArray(aRot, 3);
-
-  if (!cJSON_AddItemToArray(pArray, pRot)) {
-    if (pRot != NULL) cJSON_Delete(pRot);
-    return FALSE;
-  }
+  pNew = cJSON_CreateArray();
+  if (!ConvertVectorToJSONArray(pl.pl_OrientationAngle, pNew)
+   || !cJSON_AddItemToArray(pArray, pNew)) goto failure;
 
   return TRUE;
+
+failure:
+  if (pNew != NULL) cJSON_Delete(pNew);
+  return FALSE;
 };
 
 static SQInteger SetArray(HSQUIRRELVM v, int, LocalStorage &val) {
