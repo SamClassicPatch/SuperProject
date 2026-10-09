@@ -1225,6 +1225,189 @@ LOCALSTORAGE_CHECK_TYPE(IsObject);
 
 #undef LOCALSTORAGE_CHECK_TYPE
 
+static BOOL VerifyVector(cJSON *pArray, FLOAT3D *pvValue) {
+  if (!cJSON_IsArray(pArray)) return FALSE;
+
+  // Should have exactly 3 values
+  if (cJSON_GetArraySize(pArray) != 3) return FALSE;
+
+  // All values must be numbers
+  cJSON *p0 = cJSON_GetArrayItem(pArray, 0);
+  if (!cJSON_IsNumber(p0)) return FALSE;
+
+  cJSON *p1 = cJSON_GetArrayItem(pArray, 1);
+  if (!cJSON_IsNumber(p1)) return FALSE;
+
+  cJSON *p2 = cJSON_GetArrayItem(pArray, 2);
+  if (!cJSON_IsNumber(p2)) return FALSE;
+
+  if (pvValue != NULL) {
+    (*pvValue)(1) = cJSON_GetNumberValue(p0);
+    (*pvValue)(2) = cJSON_GetNumberValue(p1);
+    (*pvValue)(3) = cJSON_GetNumberValue(p2);
+  }
+  return TRUE;
+};
+
+static BOOL VerifyPlane(cJSON *pArray, FLOATplane3D *pplValue) {
+  if (!cJSON_IsArray(pArray)) return FALSE;
+
+  // Should have exactly 4 values
+  if (cJSON_GetArraySize(pArray) != 4) return FALSE;
+
+  // All values must be numbers
+  cJSON *p0 = cJSON_GetArrayItem(pArray, 0);
+  if (!cJSON_IsNumber(p0)) return FALSE;
+
+  cJSON *p1 = cJSON_GetArrayItem(pArray, 1);
+  if (!cJSON_IsNumber(p1)) return FALSE;
+
+  cJSON *p2 = cJSON_GetArrayItem(pArray, 2);
+  if (!cJSON_IsNumber(p2)) return FALSE;
+
+  cJSON *pDist = cJSON_GetArrayItem(pArray, 3);
+  if (!cJSON_IsNumber(pDist)) return FALSE;
+
+  if (pplValue != NULL) {
+    (*pplValue)(1) = cJSON_GetNumberValue(p0);
+    (*pplValue)(2) = cJSON_GetNumberValue(p1);
+    (*pplValue)(3) = cJSON_GetNumberValue(p2);
+    pplValue->Distance() = cJSON_GetNumberValue(pDist);
+  }
+  return TRUE;
+};
+
+static BOOL VerifyMatrix(cJSON *pArray, FLOATmatrix3D *pmValue) {
+  if (!cJSON_IsArray(pArray)) return FALSE;
+
+  // Should have exactly 9 values
+  if (cJSON_GetArraySize(pArray) != 9) return FALSE;
+
+  // All values must be numbers
+  cJSON *p11 = cJSON_GetArrayItem(pArray, 0);
+  if (!cJSON_IsNumber(p11)) return FALSE;
+  cJSON *p12 = cJSON_GetArrayItem(pArray, 1);
+  if (!cJSON_IsNumber(p12)) return FALSE;
+  cJSON *p13 = cJSON_GetArrayItem(pArray, 2);
+  if (!cJSON_IsNumber(p13)) return FALSE;
+
+  cJSON *p21 = cJSON_GetArrayItem(pArray, 3);
+  if (!cJSON_IsNumber(p21)) return FALSE;
+  cJSON *p22 = cJSON_GetArrayItem(pArray, 4);
+  if (!cJSON_IsNumber(p22)) return FALSE;
+  cJSON *p23 = cJSON_GetArrayItem(pArray, 5);
+  if (!cJSON_IsNumber(p23)) return FALSE;
+
+  cJSON *p31 = cJSON_GetArrayItem(pArray, 6);
+  if (!cJSON_IsNumber(p31)) return FALSE;
+  cJSON *p32 = cJSON_GetArrayItem(pArray, 7);
+  if (!cJSON_IsNumber(p32)) return FALSE;
+  cJSON *p33 = cJSON_GetArrayItem(pArray, 8);
+  if (!cJSON_IsNumber(p33)) return FALSE;
+
+  if (pmValue != NULL) {
+    (*pmValue)(1, 1) = cJSON_GetNumberValue(p11);
+    (*pmValue)(1, 2) = cJSON_GetNumberValue(p12);
+    (*pmValue)(1, 3) = cJSON_GetNumberValue(p13);
+
+    (*pmValue)(2, 1) = cJSON_GetNumberValue(p21);
+    (*pmValue)(2, 2) = cJSON_GetNumberValue(p22);
+    (*pmValue)(2, 3) = cJSON_GetNumberValue(p23);
+
+    (*pmValue)(3, 1) = cJSON_GetNumberValue(p31);
+    (*pmValue)(3, 2) = cJSON_GetNumberValue(p32);
+    (*pmValue)(3, 3) = cJSON_GetNumberValue(p33);
+  }
+  return TRUE;
+};
+
+static BOOL VerifyAABB(cJSON *pArray, FLOATaabbox3D *pboxValue) {
+  if (!cJSON_IsArray(pArray)) return FALSE;
+
+  // Should have exactly 2 values
+  if (cJSON_GetArraySize(pArray) != 2) return FALSE;
+
+  // All values must be vectors
+  FLOAT3D *pvMin = (pboxValue != NULL ? &pboxValue->minvect : NULL);
+  if (!VerifyVector(cJSON_GetArrayItem(pArray, 0), pvMin)) return FALSE;
+
+  FLOAT3D *pvMax = (pboxValue != NULL ? &pboxValue->maxvect : NULL);
+  if (!VerifyVector(cJSON_GetArrayItem(pArray, 1), pvMax)) return FALSE;
+
+  return TRUE;
+};
+
+static BOOL VerifyPlacement(cJSON *pArray, CPlacement3D *pplValue) {
+  if (!cJSON_IsArray(pArray)) return FALSE;
+
+  // Should have exactly 2 values
+  if (cJSON_GetArraySize(pArray) != 2) return FALSE;
+
+  // All values must be vectors
+  FLOAT3D *pvPos = (pplValue != NULL ? &pplValue->pl_PositionVector : NULL);
+  if (!VerifyVector(cJSON_GetArrayItem(pArray, 0), pvPos)) return FALSE;
+
+  FLOAT3D *pvRot = (pplValue != NULL ? &pplValue->pl_OrientationAngle : NULL);
+  if (!VerifyVector(cJSON_GetArrayItem(pArray, 1), pvRot)) return FALSE;
+
+  return TRUE;
+};
+
+static SQInteger IsVector(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  sq_pushbool(v, VerifyVector(pValue, NULL) ? SQTrue : SQFalse);
+  return 1;
+};
+
+static SQInteger IsPlane(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  sq_pushbool(v, VerifyPlane(pValue, NULL) ? SQTrue : SQFalse);
+  return 1;
+};
+
+static SQInteger IsMatrix(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  sq_pushbool(v, VerifyMatrix(pValue, NULL) ? SQTrue : SQFalse);
+  return 1;
+};
+
+static SQInteger IsAABB(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  sq_pushbool(v, VerifyAABB(pValue, NULL) ? SQTrue : SQFalse);
+  return 1;
+};
+
+static SQInteger IsPlacement(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  sq_pushbool(v, VerifyPlacement(pValue, NULL) ? SQTrue : SQFalse);
+  return 1;
+};
+
 static SQInteger SetBool(HSQUIRRELVM v, int, LocalStorage &val) {
   ASSERT_JSON;
 
@@ -1940,7 +2123,7 @@ static SQInteger PushJSONValue(HSQUIRRELVM v, cJSON *pValue) {
     return sq_throwerror(v, "unsupported JSON value type");
   }
 
-  return 1;
+  return 1; // Ends up here after pushing simple types, e.g. a string
 };
 
 SQInteger PushJSONArray(HSQUIRRELVM v, cJSON *pArray) {
@@ -2020,6 +2203,106 @@ static SQInteger GetObject(HSQUIRRELVM v, int, LocalStorage &val) {
   return PushJSONObject(v, pValue);
 };
 
+static SQInteger GetVector(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  FLOAT3D vResult;
+
+  if (!VerifyVector(pValue, &vResult)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve vector value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
+  *pv = vResult;
+  return 1;
+};
+
+static SQInteger GetPlane(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  FLOATplane3D plResult;
+
+  if (!VerifyPlane(pValue, &plResult)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve plane value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
+  *ppl = plResult;
+  return 1;
+};
+
+static SQInteger GetMatrix(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  FLOATmatrix3D mResult;
+
+  if (!VerifyMatrix(pValue, &mResult)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve matrix value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
+  *pm = mResult;
+  return 1;
+};
+
+static SQInteger GetAABB(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  FLOATaabbox3D boxResult;
+
+  if (!VerifyAABB(pValue, &boxResult)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve AABB value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
+  *pbox = boxResult;
+  return 1;
+};
+
+static SQInteger GetPlacement(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  CPlacement3D plResult;
+
+  if (!VerifyPlacement(pValue, &plResult)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot retrieve placement value '%s' from local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
+  *ppl = plResult;
+  return 1;
+};
+
 static SQInteger GetValue(HSQUIRRELVM v, int, LocalStorage &val) {
   ASSERT_JSON;
 
@@ -2052,6 +2335,11 @@ static Method<LocalStorage> _aMethods[] = {
   { "IsString", &IsString, 2, ".s" },
   { "IsArray",  &IsArray,  2, ".s" },
   { "IsObject", &IsObject, 2, ".s" },
+  { "IsVector",    &IsVector,    2, ".s" },
+  { "IsPlane",     &IsPlane,     2, ".s" },
+  { "IsMatrix",    &IsMatrix,    2, ".s" },
+  { "IsAABB",      &IsAABB,      2, ".s" },
+  { "IsPlacement", &IsPlacement, 2, ".s" },
 
   { "SetBool",   &SetBool,   3, ".sb" },
   { "SetNull",   &SetNull,   2, ".s" },
@@ -2072,6 +2360,11 @@ static Method<LocalStorage> _aMethods[] = {
   { "GetString", &GetString, 2, ".s" },
   { "GetArray",  &GetArray,  2, ".s" },
   { "GetObject", &GetObject, 2, ".s" },
+  { "GetVector",    &GetVector,    2, ".s" },
+  { "GetPlane",     &GetPlane,     2, ".s" },
+  { "GetMatrix",    &GetMatrix,    2, ".s" },
+  { "GetAABB",      &GetAABB,      2, ".s" },
+  { "GetPlacement", &GetPlacement, 2, ".s" },
   { "GetValue",  &GetValue,  2, ".s" },
 };
 
