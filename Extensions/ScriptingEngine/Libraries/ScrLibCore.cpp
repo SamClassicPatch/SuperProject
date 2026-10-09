@@ -953,7 +953,7 @@ static cJSON *ResolvePath(cJSON *pObject, const char *strPath) {
 };
 
 // Create a new boolean value at the specified directory-like path
-static SQBool CreateBool(cJSON *pObject, const char *strPath, SQBool bValue) {
+static BOOL CreateBoolAt(cJSON *pObject, const char *strPath, SQBool bValue) {
   CTString strLastKey;
   cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
   if (pLastObject == NULL || strLastKey == "") return FALSE; // No object or no key
@@ -965,7 +965,7 @@ static SQBool CreateBool(cJSON *pObject, const char *strPath, SQBool bValue) {
 };
 
 // Create a new null value at the specified directory-like path
-static SQBool CreateNull(cJSON *pObject, const char *strPath) {
+static BOOL CreateNullAt(cJSON *pObject, const char *strPath) {
   CTString strLastKey;
   cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
   if (pLastObject == NULL || strLastKey == "") return FALSE; // No object or no key
@@ -977,7 +977,7 @@ static SQBool CreateNull(cJSON *pObject, const char *strPath) {
 };
 
 // Create a new number value at the specified directory-like path
-static SQBool CreateNumber(cJSON *pObject, const char *strPath, SQFloat fValue) {
+static BOOL CreateNumberAt(cJSON *pObject, const char *strPath, SQFloat fValue) {
   CTString strLastKey;
   cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
   if (pLastObject == NULL || strLastKey == "") return FALSE; // No object or no key
@@ -989,7 +989,7 @@ static SQBool CreateNumber(cJSON *pObject, const char *strPath, SQFloat fValue) 
 };
 
 // Create a new string value at the specified directory-like path
-static SQBool CreateString(cJSON *pObject, const char *strPath, const SQChar *strValue) {
+static BOOL CreateStringAt(cJSON *pObject, const char *strPath, const SQChar *strValue) {
   CTString strLastKey;
   cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
   if (pLastObject == NULL || strLastKey == "") return FALSE; // No object or no key
@@ -1001,7 +1001,7 @@ static SQBool CreateString(cJSON *pObject, const char *strPath, const SQChar *st
 };
 
 // Create a new array value at the specified directory-like path
-static cJSON *CreateArray(cJSON *pObject, const char *strPath) {
+static cJSON *CreateArrayAt(cJSON *pObject, const char *strPath) {
   CTString strLastKey;
   cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
   if (pLastObject == NULL || strLastKey == "") return NULL; // No object or no key
@@ -1013,7 +1013,7 @@ static cJSON *CreateArray(cJSON *pObject, const char *strPath) {
 };
 
 // Create a new object value at the specified directory-like path
-static cJSON *CreateObject(cJSON *pObject, const char *strPath) {
+static cJSON *CreateObjectAt(cJSON *pObject, const char *strPath) {
   CTString strLastKey;
   cJSON *pLastObject = FindLastObject(pObject, strPath, TRUE, strLastKey);
   if (pLastObject == NULL || strLastKey == "") return NULL; // No object or no key
@@ -1233,8 +1233,13 @@ static SQInteger SetBool(HSQUIRRELVM v, int, LocalStorage &val) {
   SQBool bValue;
   sq_getbool(v, 3, &bValue);
 
-  sq_pushbool(v, CreateBool(val.pJSON, strPath, bValue));
-  return 1;
+  if (!CreateBoolAt(val.pJSON, strPath, bValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create a boolean value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
 };
 
 static SQInteger SetNull(HSQUIRRELVM v, int, LocalStorage &val) {
@@ -1243,8 +1248,13 @@ static SQInteger SetNull(HSQUIRRELVM v, int, LocalStorage &val) {
   const SQChar *strPath;
   sq_getstring(v, 2, &strPath);
 
-  sq_pushbool(v, CreateNull(val.pJSON, strPath));
-  return 1;
+  if (!CreateNullAt(val.pJSON, strPath)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create a null value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
 };
 
 static SQInteger SetNumber(HSQUIRRELVM v, int, LocalStorage &val) {
@@ -1255,8 +1265,13 @@ static SQInteger SetNumber(HSQUIRRELVM v, int, LocalStorage &val) {
   SQFloat fValue;
   sq_getfloat(v, 3, &fValue);
 
-  sq_pushbool(v, CreateNumber(val.pJSON, strPath, fValue));
-  return 1;
+  if (!CreateNumberAt(val.pJSON, strPath, fValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create a number value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
 };
 
 static SQInteger SetString(HSQUIRRELVM v, int, LocalStorage &val) {
@@ -1267,67 +1282,90 @@ static SQInteger SetString(HSQUIRRELVM v, int, LocalStorage &val) {
   const SQChar *strValue;
   sq_getstring(v, 3, &strValue);
 
-  sq_pushbool(v, CreateString(val.pJSON, strPath, strValue));
-  return 1;
+  if (!CreateStringAt(val.pJSON, strPath, strValue)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create a string value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  return 0;
 };
 
 static SQInteger PopulateJSONArray(HSQUIRRELVM v, SQInteger idxArray, cJSON *pArray);
 static SQInteger PopulateJSONObject(HSQUIRRELVM v, SQInteger idxObject, cJSON *pObject);
 
 SQInteger PopulateJSONArray(HSQUIRRELVM v, SQInteger idxArray, cJSON *pArray) {
+  if (pArray == NULL) return sq_throwerror(v, "no JSON array to populate");
+
   // Iterate through the object
   sq_pushnull(v); // Null iterator
 
   // Shift the top index because of the null iterator
   if (idxArray < 0) idxArray--;
 
+  // Temporary pointer for the last created value
+  cJSON *pNewValue = NULL;
+
   while (SQ_SUCCEEDED(sq_next(v, idxArray))) {
     switch (sq_gettype(v, -1))
     {
       case OT_NULL: {
-        cJSON_AddItemToArray(pArray, cJSON_CreateNull());
+        pNewValue = cJSON_CreateNull();
+        if (!cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
       } break;
 
       case OT_INTEGER: {
         SQInteger i;
         sq_getinteger(v, -1, &i);
-        cJSON_AddItemToArray(pArray, cJSON_CreateNumber(i));
+        pNewValue = cJSON_CreateNumber(i);
+        if (!cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
       } break;
 
       case OT_FLOAT: {
         SQFloat f;
         sq_getfloat(v, -1, &f);
-        cJSON_AddItemToArray(pArray, cJSON_CreateNumber(f));
+        pNewValue = cJSON_CreateNumber(f);
+        if (!cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
       } break;
 
       case OT_BOOL: {
         SQBool b;
         sq_getbool(v, -1, &b);
-        cJSON_AddItemToArray(pArray, cJSON_CreateBool(b));
+        pNewValue = cJSON_CreateBool(b);
+        if (!cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
       } break;
 
       case OT_STRING: {
         const SQChar *str;
         sq_getstring(v, -1, &str);
-        cJSON_AddItemToArray(pArray, cJSON_CreateString(str));
+        pNewValue = cJSON_CreateString(str);
+        if (!cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
       } break;
 
       case OT_ARRAY: {
         cJSON *pNewArray = cJSON_CreateArray();
-        PopulateJSONArray(v, -1, pNewArray);
-        cJSON_AddItemToArray(pArray, pNewArray);
+        if (SQ_FAILED(PopulateJSONArray(v, -1, pNewArray))) goto failure;
+        if (!cJSON_AddItemToArray(pArray, pNewArray)) goto failure;
       } break;
 
       case OT_TABLE: {
         cJSON *pNewObject = cJSON_CreateObject();
-        PopulateJSONObject(v, -1, pNewObject);
-        cJSON_AddItemToArray(pArray, pNewObject);
+        if (SQ_FAILED(PopulateJSONObject(v, -1, pNewObject))) goto failure;
+        if (!cJSON_AddItemToArray(pArray, pNewObject)) goto failure;
       } break;
 
       //case OT_INSTANCE:
 
-      default: return sq_throwerror(v, "unsupported Squirrel type for JSON");
+      default: {
+      failure:
+        if (pNewValue != NULL) cJSON_Delete(pNewValue);
+        sq_pop(v, 3); // Pop key, value, null iterator
+        return sq_throwerror(v, "unsupported Squirrel type for JSON");
+      }
     }
+
+    // Last value was successfully added and quit the switch block
+    pNewValue = NULL;
 
     sq_pop(v, 2); // Pop key and value before the next iteration
   }
@@ -1337,6 +1375,8 @@ SQInteger PopulateJSONArray(HSQUIRRELVM v, SQInteger idxArray, cJSON *pArray) {
 };
 
 SQInteger PopulateJSONObject(HSQUIRRELVM v, SQInteger idxObject, cJSON *pObject) {
+  if (pObject == NULL) return sq_throwerror(v, "no JSON object to populate");
+
   // Iterate through the object
   sq_pushnull(v); // Null iterator
 
@@ -1358,46 +1398,50 @@ SQInteger PopulateJSONObject(HSQUIRRELVM v, SQInteger idxObject, cJSON *pObject)
     switch (sq_gettype(v, -1))
     {
       case OT_NULL: {
-        cJSON_AddNullToObject(pObject, strKey);
+        if (cJSON_AddNullToObject(pObject, strKey) == NULL) goto failure;
       } break;
 
       case OT_INTEGER: {
         SQInteger i;
         sq_getinteger(v, -1, &i);
-        cJSON_AddNumberToObject(pObject, strKey, i);
+        if (cJSON_AddNumberToObject(pObject, strKey, i) == NULL) goto failure;
       } break;
 
       case OT_FLOAT: {
         SQFloat f;
         sq_getfloat(v, -1, &f);
-        cJSON_AddNumberToObject(pObject, strKey, f);
+        if (cJSON_AddNumberToObject(pObject, strKey, f) == NULL) goto failure;
       } break;
 
       case OT_BOOL: {
         SQBool b;
         sq_getbool(v, -1, &b);
-        cJSON_AddBoolToObject(pObject, strKey, b);
+        if (cJSON_AddBoolToObject(pObject, strKey, b) == NULL) goto failure;
       } break;
 
       case OT_STRING: {
         const SQChar *str;
         sq_getstring(v, -1, &str);
-        cJSON_AddStringToObject(pObject, strKey, str);
+        if (cJSON_AddStringToObject(pObject, strKey, str) == NULL) goto failure;
       } break;
 
       case OT_ARRAY: {
         cJSON *pNewArray = cJSON_AddArrayToObject(pObject, strKey);
-        PopulateJSONArray(v, -1, pNewArray);
+        if (SQ_FAILED(PopulateJSONArray(v, -1, pNewArray))) goto failure;
       } break;
 
       case OT_TABLE: {
         cJSON *pNewObject = cJSON_AddObjectToObject(pObject, strKey);
-        PopulateJSONObject(v, -1, pNewObject);
+        if (SQ_FAILED(PopulateJSONObject(v, -1, pNewObject))) goto failure;
       } break;
 
       //case OT_INSTANCE:
 
-      default: return sq_throwerror(v, "unsupported Squirrel type for JSON");
+      default: {
+      failure:
+        sq_pop(v, 3); // Pop key, value, null iterator
+        return sq_throwerror(v, "unsupported Squirrel type for JSON");
+      }
     }
 
     sq_pop(v, 2); // Pop key and value before the next iteration
@@ -1413,15 +1457,15 @@ static SQInteger SetArray(HSQUIRRELVM v, int, LocalStorage &val) {
   const SQChar *strPath;
   sq_getstring(v, 2, &strPath);
 
-  cJSON *pArray = CreateArray(val.pJSON, strPath);
+  cJSON *pArray = CreateArrayAt(val.pJSON, strPath);
 
-  if (pArray == NULL || SQ_FAILED(PopulateJSONArray(v, 3, pArray))) {
-    sq_pushbool(v, SQFalse);
-    return 1;
+  if (pArray == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create an array value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
   }
 
-  sq_pushbool(v, SQTrue);
-  return 1;
+  return PopulateJSONArray(v, 3, pArray);
 };
 
 static SQInteger SetObject(HSQUIRRELVM v, int, LocalStorage &val) {
@@ -1430,15 +1474,15 @@ static SQInteger SetObject(HSQUIRRELVM v, int, LocalStorage &val) {
   const SQChar *strPath;
   sq_getstring(v, 2, &strPath);
 
-  cJSON *pObject = CreateObject(val.pJSON, strPath);
+  cJSON *pObject = CreateObjectAt(val.pJSON, strPath);
 
-  if (pObject == NULL || SQ_FAILED(PopulateJSONObject(v, 3, pObject))) {
-    sq_pushbool(v, SQFalse);
-    return 1;
+  if (pObject == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create an object value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
   }
 
-  sq_pushbool(v, SQTrue);
-  return 1;
+  return PopulateJSONObject(v, 3, pObject);
 };
 
 static SQInteger SetValue(HSQUIRRELVM v, int ctArgs, LocalStorage &val) {
@@ -1453,8 +1497,7 @@ static SQInteger SetValue(HSQUIRRELVM v, int ctArgs, LocalStorage &val) {
     //case OT_INSTANCE:
   }
 
-  sq_pushbool(v, SQFalse);
-  return 1;
+  return sq_throwerror(v, "unsupported Squirrel type for JSON");
 };
 
 static SQInteger GetBool(HSQUIRRELVM v, int, LocalStorage &val) {
