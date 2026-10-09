@@ -1293,6 +1293,11 @@ static SQInteger SetString(HSQUIRRELVM v, int, LocalStorage &val) {
 
 static SQInteger PopulateJSONArray(HSQUIRRELVM v, SQInteger idxArray, cJSON *pArray);
 static SQInteger PopulateJSONObject(HSQUIRRELVM v, SQInteger idxObject, cJSON *pObject);
+static BOOL ConvertVectorToJSONArray(const FLOAT3D &v, cJSON *pArray);
+static BOOL ConvertPlaneToJSONArray(const FLOATplane3D &pl, cJSON *pArray);
+static BOOL ConvertMatrixToJSONArray(const FLOATmatrix3D &m, cJSON *pArray);
+static BOOL ConvertAABBToJSONArray(const FLOATaabbox3D &box, cJSON *pArray);
+static BOOL ConvertPlacementToJSONArray(const CPlacement3D &pl, cJSON *pArray);
 
 SQInteger PopulateJSONArray(HSQUIRRELVM v, SQInteger idxArray, cJSON *pArray) {
   if (pArray == NULL) return sq_throwerror(v, "no JSON array to populate");
@@ -1354,7 +1359,54 @@ SQInteger PopulateJSONArray(HSQUIRRELVM v, SQInteger idxArray, cJSON *pArray) {
         if (!cJSON_AddItemToArray(pArray, pNewObject)) goto failure;
       } break;
 
-      //case OT_INSTANCE:
+      case OT_INSTANCE: {
+        pNewValue = cJSON_CreateArray();
+
+        // Try plane (before vector because it's derived from FLOAT3D)
+        GetInstanceValue(FLOATplane3D, ppl, v, -1);
+
+        if (ppl != NULL) {
+          if (!ConvertPlaneToJSONArray(*ppl, pNewValue)
+           || !cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
+          break;
+        }
+
+        // Try vector
+        GetInstanceValue(FLOAT3D, pv, v, -1);
+
+        if (pv != NULL) {
+          if (!ConvertVectorToJSONArray(*pv, pNewValue)
+           || !cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
+          break;
+        }
+
+        // Try matrix
+        GetInstanceValue(FLOATmatrix3D, pm, v, -1);
+
+        if (pm != NULL) {
+          if (!ConvertMatrixToJSONArray(*pm, pNewValue)
+           || !cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
+          break;
+        }
+
+        // Try bounding box
+        GetInstanceValue(FLOATaabbox3D, pbox, v, -1);
+
+        if (pbox != NULL) {
+          if (!ConvertAABBToJSONArray(*pbox, pNewValue)
+           || !cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
+          break;
+        }
+
+        // Try placement
+        GetInstanceValue(CPlacement3D, ppl3d, v, -1);
+
+        if (ppl3d != NULL) {
+          if (!ConvertPlacementToJSONArray(*ppl3d, pNewValue)
+           || !cJSON_AddItemToArray(pArray, pNewValue)) goto failure;
+          break;
+        }
+      }
 
       default: {
       failure:
@@ -1435,7 +1487,50 @@ SQInteger PopulateJSONObject(HSQUIRRELVM v, SQInteger idxObject, cJSON *pObject)
         if (SQ_FAILED(PopulateJSONObject(v, -1, pNewObject))) goto failure;
       } break;
 
-      //case OT_INSTANCE:
+      case OT_INSTANCE: {
+        cJSON *pNewArray = cJSON_AddArrayToObject(pObject, strKey);
+        if (pNewArray == NULL) goto failure;
+
+        // Try plane (before vector because it's derived from FLOAT3D)
+        GetInstanceValue(FLOATplane3D, ppl, v, -1);
+
+        if (ppl != NULL) {
+          if (!ConvertPlaneToJSONArray(*ppl, pNewArray)) goto failure;
+          break;
+        }
+
+        // Try vector
+        GetInstanceValue(FLOAT3D, pv, v, -1);
+
+        if (pv != NULL) {
+          if (!ConvertVectorToJSONArray(*pv, pNewArray)) goto failure;
+          break;
+        }
+
+        // Try matrix
+        GetInstanceValue(FLOATmatrix3D, pm, v, -1);
+
+        if (pm != NULL) {
+          if (!ConvertMatrixToJSONArray(*pm, pNewArray)) goto failure;
+          break;
+        }
+
+        // Try bounding box
+        GetInstanceValue(FLOATaabbox3D, pbox, v, -1);
+
+        if (pbox != NULL) {
+          if (!ConvertAABBToJSONArray(*pbox, pNewArray)) goto failure;
+          break;
+        }
+
+        // Try placement
+        GetInstanceValue(CPlacement3D, ppl3d, v, -1);
+
+        if (ppl3d != NULL) {
+          if (!ConvertPlacementToJSONArray(*ppl3d, pNewArray)) goto failure;
+          break;
+        }
+      }
 
       default: {
       failure:
@@ -1449,6 +1544,123 @@ SQInteger PopulateJSONObject(HSQUIRRELVM v, SQInteger idxObject, cJSON *pObject)
 
   sq_poptop(v); // Null iterator
   return 0;
+};
+
+BOOL ConvertVectorToJSONArray(const FLOAT3D &v, cJSON *pArray) {
+  if (pArray == NULL) return FALSE;
+
+  cJSON *pNew = NULL;
+
+  pNew = cJSON_CreateNumber(v(1));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(v(2));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(v(3));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+
+  return TRUE;
+
+failure:
+  if (pNew != NULL) cJSON_Delete(pNew);
+  return FALSE;
+};
+
+BOOL ConvertPlaneToJSONArray(const FLOATplane3D &pl, cJSON *pArray) {
+  if (pArray == NULL) return FALSE;
+
+  cJSON *pNew = NULL;
+
+  pNew = cJSON_CreateNumber(pl(1));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(pl(2));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(pl(3));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(pl.Distance());
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+
+  return TRUE;
+
+failure:
+  if (pNew != NULL) cJSON_Delete(pNew);
+  return FALSE;
+};
+
+BOOL ConvertMatrixToJSONArray(const FLOATmatrix3D &m, cJSON *pArray) {
+  if (pArray == NULL) return FALSE;
+
+  cJSON *pNew = NULL;
+
+  pNew = cJSON_CreateNumber(m(1, 1));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(m(1, 2));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(m(1, 3));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+
+  pNew = cJSON_CreateNumber(m(2, 1));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(m(2, 2));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(m(2, 3));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+
+  pNew = cJSON_CreateNumber(m(3, 1));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(m(3, 2));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+  pNew = cJSON_CreateNumber(m(3, 3));
+  if (!cJSON_AddItemToArray(pArray, pNew)) goto failure;
+
+  return TRUE;
+
+failure:
+  if (pNew != NULL) cJSON_Delete(pNew);
+  return FALSE;
+};
+
+BOOL ConvertAABBToJSONArray(const FLOATaabbox3D &box, cJSON *pArray) {
+  if (pArray == NULL) return FALSE;
+
+  const FLOAT aMin[3] = { box.Min()(1), box.Min()(2), box.Min()(3) };
+  cJSON *pMin = cJSON_CreateFloatArray(aMin, 3);
+
+  if (!cJSON_AddItemToArray(pArray, pMin)) {
+    if (pMin != NULL) cJSON_Delete(pMin);
+    return FALSE;
+  }
+
+  const FLOAT aMax[3] = { box.Max()(1), box.Max()(2), box.Max()(3) };
+  cJSON *pMax = cJSON_CreateFloatArray(aMax, 3);
+
+  if (!cJSON_AddItemToArray(pArray, pMax)) {
+    if (pMax != NULL) cJSON_Delete(pMax);
+    return FALSE;
+  }
+
+  return TRUE;
+};
+
+BOOL ConvertPlacementToJSONArray(const CPlacement3D &pl, cJSON *pArray) {
+  if (pArray == NULL) return FALSE;
+
+  const FLOAT aPos[3] = { pl.pl_PositionVector(1), pl.pl_PositionVector(2), pl.pl_PositionVector(3) };
+  cJSON *pPos = cJSON_CreateFloatArray(aPos, 3);
+
+  if (!cJSON_AddItemToArray(pArray, pPos)) {
+    if (pPos != NULL) cJSON_Delete(pPos);
+    return FALSE;
+  }
+
+  const FLOAT aRot[3] = { pl.pl_OrientationAngle(1), pl.pl_OrientationAngle(2), pl.pl_OrientationAngle(3) };
+  cJSON *pRot = cJSON_CreateFloatArray(aRot, 3);
+
+  if (!cJSON_AddItemToArray(pArray, pRot)) {
+    if (pRot != NULL) cJSON_Delete(pRot);
+    return FALSE;
+  }
+
+  return TRUE;
 };
 
 static SQInteger SetArray(HSQUIRRELVM v, int, LocalStorage &val) {
@@ -1485,6 +1697,121 @@ static SQInteger SetObject(HSQUIRRELVM v, int, LocalStorage &val) {
   return PopulateJSONObject(v, 3, pObject);
 };
 
+static SQInteger SetVector(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+  GetInstanceValueVerify(FLOAT3D, pv, v, 3);
+
+  cJSON *pArray = CreateArrayAt(val.pJSON, strPath);
+
+  if (pArray == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create an array value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  if (!ConvertVectorToJSONArray(*pv, pArray)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot set vector to '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger SetPlane(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+  GetInstanceValueVerify(FLOATplane3D, ppl, v, 3);
+
+  cJSON *pArray = CreateArrayAt(val.pJSON, strPath);
+
+  if (pArray == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create an array value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  if (!ConvertPlaneToJSONArray(*ppl, pArray)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot set plane to '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger SetMatrix(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+  GetInstanceValueVerify(FLOATmatrix3D, pm, v, 3);
+
+  cJSON *pArray = CreateArrayAt(val.pJSON, strPath);
+
+  if (pArray == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create an array value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  if (!ConvertMatrixToJSONArray(*pm, pArray)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot set matrix to '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger SetAABB(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+  GetInstanceValueVerify(FLOATaabbox3D, pbox, v, 3);
+
+  cJSON *pArray = CreateArrayAt(val.pJSON, strPath);
+
+  if (pArray == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create an array value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  if (!ConvertAABBToJSONArray(*pbox, pArray)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot set AABB to '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
+static SQInteger SetPlacement(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+  GetInstanceValueVerify(CPlacement3D, ppl, v, 3);
+
+  cJSON *pArray = CreateArrayAt(val.pJSON, strPath);
+
+  if (pArray == NULL) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "failed to create an array value at '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+
+  if (!ConvertPlacementToJSONArray(*ppl, pArray)) {
+    SQChar strError[256];
+    scsprintf(strError, 256, "cannot set placement to '%s' in local storage '%s'", strPath, val.strName.str_String);
+    return sq_throwerror(v, strError);
+  }
+  return 0;
+};
+
 static SQInteger SetValue(HSQUIRRELVM v, int ctArgs, LocalStorage &val) {
   switch (sq_gettype(v, 3)) {
     case OT_NULL:   return SetNull(v, ctArgs, val);
@@ -1494,7 +1821,28 @@ static SQInteger SetValue(HSQUIRRELVM v, int ctArgs, LocalStorage &val) {
     case OT_STRING: return SetString(v, ctArgs, val);
     case OT_ARRAY:  return SetArray(v, ctArgs, val);
     case OT_TABLE:  return SetObject(v, ctArgs, val);
-    //case OT_INSTANCE:
+
+    case OT_INSTANCE: {
+      // Try plane (before vector because it's derived from FLOAT3D)
+      GetInstanceValue(FLOATplane3D, ppl, v, 3);
+      if (ppl != NULL) return SetPlane(v, ctArgs, val);
+
+      // Try vector
+      GetInstanceValue(FLOAT3D, pv, v, 3);
+      if (pv != NULL) return SetVector(v, ctArgs, val);
+
+      // Try matrix
+      GetInstanceValue(FLOATmatrix3D, pm, v, 3);
+      if (pm != NULL) return SetMatrix(v, ctArgs, val);
+
+      // Try bounding box
+      GetInstanceValue(FLOATaabbox3D, pbox, v, 3);
+      if (pbox != NULL) return SetAABB(v, ctArgs, val);
+
+      // Try placement
+      GetInstanceValue(CPlacement3D, ppl3d, v, 3);
+      if (ppl3d != NULL) return SetPlacement(v, ctArgs, val);
+    }
   }
 
   return sq_throwerror(v, "unsupported Squirrel type for JSON");
@@ -1711,7 +2059,12 @@ static Method<LocalStorage> _aMethods[] = {
   { "SetString", &SetString, 3, ".ss" },
   { "SetArray",  &SetArray,  3, ".sa" },
   { "SetObject", &SetObject, 3, ".st" },
-  { "SetValue",  &SetValue,  3, ".sb|o|n|s|a|t" },
+  { "SetVector",    &SetVector,    3, ".sx" },
+  { "SetPlane",     &SetPlane,     3, ".sx" },
+  { "SetMatrix",    &SetMatrix,    3, ".sx" },
+  { "SetAABB",      &SetAABB,      3, ".sx" },
+  { "SetPlacement", &SetPlacement, 3, ".sx" },
+  { "SetValue",  &SetValue,  3, ".sb|o|n|s|a|t|x" },
 
   { "GetBool",   &GetBool,   2, ".s" },
   { "GetNull",   &GetNull,   2, ".s" },
