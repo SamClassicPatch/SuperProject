@@ -2310,6 +2310,202 @@ static SQInteger GetValue(HSQUIRRELVM v, int, LocalStorage &val) {
   return PushJSONValue(v, pValue);
 };
 
+static SQInteger GetBoolDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (cJSON_IsBool(pValue)) {
+    sq_pushbool(v, cJSON_IsTrue(pValue));
+    return 1;
+  }
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetNumberDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (cJSON_IsNumber(pValue)) {
+    sq_pushfloat(v, pValue->valuedouble);
+    return 1;
+  }
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetStringDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+
+  if (cJSON_IsString(pValue)) {
+    sq_pushstring(v, pValue->valuestring, -1);
+    return 1;
+  }
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetArrayDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  if (cJSON_IsArray(pValue)) return PushJSONArray(v, pValue);
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetObjectDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  if (cJSON_IsObject(pValue)) return PushJSONObject(v, pValue);
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetVectorDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  FLOAT3D vResult;
+
+  if (VerifyVector(pValue, &vResult)) {
+    PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
+    *pv = vResult;
+    return 1;
+  }
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetPlaneDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  FLOATplane3D plResult;
+
+  if (VerifyPlane(pValue, &plResult)) {
+    PushNewInstance(FLOATplane3D, ppl, GetVMClass(v).Root(), "FLOATplane3D");
+    *ppl = plResult;
+    return 1;
+  }
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetMatrixDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  FLOATmatrix3D mResult;
+
+  if (VerifyMatrix(pValue, &mResult)) {
+    PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
+    *pm = mResult;
+    return 1;
+  }
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetAABBDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  FLOATaabbox3D boxResult;
+
+  if (VerifyAABB(pValue, &boxResult)) {
+    PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
+    *pbox = boxResult;
+    return 1;
+  }
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetPlacementDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  CPlacement3D plResult;
+
+  if (VerifyPlacement(pValue, &plResult)) {
+    PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
+    *ppl = plResult;
+    return 1;
+  }
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
+static SQInteger GetValueDefault(HSQUIRRELVM v, int, LocalStorage &val) {
+  ASSERT_JSON;
+
+  const SQChar *strPath;
+  sq_getstring(v, 2, &strPath);
+
+  cJSON *pValue = ResolvePath(val.pJSON, strPath);
+  if (pValue != NULL) return PushJSONValue(v, pValue);
+
+  // Push provided default value
+  sq_push(v, 3);
+  return 1;
+};
+
 static Method<LocalStorage> _aMethods[] = {
   { "Save",  &Save,  1, "." },
   { "Clear", &Clear, 1, "." },
@@ -2356,6 +2552,18 @@ static Method<LocalStorage> _aMethods[] = {
   { "GetAABB",      &GetAABB,      2, ".s" },
   { "GetPlacement", &GetPlacement, 2, ".s" },
   { "GetValue",  &GetValue,  2, ".s" },
+
+  { "GetBoolDefault",   &GetBoolDefault,   3, ".sb" },
+  { "GetNumberDefault", &GetNumberDefault, 3, ".sn" },
+  { "GetStringDefault", &GetStringDefault, 3, ".ss" },
+  { "GetArrayDefault",  &GetArrayDefault,  3, ".sa" },
+  { "GetObjectDefault", &GetObjectDefault, 3, ".st" },
+  { "GetVectorDefault",    &GetVectorDefault,    3, ".sx" },
+  { "GetPlaneDefault",     &GetPlaneDefault,     3, ".sx" },
+  { "GetMatrixDefault",    &GetMatrixDefault,    3, ".sx" },
+  { "GetAABBDefault",      &GetAABBDefault,      3, ".sx" },
+  { "GetPlacementDefault", &GetPlacementDefault, 3, ".sx" },
+  { "GetValueDefault",  &GetValueDefault,  3, ".s." },
 };
 
 }; // namespace
