@@ -798,6 +798,25 @@ static SQInteger SendChatToClient(HSQUIRRELVM v) {
   return 0;
 };
 
+static SQInteger SendChatToEveryone(HSQUIRRELVM v) {
+  ASSERT_SERVER;
+
+  const SQChar *strFromName;
+  const SQChar *strMessage;
+  sq_getstring(v, 2, &strFromName);
+  sq_getstring(v, 3, &strMessage);
+
+  CServer &srv = _pNetwork->ga_srvServer;
+  const INDEX ctSessions = srv.srv_assoSessions.Count();
+
+  for (INDEX i = 0; i < ctSessions; i++) {
+    if (i == 0 || srv.srv_assoSessions[i].sso_bActive) {
+      INetwork::SendChatToClient(i, strFromName, strMessage);
+    }
+  }
+  return 0;
+};
+
 static SQInteger KickClient(HSQUIRRELVM v) {
   ASSERT_SERVER;
 
@@ -1244,10 +1263,11 @@ static SQRegFunction _aNetworkFuncs[] = {
   { "SendChat",              &Network::SendChat,    4, ".nns" },
 
   // Server-specific
-  { "SendChatToClient",      &Network::SendChatToClient, 4, ".nss" },
-  { "KickClient",            &Network::KickClient,       3, ".ns" },
-  { "GetHostName",           &Network::GetHostName,      1, "." },
-  { "GetHostAddress",        &Network::GetHostAddress,   1, "." },
+  { "SendChatToClient",      &Network::SendChatToClient,   4, ".nss" },
+  { "SendChatToEveryone",    &Network::SendChatToEveryone, 3, ".ss" },
+  { "KickClient",            &Network::KickClient,         3, ".ns" },
+  { "GetHostName",           &Network::GetHostName,        1, "." },
+  { "GetHostAddress",        &Network::GetHostAddress,     1, "." },
 
   { "GetClients",            &Network::GetClients,         1, "." },
   { "GetMaxClients",         &Network::GetMaxClients,      1, "." },
