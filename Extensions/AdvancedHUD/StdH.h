@@ -21,6 +21,7 @@ extern BOOL _bModdedEntities;
 
 extern CPluginSymbol _psEnable;
 extern CPluginSymbol _psTheme;
+extern CPluginSymbol _psThemeScript;
 
 extern CPluginSymbol _psScreenEdgeX;
 extern CPluginSymbol _psScreenEdgeY;

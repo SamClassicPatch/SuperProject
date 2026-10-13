@@ -28,9 +28,11 @@ CPluginSymbol _psEnable(SSF_PERSISTENT | SSF_USER, INDEX(1));
 
 // Select default theme
 #if SE1_GAME == SS_TFE
-  CPluginSymbol _psTheme(SSF_PERSISTENT | SSF_USER, (INDEX)E_HUD_TFE);
+  CPluginSymbol _psTheme(0, (INDEX)E_HUD_TFE); // [Cecil] NOTE: Deprecated
+  CPluginSymbol _psThemeScript(SSF_PERSISTENT | SSF_USER, "Scripts\\ClassicsPatch\\HUDThemes\\01_TFE.nut");
 #else
-  CPluginSymbol _psTheme(SSF_PERSISTENT | SSF_USER, (INDEX)E_HUD_TSE);
+  CPluginSymbol _psTheme(0, (INDEX)E_HUD_TSE); // [Cecil] NOTE: Deprecated
+  CPluginSymbol _psThemeScript(SSF_PERSISTENT | SSF_USER, "Scripts\\ClassicsPatch\\HUDThemes\\03_TSE.nut");
 #endif
 
 CPluginSymbol _psScreenEdgeX(SSF_PERSISTENT | SSF_USER, INDEX(5));
@@ -74,6 +76,12 @@ CPluginSymbol _psColorTop(SSF_PERSISTENT | SSF_USER, INDEX(0x00FF00));
 CPluginSymbol _psColorMid(SSF_PERSISTENT | SSF_USER, INDEX(0x00FF00));
 CPluginSymbol _psColorLow(SSF_PERSISTENT | SSF_USER, INDEX(0xFF0000));
 
+static void UpdateTheme(SHELL_FUNC_ARGS) {
+  BEGIN_SHELL_FUNC;
+  CTString strLoad(0, "include \"%s\";", _psThemeScript.GetString().str_String);
+  _pShell->Execute(strLoad);
+};
+
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {
@@ -87,6 +95,9 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   // Custom symbols
   _psEnable.Register("ahud_bEnable");
   _psTheme.Register("ahud_iTheme");
+
+  GetPluginAPI()->RegisterMethod(FALSE, "void", "ahud_UpdateTheme", "INDEX", &UpdateTheme);
+  _psThemeScript.Register("ahud_strThemeScript", "", "ahud_UpdateTheme");
 
   _psScreenEdgeX.Register("ahud_iScreenEdgeX");
   _psScreenEdgeY.Register("ahud_iScreenEdgeY");
@@ -127,6 +138,9 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   _psColorTop.Register("ahud_iColorTop");
   _psColorMid.Register("ahud_iColorMid");
   _psColorLow.Register("ahud_iColorLow");
+
+  // Automatically apply selected theme on startup
+  UpdateTheme(NULL);
 
   // Initialize the HUD itself
   _HUD.Initialize();
