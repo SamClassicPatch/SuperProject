@@ -183,6 +183,26 @@ static SQInteger GetLocalPlayers(HSQUIRRELVM v) {
   return 1;
 };
 
+static SQInteger GetMaxPlayers(HSQUIRRELVM v) {
+  ASSERT_WORLD;
+  SQ_RESTRICT(v);
+
+  sq_pushinteger(v, CEntity::GetMaxPlayers());
+  return 1;
+};
+
+static SQInteger GetPlayerEntity(HSQUIRRELVM v) {
+  ASSERT_WORLD;
+  SQ_RESTRICT(v);
+
+  SQInteger iPlayer;
+  sq_getinteger(v, 2, &iPlayer);
+
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  *ppen = CEntity::GetPlayerEntity(iPlayer);
+  return 1;
+};
+
 }; // namespace
 
 // "World" namespace functions
@@ -204,6 +224,9 @@ static SQRegFunction _aWorldFuncs[] = {
   { "FindClassesByID", &World::FindClassesByID, 2, ".n" },
   { "AnyLocalPlayers", &World::AnyLocalPlayers, 1, "." },
   { "GetLocalPlayers", &World::GetLocalPlayers, 1, "." },
+
+  { "GetMaxPlayers",   &World::GetMaxPlayers,   1, "." },
+  { "GetPlayerEntity", &World::GetPlayerEntity, 2, ".n" },
 };
 
 void VM::RegisterWorld(void) {
