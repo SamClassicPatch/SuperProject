@@ -1295,7 +1295,7 @@ void VM::RegisterNetwork(void) {
       sqcAction.RegisterMethod(SqPlayerAction::_aMethods[i]);
     }
 
-    sqcAction.RegisterVar("aTranslation",  &SqPlayerAction::GetTranslation,  &SqPlayerAction::SetTranslation);
+    sqcAction.RegisterVar("vTranslation",  &SqPlayerAction::GetTranslation,  &SqPlayerAction::SetTranslation);
     sqcAction.RegisterVar("aRotation",     &SqPlayerAction::GetRotation,     &SqPlayerAction::SetRotation);
     sqcAction.RegisterVar("aViewRotation", &SqPlayerAction::GetViewRotation, &SqPlayerAction::SetViewRotation);
     sqcAction.RegisterVar("ulButtons",     &SqPlayerAction::GetButtons,      &SqPlayerAction::SetButtons);
