@@ -26,6 +26,10 @@ static INDEX _iNumber;
 static FLOAT _fNumber;
 static CTString _strString;
 static CEntity *_penEntity = NULL;
+static FLOATplane3D _plPlane;
+static FLOAT3D _vVector1;
+static FLOAT3D _vVector2;
+static DamageType _eDamageType;
 
 static INDEX _iAmmo1, _iAmmo2, _iAmmo3, _iAmmo4, _iAmmo5, _iAmmo6, _iAmmo7, _iAmmo8;
 static BOOL _bPickedUp;
@@ -51,6 +55,16 @@ inline SQRESULT PushInt(sq::VM &vm) {
   // Arguments
   sq_newarray(vm, 0);
   sq_pushinteger(vm, _iNumber);
+  sq_arrayappend(vm, -2);
+  return SQ_OK;
+};
+
+inline SQRESULT PushFloat(sq::VM &vm) {
+  if (SQ_FAILED(PushEvent(vm))) return SQ_ERROR;
+
+  // Arguments
+  sq_newarray(vm, 0);
+  sq_pushfloat(vm, _fNumber);
   sq_arrayappend(vm, -2);
   return SQ_OK;
 };
@@ -113,6 +127,62 @@ inline SQRESULT PushStringFloatInt(sq::VM &vm) {
   return SQ_OK;
 };
 
+inline SQRESULT PushTouchArgs(sq::VM &vm) {
+  if (SQ_FAILED(PushEvent(vm))) return SQ_ERROR;
+
+  // Arguments
+  sq_newarray(vm, 0);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  sq_arrayappend(vm, -2);
+  sq_pushbool(vm, _bState);
+  sq_arrayappend(vm, -2);
+  PushNewPointer(vm.Root(), "FLOATplane3D", _plPlane);
+  sq_arrayappend(vm, -2);
+  return SQ_OK;
+};
+
+inline SQRESULT PushPassArgs(sq::VM &vm) {
+  if (SQ_FAILED(PushEvent(vm))) return SQ_ERROR;
+
+  // Arguments
+  sq_newarray(vm, 0);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  sq_arrayappend(vm, -2);
+  sq_pushbool(vm, _bState);
+  sq_arrayappend(vm, -2);
+  return SQ_OK;
+};
+
+inline SQRESULT PushBlockArgs(sq::VM &vm) {
+  if (SQ_FAILED(PushEvent(vm))) return SQ_ERROR;
+
+  // Arguments
+  sq_newarray(vm, 0);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  sq_arrayappend(vm, -2);
+  PushNewPointer(vm.Root(), "FLOATplane3D", _plPlane);
+  sq_arrayappend(vm, -2);
+  return SQ_OK;
+};
+
+inline SQRESULT PushDamageArgs(sq::VM &vm) {
+  if (SQ_FAILED(PushEvent(vm))) return SQ_ERROR;
+
+  // Arguments
+  sq_newarray(vm, 0);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  sq_arrayappend(vm, -2);
+  PushNewPointer(vm.Root(), "FLOAT3D", _vVector1);
+  sq_arrayappend(vm, -2);
+  PushNewPointer(vm.Root(), "FLOAT3D", _vVector2);
+  sq_arrayappend(vm, -2);
+  sq_pushfloat(vm, _fNumber);
+  sq_arrayappend(vm, -2);
+  sq_pushinteger(vm, _eDamageType);
+  sq_arrayappend(vm, -2);
+  return SQ_OK;
+};
+
 static void CallOnEvent(CEntity *pen, const CEntityEvent &ee, const CTString &strFunc) {
   // Restrict listener functions for remote players
   if (INetwork::IsPlayingOnRemoteServer()) return;
@@ -125,6 +195,15 @@ static void CallOnEvent(CEntity *pen, const CEntityEvent &ee, const CTString &st
   _pee = &ee;
 
   switch (ee.ee_slEvent) {
+    // Generic engine
+    case EVENTCODE_EInternal:
+    case EVENTCODE_EVoid:
+    case EVENTCODE_EReturn:
+    case EVENTCODE_EBegin:
+    case EVENTCODE_ETimer:
+    case EVENTCODE_EWouldFall:
+    case EVENTCODE_ETeleport:
+    case EVENTCODE_EFirstWorldBase:
     // Generic
     case EVENTCODE_VNL_EActivate:
     case EVENTCODE_VNL_EDeactivate:
@@ -134,6 +213,61 @@ static void CallOnEvent(CEntity *pen, const CEntityEvent &ee, const CTString &st
     case EVENTCODE_VNL_EEnd:
     case EVENTCODE_VNL_EStop: {
       RunCustomScripts("On" + strFunc + strScriptFuncGeneric, &PushNoArgs);
+    } break;
+
+    case EVENTCODE_ETouch: {
+      const ETouch &eeTouch = (const ETouch &)ee;
+      _penEntity = eeTouch.penOther;
+      _bState = eeTouch.bThisMoved;
+      _plPlane = eeTouch.plCollision;
+      RunCustomScripts("On" + strFunc + strScriptFuncGeneric, &PushTouchArgs);
+    } break;
+
+    case EVENTCODE_EPass: {
+      const EPass &eePass = (const EPass &)ee;
+      _penEntity = eePass.penOther;
+      _bState = eePass.bThisMoved;
+      RunCustomScripts("On" + strFunc + strScriptFuncGeneric, &PushPassArgs);
+    } break;
+
+    case EVENTCODE_EBlock: {
+      const EBlock &eeBlock = (const EBlock &)ee;
+      _penEntity = eeBlock.penOther;
+      _plPlane = eeBlock.plCollision;
+      RunCustomScripts("On" + strFunc + strScriptFuncGeneric, &PushBlockArgs);
+    } break;
+
+    case EVENTCODE_EPreLevelChange:
+    case EVENTCODE_EPostLevelChange: {
+      const EPreLevelChange &eeLevelChange = (const EPreLevelChange &)ee;
+      _iNumber = eeLevelChange.iUserData;
+      RunCustomScripts("On" + strFunc + strScriptFuncGeneric, &PushInt);
+    } break;
+
+    case EVENTCODE_EDamage: {
+      const EDamage &eeDamage = (const EDamage &)ee;
+      _penEntity = eeDamage.penInflictor;
+      _vVector1 = eeDamage.vDirection;
+      _vVector2 = eeDamage.vHitPoint;
+      _fNumber = eeDamage.fAmount;
+      _eDamageType = eeDamage.dmtType;
+      RunCustomScripts("On" + strFunc + strScriptFuncGeneric, &PushDamageArgs);
+    } break;
+
+    case EVENTCODE_EDeath: {
+      const EDamage& eeDamage = ((const EDeath &)ee).eLastDamage;
+      _penEntity = eeDamage.penInflictor;
+      _vVector1 = eeDamage.vDirection;
+      _vVector2 = eeDamage.vHitPoint;
+      _fNumber = eeDamage.fAmount;
+      _eDamageType = eeDamage.dmtType;
+      RunCustomScripts("On" + strFunc + strScriptFuncGeneric, &PushDamageArgs);
+    } break;
+
+    case EVENTCODE_ETakingBreath: {
+      const ETakingBreath &eeBreath = (const ETakingBreath &)ee;
+      _fNumber = eeBreath.fBreathDelay;
+      RunCustomScripts("On" + strFunc + strScriptFuncGeneric, &PushFloat);
     } break;
 
     case EVENTCODE_VNL_EStart:

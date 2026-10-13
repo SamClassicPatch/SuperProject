@@ -2129,6 +2129,26 @@ void VM::RegisterEntities(void) {
   ADD_EVENT(EWater);
 #undef ADD_EVENT
 
+  // Additional engine events
+#define ADD_EVENT(_EventName) enEventCodes.RegisterValue(#_EventName, (SQInteger)EVENTCODE_##_EventName)
+  ADD_EVENT(EInternal);
+  ADD_EVENT(EVoid);
+  ADD_EVENT(EReturn);
+  ADD_EVENT(EBegin);
+  ADD_EVENT(ETimer);
+  ADD_EVENT(ETouch);
+  ADD_EVENT(EPass);
+  ADD_EVENT(EBlock);
+  ADD_EVENT(EWouldFall);
+  ADD_EVENT(ETeleport);
+  ADD_EVENT(EPreLevelChange);
+  ADD_EVENT(EPostLevelChange);
+  ADD_EVENT(EFirstWorldBase);
+  ADD_EVENT(EDamage);
+  ADD_EVENT(EDeath);
+  ADD_EVENT(ETakingBreath);
+#undef ADD_EVENT
+
   Const().AddEnum("EVENTCODE", enEventCodes);
 
   // Damage types
