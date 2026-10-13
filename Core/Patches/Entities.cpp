@@ -379,6 +379,26 @@ void CEntityPatch::P_MovingBrush_GetForce(INDEX iForce, const FLOAT3D &vPoint, C
 #endif // _PATCHCONFIG_GAMEPLAY_EXT
 };
 
+void CRationalEntityPatch::P_Jump(SLONG slThisState, SLONG slTargetState, BOOL bOverride, const CEntityEvent &eeInput)
+{
+  // Call event functions for each plugin
+  FOREACHPLUGIN(itPlugin) {
+    if (itPlugin->pm_events.m_listener->OnCallProcedure == NULL) continue;
+
+    itPlugin->pm_events.m_listener->OnCallProcedure(this, eeInput);
+  }
+
+  // Original function code
+  UnwindStack(slThisState);
+
+  if (bOverride) {
+    slTargetState = en_pecClass->ec_pdecDLLClass->GetOverridenState(slTargetState);
+  }
+
+  en_stslStateStack[en_stslStateStack.Count() - 1] = slTargetState;
+  HandleEvent(eeInput);
+};
+
 // Call a subautomaton
 void CRationalEntityPatch::P_Call(SLONG slThisState, SLONG slTargetState, BOOL bOverride, const CEntityEvent &eeInput)
 {

@@ -99,6 +99,9 @@ int ICorePatches::Entities(void) {
   CreatePatch(pSendEvent, &CEntityPatch::P_SendEvent, "CEntity::SendEvent(...)");
 
   // CRationalEntity
+  void (CRationalEntity::*pJump)(SLONG, SLONG, BOOL, const CEntityEvent &) = &CRationalEntity::Jump;
+  CreatePatch(pJump, &CRationalEntityPatch::P_Jump, "CRationalEntity::Jump(...)");
+
   void (CRationalEntity::*pCall)(SLONG, SLONG, BOOL, const CEntityEvent &) = &CRationalEntity::Call;
   CreatePatch(pCall, &CRationalEntityPatch::P_Call, "CRationalEntity::Call(...)");
 

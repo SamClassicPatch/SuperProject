@@ -59,6 +59,9 @@ class CEntityPatch : public CEntity {
 
 class CRationalEntityPatch : public CRationalEntity {
   public:
+    // Jump to a new state
+    void P_Jump(SLONG slThisState, SLONG slTargetState, BOOL bOverride, const CEntityEvent &eeInput);
+
     // Call a subautomaton
     void P_Call(SLONG slThisState, SLONG slTargetState, BOOL bOverride, const CEntityEvent &eeInput);
 };
