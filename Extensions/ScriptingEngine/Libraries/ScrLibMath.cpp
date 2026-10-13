@@ -887,30 +887,12 @@ static SQInteger MakeRotationMatrix(HSQUIRRELVM v) {
   return 1;
 };
 
-static SQInteger MakeRotationMatrixFast(HSQUIRRELVM v) {
-  // Get a vector value
-  GetInstanceValueVerify(FLOAT3D, pv, v, 2);
-
-  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
-  ::MakeRotationMatrixFast(*pm, *pv);
-  return 1;
-};
-
 static SQInteger MakeInverseRotationMatrix(HSQUIRRELVM v) {
   // Get a vector value
   GetInstanceValueVerify(FLOAT3D, pv, v, 2);
 
   PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   ::MakeInverseRotationMatrix(*pm, *pv);
-  return 1;
-};
-
-static SQInteger MakeInverseRotationMatrixFast(HSQUIRRELVM v) {
-  // Get a vector value
-  GetInstanceValueVerify(FLOAT3D, pv, v, 2);
-
-  PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
-  ::MakeInverseRotationMatrixFast(*pm, *pv);
   return 1;
 };
 
@@ -980,9 +962,7 @@ static SQRegFunction _aMathFuncs[] = {
   { "DegToRad",        &Math::DegToRad, 2, ".n" },
 
   { "MakeRotationMatrix",            &Math::MakeRotationMatrix, 2, ".x" },
-  { "MakeRotationMatrixFast",        &Math::MakeRotationMatrixFast, 2, ".x" },
   { "MakeInverseRotationMatrix",     &Math::MakeInverseRotationMatrix, 2, ".x" },
-  { "MakeInverseRotationMatrixFast", &Math::MakeInverseRotationMatrixFast, 2, ".x" },
   { "DecomposeRotationMatrix",       &Math::DecomposeRotationMatrix, 2, ".x" },
   { "DecomposeRotationMatrixNoSnap", &Math::DecomposeRotationMatrixNoSnap, 2, ".x" },
   { "AnglesToDirectionVector",       &Math::AnglesToDirectionVector, 2, ".x" },
