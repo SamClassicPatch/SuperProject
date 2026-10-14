@@ -633,14 +633,11 @@ BOOL CObserverCamera::TogglePhotoMode(void) {
 
   // Toggle pause in demos if it's of the opposite state
   } else if (_gmRunningGameMode == GM_DEMO) {
-    static CSymbolPtr pfSyncRate("dem_fSyncRate");
+    FLOAT &fSyncRate = _pNetwork->ga_fDemoSyncRate;
+    bool bDemoPause = (fSyncRate == DEMOSYNC_STOP);
 
-    if (pfSyncRate.Exists()) {
-      bool bDemoPause = (pfSyncRate.GetFloat() == DEMOSYNC_STOP);
-
-      if (!!IsActive(FALSE) ^ bDemoPause) {
-        pfSyncRate.GetFloat() = (bDemoPause ? DEMOSYNC_REALTIME : DEMOSYNC_STOP);
-      }
+    if (!!IsActive(FALSE) ^ bDemoPause) {
+      fSyncRate = (bDemoPause ? DEMOSYNC_REALTIME : DEMOSYNC_STOP);
     }
   }
 

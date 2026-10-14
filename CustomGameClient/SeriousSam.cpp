@@ -1681,6 +1681,12 @@ int SubMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
       if (msg.message == WM_KEYDOWN && msg.wParam == VK_PAUSE) {
         // toggle pause
         _pNetwork->TogglePause();
+
+        // [Cecil] Pause/unpause demo playback
+        if (_gmRunningGameMode == GM_DEMO) {
+          FLOAT &fSyncRate = _pNetwork->ga_fDemoSyncRate;
+          fSyncRate = (fSyncRate == DEMOSYNC_STOP) ? DEMOSYNC_REALTIME : DEMOSYNC_STOP;
+        }
       }
 
       // if command sent from external application
