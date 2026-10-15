@@ -1,7 +1,7 @@
 Name: 12 Gauge Pump Action Shotgun
 {
-  Offset: -0.01; -0.03; -0.47
-  Rotate: 0; 0; 0
+  BaseOffset: -0.01; -0.03; -0.47
+  BaseRotate: 0; 0; 0
 
   Model:   TFNM Models\Weapons\SingleShotgun\SingleShotgunItem.mdl
   Texture: TFNM Models\Weapons\SingleShotgun\Barrels.tex

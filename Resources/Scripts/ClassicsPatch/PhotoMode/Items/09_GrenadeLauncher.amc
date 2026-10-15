@@ -1,7 +1,7 @@
 Name: MKIII Grenade Launcher
 {
-  Offset: 0; -0.14; -0.61
-  Rotate: 0; 2; 0
+  BaseOffset: 0; -0.14; -0.61
+  BaseRotate: 0; 2; 0
 
   Model:   TFNM Models\Weapons\GrenadeLauncher\GrenadeLauncherItem.mdl
   Texture: TFNM Models\Weapons\GrenadeLauncher\Body.tex

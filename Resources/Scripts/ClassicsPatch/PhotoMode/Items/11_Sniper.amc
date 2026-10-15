@@ -1,7 +1,7 @@
 Name: RAPTOR 16mm Sniper
 {
-  Offset: 0; -0.008; -0.1
-  Rotate: 0; 0; 0
+  BaseOffset: 0; -0.008; -0.1
+  BaseRotate: 0; 0; 0
 
   Model:   TFNM ModelsMP\Weapons\Sniper\Sniper.mdl
   Texture: TFNM ModelsMP\Weapons\Sniper\Body.tex

@@ -1,7 +1,7 @@
 Name: Shofield .45 w/ TMAR
 {
-  Offset: 0; -0.02; -0.2
-  Rotate: 0; 5; 0
+  BaseOffset: 0; -0.02; -0.2
+  BaseRotate: 0; 5; 0
 
   Model:   TFNM Models\Weapons\Colt\ColtItem.mdl
   Texture: TFNM Models\Weapons\Colt\ColtMain.tex

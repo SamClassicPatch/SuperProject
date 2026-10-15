@@ -1,7 +1,7 @@
 Name: XOP Flamethrower
 {
-  Offset: 0; -0.008; -0.1
-  Rotate: 0; 0; 0
+  BaseOffset: 0; -0.008; -0.1
+  BaseRotate: 0; 0; 0
 
   Model:   TFNM ModelsMP\Weapons\Flamer\Flamer.mdl
   Texture: TFNM ModelsMP\Weapons\Flamer\Body.tex

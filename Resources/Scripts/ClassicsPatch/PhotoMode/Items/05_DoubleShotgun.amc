@@ -1,7 +1,7 @@
 Name: Double Barrel Coach Gun
 {
-  Offset: 0; -0.12; -0.3
-  Rotate: 0; 0; 0
+  BaseOffset: 0; -0.12; -0.3
+  BaseRotate: 0; 0; 0
 
   Model:   TFNM Models\Weapons\DoubleShotgun\DoubleShotgunItem.mdl
   Texture: TFNM Models\Weapons\DoubleShotgun\Ammo.tex

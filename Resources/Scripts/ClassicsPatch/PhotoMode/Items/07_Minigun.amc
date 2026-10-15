@@ -1,7 +1,7 @@
 Name: XM214-A Minigun
 {
-  Offset: 0; -0.3; -0.97
-  Rotate: 0; 0; 0
+  BaseOffset: 0; -0.3; -0.97
+  BaseRotate: 0; 0; 0
 
   Model:   TFNM Models\Weapons\Minigun\MinigunItem.mdl
   Texture: TFNM Models\Weapons\Minigun\Body.tex

@@ -1,7 +1,7 @@
 Name: M1-A2 Thompson Submachine Gun
 {
-  Offset: 0; -0.19; -0.15
-  Rotate: 0; 0; 0
+  BaseOffset: 0; -0.19; -0.15
+  BaseRotate: 0; 0; 0
 
   Model:   TFNM Models\Weapons\Tommygun\TommygunItem.mdl
   Texture: TFNM Models\Weapons\Tommygun\Body.tex
