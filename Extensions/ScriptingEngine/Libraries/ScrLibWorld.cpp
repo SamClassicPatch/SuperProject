@@ -24,6 +24,11 @@ inline BOOL IsGameOn(void) {
   return GetGameAPI()->IsHooked() && GetGameAPI()->IsGameOn();
 };
 
+static SQInteger IsActive(HSQUIRRELVM v) {
+  sq_pushbool(v, IsGameOn());
+  return 1;
+};
+
 #define ASSERT_WORLD { if (!IsGameOn()) return sq_throwerror(v, "cannot execute functions from World interface while no game is running"); }
 
 static SQInteger GetBackgroundColor(HSQUIRRELVM v) {
@@ -208,6 +213,7 @@ static SQInteger GetPlayerEntity(HSQUIRRELVM v) {
 // "World" namespace functions
 static SQRegFunction _aWorldFuncs[] = {
   // World
+  { "IsActive",            &World::IsActive,            1, "." },
   { "GetBackgroundColor",  &World::GetBackgroundColor,  1, "." },
   { "GetBackgroundViewer", &World::GetBackgroundViewer, 1, "." },
   { "GetWSC",              &World::GetWSC,              1, "." },
