@@ -66,12 +66,13 @@ BOOL IProcessPacket::ReadPatchTag(CTStream &strm, ULONG *pulReadVersion) {
 
 // Reset data before starting any session
 void IProcessPacket::ResetSessionData(BOOL bNewSetup) {
-  // Set new data
-  if (bNewSetup && GameplayExtEnabled()) {
+  // Must rely on _gexSetup instead of GameplayExtEnabled() because it's not set yet
+  if (bNewSetup && _gexSetup[k_EGameplayExt_Enable].IsTrue()) {
+    // Set new data
     IConfig::gex = _gexSetup;
 
-  // Reset to vanilla
   } else {
+    // Reset to vanilla
     IConfig::gex.Reset(TRUE);
   }
 };
@@ -134,7 +135,7 @@ static BOOL ReadOneServerInfoChunk(CTStream &strm) {
 // Append extra info about the patched server
 void IProcessPacket::WriteServerInfoToSessionState(CTStream &strm) {
   // No gameplay extensions
-  if (!IConfig::gex[k_EGameplayExt_Enable]) return;
+  if (!GameplayExtEnabled()) return;
 
   // Write patch tag
   IProcessPacket::WritePatchTag(strm);

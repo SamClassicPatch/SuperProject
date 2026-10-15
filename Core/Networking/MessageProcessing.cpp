@@ -35,9 +35,11 @@ INDEX IProcessPacket::_bForbidVanilla = FALSE;
 // Gameplay extensions (reset to recommended settings)
 IConfig::GameplayExt IProcessPacket::_gexSetup(FALSE);
 
-// Check if gameplay extensions are enabled for the server
+// Check if gameplay extensions are enabled for the server during the game
+// This must return the current state instead of the set up one (_gexSetup)
+// because gameplay extensions may be modified mid-game with custom packets
 BOOL IProcessPacket::GameplayExtEnabled(void) {
-  return _gexSetup[k_EGameplayExt_Enable].IsTrue();
+  return IConfig::gex[k_EGameplayExt_Enable].IsTrue();
 };
 
 #else

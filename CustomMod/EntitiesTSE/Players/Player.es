@@ -56,6 +56,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "Tools/CreditsHolder.h"
 #include "Tools/HudPicHolder.h"
 
+// [Cecil] Classics Patch functionality
+#include <Core/Networking/MessageProcessing.h>
+
 extern void JumpFromBouncer(CEntity *penToBounce, CEntity *penBouncer);
 // from game
 #define GRV_SHOWEXTRAS  (1L<<0)   // add extra stuff like console, weapon, pause
@@ -4195,7 +4198,7 @@ functions:
   void ActiveActions(const CPlayerAction &paAction)
   {
   #if _PATCHCONFIG_GAMEPLAY_EXT
-    const BOOL bGexEnabled = IConfig::gex[k_EGameplayExt_Enable].GetIndex();
+    const BOOL bGexEnabled = IProcessPacket::GameplayExtEnabled();
   #endif
 
     // translation

@@ -55,7 +55,7 @@ class CORE_API IProcessPacket {
 
   #endif // _PATCHCONFIG_GAMEPLAY_EXT
 
-    // Check if gameplay extensions are enabled for the server
+    // Check if gameplay extensions are enabled for the server during the game
     static BOOL GameplayExtEnabled(void);
 
     // Allow changing value of a symbol unless currently running a server
