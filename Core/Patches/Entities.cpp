@@ -111,7 +111,8 @@ void CEntityPatch::P_ReadProperties(CTStream &istrm) {
         case 29: {
           FLOAT fDummy;
           istrm >> fDummy;
-          HANDLE_UNKNOWN(fDummy);
+          DOUBLE fDummyCast = fDummy;
+          HANDLE_UNKNOWN(fDummyCast);
         } break;
 
         case CEntityProperty::EPT_ENTITYPTR: {
