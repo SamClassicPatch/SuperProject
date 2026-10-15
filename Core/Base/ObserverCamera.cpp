@@ -318,16 +318,16 @@ static void ReloadPhotoModePoses(void) {
 
     for (it = map.begin(); it != map.end(); it++) {
       SPhotoModePose &pose = _aPhotoModePoses.Push();
-      const char *strPose = it->first.c_str();
+      pose = SPhotoModePose(); // Reset data
 
-      pose.strName = strPose;
-      pose.iLegsAnim  = ini.GetIntValue(strPose, "LegsAnim",  -1);
-      pose.iLegsFrame = ini.GetIntValue(strPose, "LegsFrame", -1);
-      pose.iBodyAnim  = ini.GetIntValue(strPose, "BodyAnim",  -1);
-      pose.iBodyFrame = ini.GetIntValue(strPose, "BodyFrame", -1);
-      pose.aBody(1) = ini.GetDoubleValue(strPose, "BodyH", 0.0);
-      pose.aBody(2) = ini.GetDoubleValue(strPose, "BodyP", 0.0);
-      pose.aBody(3) = ini.GetDoubleValue(strPose, "BodyB", 0.0);
+      pose.strName = it->first.c_str();
+      pose.iLegsAnim  = ini.GetIntValue(pose.strName, "LegsAnim",  -1);
+      pose.iLegsFrame = ini.GetIntValue(pose.strName, "LegsFrame", -1);
+      pose.iBodyAnim  = ini.GetIntValue(pose.strName, "BodyAnim",  -1);
+      pose.iBodyFrame = ini.GetIntValue(pose.strName, "BodyFrame", -1);
+      pose.aBody(1) = ini.GetDoubleValue(pose.strName, "BodyH", 0.0);
+      pose.aBody(2) = ini.GetDoubleValue(pose.strName, "BodyP", 0.0);
+      pose.aBody(3) = ini.GetDoubleValue(pose.strName, "BodyB", 0.0);
       ctLoaded++;
     }
   }
@@ -359,13 +359,14 @@ static void ReloadPhotoModeItems(void) {
   _aPhotoModeItems.PopAll();
 
   CModelConfig cfg;
-  cfg.AddProcessor("Offset", &SetOffset);
-  cfg.AddProcessor("Rotate", &SetRotation);
+  cfg.AddProcessor("BaseOffset", &SetOffset);
+  cfg.AddProcessor("BaseRotate", &SetRotation);
 
   INDEX ctLoaded = 0;
 
   for (INDEX i = 0; i < ct; i++) {
     _pLoadingItem = &_aPhotoModeItems.Push();
+    *_pLoadingItem = SPhotoModeItem(); // Reset data
     cfg._pmo = &_pLoadingItem->mo;
 
     if (cfg.SetModel(aConfigs[i], _pLoadingItem->strName)) {
