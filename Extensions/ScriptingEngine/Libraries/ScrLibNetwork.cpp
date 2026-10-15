@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include <Core/Definitions/NetworkDefs.inl>
 #include <Core/Networking/ExtPackets.h>
+#include <Core/Networking/MessageProcessing.h>
 #include <Core/Networking/NetworkFunctions.h>
 
 #include <Extras/XGizmo/Interfaces/Sounds.h>
@@ -617,6 +618,12 @@ static SQInteger IsPredicting(HSQUIRRELVM v) {
 
 static SQInteger GetMaxPlayers(HSQUIRRELVM v) {
   sq_pushinteger(v, _pNetwork->ga_sesSessionState.ses_ctMaxPlayers);
+  return 1;
+};
+
+static SQInteger IsVanillaCompatible(HSQUIRRELVM v) {
+  // Only relevant for the server because clients have no knowledge of which state _bForbidVanilla is in
+  sq_pushbool(v, _pNetwork->IsServer() && !IProcessPacket::_bForbidVanilla && !IProcessPacket::GameplayExtEnabled());
   return 1;
 };
 
@@ -1223,13 +1230,14 @@ static SQInteger SetChatCommandInfo(HSQUIRRELVM v) {
 // "Network" namespace functions
 static SQRegFunction _aNetworkFuncs[] = {
   // Network states
-  { "IsHost",                &Network::IsHost,          1, "." },
-  { "IsOnline",              &Network::IsOnline,        1, "." },
-  { "IsOnlineServer",        &Network::IsOnlineServer,  1, "." },
-  { "IsPlayingOnline",       &Network::IsPlayingOnline, 1, "." },
-  { "IsObserving",           &Network::IsObserving,     1, "." },
-  { "IsPredicting",          &Network::IsPredicting,    1, "." },
-  { "GetMaxPlayers",         &Network::GetMaxPlayers,   1, "." },
+  { "IsHost",                &Network::IsHost,              1, "." },
+  { "IsOnline",              &Network::IsOnline,            1, "." },
+  { "IsOnlineServer",        &Network::IsOnlineServer,      1, "." },
+  { "IsPlayingOnline",       &Network::IsPlayingOnline,     1, "." },
+  { "IsObserving",           &Network::IsObserving,         1, "." },
+  { "IsPredicting",          &Network::IsPredicting,        1, "." },
+  { "GetMaxPlayers",         &Network::GetMaxPlayers,       1, "." },
+  { "IsVanillaCompatible",   &Network::IsVanillaCompatible, 1, "." },
 
   // Demos
   { "StartDemoRec",          &Network::StartDemoRec,       2, ".s" },
