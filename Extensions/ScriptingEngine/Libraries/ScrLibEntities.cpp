@@ -982,6 +982,7 @@ static SQInteger GetPropInfoByVariable(HSQUIRRELVM v, int, CEntityPointer &val) 
 static SQInteger GetPropValue(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
   GetInstanceValueVerifyN(CEntityProperty *, ppep, v, 2, "Entities.Property");
+  if (*ppep == NULL) return sq_throwerror(v, "Entities.Property is NULL in argument 1");
   return PushPropValue(v, **ppep, val);
 };
 
@@ -1183,7 +1184,7 @@ static SQInteger GetEnumValues(HSQUIRRELVM v, int, CEntityProperty *&val) {
 static SQInteger GetValue(HSQUIRRELVM v, int, CEntityProperty *&val) {
   ASSERT_PROPERTY;
   GetInstanceValueVerify(CEntityPointer, ppen, v, 2);
-  if (*ppen == NULL) return sq_throwerror(v, "CEntityPointer is NULL in argument 2");
+  if (*ppen == NULL) return sq_throwerror(v, "CEntityPointer is NULL in argument 1");
   return PushPropValue(v, *val, *ppen);
 };
 
