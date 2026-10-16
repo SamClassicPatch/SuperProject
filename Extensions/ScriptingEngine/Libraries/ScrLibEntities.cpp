@@ -24,7 +24,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 namespace sq {
 
 // Common function for pushing a value of some entity property
-static SQInteger PushPropValue(HSQUIRRELVM v, const CEntityProperty &ep, const CEntity *pen) {
+static SQInteger PushPropValue(HSQUIRRELVM v, const CEntityProperty &ep, const CEntity *pen, BOOL bThrowOnUnsupported) {
   switch (ep.ep_eptType) {
     case CEntityProperty::EPT_ENUM:
     case CEntityProperty::EPT_COLOR:
@@ -95,10 +95,16 @@ static SQInteger PushPropValue(HSQUIRRELVM v, const CEntityProperty &ep, const C
     case CEntityProperty::EPT_MODELINSTANCE:
   #endif
     default: {
-      SQChar strError[256];
-      scsprintf(strError, 256, "cannot retrieve value from the unknown/unsupported property type %d", ep.ep_eptType);
-      return sq_throwerror(v, strError);
-    }
+      // Throw on unsupported properties, if needed
+      if (bThrowOnUnsupported) {
+        SQChar strError[256];
+        scsprintf(strError, 256, "cannot retrieve value from the unknown/unsupported property type %d", ep.ep_eptType);
+        return sq_throwerror(v, strError);
+      }
+
+      // Otherwise return an invalid value
+      sq_pushnull(v);
+    } break;
   }
 
   return 1;
@@ -983,7 +989,86 @@ static SQInteger GetPropValue(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
   GetInstanceValueVerifyN(CEntityProperty *, ppep, v, 2, "Entities.Property");
   if (*ppep == NULL) return sq_throwerror(v, "Entities.Property is NULL in argument 1");
-  return PushPropValue(v, **ppep, val);
+  return PushPropValue(v, **ppep, val, TRUE);
+};
+
+static SQInteger GetPropValueByID(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  // Get property type, ID and optional offset
+  SQInteger iType, iID;
+  sq_getinteger(v, 2, &iType);
+  sq_getinteger(v, 3, &iID);
+
+  SQInteger iOffset = -1;
+  if (ctArgs > 2) sq_getinteger(v, 4, &iOffset);
+
+  // Make sure the property exists
+  CEntityProperty *pepCheck = IWorld::PropertyForIdOrOffset(val, iType, iID, iOffset);
+
+  // Return an invalid value if it doesn't exist
+  if (pepCheck == NULL) {
+    sq_pushnull(v);
+    return 1;
+  }
+
+  // Get property value
+  return PushPropValue(v, *pepCheck, val, FALSE);
+};
+
+static SQInteger GetPropValueByName(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  // Get property type and name
+  SQInteger iType;
+  sq_getinteger(v, 2, &iType);
+  const SQChar *strName;
+  sq_getstring(v, 3, &strName);
+
+  // Make sure the property exists
+  CEntityProperty *pepCheck = IWorld::PropertyForName(val, iType, strName);
+
+  // Return an invalid value if it doesn't exist
+  if (pepCheck == NULL) {
+    sq_pushnull(v);
+    return 1;
+  }
+
+  // Get property value
+  return PushPropValue(v, *pepCheck, val, FALSE);
+};
+
+static SQInteger GetPropValueByVariable(HSQUIRRELVM v, int, CEntityPointer &val) {
+  ASSERT_ENTITY;
+
+  // Get class and variable names
+  const SQChar *strClass;
+  const SQChar *strVariable;
+  sq_getstring(v, 2, &strClass);
+  sq_getstring(v, 3, &strVariable);
+
+  // Make sure the property exists
+  CEntityProperty *pepCheck = NULL;
+
+#if SE1_GAME != SS_REV
+  // Find property data and try to find it by name or ID
+  const CEntityProperty *pepData = FindPropertyByVariable(strClass, strVariable);
+
+  if (pepData != NULL) {
+    pepCheck = IWorld::PropertyForNameOrId(val, pepData->ep_eptType, pepData->ep_strName, pepData->ep_ulID);
+  }
+#else
+  pepCheck = val->PropertyForVariable(strVariable);
+#endif
+
+  // Return an invalid value if it doesn't exist
+  if (pepCheck == NULL) {
+    sq_pushnull(v);
+    return 1;
+  }
+
+  // Get property value
+  return PushPropValue(v, *pepCheck, val, FALSE);
 };
 
 static Method<CEntityPointer> _aMethods[] = {
@@ -1065,7 +1150,10 @@ static Method<CEntityPointer> _aMethods[] = {
   { "GetPropInfoByName",     &GetPropInfoByName,     3, ".ns" },
   { "GetPropInfoByVariable", &GetPropInfoByVariable, 3, ".ss" },
 
-  { "GetPropValue", &GetPropValue, 2, ".x" },
+  { "GetPropValue",           &GetPropValue,           2, ".x" },
+  { "GetPropValueByID",       &GetPropValueByID,      -3, ".nnn" },
+  { "GetPropValueByName",     &GetPropValueByName,     3, ".ns" },
+  { "GetPropValueByVariable", &GetPropValueByVariable, 3, ".ss" },
 };
 
 }; // namespace
@@ -1185,7 +1273,7 @@ static SQInteger GetValue(HSQUIRRELVM v, int, CEntityProperty *&val) {
   ASSERT_PROPERTY;
   GetInstanceValueVerify(CEntityPointer, ppen, v, 2);
   if (*ppen == NULL) return sq_throwerror(v, "CEntityPointer is NULL in argument 1");
-  return PushPropValue(v, *val, *ppen);
+  return PushPropValue(v, *val, *ppen, TRUE);
 };
 
 static Method<CEntityProperty *> _aMethods[] = {
