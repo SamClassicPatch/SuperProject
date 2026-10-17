@@ -58,14 +58,9 @@ void ClassicsCore_SetCustomMod(bool bState)
 };
 
 EVerifyAPIResult ClassicsPatchAPI_VerifyInternal(PatchVer_t ulInterfaceVersion, ClassicsPatchErrMsg *pOutErrMsg) {
-  // Classics Patch isn't currently running
-  if (!_bClassicsPatchRunning) {
-    strcpy(*pOutErrMsg, "Classics Patch hasn't been initialized yet");
-    return k_EVerifyAPIResult_NotRunning;
-
   // Desired interface version is too new
-  } else if (ulInterfaceVersion > CLASSICSPATCH_INTERFACE_VERSION) {
-    strcpy(*pOutErrMsg, "Classics Patch API version is too old");
+  if (ulInterfaceVersion > CLASSICSPATCH_INTERFACE_VERSION) {
+    if (pOutErrMsg != NULL) strcpy(*pOutErrMsg, "Classics Patch API version is too old");
     return k_EVerifyAPIResult_VersionMismatch;
   }
 
