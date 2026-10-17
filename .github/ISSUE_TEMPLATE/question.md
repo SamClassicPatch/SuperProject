@@ -8,5 +8,4 @@ assignees: ''
 
 ---
 
-**Your question**
 I would like to know [...]
