@@ -92,8 +92,8 @@ void CGame::QuickTest(const CTFileName &fnMapName,
   CSessionProperties sp;
   SetQuickStartSession(sp);
 
-  // start the game
-  if( !NewGame( fnMapName, fnMapName, sp)) {
+  // [Cecil] Start game through the API
+  if (!GetGameAPI()->NewGame( fnMapName, fnMapName, sp)) {
     DisableLoadingHook();
     return;
   }
