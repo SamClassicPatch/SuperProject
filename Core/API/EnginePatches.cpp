@@ -105,6 +105,9 @@ int ICorePatches::Entities(void) {
   void (CRationalEntity::*pCall)(SLONG, SLONG, BOOL, const CEntityEvent &) = &CRationalEntity::Call;
   CreatePatch(pCall, &CRationalEntityPatch::P_Call, "CRationalEntity::Call(...)");
 
+  void (CRationalEntity::*pReturn)(SLONG, const CEntityEvent &) = &CRationalEntity::Return;
+  CreatePatch(pReturn, &CRationalEntityPatch::P_Return, "CRationalEntity::Return(...)");
+
   // CPlayer
   extern CEntityPatch::CReceiveItem pReceiveItem;
   StructPtr pReceiveItemPtr(ClassicsCore_GetEntitiesSymbol("?ReceiveItem@CPlayer@@UAEHABVCEntityEvent@@@Z"));

@@ -83,3 +83,15 @@ void IListenerEvents_OnCallProcedure(CEntity *pen, const CEntityEvent &ee)
     }
   }
 };
+
+void IListenerEvents_OnJumpProcedure(CEntity *pen, const CEntityEvent &ee)
+{
+  // This function is executed every time CRationalEntity::Jump() is called,
+  // which is happening during procedure logic defined by ES files.
+};
+
+void IListenerEvents_OnReturnProcedure(CEntity *pen, const CEntityEvent &ee)
+{
+  // This function is executed every time CRationalEntity::Return() is called,
+  // which is happening during procedure logic defined by ES files.
+};

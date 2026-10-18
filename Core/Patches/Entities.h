@@ -64,6 +64,9 @@ class CRationalEntityPatch : public CRationalEntity {
 
     // Call a subautomaton
     void P_Call(SLONG slThisState, SLONG slTargetState, BOOL bOverride, const CEntityEvent &eeInput);
+
+    // Return from a subautomaton
+    void P_Return(SLONG slThisState, const CEntityEvent &eeReturn);
 };
 
 #endif // _PATCHCONFIG_EXTEND_ENTITIES

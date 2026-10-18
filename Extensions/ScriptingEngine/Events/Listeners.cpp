@@ -373,6 +373,19 @@ void IListenerEvents_OnCallProcedure(CEntity *pen, const CEntityEvent &ee) {
   CallOnEvent(pen, ee, "Receive");
 };
 
+void IListenerEvents_OnJumpProcedure(CEntity *pen, const CEntityEvent &ee) {
+  // Runs any of the following:
+  // - OnReceiveGenericEvent
+  // - OnReceiveEnemyEvent
+  // - OnReceivePlayerEvent
+  CallOnEvent(pen, ee, "Receive");
+};
+
+void IListenerEvents_OnReturnProcedure(CEntity *pen, const CEntityEvent &ee) {
+  // Don't use this function in custom scripts
+  // Reenable this function in plugin startup before adding any code here
+};
+
 inline SQRESULT PushAmmoItem(sq::VM &vm) {
   if (SQ_FAILED(PushEvent(vm))) return SQ_ERROR;
 

@@ -380,13 +380,14 @@ void CEntityPatch::P_MovingBrush_GetForce(INDEX iForce, const FLOAT3D &vPoint, C
 #endif // _PATCHCONFIG_GAMEPLAY_EXT
 };
 
+// Jump to a new state
 void CRationalEntityPatch::P_Jump(SLONG slThisState, SLONG slTargetState, BOOL bOverride, const CEntityEvent &eeInput)
 {
   // Call event functions for each plugin
   FOREACHPLUGIN(itPlugin) {
-    if (itPlugin->pm_events.m_listener->OnCallProcedure == NULL) continue;
+    if (itPlugin->pm_events.m_listener->OnJumpProcedure == NULL) continue;
 
-    itPlugin->pm_events.m_listener->OnCallProcedure(this, eeInput);
+    itPlugin->pm_events.m_listener->OnJumpProcedure(this, eeInput);
   }
 
   // Original function code
@@ -419,6 +420,22 @@ void CRationalEntityPatch::P_Call(SLONG slThisState, SLONG slTargetState, BOOL b
 
   en_stslStateStack.Push() = slTargetState;
   HandleEvent(eeInput);
+};
+
+// Return from a subautomaton
+void CRationalEntityPatch::P_Return(SLONG slThisState, const CEntityEvent &eeReturn)
+{
+  // Call event functions for each plugin
+  FOREACHPLUGIN(itPlugin) {
+    if (itPlugin->pm_events.m_listener->OnReturnProcedure == NULL) continue;
+
+    itPlugin->pm_events.m_listener->OnReturnProcedure(this, eeReturn);
+  }
+
+  // Original function code
+  UnwindStack(slThisState);
+  en_stslStateStack.PopUntil(en_stslStateStack.Count() - 2);
+  HandleEvent(eeReturn);
 };
 
 #endif // _PATCHCONFIG_EXTEND_ENTITIES
