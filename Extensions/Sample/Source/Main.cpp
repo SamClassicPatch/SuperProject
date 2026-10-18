@@ -200,6 +200,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   events.m_listener->OnCallProcedure   = &IListenerEvents_OnCallProcedure;
   events.m_listener->OnJumpProcedure   = &IListenerEvents_OnJumpProcedure;
   events.m_listener->OnReturnProcedure = &IListenerEvents_OnReturnProcedure;
+  events.m_listener->OnDamage          = &IListenerEvents_OnDamage;
 
   events.m_timer->OnTick   = &ITimerEvents_OnTick;
   events.m_timer->OnSecond = &ITimerEvents_OnSecond;

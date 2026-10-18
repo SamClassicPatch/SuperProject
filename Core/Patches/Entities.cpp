@@ -28,6 +28,7 @@ CEntityPatch::CRenderGameView pRenderGameView = NULL;
 CEntityPatch::CGetModelForRendering pGetModelForRendering = NULL;
 CEntityPatch::CGetForce pWorldBase_GetForce = NULL;
 CEntityPatch::CGetForce pMovingBrush_GetForce = NULL;
+CEntityPatch::CInflictDirectDamage pInflictDamage = NULL;
 
 // Read entity property values
 void CEntityPatch::P_ReadProperties(CTStream &istrm) {
@@ -314,6 +315,51 @@ BOOL CEntityPatch::P_ReceiveItem(const CEntityEvent &ee)
 
   return bResult;
 };
+
+#if SE1_GAME != SS_REV
+
+void CEntityPatch::P_InflictDirectDamage(CEntity *penToDamage, CEntity *penInflictor, DamageType dmtType,
+  FLOAT fDamageAmmount, const FLOAT3D &vHitPoint, const FLOAT3D &vDirection)
+{
+  // Original function code
+  ASSERT(GetFPUPrecision() == FPT_24BIT);
+
+  if (!IsAllowedForPrediction()
+   || !penToDamage->IsAllowedForPrediction()
+   || !penInflictor->IsAllowedForPrediction()) {
+    return;
+  }
+
+  if (fDamageAmmount > 0) {
+    penToDamage->ReceiveDamage(penInflictor, dmtType, fDamageAmmount, vHitPoint, vDirection);
+  }
+
+  // Call damage functions for each plugin
+  FOREACHPLUGIN(itPlugin) {
+    if (itPlugin->pm_events.m_listener->OnDamage == NULL) continue;
+
+    itPlugin->pm_events.m_listener->OnDamage(this, penToDamage, penInflictor, dmtType, fDamageAmmount, vHitPoint, vDirection);
+  }
+};
+
+#else
+
+void CEntityPatch::P_InflictDirectDamage(CEntity *penToDamage, CEntity *penInflictor, DamageType dmtType,
+  FLOAT fDamageAmmount, const FLOAT3D &vHitPoint, const FLOAT3D &vDirection, INDEX iBatchID)
+{
+  // Proceed to the original function
+  (this->*pInflictDamage)(penToDamage, penInflictor, dmtType, fDamageAmmount, vHitPoint, vDirection, iBatchID);
+
+  // Call damage functions for each plugin
+  FOREACHPLUGIN(itPlugin) {
+    if (itPlugin->pm_events.m_listener->OnDamage == NULL) continue;
+
+    // [Cecil] FIXME: Discards iBatchID
+    itPlugin->pm_events.m_listener->OnDamage(this, penToDamage, penInflictor, dmtType, fDamageAmmount, vHitPoint, vDirection);
+  }
+};
+
+#endif // SE1_GAME == SS_REV
 
 // Render game view from the player's perspective
 void CEntityPatch::P_RenderGameView(CDrawPort *pdp, void *pvUserData) {

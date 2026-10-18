@@ -562,3 +562,36 @@ void IListenerEvents_OnReceiveItem(CEntity *penPlayer, const CEntityEvent &ee, B
     } break;
   }
 };
+
+static CEntity *_penCaller = NULL;
+static CEntity *_penToDamage = NULL;
+static CEntity *_penInflictor = NULL;
+static DamageType _eInflictDamageType;
+static FLOAT _fDamage;
+static FLOAT3D _vHitPoint;
+static FLOAT3D _vDirection;
+
+inline SQRESULT PushInflictDamageArgs(sq::VM &vm) {
+  sq_pushroottable(vm);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penCaller);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penToDamage);
+  PushNewPointer(vm.Root(), "CEntityPointer", _penInflictor);
+  sq_pushinteger(vm, _eInflictDamageType);
+  sq_pushfloat(vm, _fDamage);
+  PushNewPointer(vm.Root(), "FLOAT3D", _vHitPoint);
+  PushNewPointer(vm.Root(), "FLOAT3D", _vDirection);
+  return SQ_OK;
+};
+
+void IListenerEvents_OnDamage(CEntity *penCaller, CEntity *penTarget, CEntity *penInflictor,
+  DamageType dmtType, FLOAT fDamage, const FLOAT3D &vHitPoint, const FLOAT3D &vDirection)
+{
+  _penCaller = penCaller;
+  _penToDamage = penTarget;
+  _penInflictor = penInflictor;
+  _eInflictDamageType = dmtType;
+  _fDamage = fDamage;
+  _vHitPoint = vHitPoint;
+  _vDirection = vDirection;
+  RunCustomScripts("OnDamage", &PushInflictDamageArgs);
+};

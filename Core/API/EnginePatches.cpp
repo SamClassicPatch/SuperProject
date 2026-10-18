@@ -98,6 +98,10 @@ int ICorePatches::Entities(void) {
   pSendEvent = &CEntity::SendEvent;
   CreatePatch(pSendEvent, &CEntityPatch::P_SendEvent, "CEntity::SendEvent(...)");
 
+  extern CEntityPatch::CInflictDirectDamage pInflictDamage;
+  pInflictDamage = &CEntity::InflictDirectDamage;
+  CreatePatch(pInflictDamage, &CEntityPatch::P_InflictDirectDamage, "CEntity::InflictDirectDamage(...)");
+
   // CRationalEntity
   void (CRationalEntity::*pJump)(SLONG, SLONG, BOOL, const CEntityEvent &) = &CRationalEntity::Jump;
   CreatePatch(pJump, &CRationalEntityPatch::P_Jump, "CRationalEntity::Jump(...)");

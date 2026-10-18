@@ -60,28 +60,6 @@ void IListenerEvents_OnCallProcedure(CEntity *pen, const CEntityEvent &ee)
 {
   // This function is executed every time CRationalEntity::Call() is called,
   // which is happening during procedure logic defined by ES files.
-
-  // EXAMPLE: Kick the player in the hit direction upon receiving damage from enemies
-  if (!IsDerivedFromID(pen, CPlayerEntity_ClassID)) return;
-
-  if (ee.ee_slEvent == EVENTCODE_EDamage) {
-    const EDamage &eeDamage = (const EDamage &)ee;
-
-    // CEnemyBase_ClassID
-    if (IsDerivedFromID(eeDamage.penInflictor, 310)) {
-      #if _PATCHCONFIG_EXT_PACKETS
-        // Send packet to give impulse to an entity
-        CExtEntityImpulse pck;
-        pck("ulEntity", (int)pen->en_ulID);
-        pck("vSpeed", eeDamage.vDirection * 20.0f);
-        pck.SendToClients();
-
-      #else
-        // Give impulse directly
-        ((CMovableEntity *)pen)->GiveImpulseTranslationAbsolute(eeDamage.vDirection * 20.0f);
-      #endif
-    }
-  }
 };
 
 void IListenerEvents_OnJumpProcedure(CEntity *pen, const CEntityEvent &ee)
@@ -94,4 +72,30 @@ void IListenerEvents_OnReturnProcedure(CEntity *pen, const CEntityEvent &ee)
 {
   // This function is executed every time CRationalEntity::Return() is called,
   // which is happening during procedure logic defined by ES files.
+};
+
+void IListenerEvents_OnDamage(CEntity *penCaller, CEntity *penTarget, CEntity *penInflictor,
+  DamageType dmtType, FLOAT fDamage, const FLOAT3D &vHitPoint, const FLOAT3D &vDirection)
+{
+  // This function is executed every time CEntity::InflictDirectDamage() is called.
+  // At this point, the damage has been dealt to penTarget via its ReceiveDamage()
+  // method in order to immediately retrieve freshly modified entity data, if any.
+
+  // EXAMPLE: Kick the player in the hit direction upon receiving damage from enemies
+  if (!IsDerivedFromID(penTarget, CPlayerEntity_ClassID)) return;
+
+  // CEnemyBase_ClassID
+  if (IsDerivedFromID(penInflictor, 310)) {
+    #if _PATCHCONFIG_EXT_PACKETS
+      // Send packet to give impulse to an entity
+      CExtEntityImpulse pck;
+      pck("ulEntity", (int)penTarget->en_ulID);
+      pck("vSpeed", vDirection * 20.0f);
+      pck.SendToClients();
+
+    #else
+      // Give impulse directly
+      ((CMovableEntity *)penTarget)->GiveImpulseTranslationAbsolute(vDirection * 20.0f);
+    #endif
+  }
 };

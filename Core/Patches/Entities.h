@@ -36,12 +36,29 @@ class CEntityPatch : public CEntity {
     // GetForce() pointer
     typedef void (CEntity::*CGetForce)(INDEX, const FLOAT3D &, CForceStrength &, CForceStrength &);
 
+    // InflictDirectDamage() pointer
+  #if SE1_GAME != SS_REV
+    typedef void (CEntity::*CInflictDirectDamage)(CEntity *, CEntity *, DamageType, FLOAT, const FLOAT3D &, const FLOAT3D &);
+  #else
+    typedef void (CEntity::*CInflictDirectDamage)(CEntity *, CEntity *, DamageType, FLOAT, const FLOAT3D &, const FLOAT3D &, INDEX);
+  #endif
+
   public:
     // Read entity property values
     void P_ReadProperties(CTStream &istrm);
 
     // Send an event to this entity
     void P_SendEvent(const CEntityEvent &ee);
+
+  #if SE1_GAME != SS_REV
+    // Apply some damage directly to one entity
+    void P_InflictDirectDamage(CEntity *penToDamage, CEntity *penInflictor, DamageType dmtType,
+      FLOAT fDamageAmmount, const FLOAT3D &vHitPoint, const FLOAT3D &vDirection);
+  #else
+    // Apply some damage directly to one entity
+    void P_InflictDirectDamage(CEntity *penToDamage, CEntity *penInflictor, DamageType dmtType,
+      FLOAT fDamageAmmount, const FLOAT3D &vHitPoint, const FLOAT3D &vDirection, INDEX iBatchID);
+  #endif
 
     // Receive item by a player entity
     BOOL P_ReceiveItem(const CEntityEvent &ee);
