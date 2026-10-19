@@ -584,14 +584,14 @@ inline SQRESULT PushInflictDamageArgs(sq::VM &vm) {
 };
 
 void IListenerEvents_OnDamage(CEntity *penCaller, CEntity *penTarget, CEntity *penInflictor,
-  DamageType dmtType, FLOAT fDamage, const FLOAT3D &vHitPoint, const FLOAT3D &vDirection)
+  INDEX dmtType, FLOAT fDamage, const PatchFLOAT3D &vHitPoint, const PatchFLOAT3D &vDirection)
 {
   _penCaller = penCaller;
   _penToDamage = penTarget;
   _penInflictor = penInflictor;
-  _eInflictDamageType = dmtType;
+  _eInflictDamageType = (DamageType)dmtType;
   _fDamage = fDamage;
-  _vHitPoint = vHitPoint;
-  _vDirection = vDirection;
+  _vHitPoint = FLOAT3D(vHitPoint.vector[0], vHitPoint.vector[1], vHitPoint.vector[2]);
+  _vDirection = FLOAT3D(vDirection.vector[0], vDirection.vector[1], vDirection.vector[2]);
   RunCustomScripts("OnDamage", &PushInflictDamageArgs);
 };

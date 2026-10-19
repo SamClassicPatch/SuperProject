@@ -75,7 +75,7 @@ void IListenerEvents_OnReturnProcedure(CEntity *pen, const CEntityEvent &ee)
 };
 
 void IListenerEvents_OnDamage(CEntity *penCaller, CEntity *penTarget, CEntity *penInflictor,
-  DamageType dmtType, FLOAT fDamage, const FLOAT3D &vHitPoint, const FLOAT3D &vDirection)
+  INDEX dmtType, FLOAT fDamage, const PatchFLOAT3D &vHitPoint, const PatchFLOAT3D &vDirection)
 {
   // This function is executed every time CEntity::InflictDirectDamage() is called.
   // At this point, the damage has been dealt to penTarget via its ReceiveDamage()
@@ -84,18 +84,21 @@ void IListenerEvents_OnDamage(CEntity *penCaller, CEntity *penTarget, CEntity *p
   // EXAMPLE: Kick the player in the hit direction upon receiving damage from enemies
   if (!IsDerivedFromID(penTarget, CPlayerEntity_ClassID)) return;
 
+  // Convert passed vector to Serious Engine vector
+  FLOAT3D vDir(vDirection.vector[0], vDirection.vector[1], vDirection.vector[2]);
+
   // CEnemyBase_ClassID
   if (IsDerivedFromID(penInflictor, 310)) {
     #if _PATCHCONFIG_EXT_PACKETS
       // Send packet to give impulse to an entity
       CExtEntityImpulse pck;
       pck("ulEntity", (int)penTarget->en_ulID);
-      pck("vSpeed", vDirection * 20.0f);
+      pck("vSpeed", vDir * 20.0f);
       pck.SendToClients();
 
     #else
       // Give impulse directly
-      ((CMovableEntity *)penTarget)->GiveImpulseTranslationAbsolute(vDirection * 20.0f);
+      ((CMovableEntity *)penTarget)->GiveImpulseTranslationAbsolute(vDir * 20.0f);
     #endif
   }
 };

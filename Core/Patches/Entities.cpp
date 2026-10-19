@@ -338,7 +338,9 @@ void CEntityPatch::P_InflictDirectDamage(CEntity *penToDamage, CEntity *penInfli
   FOREACHPLUGIN(itPlugin) {
     if (itPlugin->pm_events.m_listener->OnDamage == NULL) continue;
 
-    itPlugin->pm_events.m_listener->OnDamage(this, penToDamage, penInflictor, dmtType, fDamageAmmount, vHitPoint, vDirection);
+    PatchFLOAT3D vHitStruct = { vHitPoint(1), vHitPoint(2), vHitPoint(3) };
+    PatchFLOAT3D vDirStruct = { vDirection(1), vDirection(2), vDirection(3) };
+    itPlugin->pm_events.m_listener->OnDamage(this, penToDamage, penInflictor, dmtType, fDamageAmmount, vHitStruct, vDirStruct);
   }
 };
 
@@ -354,8 +356,10 @@ void CEntityPatch::P_InflictDirectDamage(CEntity *penToDamage, CEntity *penInfli
   FOREACHPLUGIN(itPlugin) {
     if (itPlugin->pm_events.m_listener->OnDamage == NULL) continue;
 
+    PatchFLOAT3D vHitStruct = { vHitPoint(1), vHitPoint(2), vHitPoint(3) };
+    PatchFLOAT3D vDirStruct = { vDirection(1), vDirection(2), vDirection(3) };
     // [Cecil] FIXME: Discards iBatchID
-    itPlugin->pm_events.m_listener->OnDamage(this, penToDamage, penInflictor, dmtType, fDamageAmmount, vHitPoint, vDirection);
+    itPlugin->pm_events.m_listener->OnDamage(this, penToDamage, penInflictor, dmtType, fDamageAmmount, vHitStruct, vDirStruct);
   }
 };
 
