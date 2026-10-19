@@ -23,6 +23,13 @@ static SQInteger Execute(HSQUIRRELVM v) {
   const SQChar *str = "";
   sq_getstring(v, 2, &str);
   _pShell->Execute(str + CTString(";"));
+  return 0;
+};
+
+static SQInteger SymbolExists(HSQUIRRELVM v) {
+  const SQChar *str = "";
+  sq_getstring(v, 2, &str);
+  sq_pushbool(v, _pShell->GetSymbol(str, TRUE) != NULL);
   return 1;
 };
 
@@ -40,7 +47,7 @@ static SQInteger SetFloat(HSQUIRRELVM v) {
   sq_getfloat(v, 3, &fValue);
 
   _pShell->SetFLOAT(str, fValue);
-  return 1;
+  return 0;
 };
 
 static SQInteger GetIndex(HSQUIRRELVM v) {
@@ -57,7 +64,7 @@ static SQInteger SetIndex(HSQUIRRELVM v) {
   sq_getinteger(v, 3, &iValue);
 
   _pShell->SetINDEX(str, iValue);
-  return 1;
+  return 0;
 };
 
 static SQInteger GetString(HSQUIRRELVM v) {
@@ -74,7 +81,7 @@ static SQInteger SetString(HSQUIRRELVM v) {
   sq_getstring(v, 3, &strValue);
 
   _pShell->SetString(str, strValue);
-  return 1;
+  return 0;
 };
 
 static SQInteger GetValue(HSQUIRRELVM v) {
@@ -91,22 +98,23 @@ static SQInteger SetValue(HSQUIRRELVM v) {
   sq_getstring(v, 3, &strValue);
 
   _pShell->SetValue(str, strValue);
-  return 1;
+  return 0;
 };
 
 }; // namespace
 
 // "Shell" namespace functions
 static SQRegFunction _aShellFuncs[] = {
-  { "Execute",   &Shell::Execute, 2, ".s" },
-  { "GetFloat",  &Shell::GetFloat, 2, ".s" },
-  { "SetFloat",  &Shell::SetFloat, 3, ".sn" },
-  { "GetIndex",  &Shell::GetIndex, 2, ".s" },
-  { "SetIndex",  &Shell::SetIndex, 3, ".sn|b" },
-  { "GetString", &Shell::GetString, 2, ".s" },
-  { "SetString", &Shell::SetString, 3, ".ss" },
-  { "GetValue",  &Shell::GetValue, 2, ".s" },
-  { "SetValue",  &Shell::SetValue, 3, ".ss" },
+  { "Execute",      &Shell::Execute,      2, ".s" },
+  { "SymbolExists", &Shell::SymbolExists, 2, ".s" },
+  { "GetFloat",     &Shell::GetFloat,     2, ".s" },
+  { "SetFloat",     &Shell::SetFloat,     3, ".sn" },
+  { "GetIndex",     &Shell::GetIndex,     2, ".s" },
+  { "SetIndex",     &Shell::SetIndex,     3, ".sn|b" },
+  { "GetString",    &Shell::GetString,    2, ".s" },
+  { "SetString",    &Shell::SetString,    3, ".ss" },
+  { "GetValue",     &Shell::GetValue,     2, ".s" },
+  { "SetValue",     &Shell::SetValue,     3, ".ss" },
 };
 
 void VM::RegisterShell(void) {
