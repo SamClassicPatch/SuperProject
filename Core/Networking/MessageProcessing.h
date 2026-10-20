@@ -48,6 +48,9 @@ class CORE_API IProcessPacket {
     // Prevent clients from joining unless they have the same patch installed
     static INDEX _bForbidVanilla;
 
+    // Refuse client connection if the CRC of their data mismatches the server
+    static INDEX _bInitialCRCCheck;
+
   #if _PATCHCONFIG_GAMEPLAY_EXT
 
     // Gameplay extensions
@@ -133,6 +136,9 @@ class CORE_API IProcessPacket {
 
     // Client sending a chat message
     static BOOL OnChatInRequest(INDEX iClient, CNetworkMessage &nmMessage);
+
+    // Client replying to the initial CRC check
+    static void OnCRCCheck(INDEX iClient, CNetworkMessage &nmMessage);
 };
 
 #endif

@@ -108,6 +108,11 @@ BOOL INetwork::ServerHandle(CMessageDispatcher *pmd, INDEX iClient, CNetworkMess
     // Client sending a chat message
     case MSG_CHAT_IN:
       return IProcessPacket::OnChatInRequest(iClient, nmMessage);
+
+    // Client replying to the initial CRC check
+    case MSG_REP_CRCCHECK:
+      IProcessPacket::OnCRCCheck(iClient, nmMessage);
+      return FALSE;
   }
 
 #if _PATCHCONFIG_EXT_PACKETS

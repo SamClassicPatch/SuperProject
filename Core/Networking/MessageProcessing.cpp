@@ -30,6 +30,9 @@ INDEX IProcessPacket::_bReportSyncBadToClients = FALSE;
 // Prevent clients from joining unless they have the same patch installed
 INDEX IProcessPacket::_bForbidVanilla = FALSE;
 
+// Refuse client connection if the CRC of their data mismatches the server
+INDEX IProcessPacket::_bInitialCRCCheck = TRUE;
+
 #if _PATCHCONFIG_GAMEPLAY_EXT
 
 // Gameplay extensions (reset to recommended settings)
@@ -69,6 +72,7 @@ void IProcessPacket::RegisterCommands(void) {
 
   _pShell->DeclareSymbol("persistent user INDEX ser_bReportSyncBadToClients;", &_bReportSyncBadToClients);
   _pShell->DeclareSymbol("persistent user INDEX ser_bForbidVanilla pre:UpdateServerSymbolValue;", &_bForbidVanilla);
+  _pShell->DeclareSymbol("user INDEX ser_bInitialCRCCheck;", &_bInitialCRCCheck);
 
 #if _PATCHCONFIG_GAMEPLAY_EXT
   // Gameplay extensions
@@ -935,4 +939,28 @@ BOOL IProcessPacket::OnChatInRequest(INDEX iClient, CNetworkMessage &nmMessage)
   }
 
   return TRUE;
+};
+
+// Client replying to the initial CRC check
+void IProcessPacket::OnCRCCheck(INDEX iClient, CNetworkMessage &nmMessage) {
+  CServer &srv = _pNetwork->ga_srvServer;
+  CSessionSocket &sso = srv.srv_assoSessions[iClient];
+
+  ULONG ulCRC;
+  INDEX iLastSequence;
+  nmMessage >> ulCRC >> iLastSequence;
+
+  // [Cecil] Disconnect the client on mismatching CRC, if needed
+  if (_bInitialCRCCheck && _pNetwork->ga_ulCRC != ulCRC) {
+    INetwork::SendDisconnectMessage(iClient, TRANS("Wrong CRC check."), FALSE);
+
+  } else {
+    if (!_bInitialCRCCheck) {
+      CPrintF(TRANS("Server: Client '%s', CRC check OK\n"), GetComm().Server_GetClientName(iClient).str_String);
+    }
+
+    sso.sso_bSendStream = TRUE;
+    ((CNetStream &)sso.sso_nsBuffer).RemoveOlderBlocksBySequence(iLastSequence);
+    sso.sso_iLastSentSequence = iLastSequence;
+  }
 };
