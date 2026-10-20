@@ -40,6 +40,7 @@ static void NameClick(void) {
     case PCN_TIN: RunBrowser("https://youtu.be/o2W3jfvZU4w"); break;
     case PCN_ZDZICHU: RunBrowser("https://www.facebook.com/SeriousSamAlphaRemake"); break;
 
+    case PCN_CJSON: RunBrowser("https://github.com/DaveGamble/cJSON"); break;
     case PCN_KENNEY: RunBrowser("https://www.kenney.nl/"); break;
     case PCN_SDL: RunBrowser("https://libsdl.org/"); break;
     case PCN_SQUIRREL: RunBrowser("http://squirrel-lang.org/"); break;
@@ -149,45 +150,51 @@ void CPatchCreditsMenu::Initialize_t(void) {
   gm_mgThirdParty.mg_bEnabled = FALSE;
   gm_mgThirdParty.mg_bLabel = TRUE;
   AddChild(&gm_mgThirdParty);
+  
+  gm_amgNames[PCN_CJSON].SetText("cJSON");
+  gm_amgNames[PCN_CJSON].mg_strTip = "Copyright (C) 2009-2017 Dave Gamble and cJSON contributors";
+  gm_amgNames[PCN_CJSON].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 1.0f);
+  gm_amgNames[PCN_CJSON].mg_pmgUp = &gm_mgPatchLink;
+  gm_amgNames[PCN_CJSON].mg_pmgDown = &gm_amgNames[PCN_KENNEY];
 
   gm_amgNames[PCN_KENNEY].SetText("Kenney Game Assets");
   gm_amgNames[PCN_KENNEY].mg_strTip = "Kenney (www.kenney.nl)";
-  gm_amgNames[PCN_KENNEY].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 1.0f);
-  gm_amgNames[PCN_KENNEY].mg_pmgUp = &gm_mgPatchLink;
+  gm_amgNames[PCN_KENNEY].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 2.0f);
+  gm_amgNames[PCN_KENNEY].mg_pmgUp = &gm_amgNames[PCN_CJSON];
   gm_amgNames[PCN_KENNEY].mg_pmgDown = &gm_amgNames[PCN_SDL];
 
   gm_amgNames[PCN_SDL].SetText("Simple DirectMedia Layer");
-  gm_amgNames[PCN_SDL].mg_strTip = "Copyright (C) 1997-2020 Sam Lantinga";
-  gm_amgNames[PCN_SDL].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 2.0f);
+  gm_amgNames[PCN_SDL].mg_strTip = "Copyright (C) 1997-2026 Sam Lantinga";
+  gm_amgNames[PCN_SDL].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 3.0f);
   gm_amgNames[PCN_SDL].mg_pmgUp = &gm_amgNames[PCN_KENNEY];
   gm_amgNames[PCN_SDL].mg_pmgDown = &gm_amgNames[PCN_SQUIRREL];
 
   gm_amgNames[PCN_SQUIRREL].SetText("Squirrel");
   gm_amgNames[PCN_SQUIRREL].mg_strTip = "Copyright (C) 2003-2022 Alberto Demichelis";
-  gm_amgNames[PCN_SQUIRREL].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 3.0f);
+  gm_amgNames[PCN_SQUIRREL].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 4.0f);
   gm_amgNames[PCN_SQUIRREL].mg_pmgUp = &gm_amgNames[PCN_SDL];
   gm_amgNames[PCN_SQUIRREL].mg_pmgDown = &gm_amgNames[PCN_STB];
 
   gm_amgNames[PCN_STB].SetText("stb");
   gm_amgNames[PCN_STB].mg_strTip = "Copyright (C) 2017 Sean Barrett";
-  gm_amgNames[PCN_STB].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 4.0f);
+  gm_amgNames[PCN_STB].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 5.0f);
   gm_amgNames[PCN_STB].mg_pmgUp = &gm_amgNames[PCN_SQUIRREL];
   gm_amgNames[PCN_STB].mg_pmgDown = &gm_amgNames[PCN_STEAMAPI];
 
   gm_amgNames[PCN_STEAMAPI].SetText("Steamworks API");
   gm_amgNames[PCN_STEAMAPI].mg_strTip = "Copyright (C) 1996-2022, Valve Corporation, All rights reserved.";
-  gm_amgNames[PCN_STEAMAPI].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 5.0f);
+  gm_amgNames[PCN_STEAMAPI].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 6.0f);
   gm_amgNames[PCN_STEAMAPI].mg_pmgUp = &gm_amgNames[PCN_STB];
   gm_amgNames[PCN_STEAMAPI].mg_pmgDown = &gm_amgNames[PCN_ZLIB];
 
   gm_amgNames[PCN_ZLIB].SetText("zlib");
   gm_amgNames[PCN_ZLIB].mg_strTip = "Copyright (C) 1995-2024 Jean-loup Gailly and Mark Adler";
-  gm_amgNames[PCN_ZLIB].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 6.0f);
+  gm_amgNames[PCN_ZLIB].mg_boxOnScreen = BoxMediumRight(fHeightThirdParty + 7.0f);
   gm_amgNames[PCN_ZLIB].mg_pmgUp = &gm_amgNames[PCN_STEAMAPI];
   gm_amgNames[PCN_ZLIB].mg_pmgDown = &gm_mgPatchLink;
 
   // Add all names
-  for (INDEX i = 0; i < PCN_LAST; i++) {
+  for (INDEX i = 0; i < PCN_MAX; i++) {
     // Pad the name
     gm_amgNames[i].SetText("  " + gm_amgNames[i].GetText() + "  ");
 
@@ -222,17 +229,17 @@ void CPatchCreditsMenu::StartMenu(void) {
     "^iIf only Serious Engine 1.50 was open-source...",
     "^i100% no virus",
     "^iI bet others are jealous that I can have random and ^ce50000c^cff8d00o^cffee00l^c028121o^c004cffr^c770088f^cf5abb9u^c5bcffbl^C quotes",
+    "^i100% human-written code",
     "^i\"You reap what you sow.\"",
     "^i\"Good things come to those who wait.\"",
     "^i\"If you play with fire, you will get burned.\"",
     "^i\"It's never too late to mend.\"",
     "^i\"People who live in glass houses shouldn't throw stones.\"",
     "^i\"Two wrongs don't make a right.\"",
-    "^i\"Good things come to those who wait.\"",
     "^i\"If it ain't broke, don't fix it.\"",
   };
 
-  _iRandomQuote = rand() % 16;
+  _iRandomQuote = rand() % ARRAYCOUNT(astrQuotes);
   gm_amgNames[PCN_CECIL].mg_strTip = astrQuotes[_iRandomQuote];
 
   CGameMenu::StartMenu();

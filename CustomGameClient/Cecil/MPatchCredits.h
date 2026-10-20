@@ -37,14 +37,15 @@ enum EPatchCreditsName {
 
   PCN_FIRST_THIRDPARTY,
 
-  PCN_KENNEY = PCN_FIRST_THIRDPARTY,
+  PCN_CJSON = PCN_FIRST_THIRDPARTY,
+  PCN_KENNEY,
   PCN_SDL,
   PCN_SQUIRREL,
   PCN_STB,
   PCN_STEAMAPI,
   PCN_ZLIB,
 
-  PCN_LAST,
+  PCN_MAX,
 };
 
 class CPatchCreditsMenu : public CGameMenu {
@@ -55,7 +56,7 @@ class CPatchCreditsMenu : public CGameMenu {
     CMGButton gm_mgLead;
     CMGButton gm_mgThanks;
     CMGButton gm_mgThirdParty;
-    CMGButton gm_amgNames[PCN_LAST];
+    CMGButton gm_amgNames[PCN_MAX];
 
     // Initialize credits
     void Initialize_t(void);
