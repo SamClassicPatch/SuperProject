@@ -107,6 +107,9 @@ function SpawnEntity(classFile) {
 };
 
 function OnStep() {
+  // Cannot execute if not currently running on a patch-exclusive server
+  if (!Network.IsHost() || Network.IsVanillaCompatible()) return;
+
   menuKey.Update(Button.KID_TAB);
 
   // Numbers row
@@ -159,6 +162,9 @@ function OnPlayerAction(iClient, iPlayer, pa, iResent) {
 };
 
 function OnPostDraw(dp) {
+  // Cannot execute if not currently running on a patch-exclusive server
+  if (!Network.IsHost() || Network.IsVanillaCompatible()) return;
+
   // Make sure there are any local players
   local players = World.GetLocalPlayers();
   if (players.len() == 0) return;

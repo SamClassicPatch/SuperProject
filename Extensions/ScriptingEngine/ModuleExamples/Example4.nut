@@ -119,7 +119,8 @@ function WeaponForDamage(killer, damageType) {
 };
 
 function OnStep() {
-  if (!World.IsActive()) return;
+  // Quit if not in a world or currently playing on a remote server
+  if (!World.IsActive() || Network.IsPlayingOnline()) return;
 
   // Go through every player entity in the world
   for (local i = 0; i < World.GetMaxPlayers(); i++) {

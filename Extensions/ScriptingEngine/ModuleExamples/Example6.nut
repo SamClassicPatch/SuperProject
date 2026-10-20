@@ -123,6 +123,9 @@ fntKeys <- CFontData("Fonts\\Display3-caps.fnt");
 fntText <- CFontData("Fonts\\Display3-narrow.fnt");
 
 function OnStep() {
+  // Cannot execute if not currently running on a patch-exclusive server
+  if (!Network.IsHost() || Network.IsVanillaCompatible()) return;
+
   switchSample.Update(Button.KID_TAB, -1);
 
   if (switchSample.pressed) {
@@ -167,6 +170,9 @@ function OnPlayerAction(iClient, iPlayer, pa, iResent) {
 };
 
 function OnPostDraw(dp) {
+  // Cannot execute if not currently running on a patch-exclusive server
+  if (!Network.IsHost() || Network.IsVanillaCompatible()) return;
+
   if (!World.AnyLocalPlayers()) return;
 
   // Determine render scaling and set default text font

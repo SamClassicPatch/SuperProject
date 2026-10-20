@@ -34,7 +34,8 @@ function OnGameStart() {
 const CPlayer_ClassID = 401;
 
 function OnStep() {
-  if (!World.IsActive() || Network.IsVanillaCompatible()) return;
+  // Cannot execute if not in any world or not currently running on a patch-exclusive server
+  if (!World.IsActive() || !Network.IsHost() || Network.IsVanillaCompatible()) return;
 
   // Find all CCannonBall entities in the world
   local cannonballs = World.FindClassesByID(506);
@@ -132,7 +133,8 @@ function DeterminePlayerWeapon(player) {
 };
 
 function OnDamage(caller, target, inflictor, damageType, damage, hitPoint, direction) {
-  if (!World.IsActive() || Network.IsVanillaCompatible()) return;
+  // Cannot execute if not in any world or not currently running on a patch-exclusive server
+  if (!World.IsActive() || !Network.IsHost() || Network.IsVanillaCompatible()) return;
 
   // Make sure it's chainsaw damage
   if (damageType != DMT.CHAINSAW) return;

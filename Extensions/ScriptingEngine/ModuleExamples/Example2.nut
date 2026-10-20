@@ -15,6 +15,9 @@ function TeleportEnemy(enemy) {
 };
 
 function ReplaceEnemies() {
+  // Not a server
+  if (!Network.IsHost()) return;
+
   if (Network.IsVanillaCompatible()) {
     print("^cff0000Enemies may only be replaced in Classics Patch exclusive games and servers!\n");
     return;
