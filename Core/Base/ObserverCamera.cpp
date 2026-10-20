@@ -50,6 +50,12 @@ struct SPhotoModeItem {
   CPlacement3D plOffset;
 
   SPhotoModeItem() : plOffset(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0)) {};
+
+  inline void Clear(void) {
+    strName = "";
+    mo.SetData(NULL);
+    plOffset = CPlacement3D(FLOAT3D(0, 0, 0), ANGLE3D(0, 0, 0));
+  };
 };
 
 // Available items for each hand
@@ -366,7 +372,7 @@ static void ReloadPhotoModeItems(void) {
 
   for (INDEX i = 0; i < ct; i++) {
     _pLoadingItem = &_aPhotoModeItems.Push();
-    *_pLoadingItem = SPhotoModeItem(); // Reset data
+    _pLoadingItem->Clear(); // Reset data
     cfg._pmo = &_pLoadingItem->mo;
 
     if (cfg.SetModel(aConfigs[i], _pLoadingItem->strName)) {
