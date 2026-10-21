@@ -699,7 +699,7 @@ static SQInteger GetGameTime(HSQUIRRELVM v) {
   return 1;
 };
 
-static SQInteger GetPlayerEntity(HSQUIRRELVM v) {
+static SQInteger GetPlayerTarget(HSQUIRRELVM v) {
   SQ_RESTRICT(v);
 
   SQInteger iPlayer;
@@ -712,15 +712,37 @@ static SQInteger GetPlayerEntity(HSQUIRRELVM v) {
   }
 
   CPlayerTarget &plt = aplt[iPlayer];
+  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
 
-  if (!plt.IsActive()) {
-    SQChar strError[256];
-    scsprintf(strError, 256, "player %d is inactive", iPlayer);
-    return sq_throwerror(v, strError);
+  if (plt.IsActive()) {
+    *ppen = plt.plt_penPlayerEntity;
+  } else {
+    *ppen = NULL;
+  }
+  return 1;
+};
+
+static SQInteger IsPlayerTargetActive(HSQUIRRELVM v) {
+  SQ_RESTRICT(v);
+
+  SQInteger iPlayer;
+  sq_getinteger(v, 2, &iPlayer);
+
+  CStaticArray<CPlayerTarget> &aplt = _pNetwork->ga_sesSessionState.ses_apltPlayers;
+
+  if (iPlayer < 0 || iPlayer >= aplt.Count()) {
+    return sq_throwerror(v, "player index is out of bounds");
   }
 
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
-  *ppen = plt.plt_penPlayerEntity;
+  CPlayerTarget &plt = aplt[iPlayer];
+  sq_pushbool(v, plt.IsActive());
+  return 1;
+};
+
+static SQInteger GetMaxPlayerTargets(HSQUIRRELVM v) {
+  SQ_RESTRICT(v);
+  CStaticArray<CPlayerTarget> &aplt = _pNetwork->ga_sesSessionState.ses_apltPlayers;
+  sq_pushinteger(v, aplt.Count());
   return 1;
 };
 
@@ -1259,7 +1281,9 @@ static SQRegFunction _aNetworkFuncs[] = {
   { "GetGameTime",           &Network::GetGameTime,       1, "." },
 
   // Entities
-  { "GetPlayerEntity",       &Network::GetPlayerEntity,       2, ".n" },
+  { "GetPlayerTarget",       &Network::GetPlayerTarget,       2, ".n" },
+  { "IsPlayerTargetActive",  &Network::IsPlayerTargetActive,  2, ".n" },
+  { "GetMaxPlayerTargets",   &Network::GetMaxPlayerTargets,   1, "." },
   { "GetPlayerEntityByName", &Network::GetPlayerEntityByName, 2, ".s" },
   { "CountEntitiesWithName", &Network::CountEntitiesWithName, 2, ".s" },
   { "GetEntityWithName",     &Network::GetEntityWithName,     3, ".sn" },
