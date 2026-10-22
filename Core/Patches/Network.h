@@ -106,6 +106,8 @@ class CSessionStatePatch : public CSessionState {
     // Start session as a client
     void P_Start_AtClient(INDEX ctLocalPlayers);
 
+    void P_SetLerpFactor(CTimerValue tvNow);
+
     // Wait for a stream from a server
     void P_WaitStream(CTMemoryStream &strmMessage, const CTString &strName, INDEX iMsgCode);
 

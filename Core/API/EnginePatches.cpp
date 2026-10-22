@@ -275,6 +275,10 @@ int ICorePatches::Network(void) {
   pStartAtClient = &CSessionState::Start_AtClient_t;
   CreatePatch(pStartAtClient, &CSessionStatePatch::P_Start_AtClient, "CSessionState::Start_AtClient_t(...)");
 
+  extern void (CSessionState::*pSetLerpFactor)(CTimerValue);
+  pSetLerpFactor = &CSessionState::SetLerpFactor;
+  CreatePatch(pSetLerpFactor, &CSessionStatePatch::P_SetLerpFactor, "CSessionState::SetLerpFactor(...)");
+
   void (CSessionState::*pWaitStream)(CTMemoryStream &, const CTString &, INDEX) = &CSessionState::WaitStream_t;
   CreatePatch(pWaitStream, &CSessionStatePatch::P_WaitStream, "CSessionState::WaitStream_t(...)");
 

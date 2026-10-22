@@ -199,6 +199,7 @@ BOOL CMessageDisPatch::P_ReceiveFromClientReliable(INDEX iClient, CNetworkMessag
 // Original function pointers
 void (CSessionState::*pFlushPredictions)(void) = NULL;
 void (CSessionState::*pStartAtClient)(INDEX) = NULL;
+void (CSessionState::*pSetLerpFactor)(CTimerValue) = NULL;
 void (CSessionState::*pReadSessionState)(CTStream *) = NULL;
 void (CSessionState::*pWriteSessionState)(CTStream *) = NULL;
 
@@ -632,6 +633,14 @@ void CSessionStatePatch::P_Start_AtClient(INDEX ctLocalPlayers) {
   // Restore passwords
   pstrPwd1.GetString() = strOldPwd1;
   pstrPwd2.GetString() = strOldPwd2;
+};
+
+void CSessionStatePatch::P_SetLerpFactor(CTimerValue tvNow) {
+  // Proceed to the original function
+  (this->*pSetLerpFactor)(tvNow);
+
+  // Cache freshly set timer values
+  _sstCurrentTick.Update();
 };
 
 // Wait for a stream from a server

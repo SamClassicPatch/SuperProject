@@ -108,6 +108,9 @@ void IHooks::OnRenderView(CWorld &wo, CEntity *penViewer, CAnyProjection3D &apr,
 // Called after starting world simulation
 void IHooks::OnGameStart(void)
 {
+  // Reset simulation time
+  _sstCurrentTick.Clear();
+
   // Call game start function for each plugin
   FOREACHPLUGIN(itPlugin) {
     if (itPlugin->pm_events.m_game->OnGameStart == NULL) continue;
@@ -152,6 +155,9 @@ void IHooks::OnGameStop(void)
   if (ser_bAutoSaveClientLog) {
     IClientLogging::SaveLog();
   }
+
+  // Reset simulation time
+  _sstCurrentTick.Clear();
 };
 
 // Called after saving the game
@@ -168,6 +174,9 @@ void IHooks::OnGameSave(const CTFileName &fnmSave)
 // Called after loading a saved game
 void IHooks::OnGameLoad(const CTFileName &fnmSave)
 {
+  // Update simulation time
+  _sstCurrentTick.Update();
+
   // Call game load function for each plugin
   FOREACHPLUGIN(itPlugin) {
     if (itPlugin->pm_events.m_game->OnGameLoad == NULL) continue;
@@ -219,6 +228,10 @@ void IHooks::OnRemovePlayer(CPlayerTarget &plt, BOOL bLocal)
 // Called after starting demo playback
 void IHooks::OnDemoPlay(const CTFileName &fnmDemo)
 {
+  // [Cecil] NOTE: It's impossible (i.e. very difficult) to get the relevant tick from here because it's not
+  // yet updated using recorded packets, so CurrentTick() always reports -2 for the first tick of the demo
+  _sstCurrentTick.Update();
+
   // Start CAM for the demo
   GetGameAPI()->GetCamera().Start(fnmDemo);
 

@@ -60,6 +60,27 @@ CORE_API extern ERunningGameMode _gmRunningGameMode;
 CORE_API extern const char *_strColorTagPositive;
 CORE_API extern const char *_strColorTagNegative;
 
+// Cached timer values of the current simulation right after CSessionState::SetLerpFactor()
+struct SessionStateTick {
+  TIME tmTick;
+  TIME tmLerpedTick;
+  TIME tmLerpFactor;
+  TIME tmLerpFactor2;
+
+  inline void Clear(void) {
+    tmTick = tmLerpedTick = tmLerpFactor = tmLerpFactor2 = 0;
+  };
+
+  inline void Update(void) {
+    tmTick        = _pTimer->CurrentTick();
+    tmLerpedTick  = _pTimer->GetLerpedCurrentTick();
+    tmLerpFactor  = _pTimer->GetLerpFactor();
+    tmLerpFactor2 = _pTimer->GetLerpFactor2();
+  };
+};
+
+CORE_API extern SessionStateTick _sstCurrentTick;
+
 namespace ICore {
 
 // Own constants to replace engine ones

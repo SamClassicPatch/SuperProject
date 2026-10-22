@@ -61,6 +61,9 @@ ERunningGameMode _gmRunningGameMode = GM_NONE;
 const char *_strColorTagPositive = "^c5FFF5F";
 const char *_strColorTagNegative = "^cFF3F3F";
 
+// Cached timer values of the current simulation right after CSessionState::SetLerpFactor()
+SessionStateTick _sstCurrentTick = { 0, 0, 0, 0 };
+
 extern BOOL _bTempIgnoreTimestamps;
 
 // Toggle vanilla query manager
