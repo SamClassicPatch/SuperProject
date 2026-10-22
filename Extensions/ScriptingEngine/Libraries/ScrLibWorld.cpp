@@ -29,6 +29,26 @@ static SQInteger IsActive(HSQUIRRELVM v) {
   return 1;
 };
 
+static SQInteger GetCurrentTick(HSQUIRRELVM v) {
+  sq_pushfloat(v, _sstCurrentTick.tmTick);
+  return 1;
+};
+
+static SQInteger GetLerpedCurrentTick(HSQUIRRELVM v) {
+  sq_pushfloat(v, _sstCurrentTick.tmLerpedTick);
+  return 1;
+};
+
+static SQInteger GetLerpFactor(HSQUIRRELVM v) {
+  sq_pushfloat(v, _sstCurrentTick.tmLerpFactor);
+  return 1;
+};
+
+static SQInteger GetLerpFactor2(HSQUIRRELVM v) {
+  sq_pushfloat(v, _sstCurrentTick.tmLerpFactor2);
+  return 1;
+};
+
 #define ASSERT_WORLD { if (!IsGameOn()) return sq_throwerror(v, "cannot execute functions from World interface while no game is running"); }
 
 static SQInteger GetBackgroundColor(HSQUIRRELVM v) {
@@ -213,10 +233,14 @@ static SQInteger GetPlayerEntity(HSQUIRRELVM v) {
 // "World" namespace functions
 static SQRegFunction _aWorldFuncs[] = {
   // World
-  { "IsActive",            &World::IsActive,            1, "." },
-  { "GetBackgroundColor",  &World::GetBackgroundColor,  1, "." },
-  { "GetBackgroundViewer", &World::GetBackgroundViewer, 1, "." },
-  { "GetWSC",              &World::GetWSC,              1, "." },
+  { "IsActive",             &World::IsActive,             1, "." },
+  { "GetCurrentTick",       &World::GetCurrentTick,       1, "." },
+  { "GetLerpedCurrentTick", &World::GetLerpedCurrentTick, 1, "." },
+  { "GetLerpFactor",        &World::GetLerpFactor,        1, "." },
+  { "GetLerpFactor2",       &World::GetLerpFactor2,       1, "." },
+  { "GetBackgroundColor",   &World::GetBackgroundColor,   1, "." },
+  { "GetBackgroundViewer",  &World::GetBackgroundViewer,  1, "." },
+  { "GetWSC",               &World::GetWSC,               1, "." },
 
   { "GetFilename",    &World::GetFilename,    1, "." },
   { "GetDescription", &World::GetDescription, 1, "." },
