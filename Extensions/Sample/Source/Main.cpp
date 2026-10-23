@@ -182,6 +182,7 @@ CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
   events.m_packet->OnCharacterChange  = &IPacketEvents_OnCharacterChange;
   events.m_packet->OnPlayerAction     = &IPacketEvents_OnPlayerAction;
   events.m_packet->OnChatMessage      = &IPacketEvents_OnChatMessage;
+  events.m_packet->OnChatOutput       = &IPacketEvents_OnChatOutput;
 
   events.m_game->OnGameStart   = &IGameEvents_OnGameStart;
   events.m_game->OnChangeLevel = &IGameEvents_OnChangeLevel;

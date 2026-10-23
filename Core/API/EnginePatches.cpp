@@ -282,6 +282,9 @@ int ICorePatches::Network(void) {
   void (CSessionState::*pWaitStream)(CTMemoryStream &, const CTString &, INDEX) = &CSessionState::WaitStream_t;
   CreatePatch(pWaitStream, &CSessionStatePatch::P_WaitStream, "CSessionState::WaitStream_t(...)");
 
+  void (CSessionState::*pPrintChatMessage)(ULONG, const CTString &, const CTString &) = &CSessionState::PrintChatMessage;
+  CreatePatch(pPrintChatMessage, &CSessionStatePatch::P_PrintChatMessage, "CSessionState::PrintChatMessage(...)");
+
   void (CSessionState::*pProcGameStreamBlock)(CNetworkMessage &) = &CSessionState::ProcessGameStreamBlock;
   CreatePatch(pProcGameStreamBlock, &CSessionStatePatch::P_ProcessGameStreamBlock, "CSessionState::ProcessGameStreamBlock(...)");
 

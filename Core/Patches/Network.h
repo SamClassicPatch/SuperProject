@@ -111,6 +111,9 @@ class CSessionStatePatch : public CSessionState {
     // Wait for a stream from a server
     void P_WaitStream(CTMemoryStream &strmMessage, const CTString &strName, INDEX iMsgCode);
 
+    // Print an incoming chat message to console
+    void P_PrintChatMessage(ULONG ulFrom, const CTString &strFrom, const CTString &strMessage);
+
     void P_Stop(void);
 
     // Read session state

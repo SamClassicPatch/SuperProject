@@ -79,3 +79,15 @@ BOOL IPacketEvents_OnChatMessage(INDEX iClient, ULONG ulFrom, ULONG ulTo, CTStri
   // and it shouldn't be displayed in chat as a regular message for all clients to see.
   return TRUE;
 };
+
+void IPacketEvents_OnChatOutput(const ULONG ulFrom, const CTString &strFrom, CTString &strSender, CTString &strMessage)
+{
+  // This function is executed every time the client receives a new chat message from the server,
+  // addressed from certain players to this client. It can be used to modify the name of the sender
+  // and the message itself to be displayed differently in the console but this change will only be
+  // reflected locally on the side of the client that received the message.
+
+  // Alternatively, it can be used to reroute the chat message to some other custom "chat" system
+  // and prevent it from being printed in the console like it normally would by setting the sender
+  // or the message string to an empty string value.
+};

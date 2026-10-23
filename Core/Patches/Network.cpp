@@ -763,6 +763,68 @@ void CSessionStatePatch::P_WaitStream(CTMemoryStream &strmMessage, const CTStrin
   ThrowF_t(LOCALIZE("Timeout while waiting for %s"), strName);
 };
 
+// Print an incoming chat message to console
+void CSessionStatePatch::P_PrintChatMessage(ULONG ulFrom, const CTString &strFrom, const CTString &strMessage) {
+  CTString strSender = "";
+
+  // Take symbolic sender string, if no sender players
+  if (ulFrom == 0) {
+    strSender = strFrom;
+
+  // Otherwise, if there are sender players
+  } else {
+    // Go through each player target on the server
+    for (INDEX i = 0; i < ses_apltPlayers.Count(); i++) {
+      // Skip if the current player isn't one of the senders
+      if (!(ulFrom & (1UL << i))) continue;
+
+      CPlayerTarget &plt = ses_apltPlayers[i];
+      if (!plt.IsActive()) continue;
+
+      // Add player name to the comma-separated list of senders
+      if (strSender != "") strSender += ", ";
+      strSender += plt.plt_penPlayerEntity->GetPlayerName();
+    }
+  }
+
+  // [Cecil] Dummy proxy variables, if the command ones are unavailable
+  static CTString strDummySender;
+  static CTString strDummyMessage;
+  CTString *pstrSender = &strDummySender;
+  CTString *pstrMessage = &strDummyMessage;
+
+  // Let eventual script addon process the message
+  static CSymbolPtr pstrChatSender("cmd_strChatSender");
+  static CSymbolPtr pstrChatMessage("cmd_strChatMessage");
+  if (pstrChatSender.Exists()) pstrSender = &pstrChatSender.GetString();
+  if (pstrChatMessage.Exists()) pstrMessage = &pstrChatMessage.GetString();
+
+  *pstrSender = strSender;
+  *pstrMessage = strMessage;
+
+  static CSymbolPtr pstrCmdOnChat("cmd_cmdOnChat");
+
+  if (pstrCmdOnChat.Exists()) {
+    CTString &strCmd = pstrCmdOnChat.GetString();
+    if (strCmd != "") _pShell->Execute(strCmd + ";");
+  }
+
+  // [Cecil] Let plugins process chat messages
+  FOREACHPLUGIN(itPlugin) {
+    if (itPlugin->pm_events.m_packet->OnChatOutput == NULL) continue;
+
+    itPlugin->pm_events.m_packet->OnChatOutput(ulFrom, strFrom, *pstrSender, *pstrMessage);
+  }
+
+  // Print the message, if proccessing didn't kill it
+  if (*pstrSender != "" && *pstrMessage != "") {
+    CPrintF("%s: ^o^cFFFFFF%s^r\n", pstrSender->str_String, pstrMessage->str_String);
+  }
+
+  static CSymbolPtr piChatMessages("net_ctChatMessages");
+  if (piChatMessages.Exists()) piChatMessages.GetIndex()++;
+};
+
 void CSessionStatePatch::P_Stop(void) {
   // Original function code
   ses_bKeepingUpWithTime = TRUE;
