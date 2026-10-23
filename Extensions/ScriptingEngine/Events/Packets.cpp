@@ -20,7 +20,9 @@ static ULONG _ulFrom, _ulTo;
 
 static CPlayerCharacter *_ppc = NULL;
 static CPlayerAction *_ppa = NULL;
-static const CTString *_pstrMessage = NULL;
+static const CTString *_pstrFrom = NULL;
+static CTString *_pstrSender = NULL;
+static CTString *_pstrMessage = NULL;
 
 static SQBool _bKeepReturn;
 static BOOL _bReturnValue;
@@ -99,4 +101,40 @@ BOOL IPacketEvents_OnChatMessage(INDEX iClient, ULONG ulFrom, ULONG ulTo, CTStri
   _bReturnValue = TRUE;
   RunCustomScripts("OnChatMessage", &PushChatArgs, &ReturnValue);
   return _bReturnValue;
+};
+
+inline SQRESULT PushChatOutArgs(sq::VM &vm) {
+  sq_pushroottable(vm);
+  sq_pushinteger(vm, _ulFrom);
+  sq_pushstring(vm, _pstrFrom->str_String, -1);
+  sq_pushstring(vm, _pstrSender->str_String, -1);
+  sq_pushstring(vm, _pstrMessage->str_String, -1);
+  return SQ_OK;
+};
+
+inline bool ReturnNewOutputValues(sq::VM &vm) {
+  if (sq_gettype(vm, -1) != OT_ARRAY) {
+    return true;
+  }
+
+  CTString strNewSender;
+  CTString strNewMessage;
+
+  // Update sender and message if they can be retrieved from the array
+  if (vm.ArrayPopFirst(-1, &strNewSender) && vm.ArrayPopFirst(-1, &strNewMessage)) {
+    *_pstrSender = strNewSender;
+    *_pstrMessage = strNewMessage;
+  }
+  return true;
+};
+
+void IPacketEvents_OnChatOutput(const ULONG ulFrom, const CTString &strFrom, CTString &strSender, CTString &strMessage) {
+  _ulFrom = ulFrom;
+  _pstrFrom = &strFrom;
+
+  // These two are also modified by pointer in ReturnNewOutputValues() aside from simply being pushed as arguments
+  _pstrSender = &strSender;
+  _pstrMessage = &strMessage;
+
+  RunCustomScripts("OnChatOutput", &PushChatOutArgs, &ReturnNewOutputValues);
 };

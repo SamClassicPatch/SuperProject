@@ -86,6 +86,7 @@ template<>
 struct Value<CTString> : public AbstractValue {
   CTString val;
 
+  Value() : val("") {};
   Value(const SQChar *strSet) : val(strSet) {};
   Value(const CTString &strSet) : val(strSet) {};
 
@@ -106,6 +107,7 @@ template<>
 struct Value<void *> : public AbstractValue {
   void *val;
 
+  Value() : val(NULL) {};
   Value(void *pSet) : val(pSet) {};
 
   virtual void Push(HSQUIRRELVM v) const {
