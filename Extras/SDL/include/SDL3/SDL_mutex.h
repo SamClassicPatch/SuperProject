@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2026 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -308,8 +308,6 @@ typedef struct SDL_Mutex SDL_Mutex;
  * \returns the initialized and unlocked mutex or NULL on failure; call
  *          SDL_GetError() for more information.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_DestroyMutex
@@ -336,8 +334,6 @@ extern SDL_DECLSPEC SDL_Mutex * SDLCALL SDL_CreateMutex(void);
  *
  * \param mutex the mutex to lock.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_TryLockMutex
@@ -359,8 +355,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_LockMutex(SDL_Mutex *mutex) SDL_ACQUIRE(mut
  * \param mutex the mutex to try to lock.
  * \returns true on success, false if the mutex would block.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_LockMutex
@@ -380,9 +374,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_TryLockMutex(SDL_Mutex *mutex) SDL_TRY_ACQU
  *
  * \param mutex the mutex to unlock.
  *
- * \threadsafety This call must be paired with a previous locking call on the
- *               same thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_LockMutex
@@ -400,8 +391,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_UnlockMutex(SDL_Mutex *mutex) SDL_RELEASE(m
  * on the platform.
  *
  * \param mutex the mutex to destroy.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  *
@@ -468,8 +457,6 @@ typedef struct SDL_RWLock SDL_RWLock;
  * \returns the initialized and unlocked read/write lock or NULL on failure;
  *          call SDL_GetError() for more information.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_DestroyRWLock
@@ -510,8 +497,6 @@ extern SDL_DECLSPEC SDL_RWLock * SDLCALL SDL_CreateRWLock(void);
  *
  * \param rwlock the read/write lock to lock.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_LockRWLockForWriting
@@ -543,8 +528,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_LockRWLockForReading(SDL_RWLock *rwlock) SD
  *
  * \param rwlock the read/write lock to lock.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_LockRWLockForReading
@@ -569,8 +552,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_LockRWLockForWriting(SDL_RWLock *rwlock) SD
  *
  * \param rwlock the rwlock to try to lock.
  * \returns true on success, false if the lock would block.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  *
@@ -602,8 +583,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_TryLockRWLockForReading(SDL_RWLock *rwlock)
  * \param rwlock the rwlock to try to lock.
  * \returns true on success, false if the lock would block.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_LockRWLockForWriting
@@ -628,9 +607,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_TryLockRWLockForWriting(SDL_RWLock *rwlock)
  *
  * \param rwlock the rwlock to unlock.
  *
- * \threadsafety This call must be paired with a previous locking call on the
- *               same thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_LockRWLockForReading
@@ -650,8 +626,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_UnlockRWLock(SDL_RWLock *rwlock) SDL_RELEAS
  * undefined behavior depending on the platform.
  *
  * \param rwlock the rwlock to destroy.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  *
@@ -696,8 +670,6 @@ typedef struct SDL_Semaphore SDL_Semaphore;
  * \returns a new semaphore or NULL on failure; call SDL_GetError() for more
  *          information.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_DestroySemaphore
@@ -717,8 +689,6 @@ extern SDL_DECLSPEC SDL_Semaphore * SDLCALL SDL_CreateSemaphore(Uint32 initial_v
  *
  * \param sem the semaphore to destroy.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_CreateSemaphore
@@ -736,8 +706,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_DestroySemaphore(SDL_Semaphore *sem);
  * a time length of -1.
  *
  * \param sem the semaphore wait on.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  *
@@ -757,8 +725,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_WaitSemaphore(SDL_Semaphore *sem);
  *
  * \param sem the semaphore to wait on.
  * \returns true if the wait succeeds, false if the wait would block.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  *
@@ -780,8 +746,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_TryWaitSemaphore(SDL_Semaphore *sem);
  *                  indefinitely.
  * \returns true if the wait succeeds or false if the wait times out.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_SignalSemaphore
@@ -794,8 +758,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_WaitSemaphoreTimeout(SDL_Semaphore *sem, Si
  * Atomically increment a semaphore's value and wake waiting threads.
  *
  * \param sem the semaphore to increment.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  *
@@ -810,8 +772,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_SignalSemaphore(SDL_Semaphore *sem);
  *
  * \param sem the semaphore to query.
  * \returns the current value of the semaphore.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  */
@@ -846,8 +806,6 @@ typedef struct SDL_Condition SDL_Condition;
  * \returns a new condition variable or NULL on failure; call SDL_GetError()
  *          for more information.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  *
  * \sa SDL_BroadcastCondition
@@ -862,8 +820,6 @@ extern SDL_DECLSPEC SDL_Condition * SDLCALL SDL_CreateCondition(void);
  * Destroy a condition variable.
  *
  * \param cond the condition variable to destroy.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  *

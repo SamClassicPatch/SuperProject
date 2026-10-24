@@ -1,6 +1,6 @@
 /*
 Simple DirectMedia Layer
-Copyright (C) 1997-2026 Sam Lantinga <slouken@libsdl.org>
+Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages
@@ -106,8 +106,6 @@ typedef enum SDL_TimeFormat
  * \returns true on success or false on failure; call SDL_GetError() for more
  *          information.
  *
- * \threadsafety This function is not thread safe.
- *
  * \since This function is available since SDL 3.2.0.
  */
 extern SDL_DECLSPEC bool SDLCALL SDL_GetDateTimeLocalePreferences(SDL_DateFormat *dateFormat, SDL_TimeFormat *timeFormat);
@@ -119,8 +117,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_GetDateTimeLocalePreferences(SDL_DateFormat
  * \param ticks the SDL_Time to hold the returned tick count.
  * \returns true on success or false on failure; call SDL_GetError() for more
  *          information.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  */
@@ -138,8 +134,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_GetCurrentTime(SDL_Time *ticks);
  * \returns true on success or false on failure; call SDL_GetError() for more
  *          information.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  */
 extern SDL_DECLSPEC bool SDLCALL SDL_TimeToDateTime(SDL_Time ticks, SDL_DateTime *dt, bool localTime);
@@ -154,8 +148,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_TimeToDateTime(SDL_Time ticks, SDL_DateTime
  * \param ticks the resulting SDL_Time.
  * \returns true on success or false on failure; call SDL_GetError() for more
  *          information.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  */
@@ -173,8 +165,6 @@ extern SDL_DECLSPEC bool SDLCALL SDL_DateTimeToTime(const SDL_DateTime *dt, SDL_
  * \param dwHighDateTime a pointer filled in with the high portion of the
  *                       Windows FILETIME value.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  */
 extern SDL_DECLSPEC void SDLCALL SDL_TimeToWindows(SDL_Time ticks, Uint32 *dwLowDateTime, Uint32 *dwHighDateTime);
@@ -190,8 +180,6 @@ extern SDL_DECLSPEC void SDLCALL SDL_TimeToWindows(SDL_Time ticks, Uint32 *dwLow
  * \param dwHighDateTime the high portion of the Windows FILETIME value.
  * \returns the converted SDL time.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  */
 extern SDL_DECLSPEC SDL_Time SDLCALL SDL_TimeFromWindows(Uint32 dwLowDateTime, Uint32 dwHighDateTime);
@@ -203,8 +191,6 @@ extern SDL_DECLSPEC SDL_Time SDLCALL SDL_TimeFromWindows(Uint32 dwLowDateTime, U
  * \param month the month [1-12].
  * \returns the number of days in the requested month or -1 on failure; call
  *          SDL_GetError() for more information.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  */
@@ -219,8 +205,6 @@ extern SDL_DECLSPEC int SDLCALL SDL_GetDaysInMonth(int year, int month);
  * \returns the day of year [0-365] if the date is valid or -1 on failure;
  *          call SDL_GetError() for more information.
  *
- * \threadsafety It is safe to call this function from any thread.
- *
  * \since This function is available since SDL 3.2.0.
  */
 extern SDL_DECLSPEC int SDLCALL SDL_GetDayOfYear(int year, int month, int day);
@@ -233,8 +217,6 @@ extern SDL_DECLSPEC int SDLCALL SDL_GetDayOfYear(int year, int month, int day);
  * \param day the day component of the date.
  * \returns a value between 0 and 6 (0 being Sunday) if the date is valid or
  *          -1 on failure; call SDL_GetError() for more information.
- *
- * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
  */
