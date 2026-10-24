@@ -183,9 +183,10 @@ function LogKill(killer, died, damageType) {
     Network.SendChatToEveryone("^a00", "^r>>>>> " + message);
 
   } else {
-    local snd = Network.Sound("Sounds\\Menu\\Chat.wav", 2);
-    snd.Play(true);
     print("  >>>>> " + message + "\n");
+
+    // Increase chat message counter to play the chat sound
+    Shell.SetIndex("net_ctChatMessages", Shell.GetIndex("net_ctChatMessages") + 1);
   }
 };
 
