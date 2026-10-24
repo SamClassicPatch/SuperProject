@@ -1,6 +1,6 @@
 /* ================================================================
  * Script module example 5: Server-side enemy spawn menu
- * Compatibility: TSE (v1.05, v1.07)
+ * Compatibility: TFE (v1.05), TSE (v1.05, v1.07)
  *
  * Displays a toggleable spawn menu on the left side of the screen
  * that the host client can interact with in order to spawn enemies
@@ -46,51 +46,94 @@ hit <- FLOAT3D();
 // Prepare text font
 fnt <- CFontData("Fonts\\Display3-narrow.fnt");
 
-// Prepare class files
-classes <- [
-  "Classes\\Beast.ecl",
-  "Classes\\Boneman.ecl",
-  "Classes\\CannonRotating.ecl",
-  "Classes\\CannonStatic.ecl",
-  "Classes\\ChainsawFreak.ecl",
-  "Classes\\Demon.ecl",
-  "Classes\\Elemental.ecl",
-  "Classes\\Eyeman.ecl",
-  "Classes\\Fish.ecl",
-  "Classes\\Gizmo.ecl",
-  "Classes\\Grunt.ecl",
-  "Classes\\Guffy.ecl",
-  "Classes\\Headman.ecl",
-  "Classes\\BigHead.ecl",
-  "Classes\\Santa.ecl",
-  "Classes\\Scorpman.ecl",
-  "Classes\\Walker.ecl",
-  "Classes\\Werebull.ecl",
-  "Classes\\Woman.ecl",
-];
+// The First Encounter definitions
+if (Core.IsTFE()) {
+  // Player action weapon mask definition from Player.es
+  PLACT_SELECT_WEAPON_MASK <- 0x1F << 9;
 
-// Prepare class icons
-icons <- [
-  CTextureObject("Thumbnails\\Beast.tbn"),
-  CTextureObject("Thumbnails\\Boneman.tbn"),
-  CTextureObject("Thumbnails\\CannonRotating.tbn"),
-  CTextureObject("Thumbnails\\CannonStatic.tbn"),
-  CTextureObject("Thumbnails\\ChainsawFreak.tbn"),
-  CTextureObject("Thumbnails\\Demon.tbn"),
-  CTextureObject("Thumbnails\\Elemental.tbn"),
-  CTextureObject("Thumbnails\\Eyeman.tbn"),
-  CTextureObject("Thumbnails\\Fish.tbn"),
-  CTextureObject("Thumbnails\\Gizmo.tbn"),
-  CTextureObject("Thumbnails\\Grunt.tbn"),
-  CTextureObject("Thumbnails\\Guffy.tbn"),
-  CTextureObject("Thumbnails\\Headman.tbn"),
-  CTextureObject("Thumbnails\\Mental.tbn"),
-  CTextureObject("Thumbnails\\Santa.tbn"),
-  CTextureObject("Thumbnails\\Scorpman.tbn"),
-  CTextureObject("Thumbnails\\Walker.tbn"),
-  CTextureObject("Thumbnails\\Werebull.tbn"),
-  CTextureObject("Thumbnails\\Woman.tbn"),
-];
+  // Prepare class files
+  classes <- [
+    "Classes\\Beast.ecl",
+    "Classes\\Boneman.ecl",
+    "Classes\\Elemental.ecl",
+    "Classes\\Eyeman.ecl",
+    "Classes\\Fish.ecl",
+    "Classes\\Gizmo.ecl",
+    "Classes\\Headman.ecl",
+    "Classes\\BigHead.ecl",
+    "Classes\\Scorpman.ecl",
+    "Classes\\Walker.ecl",
+    "Classes\\Werebull.ecl",
+    "Classes\\Woman.ecl",
+  ];
+
+  // Prepare class icons
+  icons <- [
+    CTextureObject("Thumbnails\\Beast.tbn"),
+    CTextureObject("Thumbnails\\Boneman.tbn"),
+    CTextureObject("Thumbnails\\Elemental.tbn"),
+    CTextureObject("Thumbnails\\Eyeman.tbn"),
+    CTextureObject("Thumbnails\\Fish.tbn"),
+    CTextureObject("Thumbnails\\Gizmo.tbn"),
+    CTextureObject("Thumbnails\\Headman.tbn"),
+    CTextureObject("Thumbnails\\Mental.tbn"),
+    CTextureObject("Thumbnails\\Scorpman.tbn"),
+    CTextureObject("Thumbnails\\Walker.tbn"),
+    CTextureObject("Thumbnails\\Werebull.tbn"),
+    CTextureObject("Thumbnails\\Woman.tbn"),
+  ];
+
+// The Second Encounter definitions
+} else {
+  // Player action weapon mask definition from Player.es
+  PLACT_SELECT_WEAPON_MASK <- 0x1F << 14;
+
+  // Prepare class files
+  classes <- [
+    "Classes\\Beast.ecl",
+    "Classes\\Boneman.ecl",
+    "Classes\\CannonRotating.ecl",
+    "Classes\\CannonStatic.ecl",
+    "Classes\\ChainsawFreak.ecl",
+    "Classes\\Demon.ecl",
+    "Classes\\Elemental.ecl",
+    "Classes\\Eyeman.ecl",
+    "Classes\\Fish.ecl",
+    "Classes\\Gizmo.ecl",
+    "Classes\\Grunt.ecl",
+    "Classes\\Guffy.ecl",
+    "Classes\\Headman.ecl",
+    "Classes\\BigHead.ecl",
+    "Classes\\Santa.ecl",
+    "Classes\\Scorpman.ecl",
+    "Classes\\Walker.ecl",
+    "Classes\\Werebull.ecl",
+    "Classes\\Woman.ecl",
+  ];
+
+  // Prepare class icons
+  icons <- [
+    CTextureObject("Thumbnails\\Beast.tbn"),
+    CTextureObject("Thumbnails\\Boneman.tbn"),
+    CTextureObject("Thumbnails\\CannonRotating.tbn"),
+    CTextureObject("Thumbnails\\CannonStatic.tbn"),
+    CTextureObject("Thumbnails\\ChainsawFreak.tbn"),
+    CTextureObject("Thumbnails\\Demon.tbn"),
+    CTextureObject("Thumbnails\\Elemental.tbn"),
+    CTextureObject("Thumbnails\\Eyeman.tbn"),
+    CTextureObject("Thumbnails\\Fish.tbn"),
+    CTextureObject("Thumbnails\\Gizmo.tbn"),
+    CTextureObject("Thumbnails\\Grunt.tbn"),
+    CTextureObject("Thumbnails\\Guffy.tbn"),
+    CTextureObject("Thumbnails\\Headman.tbn"),
+    CTextureObject("Thumbnails\\Mental.tbn"),
+    CTextureObject("Thumbnails\\Santa.tbn"),
+    CTextureObject("Thumbnails\\Scorpman.tbn"),
+    CTextureObject("Thumbnails\\Walker.tbn"),
+    CTextureObject("Thumbnails\\Werebull.tbn"),
+    CTextureObject("Thumbnails\\Woman.tbn"),
+  ];
+}
 
 // Spawn entity at the crosshair position facing the player
 function SpawnEntity(classFile) {
@@ -141,8 +184,9 @@ function OnStep() {
   }
 
   // Switch menu pages
+  local lastPage = floor(classes.len() / 8.0).tointeger()
   if (spawnKeys[9].pressed && page > 0) page--;
-  if (spawnKeys[0].pressed && page < 2) page++;
+  if (spawnKeys[0].pressed && page < lastPage) page++;
 };
 
 function OnPlayerAction(iClient, iPlayer, pa, iResent) {
@@ -153,11 +197,10 @@ function OnPlayerAction(iClient, iPlayer, pa, iResent) {
   if (localPlayers.len() == 0) return;
 
   // Make sure this player is the first local one
-  local player = Network.GetPlayerEntity(iPlayer);
+  local player = Network.GetPlayerTarget(iPlayer);
   if (!player.Equal(localPlayers[0])) return;
 
   // Suppress weapon selection while the spawn menu is open
-  local PLACT_SELECT_WEAPON_MASK = 0x1F << 14;
   if (menu) pa.ulButtons = pa.ulButtons & ~(PLACT_SELECT_WEAPON_MASK);
 };
 

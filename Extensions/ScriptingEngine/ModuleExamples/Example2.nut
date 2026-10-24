@@ -32,8 +32,9 @@ function ReplaceEnemies() {
     local classID = enemy.GetClassID();
 
     switch (classID) {
-      // CBeast - Replace Highlanders with Highlander's Brides
+      // CBeast - Replace Highlanders with Highlander's Brides (only in TSE)
       case 336: {
+        if (!Core.IsTSE()) break;
         local char = enemy.GetPropValueByName(EPT.ENUM, "Character");
 
         if (char == 1) {
