@@ -25,6 +25,7 @@ echo Copying "Data" files...
 xcopy /y "%RESDIR%Data\ClassicsPatch\LevelCategories\00_TFE.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
 xcopy /y "%RESDIR%Data\ClassicsPatch\LevelCategories\01_TSE.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
 xcopy /y "%RESDIR%Data\ClassicsPatch\LevelCategories\02_SSR.des" "%LOCALEDIR%Data\ClassicsPatch\LevelCategories\"
+xcopy /y "%RESDIR%Data\ClassicsPatch\TOTD.txt"                   "%LOCALEDIR%Data\ClassicsPatch\"
 
 :: Scripts
 echo.
@@ -33,6 +34,11 @@ echo Copying "Scripts" files...
 xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatch_Full.des"                  "%LOCALEDIR%Scripts\Addons\"
 xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatch_Minimal.des"               "%LOCALEDIR%Scripts\Addons\"
 xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatch_Vanilla.des"               "%LOCALEDIR%Scripts\Addons\"
+xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatchClient_Classic.des"         "%LOCALEDIR%Scripts\Addons\"
+xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatchClient_SSR.des"             "%LOCALEDIR%Scripts\Addons\"
+xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatchClient_SSRWorkshop.des"     "%LOCALEDIR%Scripts\Addons\"
+xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatchClient_TFE.des"             "%LOCALEDIR%Scripts\Addons\"
+xcopy /y "%RESDIR%Scripts\Addons\ClassicsPatchClient_Vanilla.des"         "%LOCALEDIR%Scripts\Addons\"
 
 xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\00_Green.des"     "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
 xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\01_Blue.des"      "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
@@ -43,6 +49,11 @@ xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\05_Retro.des"     "%LOCA
 xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\06_Candy.des"     "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
 xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\07_BlackMesa.des" "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
 xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDColorPresets\08_Inverted.des"  "%LOCALEDIR%Scripts\ClassicsPatch\HUDColorPresets\"
+
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDThemes\01_TFE.des"             "%LOCALEDIR%Scripts\ClassicsPatch\HUDThemes\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDThemes\02_Warped.des"          "%LOCALEDIR%Scripts\ClassicsPatch\HUDThemes\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDThemes\03_TSE.des"             "%LOCALEDIR%Scripts\ClassicsPatch\HUDThemes\"
+xcopy /y "%RESDIR%Scripts\ClassicsPatch\HUDThemes\04_SSR.des"             "%LOCALEDIR%Scripts\ClassicsPatch\HUDThemes\"
 
 xcopy /y "%RESDIR%Scripts\ClassicsPatch\Themes\00_SyncWithHUD.des"        "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"
 xcopy /y "%RESDIR%Scripts\ClassicsPatch\Themes\01_TFE.des"                "%LOCALEDIR%Scripts\ClassicsPatch\Themes\"

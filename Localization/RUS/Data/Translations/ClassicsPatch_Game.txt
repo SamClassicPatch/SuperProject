@@ -1,4 +1,4 @@
-92
+100
 
 \0\<
 Window
@@ -80,13 +80,13 @@ REMIND ME LATER
 НАПОМНИТЬ ПОЗЖЕ
 \0\<
 A new version of Classics Patch is available!\n
-   Your version: ^cff3f3f%s^r      Latest version: ^c5fff5f%s^r\n
+   Your version: %s%s^r      Latest version: %s%s^r\n
 \n
 - "Remind me later" will show this again in a week.\n
 - Use '^cffffffNotifyAboutUpdates^r' config property to toggle it.
 \0\>
 Доступна новая версия Classics Patch!\n
-   Ваша версия: ^cff3f3f%s^r      Последняя версия: ^c5fff5f%s^r\n
+   Ваша версия: %s%s^r      Последняя версия: %s%s^r\n
 \n
 - "Напомнить позже" снова покажет это окно через неделю.\n
 - Свойство конфига '^cffffffNotifyAboutUpdates^r' переключает его.
@@ -335,14 +335,12 @@ December 15
 \0\<
 Merry Christmas & Happy Holidays!\n
 \n
-Enjoy the snowy winter wonderland as you pulp Mental's horde\n
-into festive-looking chunks!\n
+Enjoy the snowy winter wonderland as you pulp Mental's horde into festive-looking chunks!\n
 That Kleer skull will look beautiful on the Christmas tree...
 \0\>
 С рождеством и с новым годом!\n
 \n
-Наслаждайтесь зимней страной чудес, попутно разрывая орду\n
-Ментала на праздничные кусочки!\n
+Наслаждайтесь зимней страной чудес, попутно разрывая орду Ментала на праздничные кусочки!\n
 Этот череп Клира будет прекрасно смотреться на верхушке елки...
 \0\<
 October 31
@@ -355,14 +353,12 @@ October 1
 \0\<
 Happy Halloween!\n
 \n
-On this special occasion, Mental's horde ate so much candy and\n
-pumpkins that all of their internal organs turned into them!\n
-Although, as delicious as it looks, I wouldn't recommend eating it.
+On this special occasion, Mental's horde ate so much candy and pumpkins that all of their internal organs turned into them!\n
+Although, as delicious as it looks, I would recommend against eating it.
 \0\>
 С хэллоуином!\n
 \n
-В этот особый день орда Ментала наелась стольким количеством\n
-конфет и тыкв, что все их внутренности превратились в тыкву!\n
+В этот особый день орда Ментала наелась стольким количеством конфет и тыкв, что все их внутренности превратились в тыкву!\n
 Но, как бы вкусно они ни выглядели, их лучше не есть.
 \0\<
 June 24
@@ -375,18 +371,12 @@ June 20
 \0\<
 Happy Anniversary to Classics Patch!\n
 \n
-The very first release of Classics Patch was on June 22, 2022.\n
-Mental was so excited about this anniversary that he simply could\n
-not resist the temptation to throw his own party for his horde,\n
-who had eaten their fill of cakes and other colorful pastries.\n
+The very first release of Classics Patch was on June 22, 2022. Mental was so excited about this anniversary that he simply could not resist the temptation to throw his own party for his horde, who had eaten their fill of cakes and other colorful pastries.\n
 It's time to crash this party!
 \0\>
 С годовщиной, Classics Patch!\n
 \n
-Самый первый релиз патча для классики состоялся 22 июня 2022 г.\n
-Ментал был настолько взволнован этой годовщиной, что просто не мог\n
-не устроить собственную вечеринку для своей орды, которая объелась\n
-тортов и другой красочной выпечки.\n
+Самый первый релиз патча для классики состоялся 22 июня 2022 г. Ментал был настолько взволнован этой годовщиной, что просто не мог не устроить собственную вечеринку для своей орды, которая объелась тортов и другой красочной выпечки.\n
 Время ворваться на эту вечеринку!
 \0\<
 March 23
@@ -399,17 +389,13 @@ March 19
 \0\<
 Happy Birthday to Serious Sam!\n
 \n
-March 21st saw the birth of a man who vowed to save all of\n
-humanity by any means necessary!\n
-But unfortunately for Sam, Mental stole all the cakes and stuffed\n
-them into his horde. It's time for a real birthday bash!
+March 21st saw the birth of a man who vowed to save all of humanity by any means necessary!\n
+But unfortunately for Sam, Mental stole all the cakes and stuffed them into his horde. It's time for a real birthday bash!
 \0\>
 С днем рождения, Крутой Сэм!\n
 \n
-21 марта родился человек, который поклялся спасти все человечество\n
-несмотря ни на что!\n
-Но, к несчастью для Сэма, Ментал украл все торты и накормил ими\n
-свою орду. Время для серьезного праздника!
+21 марта родился человек, который поклялся спасти все человечество несмотря ни на что!\n
+Но, к несчастью для Сэма, Ментал украл все торты и накормил ими свою орду. Время для серьезного праздника!
 \0\<
 February 18
 \0\>
@@ -421,16 +407,12 @@ February 10
 \0\<
 Happy Valentine's Day!\n
 \n
-Love is in the air? WRONG! Smoke and the smell of napalm are in\n
-the air as you tear through Mental's horde, killing everyone in\n
-your path for what they did to your loved ones!\n
+Love is in the air? WRONG! Smoke and the smell of napalm are in the air as you tear through Mental's horde, killing everyone in your path for what they did to your loved ones!\n
 It's the perfect time to break alien hearts... with your bare hands!
 \0\>
 С днем святого Валентина!\n
 \n
-Любовь витает в воздухе? ЛОЖЬ! Запах дыма и напалма наполняет воздух,\n
-оставленным вашим прорывом сквозь орду Ментала, убивая всех, кто\n
-когда-либо вставал на пути ваших близких!\n
+Любовь витает в воздухе? ЛОЖЬ! Запах дыма и напалма наполняет воздух, оставленным вашим прорывом сквозь орду Ментала, убивая всех, кто когда-либо вставал на пути ваших близких!\n
 Пришло время разбить инопланетные сердца... голыми руками!
 \0\<
 toggle photo mode via the observer camera
@@ -440,4 +422,38 @@ toggle photo mode via the observer camera
 Photo mode
 \0\>
 Фоторежим
+\0\<
+(This event locally affects certain gameplay elements, such as blood color, the behavior of which can be toggled in the Classics Patch options)
+\0\>
+(Это событие локально влияет на элементы игры, такие как цвет крови, которые можно отключить в настройках патча для классики)
+\0\<
+^cff0000Photo mode is unavailable during this game! Try recording a demo or joining the server as an observer.\n
+
+\0\>
+^cff0000Фоторежим недоступен во время этой игры! Попробуйте записать демонстрацию игры или зайти на сервер в виде наблюдателя.\n
+
+\0\<
+display a randomized tip or a fun fact of today about classics patch
+\0\>
+отобразить случайный совет или интересный факт дня о патче для классики
+\0\<
+Tip of the day!
+\0\>
+Совет дня!
+\0\<
+Did you know?
+\0\>
+А вы знали?
+\0\<
+NEXT TIP
+\0\>
+СЛЕДУЮЩИЙ СОВЕТ
+\0\<
+entry name filter
+\0\>
+фильтрация по названию
+\0\<
+adjust gameplay settings from the classics patch
+\0\>
+настройки игры из патча для классики
 \0\$

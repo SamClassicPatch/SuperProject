@@ -1,4 +1,4 @@
-640
+631
 
 \0\<
 The First Encounter directory
@@ -185,7 +185,7 @@ Chat command prefix
 \0\>
 Prefisso comandi discussioni
 \0\<
-what prefix should chat commands start with (e.g. "!" for "!dummy")
+what prefix chat commands should start with (e.g. "!" for "!dummy")
 \0\>
 specifica quale prefisso utilizzare per i comandi delle discussioni (es. "!" per "!dummy")
 \0\<
@@ -1021,10 +1021,6 @@ The First Encounter
 \0\>
 The First Encounter
 \0\<
-Seriously Warped Deathmatch
-\0\>
-Seriously Warped Deathmatch
-\0\<
 The Second Encounter
 \0\>
 The Second Encounter
@@ -1056,10 +1052,6 @@ Opacità del mirino del fucile di precisione
 how transparent the sniper scope should be
 \0\>
 specifica quanto dovrebbe essere trasparente il mirino del fucile di precisione
-\0\<
-Revolution
-\0\>
-Revolution
 \0\<
 Show player ping
 \0\>
@@ -2373,14 +2365,6 @@ display information about the observer camera while it's active
 \0\>
 visualizza le informazioni sulla telecamera dell'osservatore mentre è attiva
 \0\<
-Only properties
-\0\>
-Solo proprietà
-\0\<
-Properties and controls
-\0\>
-Proprietà e comandi
-\0\<
 OCAM Demo speed control
 \0\>
 Controllo velocità Demo OCAM
@@ -2453,25 +2437,9 @@ how much to multiply the camera speed by to make it rotate smoother
 \0\>
 moltiplicatore della velocità di rotazione della telecamera dell'osservatore
 \0\<
-OCAM Follow distance
-\0\>
-Distanza OCAM
-\0\<
-how close to the current player the observer camera should be
-\0\>
-distanza della telecamera dell'osservatore dal giocatore attuale
-\0\<
 Camera controls
 \0\>
 Comandi telecamera
-\0\<
-Default OCAM controls
-\0\>
-Comandi OCAM predefiniti
-\0\<
-allow controlling the observer camera using the default controls that can be rebound below
-\0\>
-consente di controllare la telecamera dell'osservatore usando i comandi predefiniti riassegnabili di seguito
 \0\<
 OCAM Toggle
 \0\>
@@ -2500,10 +2468,6 @@ Teletrasporto OCAM
 OCAM Reset
 \0\>
 Ripristina OCAM
-\0\<
-OCAM Follow player
-\0\>
-Segui giocatore OCAM
 \0\<
 OCAM Position snapshot
 \0\>

@@ -1,4 +1,4 @@
-640
+673
 
 \0\<
 The First Encounter directory
@@ -185,7 +185,7 @@ Chat command prefix
 \0\>
 Префикс команды чата
 \0\<
-what prefix should chat commands start with (e.g. "!" for "!dummy")
+what prefix chat commands should start with (e.g. "!" for "!dummy")
 \0\>
 какой префикс использовать для команд в чате (например, "!" для "!dummy")
 \0\<
@@ -1021,10 +1021,6 @@ The First Encounter
 \0\>
 Первая кровь
 \0\<
-Seriously Warped Deathmatch
-\0\>
-Seriously Warped Deathmatch
-\0\<
 The Second Encounter
 \0\>
 Второе пришествие
@@ -1056,10 +1052,6 @@ Sniper scope opacity
 how transparent the sniper scope should be
 \0\>
 насколько прозрачным должен быть снайперский прицел
-\0\<
-Revolution
-\0\>
-Революция
 \0\<
 Show player ping
 \0\>
@@ -2373,14 +2365,6 @@ display information about the observer camera while it's active
 \0\>
 отображать информацию о камера наблюдателя, пока она активна
 \0\<
-Only properties
-\0\>
-Только свойства
-\0\<
-Properties and controls
-\0\>
-Свойства и управление
-\0\<
 OCAM Demo speed control
 \0\>
 OCAM Контроль скорости демонстраций
@@ -2453,25 +2437,9 @@ how much to multiply the camera speed by to make it rotate smoother
 \0\>
 насколько умножить скорость камеры для сглаживания ее поворота
 \0\<
-OCAM Follow distance
-\0\>
-OCAM Расстояние для следования
-\0\<
-how close to the current player the observer camera should be
-\0\>
-насколько близко камера наблюдателя должна придерживаться текущего игрока
-\0\<
 Camera controls
 \0\>
 Управление камерой
-\0\<
-Default OCAM controls
-\0\>
-Стандартное управление OCAM
-\0\<
-allow controlling the observer camera using the default controls that can be rebound below
-\0\>
-разрешить управление камерой наблюдателя с помощью кнопок, которые можно переназначить ниже
 \0\<
 OCAM Toggle
 \0\>
@@ -2500,10 +2468,6 @@ OCAM Телепортация
 OCAM Reset
 \0\>
 OCAM Сброс
-\0\<
-OCAM Follow player
-\0\>
-OCAM Следование за игроком
 \0\<
 OCAM Position snapshot
 \0\>
@@ -2560,4 +2524,172 @@ Weapon viewmodel customization
 customize viewmodel position
 \0\>
 настроить позицию модели оружия от первого лица
+\0\<
+make message font in NETRICSA bigger in any mod
+\0\>
+сделать шрифт в ИНЕРТАНе больше в любой модификации
+\0\<
+Text scaling (AHUD)
+\0\>
+Размер текста (AHUD)
+\0\<
+set size of all HUD text
+\0\>
+выставить размер всего текста на интерфейсе
+\0\<
+Show
+\0\>
+Показать
+\0\<
+Show with precision (only custom mod)
+\0\>
+Показать с точностью (только в собственном моде)
+\0\<
+Disable everything
+\0\>
+Выключить все
+\0\<
+Hide info
+\0\>
+Спрятать информацию
+\0\<
+Show info
+\0\>
+Показать информацию
+\0\<
+Show info with commands
+\0\>
+Показать информацию с командами
+\0\<
+OCAM Focus distance
+\0\>
+OCAM Расстояние фокуса
+\0\<
+maximum distance between the observer camera and the current player
+\0\>
+максимальное расстрояние между камерой наблюдателя и текущим игроком
+\0\<
+OCAM Toggle camera info
+\0\>
+OCAM Переключить информацию о камере
+\0\<
+OCAM Rotate
+\0\>
+OCAM Вращение
+\0\<
+OCAM Speed up
+\0\>
+OCAM Ускорение
+\0\<
+OCAM Toggle grid
+\0\>
+OCAM Переключить сетку
+\0\<
+OCAM Focus player
+\0\>
+OCAM Фокусироваться на игроке
+\0\<
+Player posing
+\0\>
+Позирование игрока
+\0\<
+OCAM Toggle player posing mode
+\0\>
+OCAM Переключить режим позирования
+\0\<
+OCAM Next pose
+\0\>
+OCAM Следующая поза
+\0\<
+OCAM Previous pose
+\0\>
+OCAM Предыдущая поза
+\0\<
+OCAM Next left item
+\0\>
+OCAM Следующий левый предмет
+\0\<
+OCAM Previous left item
+\0\>
+OCAM Предыдущий левый предмет
+\0\<
+OCAM Next right item
+\0\>
+OCAM Следующий правой предмет
+\0\<
+OCAM Previous right item
+\0\>
+OCAM Предыдущий правый предмет
+\0\<
+Tip of the day
+\0\>
+Совет дня
+\0\<
+display a button in the main menu that shows a unique tip or a fun fact every day
+\0\>
+отобразить кнопку в главном меню для отображения уникального совета или интересного факта каждый день
+\0\<
+Other options
+\0\>
+Другие настройки
+\0\<
+Log timestamps
+\0\>
+Временные метки в логе
+\0\<
+append timestamps to messages in the console and the log file
+\0\>
+добавить временные метки к сообщениям в консоли и внутри файла лога
+\0\<
+Console symbol help
+\0\>
+Помощь по консольным символам
+\0\<
+print useful information about each symbol in the autocomplete list (Tab / Ctrl+Tab)
+\0\>
+отображать полезную информацию о символах в списке автодополнения (Tab / Ctrl+Tab)
+\0\<
+eliminates jittery player movement with latency under gam_fPredictionToggleThreshold
+\0\>
+устраняет дрожание игрока с задержкой менее gam_fPredictionToggleThreshold
+\0\<
+Local prediction threshold
+\0\>
+Порог локального предсказания
+\0\<
+latency threshold in milliseconds, under which to disable local prediction
+\0\>
+порог задержки в миллисекундах, менее которого локальное предсказание отключается
+\0\<
+50 (default)
+\0\>
+50 (по умолчанию)
+\0\<
+Static third person camera angle
+\0\>
+Статический угол камеры от третьего лица
+\0\<
+lock the third person view angle in place instead of tilting it towards the crosshair
+\0\>
+зафиксировать угол обзора от третьего лица вместо налона в сторону прицела
+\0\<
+Perform initial CRC check
+\0\>
+Выполнять начальную проверку CRC
+\0\<
+check the CRC value of the client's game resources and refuse connection on mismatch
+\0\>
+проверять значение CRC ресурсов игры клиента и отказывать от соединения при несоответствии
+\0\<
+Server passwords
+\0\>
+Пароли сервера
+\0\<
+Server admin password
+\0\>
+Пароль администратора сервера
+\0\<
+for the standard "Admin()" command (net_strAdminPassword)
+\0\>
+для стандартной команды "Admin()" (net_strAdminPassword)
 \0\$

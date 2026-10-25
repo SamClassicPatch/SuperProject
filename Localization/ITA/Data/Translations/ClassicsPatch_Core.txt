@@ -1,4 +1,4 @@
-178
+170
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -129,17 +129,13 @@ Componente aggiuntivo '%s' disabilitato con successo!\n
 Il componente aggiuntivo '%s' è già disabilitato!\n
 
 \0\<
-'%s' loading cancelled: Mismatching utility flags (0x%X)\n
-
+'%s' loading cancelled: Mismatching utility flags (0x%X)
 \0\>
-Caricamento '%s' annullato: Parametri di utilita non corrispondenti (0x%X)\n
-
+Caricamento '%s' annullato: Parametri di utilita non corrispondenti (0x%X)
 \0\<
-'%s' loading cancelled: API version is too new (%u)\n
-
+'%s' loading cancelled: API version is too new (%u)
 \0\>
-Caricamento '%s' annullato: Versione API troppo nuova (%u)\n
-
+Caricamento '%s' annullato: Versione API troppo nuova (%u)
 \0\<
 Cannot load module '%s':\n
 %s
@@ -223,28 +219,28 @@ Split-screen isn't allowed in this session!
 \0\>
 In questa sessione non è consentita la modalità schermo diviso!
 \0\<
-%s^r - wall walking: %s\n
+^o%s^r - wall walking: %s\n
 
 \0\>
-%s^r - camminare sui muri: %s\n
+^o%s^r - camminare sui muri: %s\n
 
 \0\<
-%s^r - noclip: %s\n
+^o%s^r - noclip: %s\n
 
 \0\>
-%s^r - nessun proiettile: %s\n
+^o%s^r - nessun proiettile: %s\n
 
 \0\<
-Set %s^r health to %d\n
+^oSet %s^r health to %d\n
 
 \0\>
-Imposta salute %s^r a %d\n
+^oImposta salute %s^r a %d\n
 
 \0\<
-%s^r created '%s' item (%u)\n
+^o%s^r created '%s' item (%u)\n
 
 \0\>
-%s^r ha creato l'oggetto '%s' (%u)\n
+^o%s^r ha creato l'oggetto '%s' (%u)\n
 
 \0\<
 Executing scheduled sandbox commands...\n
@@ -621,29 +617,15 @@ You are already a server operator!
 \0\>
 Sei già un operatore del server!
 \0\<
-See server log for the command output.
-\0\>
-Per la lista dei comandi eseguiti, osserva il registro del server.
-\0\<
 Client '%s' (identity %d) is executing a command:\n
 
 \0\>
 Client '%s' (identità %d) sta eseguendo un comando:\n
 
 \0\<
-You are not a server operator!
+Saved game:
 \0\>
-Non sei un operatore del server!
-\0\<
-Client '%s' (identity %d) is trying to execute a command:\n
-
-\0\>
-Client '%s' (identità %d) sta tentando di eseguire un comando:\n
-
-\0\<
-Saved game: %s
-\0\>
-Partita salvata: %s
+Partita salvata:
 \0\<
 Cannot create 'steam_appid.txt': %s\n
 
@@ -657,25 +639,21 @@ Successfully created 'steam_appid.txt' with %s app ID!\n
 File 'steam_appid.txt' creato con successo con ID applicazione %s!\n
 
 \0\<
-Client %d
+Change current map to:
 \0\>
-Client %d
+Modifica mappa corrente in:
 \0\<
-^cffff00Change current map to: %s^r
+Changing current map to:
 \0\>
-^cffff00Modifica mappa corrente in: %s^r
+Modifica della mappa corrente in:
 \0\<
-^cffff00Changing current map to: %s^r
+Kick %s%s from the server
 \0\>
-^cffff00Modifica della mappa corrente in: %s^r
+Espelli %s%s dal server
 \0\<
-^cffff00Kick %s from the server
+Kicking %s%s from the server...
 \0\>
-^cffff00Espelli %s dal server
-\0\<
-^cffff00Kicking %s from the server...
-\0\>
-^cffff00Espulsione di %s dal server...
+Espulsione di %s%s dal server...
 \0\<
 Couldn't find client identity in the log for kicking!\n
 
@@ -683,13 +661,13 @@ Couldn't find client identity in the log for kicking!\n
 Impossibile trovare l'identità del client nel registro per eseguire l'espulsione dal server!\n
 
 \0\<
-^cffff00Prevent %s from chatting
+Prevent %s%s from chatting
 \0\>
-^cffff00Impedisci a %s di inviare messaggi
+Impedisci a %s%s di inviare messaggi
 \0\<
-^cffff00Muting %s...
+Muting %s%s...
 \0\>
-^cffff00Disattivazione messaggi di %s...
+Disattivazione messaggi di %s%s...
 \0\<
 Couldn't find client identity in the log for muting!\n
 
@@ -697,31 +675,31 @@ Couldn't find client identity in the log for muting!\n
 Impossibile trovare l'identità del client nel registro per eseguire la disattivazione dei messaggi!\n
 
 \0\<
-^cffff00Skip current round
+Skip current round
 \0\>
-^cffff00Salta il turno corrente
+Salta il turno corrente
 \0\<
-^cffff00Skipping current round...
+Skipping current round...
 \0\>
-^cffff00Salto del turno corrente...
+Salto del turno corrente...
 \0\<
 Invalid map index!
 \0\>
 Indice mappa non valido!
 \0\<
-Removed '%s' from the map pool!\n
+Removed '%s^r' from the map pool!\n
 
 \0\>
-'%s' è stato rimosso dall'elenco delle mappe!\n
+'%s^r' è stato rimosso dall'elenco delle mappe!\n
 
 \0\<
 ^cffffff%d^C seconds left to vote
 \0\>
 ^cffffff%d^C secondi rimasti per votare
 \0\<
-Voting is over! ^c00ff00Yes: %d^C / ^cff0000No: %d
+Voting is over! %sYes: %d^C / %sNo: %d
 \0\>
-Le votazioni sono terminate! ^c00ff00Sì: %d^C / ^cff0000No: %d
+Le votazioni sono terminate! %sSì: %d^C / %sNo: %d
 \0\<
 Cannot add '%s' to the map pool:\n
 %s\n
@@ -731,21 +709,21 @@ Impossibile aggiungere '%s' nell'elenco delle mappe:\n
 %s\n
 
 \0\<
-^cffffffAvailable maps:
+^cffffffAvailable maps
 \0\>
-^cffffffMappe disponibili:
+^cffffffMappe disponibili
 \0\<
-^cffffffAvailable clients:
+^cffffffAvailable clients
 \0\>
-^cffffffClient disponibili:
+^cffffffClient disponibili
 \0\<
 There is already voting in progress!
 \0\>
 La votazione è già in corso!
 \0\<
-To initiate a vote, type "%svotemap <map index>"
+To initiate a vote, type %s%svotemap <map index>
 \0\>
-Per avviare una votazione, digita "%svotemap <indice mappa>"
+Per avviare una votazione, digita %s%svotemap <indice mappa>
 \0\<
 There are no maps in the current pool!
 \0\>
@@ -755,11 +733,9 @@ Nessuna mappa elencata!
 \0\>
 ^CHai ^cffffff%d^C secondi per votare. Digita %s^C o %s^C per votare a favore o contro!
 \0\<
-%s has initiated a vote:\n
-
+has initiated a vote:
 \0\>
-%s ha avviato una votazione:\n
-
+ha avviato una votazione:
 \0\<
 Observers aren't allowed to initiate voting!
 \0\>
@@ -773,9 +749,9 @@ Invalid client index!
 \0\>
 Indice client non valido!
 \0\<
-To initiate a vote, type "%s%s <client index>"
+To initiate a vote, type %s%s%s <client index>
 \0\>
-Per avviare una votazione, digita "%s%s <indice client>"
+Per avviare una votazione, digita %s%s%s <indice client>
 \0\<
 Observers aren't allowed to vote!
 \0\>
@@ -829,67 +805,29 @@ Expected a string value for '%s' gameplay extension!\n
 Era previsto un valore stringa per l'estensione di gioco '%s'!\n
 
 \0\<
-Take position snapshot: %s\n
-
+Take position snapshot: %s
 \0\>
-Acquisizione della posizione: %s\n
-
+Acquisizione della posizione: %s
 \0\<
-Reset tilt and zoom: %s\n
-
+Reset tilt and zoom: %s
 \0\>
-Ripristina inclinazione e ingrandimento: %s\n
-
+Ripristina inclinazione e ingrandimento: %s
 \0\<
-Teleport to current player: %s\n
-
+Teleport to current player: %s
 \0\>
-Teletrasporto al giocatore corrente: %s\n
-
+Teletrasporto al giocatore corrente: %s
 \0\<
-Follow current player: %s\n
-
+Zoom in/out: %s / %s
 \0\>
-Segui il giocatore corrente: %s\n
-
-\0\<
-Zoom in/out: %s/%s\n
-
-\0\>
-Ingrandisci/riduci: %s/%s\n
-
-\0\<
-Disabled
-\0\>
-Disabilitato
-\0\<
-Default camera controls
-\0\>
-Controlli telecamera predefiniti
-\0\<
-Camera properties
-\0\>
-Proprieta telecamera
-\0\<
-Observer camera info (ocam_iShowInfo)
-\0\>
-Informazioni sulla telecamera dell'osservatore (ocam_iShowInfo)
+Ingrandisci/riduci: %s / %s
 \0\<
 Client count is zero
 \0\>
 Il numero di client è zero
 \0\<
-Take HQ screenshot: %s\n
-
+Take HQ screenshot: %s
 \0\>
-Scatta un'istantanea dello schermo: %s\n
-
-\0\<
-Select resolution preset: %s\n
-
-\0\>
-Seleziona la risoluzione: %s\n
-
+Scatta un'istantanea dello schermo: %s
 \0\<
 Local cheats can only be used in single player or on locally hosted servers!\n
 
@@ -967,5 +905,17 @@ Saving a new screenshot...\n
 
 \0\>
 Salvataggio istantanea schermo...\n
+
+\0\<
+Unknown property '%s'
+\0\>
+Proprietà sconosciuta '%s'
+\0\<
+Cannot load model config:\n
+%s (%d) : %s\n
+
+\0\>
+Impossibile caricare la configurazione del modello:\n
+%s (%d) : %s\n
 
 \0\$

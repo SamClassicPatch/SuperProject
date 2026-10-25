@@ -1,4 +1,4 @@
-178
+236
 
 \0\<
 Cannot find '%s' symbol in '%s'!
@@ -129,17 +129,13 @@ Successfully disabled '%s' plugin!\n
 Плагин '%s' уже выключен!\n
 
 \0\<
-'%s' loading cancelled: Mismatching utility flags (0x%X)\n
-
+'%s' loading cancelled: Mismatching utility flags (0x%X)
 \0\>
-Загрузка '%s' отменена: Несоответствие служебных флагов (0x%X)\n
-
+Загрузка '%s' отменена: Несоответствие служебных флагов (0x%X)
 \0\<
-'%s' loading cancelled: API version is too new (%u)\n
-
+'%s' loading cancelled: API version is too new (%u)
 \0\>
-Загрузка '%s' отменена: Версия API слишком новая (%u)\n
-
+Загрузка '%s' отменена: Версия API слишком новая (%u)
 \0\<
 Cannot load module '%s':\n
 %s
@@ -223,28 +219,28 @@ Split-screen isn't allowed in this session!
 \0\>
 Разделение экрана запрещено на этом сервере!
 \0\<
-%s^r - wall walking: %s\n
+^o%s^r - wall walking: %s\n
 
 \0\>
-%s^r - хождение по стенам: %s\n
+^o%s^r - хождение по стенам: %s\n
 
 \0\<
-%s^r - noclip: %s\n
+^o%s^r - noclip: %s\n
 
 \0\>
-%s^r - режим призрака: %s\n
+^o%s^r - режим призрака: %s\n
 
 \0\<
-Set %s^r health to %d\n
+^oSet %s^r health to %d\n
 
 \0\>
-%s^r установлено %d здоровья\n
+^o%s^r установлено %d здоровья\n
 
 \0\<
-%s^r created '%s' item (%u)\n
+^o%s^r created '%s' item (%u)\n
 
 \0\>
-%s^r создали предмет '%s' (%u)\n
+^o%s^r создали предмет '%s' (%u)\n
 
 \0\<
 Executing scheduled sandbox commands...\n
@@ -621,29 +617,15 @@ You are already a server operator!
 \0\>
 Вы уже являетесь оператором сервера!
 \0\<
-See server log for the command output.
-\0\>
-См. лог сервера для вывода команды.
-\0\<
 Client '%s' (identity %d) is executing a command:\n
 
 \0\>
 Клиент '%s' (идентификатор %d) выполняет команду:\n
 
 \0\<
-You are not a server operator!
+Saved game:
 \0\>
-Вы не являетесь оператором сервера!
-\0\<
-Client '%s' (identity %d) is trying to execute a command:\n
-
-\0\>
-Клиент '%s' (идентификатор %d) пытается выполнить команду:\n
-
-\0\<
-Saved game: %s
-\0\>
-Сохраненная игра: %s
+Сохраненная игра:
 \0\<
 Cannot create 'steam_appid.txt': %s\n
 
@@ -657,25 +639,21 @@ Successfully created 'steam_appid.txt' with %s app ID!\n
 Успешно создан 'steam_appid.txt' с идентификатором приложения %s!\n
 
 \0\<
-Client %d
+Change current map to:
 \0\>
-Клиент %d
+Сменить текущую карту на:
 \0\<
-^cffff00Change current map to: %s^r
+Changing current map to:
 \0\>
-^cffff00Сменить текущую карту на: %s^r
+Смена текущей карты на:
 \0\<
-^cffff00Changing current map to: %s^r
+Kick %s%s from the server
 \0\>
-^cffff00Смена текущей карты на: %s^r
+Выгнать %s%s с сервера
 \0\<
-^cffff00Kick %s from the server
+Kicking %s%s from the server...
 \0\>
-^cffff00Выгнать %s с сервера
-\0\<
-^cffff00Kicking %s from the server...
-\0\>
-^cffff00Выгоняем %s с сервера...
+Выгоняем %s%s с сервера...
 \0\<
 Couldn't find client identity in the log for kicking!\n
 
@@ -683,13 +661,13 @@ Couldn't find client identity in the log for kicking!\n
 Не удалось найти идентификатор клиента в журнале, чтобы его выгнать!\n
 
 \0\<
-^cffff00Prevent %s from chatting
+Prevent %s%s from chatting
 \0\>
-^cffff00Запретить %s общаться в чате
+Запретить %s%s общаться в чате
 \0\<
-^cffff00Muting %s...
+Muting %s%s...
 \0\>
-^cffff00Заглушаем %s...
+Заглушаем %s%s...
 \0\<
 Couldn't find client identity in the log for muting!\n
 
@@ -697,31 +675,37 @@ Couldn't find client identity in the log for muting!\n
 Не удалось найти идентификатор клиента в журнале, чтобы его заглушить!\n
 
 \0\<
-^cffff00Skip current round
+Skip current round
 \0\>
-^cffff00Пропустить текущий раунд
+Пропустить текущий раунд
 \0\<
-^cffff00Skipping current round...
+Skipping current round...
 \0\>
-^cffff00Пропуск текущего раунда...
+Пропуск текущего раунда...
 \0\<
 Invalid map index!
 \0\>
 Неверный индекс карты!
 \0\<
-Removed '%s' from the map pool!\n
+Removed '%s^r' from the map pool!\n
 
 \0\>
-'%s' убрана из списка карт!\n
+'%s^r' убрана из списка карт!\n
+
+\0\<
+Added '%s^r' to the map pool!\n
+
+\0\>
+'%s^r' добавлена в список карт!\n
 
 \0\<
 ^cffffff%d^C seconds left to vote
 \0\>
 Осталось ^cffffff%d^C секунд для голосования
 \0\<
-Voting is over! ^c00ff00Yes: %d^C / ^cff0000No: %d
+Voting is over! %sYes: %d^C / %sNo: %d
 \0\>
-Голосование завершено! ^c00ff00За: %d^C / ^cff0000Против: %d
+Голосование завершено! %sЗа: %d^C / %sПротив: %d
 \0\<
 Cannot add '%s' to the map pool:\n
 %s\n
@@ -731,21 +715,21 @@ Cannot add '%s' to the map pool:\n
 %s\n
 
 \0\<
-^cffffffAvailable maps:
+^cffffffAvailable maps
 \0\>
-^cffffffДоступные карты:
+^cffffffДоступные карты
 \0\<
-^cffffffAvailable clients:
+^cffffffAvailable clients
 \0\>
-^cffffffДоступные клиенты:
+^cffffffДоступные клиенты
 \0\<
 There is already voting in progress!
 \0\>
 Уже идет голосование!
 \0\<
-To initiate a vote, type "%svotemap <map index>"
+To initiate a vote, type %s%svotemap <map index>
 \0\>
-Чтобы начать голосование, введите "%svotemap <индекс карты>"
+Чтобы начать голосование, введите %s%svotemap <индекс карты>
 \0\<
 There are no maps in the current pool!
 \0\>
@@ -755,11 +739,9 @@ There are no maps in the current pool!
 \0\>
 ^CУ вас есть ^cffffff%d^C секунд на голосование. Введите %s^C или %s^C для голосования за или против!
 \0\<
-%s has initiated a vote:\n
-
+has initiated a vote:
 \0\>
-%s начали голосование:\n
-
+начали голосование:
 \0\<
 Observers aren't allowed to initiate voting!
 \0\>
@@ -773,9 +755,9 @@ Invalid client index!
 \0\>
 Неверный индекс клиента!
 \0\<
-To initiate a vote, type "%s%s <client index>"
+To initiate a vote, type %s%s%s <client index>
 \0\>
-Чтобы начать голосование, введите "%s%s <индекс клиента>"
+Чтобы начать голосование, введите %s%s%s <индекс клиента>
 \0\<
 Observers aren't allowed to vote!
 \0\>
@@ -829,67 +811,45 @@ Expected a string value for '%s' gameplay extension!\n
 Ожидалось строковое значение для расширения геймплея '%s'!\n
 
 \0\<
-Take position snapshot: %s\n
-
+Take position snapshot: %s
 \0\>
-Сделать снимок позиции: %s\n
-
+Сделать снимок позиции: %s
 \0\<
-Reset tilt and zoom: %s\n
-
+Reset tilt and zoom: %s
 \0\>
-Сбросить угол и поле зрения: %s\n
-
+Сбросить угол и поле зрения: %s
 \0\<
-Teleport to current player: %s\n
-
+Teleport to current player: %s
 \0\>
-Телепортироваться к игроку: %s\n
-
+Телепортироваться к игроку: %s
 \0\<
-Follow current player: %s\n
-
+Focus on the current player: %s
 \0\>
-Следовать за игроком: %s\n
-
+Фокусироваться на текущем игроке: %s
 \0\<
-Zoom in/out: %s/%s\n
-
+Zoom in/out: %s / %s
 \0\>
-Приближение: %s/%s\n
-
+Приближение: %s / %s
 \0\<
-Disabled
+Camera properties & controls
 \0\>
-Выключено
+Свойства и управление камерой
 \0\<
-Default camera controls
+Observer camera info (press %s to toggle)
 \0\>
-Стандартное управление камерой
-\0\<
-Camera properties
-\0\>
-Свойства камеры
-\0\<
-Observer camera info (ocam_iShowInfo)
-\0\>
-Информация о камере наблюдателя (ocam_iShowInfo)
+Информация о камере наблюдателя (нажмите %s для переключения)
 \0\<
 Client count is zero
 \0\>
 Количество клиентов равно нулю
 \0\<
-Take HQ screenshot: %s\n
-
+Take HQ screenshot: %s
 \0\>
-Сделать снимок экрана: %s\n
-
+Сделать снимок экрана: %s
 \0\<
-Select resolution preset: %s\n
-
+Press %s to select resolution preset
 \0\>
-Выбрать разрешение снимка: %s\n
-
+Нажмите %s для выбора разрешения
 \0\<
 Local cheats can only be used in single player or on locally hosted servers!\n
 
@@ -967,5 +927,279 @@ Saving a new screenshot...\n
 
 \0\>
 Сохранение нового скриншота...\n
+
+\0\<
+Chat command
+\0\>
+Команда чата
+\0\<
+^cffffffAvailable commands (page %d/%d):
+\0\>
+^cffffffДоступные команды (страница %d/%d):
+\0\<
+No chat commands available
+\0\>
+Команд для чата нет
+\0\<
+No description
+\0\>
+Описание отсутствует
+\0\<
+Vote "no" during active voting
+\0\>
+Проголосовать "против" во время голосования
+\0\<
+Vote "yes" during active voting
+\0\>
+Проголосовать "за" во время голосования
+\0\<
+Initiate a voting process to skip the current round on a dedicated server
+\0\>
+Начать голосование за пропуск текущего раунда на выделенном сервере
+\0\<
+Initiate a voting process to mute a specific client under a specific index
+\0\>
+Начать голосование за заглушение конкретного клиента под конкретным индексом
+\0\<
+Initiate a voting process to kick a specific client under a specific index
+\0\>
+Начать голосование за кик конкретного клиента под конкретным индексом
+\0\<
+Initiate a voting process to change the current map with another one from the current map pool
+\0\>
+Начать голосование за смену текущей карты на новую из текущего списка карт
+\0\<
+Kick all clients under a specific identity index, with an optional reason
+\0\>
+Выгнать всех клиентов под конкретным идентификатором с дополнительной причиной
+\0\<
+Mute all clients under a specific identity index for a specific amount of time
+\0\>
+Заглушить всех клиентов под конкретным идентификатором на определенное время
+\0\<
+Ban all clients under a specific identity index for a specific amount of time
+\0\>
+Забанить всех клиентов под конкретным идентификатором на определенное время
+\0\<
+Display a log of clients that have ever connected to the server
+\0\>
+Отобразить журнал клиентов, которые когда-либо заходили на сервер
+\0\<
+Save the current game on the same computer where the dedicated server is running
+\0\>
+Сохранить текущую игру на том же компьютере, на котором работает выделенный сервер
+\0\<
+Execute any server-side console commands
+\0\>
+Выполнить любые консольные команды со стороны сервера
+\0\<
+Log in as a server administrator, or as a server operator
+\0\>
+Войти как администратор или оператор сервера
+\0\<
+Display the name of the current level and its world file
+\0\>
+Отобразить имя текущего уровня и его файл мира
+\0\<
+Display a list of available commands on a specific page
+\0\>
+Отобразить список доступных команд на определенной странице
+\0\<
+Invalid client index!\n
+
+\0\>
+Неверный индекс клиента!\n
+
+\0\<
+Invalid character index!\n
+
+\0\>
+Неверный индекс персонажа!\n
+
+\0\<
+Removed character %d from client %d\n
+
+\0\>
+Удален персонаж %d из клиента %d\n
+
+\0\<
+Host address %s already exists in client %d\n
+
+\0\>
+Адрес хоста %s уже существует в клиенте %d\n
+
+\0\<
+Host address %s not found in client %d\n
+
+\0\>
+Адрес хоста %s не найден в клиенте %d\n
+
+\0\<
+^cff0000WARNING! OCAM screenshots are temporarily disabled in Direct3D due to internal issues! Use OpenGL to take screenshots using OCAM!\n
+
+\0\>
+^cff0000ВНИМАНИЕ! Снимки через камеру наблюдателя временно отключены для Direct3D из-за внутренних неисправностей! Используйте OpenGL для снимков экрана камерой наблюдателя!\n
+
+\0\<
+Loaded %d photo mode poses\n
+
+\0\>
+Загружено %d поз для фоторежима\n
+
+\0\<
+Loaded %d photo mode items\n
+
+\0\>
+Загружено %d предметов для фоторежима\n
+
+\0\<
+Cannot setup player model for the photo mode: %s\n
+
+\0\>
+Не удается настроить модель игрока для фоторежима: %s\n
+
+\0\<
+Use tilt keys to rotate the player model
+\0\>
+Используйте клавиши наклона для вращения модели игрока
+\0\<
+Use movement keys to offset the player model
+\0\>
+Используйте клавиши движения для смещения модели игрока
+\0\<
+Custom body rotation
+\0\>
+Пользовательское вращение тела
+\0\<
+Right hand
+\0\>
+Правая рука
+\0\<
+Left hand
+\0\>
+Левая рука
+\0\<
+Selected pose
+\0\>
+Выбранная поза
+\0\<
+Select right hand item: %s / %s
+\0\>
+Выбрать предмет в правой руке: %s / %s
+\0\<
+Select left hand item: %s / %s
+\0\>
+Выбрать предмет в левой руке: %s / %s
+\0\<
+Select player pose: %s / %s
+\0\>
+Выбрать позу игрока: %s / %s
+\0\<
+Player posing
+\0\>
+Позирование игрока
+\0\<
+Focus distance
+\0\>
+Расстояние фокуса
+\0\<
+Focus mode
+\0\>
+Режим фокуса
+\0\<
+Locked on
+\0\>
+Зафиксирован
+\0\<
+Orbiting
+\0\>
+Вращение вокруг
+\0\<
+Field of view
+\0\>
+Поле зрения
+\0\<
+Toggle grid: %s
+\0\>
+Переключить сетку: %s
+\0\<
+Camera speed
+\0\>
+Скорость камеры
+\0\<
+Tilt left/right: %s / %s
+\0\>
+Наклон влево/вправо: %s / %s
+\0\<
+Hold %s to speed up flight
+\0\>
+Удерживайте %s для ускорения полета
+\0\<
+Hold %s to rotate the camera
+\0\>
+Удерживайте %s для вращения камерой
+\0\<
+Movement tension
+\0\>
+Напряжение передвижения
+\0\<
+Smooth movement
+\0\>
+Сглаженное передвижения
+\0\<
+Demo speed control
+\0\>
+Контролирование скорости демонстраций
+\0\<
+Press %s to enter posing mode
+\0\>
+Нажмите %s для входа в режим позирования
+\0\<
+Press %s to exit posing mode
+\0\>
+Нажмите %s для выхода из режима позирования
+\0\<
+Press %s to enter free-fly mode
+\0\>
+Нажмите %s для входа в режим свободного полета
+\0\<
+No pose
+\0\>
+Поза не выставлена
+\0\<
+Current player
+\0\>
+Текущий игрок
+\0\<
+Current item
+\0\>
+Текущий предмет
+\0\<
+Unknown client log version %u
+\0\>
+Неизвестная версия журнала клиентов %u
+\0\<
+World file:
+\0\>
+Файл мира:
+\0\<
+World name:
+\0\>
+Имя мира:
+\0\<
+(observer)
+\0\>
+(наблюдатель)
+\0\<
+Unknown property '%s'
+\0\>
+Неизвестное свойство '%s'
+\0\<
+Cannot load model config:\n
+%s (%d) : %s\n
+
+\0\>
+Невозможно загрузить конфиг с моделью:\n
+%s (%d) : %s\n
 
 \0\$

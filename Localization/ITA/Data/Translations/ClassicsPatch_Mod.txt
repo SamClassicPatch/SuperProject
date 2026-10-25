@@ -1,4 +1,4 @@
-28
+26
 
 \0\<
 Cannot load game theme config '%s':\n
@@ -12,18 +12,6 @@ Impossibile caricare la configurazione del tema di gioco '%s':\n
 Trying to load a sync theme during an ongoing synchronization!
 \0\>
 Tentativo di caricare un tema con sincronizzazione durante una sincronizzazione in corso!
-\0\<
-Unknown property '%s'
-\0\>
-Proprietà sconosciuta '%s'
-\0\<
-Cannot load model config:\n
-%s (%d) : %s\n
-
-\0\>
-Impossibile caricare la configurazione del modello:\n
-%s (%d) : %s\n
-
 \0\<
 Cannot setup model '%s':\n
 %s\n
