@@ -2,6 +2,12 @@ Data\ClassicsPatch\LevelCategories\01_TSE.des
 Data\ClassicsPatch\LevelCategories\01_TSE.lst
 Data\ClassicsPatch\LevelCategories\02_SSR.des
 Data\ClassicsPatch\LevelCategories\02_SSR.lst
+Scripts\Addons\ClassicsPatchClient_SSR.des
+Scripts\Addons\ClassicsPatchClient_SSR.ini
+Scripts\Addons\ClassicsPatchClient_SSRWorkshop.des
+Scripts\Addons\ClassicsPatchClient_SSRWorkshop.ini
+Scripts\Addons\ClassicsPatchClient_TFE.des
+Scripts\Addons\ClassicsPatchClient_TFE.ini
 Textures\
 TexturesPatch\Interface\Revolution\P*.tex
 TexturesPatch\Interface\Revolution\AmFuelReservoir.tex
