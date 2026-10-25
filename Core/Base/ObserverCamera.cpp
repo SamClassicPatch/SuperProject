@@ -178,7 +178,7 @@ inline CTString GetPhotoModePoseName(void) {
   if (i < 0) return CTString(0, "^cAFAFAF%s^r", TRANS("No pose"));
 
   SPhotoModePose *pPose = GetPhotoModePose();
-  CTString strItem = (pPose != NULL) ? pPose->strName : LOCALIZE("Current player");
+  CTString strItem = (pPose != NULL) ? pPose->strName : TRANS("Current player");
 
   return CTString(0, "^c9FDFFF%d.^r %s", i, strItem.str_String);
 };

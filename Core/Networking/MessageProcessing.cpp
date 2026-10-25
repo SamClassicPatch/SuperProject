@@ -952,11 +952,11 @@ void IProcessPacket::OnCRCCheck(INDEX iClient, CNetworkMessage &nmMessage) {
 
   // [Cecil] Disconnect the client on mismatching CRC, if needed
   if (_bInitialCRCCheck && _pNetwork->ga_ulCRC != ulCRC) {
-    INetwork::SendDisconnectMessage(iClient, TRANS("Wrong CRC check."), FALSE);
+    INetwork::SendDisconnectMessage(iClient, LOCALIZE("Wrong CRC check."), FALSE);
 
   } else {
     if (!_bInitialCRCCheck) {
-      CPrintF(TRANS("Server: Client '%s', CRC check OK\n"), GetComm().Server_GetClientName(iClient).str_String);
+      CPrintF(LOCALIZE("Server: Client '%s', CRC check OK\n"), GetComm().Server_GetClientName(iClient).str_String);
     }
 
     sso.sso_bSendStream = TRUE;
