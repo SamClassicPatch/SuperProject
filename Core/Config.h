@@ -30,7 +30,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 //================================================================================================//
 
 // Current Classics Patch version
-#define CORE_PATCH_VERSION MakeVersion(1, 9, 4)
+#define CORE_PATCH_VERSION MakeVersion(1, 10, 0)
 
 // Indication of a specific pre-release build (set to 0 for full releases)
 #define CORE_PRERELEASE_BUILD 0
