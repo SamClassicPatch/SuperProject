@@ -18,6 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <Core/Networking/ExtPackets.h>
 #include <Extras/XGizmo/Vanilla/EntityEvents.h>
 
+#include <Engine/Templates/Stock_CEntityClass.h>
+
 // Make sure the client is currently running a server
 #define ASSERT_SERVER { if (!_pNetwork->IsServer()) return sq_throwerror(v, "cannot send entity packets while not hosting a game"); }
 
@@ -157,6 +159,188 @@ static SQInteger PushPropValue(HSQUIRRELVM v, const CEntityProperty &ep, const C
 
   return 1;
 };
+
+// CDLLEntityClass class methods
+namespace SqMetaClass {
+
+struct MetaClassHolder {
+  CDLLEntityClass *pMetaClass;
+  CEntityClass *pObtainedFrom;
+
+  MetaClassHolder() : pMetaClass(NULL), pObtainedFrom(NULL) {};
+
+  ~MetaClassHolder() {
+    Clear();
+  };
+
+  // Obtain a new entity class from an ECL file within some Squirrel VM
+  inline SQInteger Obtain(HSQUIRRELVM v, const CTString &strClassFile) {
+    try {
+      pObtainedFrom = _pEntityClassStock->Obtain_t(strClassFile);
+      pMetaClass = pObtainedFrom->ec_pdecDLLClass;
+    } catch (char *strError) {
+      return sq_throwerror(v, strError);
+    }
+
+    return SQ_OK;
+  };
+
+  // Set new class directly by pointer
+  inline void Set(CDLLEntityClass *pNewClass) {
+    Clear();
+    pMetaClass = pNewClass;
+  };
+
+  inline void Clear(void) {
+    // Free the class from the stock if it has been obtained from there
+    if (pObtainedFrom != NULL) {
+      _pEntityClassStock->Release(pObtainedFrom);
+    }
+
+    pMetaClass = NULL;
+    pObtainedFrom = NULL;
+  };
+};
+
+// Make sure the class exists
+#define ASSERT_METACLASS { if (val.pMetaClass == NULL) return sq_throwerror(v, "CDLLEntityClass is NULL"); }
+
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, MetaClassHolder &val) {
+  if (ctArgs > 0) {
+    const SQChar *strPath;
+
+    if (SQ_SUCCEEDED(sq_getstring(v, 2, &strPath))) {
+      return val.Obtain(v, strPath);
+    }
+
+    return sq_throwerror(v, "expected a path to an entity class link in argument 1");
+  }
+
+  return 0;
+};
+
+static SQInteger ToString(HSQUIRRELVM v, MetaClassHolder &val) {
+  if (val.pMetaClass == NULL) {
+    sq_pushstring(v, "(none)", -1);
+    return 1;
+  }
+
+  CTString strEntity(0, "(%s : %u)", val.pMetaClass->dec_strName, val.pMetaClass->dec_iID);
+  sq_pushstring(v, strEntity.str_String, -1);
+  return 1;
+};
+
+static SQInteger Equal(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  // Compare against null
+  if (sq_gettype(v, 2) == OT_NULL) {
+    sq_pushbool(v, val.pMetaClass == NULL);
+    return 1;
+  }
+
+  // Compare against another class
+  GetInstanceValueVerifyN(MetaClassHolder, pOther, v, 2, "CDLLEntityClass");
+  sq_pushbool(v, val.pMetaClass == pOther->pMetaClass);
+  return 1;
+};
+
+static SQInteger GetProperties(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  sq_newarray(v, 0);
+
+  // Fill an array with property instances that reference the class properties
+  for (INDEX i = 0; i < val.pMetaClass->dec_ctProperties; i++) {
+    Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
+    PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
+    *ppep = &val.pMetaClass->dec_aepProperties[i];
+
+    sq_arrayappend(v, -2);
+  }
+  return 1;
+};
+
+static SQInteger GetPropertyCount(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  sq_pushinteger(v, val.pMetaClass->dec_ctProperties);
+  return 1;
+};
+
+static SQInteger GetName(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  sq_pushstring(v, val.pMetaClass->dec_strName, -1);
+  return 1;
+};
+
+static SQInteger GetIcon(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  sq_pushstring(v, val.pMetaClass->dec_strIconFileName, -1);
+  return 1;
+};
+
+static SQInteger GetID(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  sq_pushinteger(v, val.pMetaClass->dec_iID);
+  return 1;
+};
+
+static SQInteger GetBase(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  PushNewInstance(MetaClassHolder, pdec, GetVMClass(v).Root(), "CDLLEntityClass");
+  pdec->Set(val.pMetaClass->dec_pdecBase);
+  return 1;
+};
+
+static SQInteger GetPropInfoByID(HSQUIRRELVM v, int ctArgs, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  CEntityProperty *pep = FindPropByID(v, ctArgs, val.pMetaClass);
+
+  // Create a property instance
+  Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
+  *ppep = pep;
+  return 1;
+};
+
+static SQInteger GetPropInfoByName(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  CEntityProperty *pep = FindPropByName(v, val.pMetaClass);
+
+  // Create a property instance
+  Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
+  *ppep = pep;
+  return 1;
+};
+
+static SQInteger GetPropInfoByVariable(HSQUIRRELVM v, int, MetaClassHolder &val) {
+  ASSERT_METACLASS;
+  CEntityProperty *pep = FindPropByVariable(v, val.pMetaClass);
+
+  // Create a property instance
+  Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
+  PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
+  *ppep = pep;
+  return 1;
+};
+
+static Method<MetaClassHolder> _aMethods[] = {
+  { "Equal", &Equal, 2, ".x|o" },
+
+  // Class info
+  { "GetProperties",    &GetProperties,    1, "." },
+  { "GetPropertyCount", &GetPropertyCount, 1, "." },
+
+  { "GetName", &GetName, 1, "." },
+  { "GetIcon", &GetIcon, 1, "." },
+  { "GetID",   &GetID,   1, "." },
+  { "GetBase", &GetBase, 1, "." },
+
+  // Property lookup
+  { "GetPropInfoByID",       &GetPropInfoByID,      -3, ".nnn" },
+  { "GetPropInfoByName",     &GetPropInfoByName,     3, ".ns" },
+  { "GetPropInfoByVariable", &GetPropInfoByVariable, 3, ".ss" },
+};
+
+}; // namespace
 
 // CEntity class methods
 namespace SqEntity {
@@ -911,15 +1095,10 @@ static SQInteger GetClassFile(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetClassName(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetMetaClass(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-  sq_pushstring(v, val->GetClass()->ec_pdecDLLClass->dec_strName, -1);
-  return 1;
-};
-
-static SQInteger GetClassID(HSQUIRRELVM v, int, CEntityPointer &val) {
-  ASSERT_ENTITY;
-  sq_pushinteger(v, val->GetClass()->ec_pdecDLLClass->dec_iID);
+  PushNewInstance(SqMetaClass::MetaClassHolder, pClass, GetVMClass(v).Root(), "CDLLEntityClass");
+  pClass->Set(val->GetClass()->ec_pdecDLLClass);
   return 1;
 };
 
@@ -1117,8 +1296,7 @@ static Method<CEntityPointer> _aMethods[] = {
 
   // Entity class data
   { "GetClassFile", &GetClassFile, 1, "." },
-  { "GetClassName", &GetClassName, 1, "." },
-  { "GetClassID",   &GetClassID,   1, "." },
+  { "GetMetaClass", &GetMetaClass, 1, "." },
 
   { "IsOfClass",          &IsOfClass,          2, ".s" },
   { "IsDerivedFromClass", &IsDerivedFromClass, 2, ".s" },
@@ -1866,6 +2044,19 @@ void VM::RegisterEntities(void) {
   INDEX i;
 
   // Register classes
+  {
+    Class<SqMetaClass::MetaClassHolder> sqcMetaClass(GetVM(), "CDLLEntityClass", &SqMetaClass::Constructor);
+
+    // Methods
+    for (i = 0; i < ARRAYCOUNT(SqMetaClass::_aMethods); i++) {
+      sqcMetaClass.RegisterMethod(SqMetaClass::_aMethods[i]);
+    }
+
+    // Metamethods
+    sqcMetaClass.RegisterMetamethod(E_MM_TOSTRING, &SqMetaClass::ToString);
+
+    Root().AddClass(sqcMetaClass);
+  }
   {
     Class<CEntityPointer> sqcEntity(GetVM(), "CEntityPointer", &SqEntity::Constructor);
 
