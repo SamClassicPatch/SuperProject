@@ -113,8 +113,12 @@ static SQInteger PushPropValue(HSQUIRRELVM v, const CEntityProperty &ep, const C
 // CEntity class methods
 namespace SqEntity {
 
+__forceinline BOOL IsEntityNull(CEntityPointer &val) {
+  return val == NULL || (val->GetFlags() & ENF_DELETED);
+};
+
 // Make sure the entity in the pointer exists
-#define ASSERT_ENTITY { if (val == NULL) return sq_throwerror(v, "CEntityPointer is NULL"); }
+#define ASSERT_ENTITY { if (IsEntityNull(val)) return sq_throwerror(v, "CEntityPointer is NULL"); }
 
 static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
   if (ctArgs > 0) {
@@ -126,7 +130,7 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
 };
 
 static SQInteger ToString(HSQUIRRELVM v, CEntityPointer &val) {
-  if (val == NULL) {
+  if (IsEntityNull(val)) {
     sq_pushstring(v, "(none)", -1);
     return 1;
   }
@@ -139,13 +143,21 @@ static SQInteger ToString(HSQUIRRELVM v, CEntityPointer &val) {
 static SQInteger Equal(HSQUIRRELVM v, int, CEntityPointer &val) {
   // Compare against null
   if (sq_gettype(v, 2) == OT_NULL) {
-    sq_pushbool(v, val == NULL);
+    sq_pushbool(v, IsEntityNull(val));
     return 1;
   }
 
   // Compare against another pointer
   GetInstanceValueVerify(CEntityPointer, pOther, v, 2);
-  sq_pushbool(v, val == *pOther);
+
+  // Either entity is NULL but not the other one
+  if (IsEntityNull(val) != IsEntityNull(*pOther)) {
+    sq_pushbool(v, SQFalse);
+
+  // Neither is NULL, compare values
+  } else {
+    sq_pushbool(v, val == *pOther);
+  }
   return 1;
 };
 
@@ -803,7 +815,7 @@ static SQInteger IsStandingOnPolygon(HSQUIRRELVM v, int, CEntityPointer &val) {
 
   // No polygon
   if (*pbpol == NULL) {
-    sq_pushbool(v, false);
+    sq_pushbool(v, SQFalse);
     return 1;
   }
 
@@ -829,7 +841,7 @@ static SQInteger IsPolygonBelowPoint(HSQUIRRELVM v, int, CEntityPointer &val) {
 
   // No polygon
   if (*pbpol == NULL) {
-    sq_pushbool(v, false);
+    sq_pushbool(v, SQFalse);
     return 1;
   }
 
