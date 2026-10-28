@@ -23,6 +23,54 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
+// Common function for looking up some entity property by ID and offset
+static CEntityProperty *FindPropByID(HSQUIRRELVM v, int ctArgs, LibClassHolder lch) {
+  // Get property type, ID and optional offset
+  SQInteger iType, iID;
+  sq_getinteger(v, 2, &iType);
+  sq_getinteger(v, 3, &iID);
+
+  SQInteger iOffset = -1;
+  if (ctArgs > 2) sq_getinteger(v, 4, &iOffset);
+
+  return IWorld::PropertyForIdOrOffset(lch, iType, iID, iOffset);
+};
+
+// Common function for looking up some entity property by name
+static CEntityProperty *FindPropByName(HSQUIRRELVM v, LibClassHolder lch) {
+  // Get property type and name
+  SQInteger iType;
+  sq_getinteger(v, 2, &iType);
+  const SQChar *strName;
+  sq_getstring(v, 3, &strName);
+
+  return IWorld::PropertyForName(lch, iType, strName);
+};
+
+// Common function for looking up some entity property by class variable
+static CEntityProperty *FindPropByVariable(HSQUIRRELVM v, LibClassHolder lch) {
+  // Get class and variable names
+  const SQChar *strClass;
+  const SQChar *strVariable;
+  sq_getstring(v, 2, &strClass);
+  sq_getstring(v, 3, &strVariable);
+
+  CEntityProperty *pep = NULL;
+
+#if SE1_GAME != SS_REV
+  // Find property data and try to find it by name or ID
+  const CEntityProperty *pepData = FindPropertyByVariable(strClass, strVariable);
+
+  if (pepData != NULL) {
+    pep = IWorld::PropertyForNameOrId(lch, pepData->ep_eptType, pepData->ep_strName, pepData->ep_ulID);
+  }
+#else
+  pep = lch->PropertyForVariable(strVariable);
+#endif
+
+  return pep;
+};
+
 // Common function for pushing a value of some entity property
 static SQInteger PushPropValue(HSQUIRRELVM v, const CEntityProperty &ep, const CEntity *pen, BOOL bThrowOnUnsupported) {
   switch (ep.ep_eptType) {
@@ -925,75 +973,34 @@ static SQInteger IsRationalEntity(HSQUIRRELVM v, int, CEntityPointer &val) {
 
 static SQInteger GetPropInfoByID(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Get property type, ID and optional offset
-  SQInteger iType, iID;
-  sq_getinteger(v, 2, &iType);
-  sq_getinteger(v, 3, &iID);
-
-  SQInteger iOffset = -1;
-  if (ctArgs > 2) sq_getinteger(v, 4, &iOffset);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = IWorld::PropertyForIdOrOffset(val, iType, iID, iOffset);
-  if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
+  CEntityProperty *pep = FindPropByID(v, ctArgs, val);
 
   // Create a property instance
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
   PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
-  *ppep = pepCheck;
+  *ppep = pep;
   return 1;
 };
 
 static SQInteger GetPropInfoByName(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Get property type and name
-  SQInteger iType;
-  sq_getinteger(v, 2, &iType);
-  const SQChar *strName;
-  sq_getstring(v, 3, &strName);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = IWorld::PropertyForName(val, iType, strName);
-  if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
+  CEntityProperty *pep = FindPropByName(v, val);
 
   // Create a property instance
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
   PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
-  *ppep = pepCheck;
+  *ppep = pep;
   return 1;
 };
 
 static SQInteger GetPropInfoByVariable(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Get class and variable names
-  const SQChar *strClass;
-  const SQChar *strVariable;
-  sq_getstring(v, 2, &strClass);
-  sq_getstring(v, 3, &strVariable);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = NULL;
-
-#if SE1_GAME != SS_REV
-  // Find property data and try to find it by name or ID
-  const CEntityProperty *pepData = FindPropertyByVariable(strClass, strVariable);
-
-  if (pepData != NULL) {
-    pepCheck = IWorld::PropertyForNameOrId(val, pepData->ep_eptType, pepData->ep_strName, pepData->ep_ulID);
-  }
-#else
-  pepCheck = val->PropertyForVariable(strVariable);
-#endif
-
-  if (pepCheck == NULL) return sq_throwerror(v, "property doesn't exist");
+  CEntityProperty *pep = FindPropByVariable(v, val);
 
   // Create a property instance
   Table sqtEntities(GetVMClass(v).Root().GetValue("Entities"));
   PushNewInstance(CEntityProperty *, ppep, sqtEntities, "Property");
-  *ppep = pepCheck;
+  *ppep = pep;
   return 1;
 };
 
@@ -1006,81 +1013,44 @@ static SQInteger GetPropValue(HSQUIRRELVM v, int, CEntityPointer &val) {
 
 static SQInteger GetPropValueByID(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Get property type, ID and optional offset
-  SQInteger iType, iID;
-  sq_getinteger(v, 2, &iType);
-  sq_getinteger(v, 3, &iID);
-
-  SQInteger iOffset = -1;
-  if (ctArgs > 2) sq_getinteger(v, 4, &iOffset);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = IWorld::PropertyForIdOrOffset(val, iType, iID, iOffset);
+  CEntityProperty *pep = FindPropByID(v, ctArgs, val);
 
   // Return an invalid value if it doesn't exist
-  if (pepCheck == NULL) {
+  if (pep == NULL) {
     sq_pushnull(v);
     return 1;
   }
 
   // Get property value
-  return PushPropValue(v, *pepCheck, val, FALSE);
+  return PushPropValue(v, *pep, val, FALSE);
 };
 
 static SQInteger GetPropValueByName(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Get property type and name
-  SQInteger iType;
-  sq_getinteger(v, 2, &iType);
-  const SQChar *strName;
-  sq_getstring(v, 3, &strName);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = IWorld::PropertyForName(val, iType, strName);
+  CEntityProperty *pep = FindPropByName(v, val);
 
   // Return an invalid value if it doesn't exist
-  if (pepCheck == NULL) {
+  if (pep == NULL) {
     sq_pushnull(v);
     return 1;
   }
 
   // Get property value
-  return PushPropValue(v, *pepCheck, val, FALSE);
+  return PushPropValue(v, *pep, val, FALSE);
 };
 
 static SQInteger GetPropValueByVariable(HSQUIRRELVM v, int, CEntityPointer &val) {
   ASSERT_ENTITY;
-
-  // Get class and variable names
-  const SQChar *strClass;
-  const SQChar *strVariable;
-  sq_getstring(v, 2, &strClass);
-  sq_getstring(v, 3, &strVariable);
-
-  // Make sure the property exists
-  CEntityProperty *pepCheck = NULL;
-
-#if SE1_GAME != SS_REV
-  // Find property data and try to find it by name or ID
-  const CEntityProperty *pepData = FindPropertyByVariable(strClass, strVariable);
-
-  if (pepData != NULL) {
-    pepCheck = IWorld::PropertyForNameOrId(val, pepData->ep_eptType, pepData->ep_strName, pepData->ep_ulID);
-  }
-#else
-  pepCheck = val->PropertyForVariable(strVariable);
-#endif
+  CEntityProperty *pep = FindPropByVariable(v, val);
 
   // Return an invalid value if it doesn't exist
-  if (pepCheck == NULL) {
+  if (pep == NULL) {
     sq_pushnull(v);
     return 1;
   }
 
   // Get property value
-  return PushPropValue(v, *pepCheck, val, FALSE);
+  return PushPropValue(v, *pep, val, FALSE);
 };
 
 static Method<CEntityPointer> _aMethods[] = {
