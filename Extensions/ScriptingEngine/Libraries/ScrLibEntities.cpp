@@ -106,7 +106,7 @@ static SQInteger PushPropValue(HSQUIRRELVM v, const CEntityProperty &ep, const C
     } break;
 
     case CEntityProperty::EPT_ENTITYPTR: {
-      PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+      PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
       *ppen = ENTITYPROPERTY(pen, ep.ep_slOffset, CEntityPointer);
     } break;
 
@@ -345,23 +345,26 @@ static Method<MetaClassHolder> _aMethods[] = {
 // CEntity class methods
 namespace SqEntity {
 
-__forceinline BOOL IsEntityNull(CEntityPointer &val) {
+__forceinline BOOL IsEntityNull(EntityRef &val) {
   return val == NULL || (val->GetFlags() & ENF_DELETED);
 };
 
 // Make sure the entity in the pointer exists
 #define ASSERT_ENTITY { if (IsEntityNull(val)) return sq_throwerror(v, "CEntityPointer is NULL"); }
 
-static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
+static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, EntityRef &val) {
+  // Register this reference in the VM on construction
+  GetVMClass(v).AddEntityRef(val);
+
   if (ctArgs > 0) {
-    GetInstanceValueVerify(CEntityPointer, pOther, v, 2);
+    GetInstanceValueVerifyN(EntityRef, pOther, v, 2, "CEntityPointer");
     if (pOther != NULL) val = *pOther;
   }
 
   return 0;
 };
 
-static SQInteger ToString(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger ToString(HSQUIRRELVM v, EntityRef &val) {
   if (IsEntityNull(val)) {
     sq_pushstring(v, "(none)", -1);
     return 1;
@@ -372,7 +375,7 @@ static SQInteger ToString(HSQUIRRELVM v, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger Equal(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger Equal(HSQUIRRELVM v, int, EntityRef &val) {
   // Compare against null
   if (sq_gettype(v, 2) == OT_NULL) {
     sq_pushbool(v, IsEntityNull(val));
@@ -380,7 +383,7 @@ static SQInteger Equal(HSQUIRRELVM v, int, CEntityPointer &val) {
   }
 
   // Compare against another pointer
-  GetInstanceValueVerify(CEntityPointer, pOther, v, 2);
+  GetInstanceValueVerifyN(EntityRef, pOther, v, 2, "CEntityPointer");
 
   // Either entity is NULL but not the other one
   if (IsEntityNull(val) != IsEntityNull(*pOther)) {
@@ -393,94 +396,94 @@ static SQInteger Equal(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetID(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetID(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushinteger(v, val->en_ulID);
   return 1;
 };
 
-static SQInteger GetRenderType(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetRenderType(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushinteger(v, val->GetRenderType());
   return 1;
 };
 
-static SQInteger GetFlags(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetFlags(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushinteger(v, val->GetFlags());
   return 1;
 };
 
-static SQInteger GetSpawnFlags(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetSpawnFlags(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushinteger(v, val->GetSpawnFlags());
   return 1;
 };
 
-static SQInteger GetPhysicsFlags(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPhysicsFlags(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushinteger(v, val->GetPhysicsFlags());
   return 1;
 };
 
-static SQInteger GetCollisionFlags(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetCollisionFlags(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushinteger(v, val->GetCollisionFlags());
   return 1;
 };
 
-static SQInteger IsPredictor(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsPredictor(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushbool(v, val->IsPredictor());
   return 1;
 };
 
-static SQInteger IsPredicted(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsPredicted(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushbool(v, val->IsPredicted());
   return 1;
 };
 
-static SQInteger IsPredictable(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsPredictable(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushbool(v, val->IsPredictable());
   return 1;
 };
 
-static SQInteger GetPredictor(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPredictor(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetPredictor();
   return 1;
 };
 
-static SQInteger GetPredicted(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPredicted(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetPredicted();
   return 1;
 };
 
-static SQInteger GetSpatialClassificationRadius(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetSpatialClassificationRadius(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushfloat(v, val->en_fSpatialClassificationRadius);
   return 1;
 };
 
-static SQInteger GetSpatialClassificationBox(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetSpatialClassificationBox(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   *pbox = val->en_boxSpatialClassification;
   return 1;
 };
 
-static SQInteger GetCollisionBoxIndex(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetCollisionBoxIndex(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushinteger(v, val->GetCollisionBoxIndex());
   return 1;
 };
 
-static SQInteger GetCollisionBoxParameters(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetCollisionBoxParameters(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
 
   SQInteger iBox;
@@ -502,21 +505,21 @@ static SQInteger GetCollisionBoxParameters(HSQUIRRELVM v, int, CEntityPointer &v
   return 1;
 };
 
-static SQInteger GetBoundingBox(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetBoundingBox(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   val->GetBoundingBox(*pbox);
   return 1;
 };
 
-static SQInteger GetSize(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetSize(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(FLOATaabbox3D, pbox, GetVMClass(v).Root(), "FLOATaabbox3D");
   val->GetSize(*pbox);
   return 1;
 };
 
-static SQInteger GetNearestPolygon(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetNearestPolygon(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
 
   FLOAT3D vPointReturn;
@@ -544,7 +547,7 @@ static SQInteger GetNearestPolygon(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetEntityPointRatio(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
+static SQInteger GetEntityPointRatio(HSQUIRRELVM v, int ctArgs, EntityRef &val) {
   ASSERT_ENTITY;
 
   // Get point ratio
@@ -559,7 +562,7 @@ static SQInteger GetEntityPointRatio(HSQUIRRELVM v, int ctArgs, CEntityPointer &
   return 1;
 };
 
-static SQInteger GetEntityPointFixed(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetEntityPointFixed(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
 
   // Get fixed point
@@ -570,7 +573,7 @@ static SQInteger GetEntityPointFixed(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger FindEntitiesInRange(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger FindEntitiesInRange(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   SQ_RESTRICT(v);
 
@@ -587,7 +590,7 @@ static SQInteger FindEntitiesInRange(HSQUIRRELVM v, int, CEntityPointer &val) {
 
   // Create an entity instance for each entity in the container and append it to the array
   FOREACHINDYNAMICCONTAINER(cOutput, CEntity, iten) {
-    PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+    PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
     *ppen = iten;
 
     sq_arrayappend(v, -2);
@@ -596,28 +599,28 @@ static SQInteger FindEntitiesInRange(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPlacement(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = val->GetPlacement();
   return 1;
 };
 
-static SQInteger GetLerpedPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetLerpedPlacement(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = val->GetLerpedPlacement();
   return 1;
 };
 
-static SQInteger GetRotationMatrix(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetRotationMatrix(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(FLOATmatrix3D, pm, GetVMClass(v).Root(), "FLOATmatrix3D");
   *pm = val->GetRotationMatrix();
   return 1;
 };
 
-static SQInteger GetViewpoint(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
+static SQInteger GetViewpoint(HSQUIRRELVM v, int ctArgs, EntityRef &val) {
   ASSERT_ENTITY;
 
   // Make sure it's a player entity
@@ -633,58 +636,58 @@ static SQInteger GetViewpoint(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetPlacementRelativeToParent(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPlacementRelativeToParent(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
   *ppl = val->en_plRelativeToParent;
   return 1;
 };
 
-static SQInteger GetParent(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetParent(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetParent();
   return 1;
 };
 
-static SQInteger GetChildOfClass(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetChildOfClass(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
 
   const SQChar *str;
   sq_getstring(v, 2, &str);
 
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetChildOfClass(str);
   return 1;
 };
 
-static SQInteger GetName(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetName(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushstring(v, val->GetName().str_String, -1);
   return 1;
 };
 
-static SQInteger GetDescription(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetDescription(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushstring(v, val->GetDescription().str_String, -1);
   return 1;
 };
 
-static SQInteger GetTarget(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetTarget(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val->GetTarget();
   return 1;
 };
 
-static SQInteger GetClassificationBoxStretch(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetClassificationBoxStretch(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
   *pv = val->GetClassificationBoxStretch();
   return 1;
 };
 
-static SQInteger GetHealth(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetHealth(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   if (!::IsLiveEntity(val)) return sq_throwerror(v, "CEntityPointer does not contain a live entity");
 
@@ -696,7 +699,7 @@ static SQInteger GetHealth(HSQUIRRELVM v, int, CEntityPointer &val) {
 // Make sure the entity in the pointer is derived from CMovableEntity
 #define ASSERT_MOVABLE { if (!::IsDerivedFromID(val, CMovableEntity_ClassID)) return sq_throwerror(v, "CEntityPointer does not contain a movable entity"); }
 
-static SQInteger GetDesiredTranslationRelative(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetDesiredTranslationRelative(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
@@ -705,7 +708,7 @@ static SQInteger GetDesiredTranslationRelative(HSQUIRRELVM v, CEntityPointer &va
   return 1;
 };
 
-static SQInteger GetDesiredRotationRelative(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetDesiredRotationRelative(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
@@ -714,7 +717,7 @@ static SQInteger GetDesiredRotationRelative(HSQUIRRELVM v, CEntityPointer &val) 
   return 1;
 };
 
-static SQInteger GetCurrentTranslationAbsolute(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetCurrentTranslationAbsolute(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
@@ -723,7 +726,7 @@ static SQInteger GetCurrentTranslationAbsolute(HSQUIRRELVM v, CEntityPointer &va
   return 1;
 };
 
-static SQInteger GetCurrentRotationAbsolute(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetCurrentRotationAbsolute(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
@@ -732,16 +735,16 @@ static SQInteger GetCurrentRotationAbsolute(HSQUIRRELVM v, CEntityPointer &val) 
   return 1;
 };
 
-static SQInteger GetReference(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetReference(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *ppen = penMovable->en_penReference;
   return 1;
 };
 
-static SQInteger GetReferencePlane(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetReferencePlane(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
@@ -750,79 +753,79 @@ static SQInteger GetReferencePlane(HSQUIRRELVM v, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetReferenceSurface(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetReferenceSurface(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushinteger(v, penMovable->en_iReferenceSurface);
   return 1;
 };
 
-static SQInteger GetLastValidReference(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetLastValidReference(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *ppen = penMovable->en_penLastValidReference;
   return 1;
 };
 
-static SQInteger GetLastSignificantVerticalMovement(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetLastSignificantVerticalMovement(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_tmLastSignificantVerticalMovement);
   return 1;
 };
 
-static SQInteger GetLastBreathed(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetLastBreathed(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_tmLastBreathed);
   return 1;
 };
 
-static SQInteger GetMaxHoldBreath(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetMaxHoldBreath(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_tmMaxHoldBreath);
   return 1;
 };
 
-static SQInteger GetDensity(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetDensity(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fDensity);
   return 1;
 };
 
-static SQInteger GetLastSwimDamage(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetLastSwimDamage(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_tmLastSwimDamage);
   return 1;
 };
 
-static SQInteger GetUpContent(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetUpContent(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushinteger(v, penMovable->en_iUpContent);
   return 1;
 };
 
-static SQInteger GetDnContent(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetDnContent(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushinteger(v, penMovable->en_iDnContent);
   return 1;
 };
 
-static SQInteger GetImmersionFactor(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetImmersionFactor(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fImmersionFactor);
   return 1;
 };
 
-static SQInteger GetGravityDir(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetGravityDir(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
@@ -831,21 +834,21 @@ static SQInteger GetGravityDir(HSQUIRRELVM v, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetGravityA(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetGravityA(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fGravityA);
   return 1;
 };
 
-static SQInteger GetGravityV(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetGravityV(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fGravityV);
   return 1;
 };
 
-static SQInteger GetForceDir(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetForceDir(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(FLOAT3D, pv, GetVMClass(v).Root(), "FLOAT3D");
 
@@ -854,98 +857,98 @@ static SQInteger GetForceDir(HSQUIRRELVM v, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetForceA(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetForceA(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fForceA);
   return 1;
 };
 
-static SQInteger GetForceV(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetForceV(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fForceV);
   return 1;
 };
 
-static SQInteger GetJumped(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetJumped(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_tmJumped);
   return 1;
 };
 
-static SQInteger GetMaxJumpControl(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetMaxJumpControl(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_tmMaxJumpControl);
   return 1;
 };
 
-static SQInteger GetJumpControlMultiplier(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetJumpControlMultiplier(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fJumpControlMultiplier);
   return 1;
 };
 
-static SQInteger GetAcceleration(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetAcceleration(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fAcceleration);
   return 1;
 };
 
-static SQInteger GetDeceleration(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetDeceleration(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fDeceleration);
   return 1;
 };
 
-static SQInteger GetStepUpHeight(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetStepUpHeight(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fStepUpHeight);
   return 1;
 };
 
-static SQInteger GetStepDnHeight(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetStepDnHeight(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fStepDnHeight);
   return 1;
 };
 
-static SQInteger GetBounceDampParallel(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetBounceDampParallel(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fBounceDampParallel);
   return 1;
 };
 
-static SQInteger GetBounceDampNormal(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetBounceDampNormal(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fBounceDampNormal);
   return 1;
 };
 
-static SQInteger GetCollisionSpeedLimit(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetCollisionSpeedLimit(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fCollisionSpeedLimit);
   return 1;
 };
 
-static SQInteger GetCollisionDamageFactor(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetCollisionDamageFactor(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushfloat(v, penMovable->en_fCollisionDamageFactor);
   return 1;
 };
 
-static SQInteger GetPing(HSQUIRRELVM v, CEntityPointer &val) {
+static SQInteger GetPing(HSQUIRRELVM v, EntityRef &val) {
   ASSERT_ENTITY;
   if (!::IsDerivedFromID(val, CPlayerEntity_ClassID)) return sq_throwerror(v, "CEntityPointer does not contain a player entity");
 
@@ -954,7 +957,7 @@ static SQInteger GetPing(HSQUIRRELVM v, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetLastPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetLastPlacement(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(CPlacement3D, ppl, GetVMClass(v).Root(), "CPlacement3D");
 
@@ -963,7 +966,7 @@ static SQInteger GetLastPlacement(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetPolygonUnderneath(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPolygonUnderneath(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   PushNewInstance(CBrushPolygon *, pbpol, GetVMClass(v).Root(), "CBrushPolygon");
 
@@ -972,7 +975,7 @@ static SQInteger GetPolygonUnderneath(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetRelativeHeading(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetRelativeHeading(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
@@ -981,7 +984,7 @@ static SQInteger GetRelativeHeading(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetRelativePitch(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetRelativePitch(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   GetInstanceValueVerify(FLOAT3D, pvDir, v, 2);
 
@@ -990,7 +993,7 @@ static SQInteger GetRelativePitch(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetReferenceHeadingDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetReferenceHeadingDirection(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
 
   GetInstanceValueVerify(FLOAT3D, pvRef, v, 2);
@@ -1005,7 +1008,7 @@ static SQInteger GetReferenceHeadingDirection(HSQUIRRELVM v, int, CEntityPointer
   return 1;
 };
 
-static SQInteger GetHeadingDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetHeadingDirection(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
 
   SQFloat fH;
@@ -1018,7 +1021,7 @@ static SQInteger GetHeadingDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetPitchDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPitchDirection(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
 
   SQFloat fH;
@@ -1031,16 +1034,16 @@ static SQInteger GetPitchDirection(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger MiscDamageInflictor(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger MiscDamageInflictor(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
 
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   *ppen = penMovable->MiscDamageInflictor();
   return 1;
 };
 
-static SQInteger IsStandingOnPolygon(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsStandingOnPolygon(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
 
   GetInstanceValueVerifyN(CBrushPolygon *, pbpol, v, 2, "CBrushPolygon");
@@ -1062,7 +1065,7 @@ static SQInteger IsStandingOnPolygon(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger IsPolygonBelowPoint(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsPolygonBelowPoint(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
 
   GetInstanceValueVerifyN(CBrushPolygon *, pbpol, v, 2, "CBrushPolygon");
@@ -1082,27 +1085,27 @@ static SQInteger IsPolygonBelowPoint(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger WouldFallInNextPosition(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger WouldFallInNextPosition(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY; ASSERT_MOVABLE;
   CMovableEntity *penMovable = (CMovableEntity *)(CEntity *)val;
   sq_pushbool(v, penMovable->WouldFallInNextPosition());
   return 1;
 };
 
-static SQInteger GetClassFile(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetClassFile(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushstring(v, val->GetClass()->GetName().str_String, -1);
   return 1;
 };
 
-static SQInteger GetMetaClass(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetMetaClass(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   PushNewInstance(SqMetaClass::MetaClassHolder, pClass, GetVMClass(v).Root(), "CDLLEntityClass");
   pClass->Set(val->GetClass()->ec_pdecDLLClass);
   return 1;
 };
 
-static SQInteger IsOfClass(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsOfClass(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
 
   const SQChar *strClass;
@@ -1111,7 +1114,7 @@ static SQInteger IsOfClass(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger IsDerivedFromClass(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsDerivedFromClass(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
 
   const SQChar *strClass;
@@ -1120,7 +1123,7 @@ static SQInteger IsDerivedFromClass(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger IsOfClassID(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsOfClassID(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
 
   SQInteger iClassID;
@@ -1129,7 +1132,7 @@ static SQInteger IsOfClassID(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger IsDerivedFromID(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsDerivedFromID(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
 
   SQInteger iClassID;
@@ -1138,19 +1141,19 @@ static SQInteger IsDerivedFromID(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger IsLiveEntity(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsLiveEntity(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushbool(v, ::IsLiveEntity(val));
   return 1;
 };
 
-static SQInteger IsRationalEntity(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger IsRationalEntity(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   sq_pushbool(v, ::IsRationalEntity(val));
   return 1;
 };
 
-static SQInteger GetPropInfoByID(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
+static SQInteger GetPropInfoByID(HSQUIRRELVM v, int ctArgs, EntityRef &val) {
   ASSERT_ENTITY;
   CEntityProperty *pep = FindPropByID(v, ctArgs, val);
 
@@ -1161,7 +1164,7 @@ static SQInteger GetPropInfoByID(HSQUIRRELVM v, int ctArgs, CEntityPointer &val)
   return 1;
 };
 
-static SQInteger GetPropInfoByName(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPropInfoByName(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   CEntityProperty *pep = FindPropByName(v, val);
 
@@ -1172,7 +1175,7 @@ static SQInteger GetPropInfoByName(HSQUIRRELVM v, int, CEntityPointer &val) {
   return 1;
 };
 
-static SQInteger GetPropInfoByVariable(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPropInfoByVariable(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   CEntityProperty *pep = FindPropByVariable(v, val);
 
@@ -1183,14 +1186,14 @@ static SQInteger GetPropInfoByVariable(HSQUIRRELVM v, int, CEntityPointer &val) 
   return 1;
 };
 
-static SQInteger GetPropValue(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPropValue(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   GetInstanceValueVerifyN(CEntityProperty *, ppep, v, 2, "Entities.Property");
   if (*ppep == NULL) return sq_throwerror(v, "Entities.Property is NULL in argument 1");
   return PushPropValue(v, **ppep, val, TRUE);
 };
 
-static SQInteger GetPropValueByID(HSQUIRRELVM v, int ctArgs, CEntityPointer &val) {
+static SQInteger GetPropValueByID(HSQUIRRELVM v, int ctArgs, EntityRef &val) {
   ASSERT_ENTITY;
   CEntityProperty *pep = FindPropByID(v, ctArgs, val);
 
@@ -1204,7 +1207,7 @@ static SQInteger GetPropValueByID(HSQUIRRELVM v, int ctArgs, CEntityPointer &val
   return PushPropValue(v, *pep, val, FALSE);
 };
 
-static SQInteger GetPropValueByName(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPropValueByName(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   CEntityProperty *pep = FindPropByName(v, val);
 
@@ -1218,7 +1221,7 @@ static SQInteger GetPropValueByName(HSQUIRRELVM v, int, CEntityPointer &val) {
   return PushPropValue(v, *pep, val, FALSE);
 };
 
-static SQInteger GetPropValueByVariable(HSQUIRRELVM v, int, CEntityPointer &val) {
+static SQInteger GetPropValueByVariable(HSQUIRRELVM v, int, EntityRef &val) {
   ASSERT_ENTITY;
   CEntityProperty *pep = FindPropByVariable(v, val);
 
@@ -1232,7 +1235,7 @@ static SQInteger GetPropValueByVariable(HSQUIRRELVM v, int, CEntityPointer &val)
   return PushPropValue(v, *pep, val, FALSE);
 };
 
-static Method<CEntityPointer> _aMethods[] = {
+static Method<EntityRef> _aMethods[] = {
   { "Equal", &Equal, 2, ".x|o" },
 
   // Internal
@@ -1431,7 +1434,7 @@ static SQInteger GetEnumValues(HSQUIRRELVM v, int, CEntityProperty *&val) {
 
 static SQInteger GetValue(HSQUIRRELVM v, int, CEntityProperty *&val) {
   ASSERT_PROPERTY;
-  GetInstanceValueVerify(CEntityPointer, ppen, v, 2);
+  GetInstanceValueVerifyN(EntityRef, ppen, v, 2, "CEntityPointer");
   if (*ppen == NULL) return sq_throwerror(v, "CEntityPointer is NULL in argument 1");
   return PushPropValue(v, *val, *ppen, TRUE);
 };
@@ -1531,7 +1534,7 @@ static SQInteger SetArgs(HSQUIRRELVM v, int ctArgs, EExtEntityEvent &val) {
         }
 
         // Try entity
-        GetInstanceValue(CEntityPointer, ppenArg, v, 2 + i);
+        GetInstanceValue(EntityRef, ppenArg, v, 2 + i);
 
         if (ppenArg != NULL) {
           if (*ppenArg != NULL) {
@@ -2058,7 +2061,7 @@ void VM::RegisterEntities(void) {
     Root().AddClass(sqcMetaClass);
   }
   {
-    Class<CEntityPointer> sqcEntity(GetVM(), "CEntityPointer", &SqEntity::Constructor);
+    Class<EntityRef> sqcEntity(GetVM(), "CEntityPointer", &SqEntity::Constructor);
 
     // Methods
     for (i = 0; i < ARRAYCOUNT(SqEntity::_aMethods); i++) {

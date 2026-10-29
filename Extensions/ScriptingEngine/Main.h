@@ -25,3 +25,6 @@ extern CDynamicContainer<sq::VM> _cCustomScripts;
 
 // Run a specific function for all loaded custom scripts
 void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, sq::VM::FReturnValueCallback pReturnCallback = NULL);
+
+// Clear all entity references for all loaded custom scripts
+void ClearEntityRefsInCustomScripts(void);

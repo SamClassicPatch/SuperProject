@@ -712,7 +712,7 @@ static SQInteger GetPlayerTarget(HSQUIRRELVM v) {
   }
 
   CPlayerTarget &plt = aplt[iPlayer];
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
 
   if (plt.IsActive()) {
     *ppen = plt.plt_penPlayerEntity;
@@ -752,7 +752,7 @@ static SQInteger GetPlayerEntityByName(HSQUIRRELVM v) {
   const SQChar *strName;
   sq_getstring(v, 2, &strName);
 
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = _pNetwork->GetPlayerEntityByName(strName);
   return 1;
 };
@@ -775,13 +775,13 @@ static SQInteger GetEntityWithName(HSQUIRRELVM v) {
   SQInteger iEntity;
   sq_getinteger(v, 3, &iEntity);
 
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = _pNetwork->GetEntityWithName(strName, iEntity);
   return 1;
 };
 
 static SQInteger IsPlayerLocal(HSQUIRRELVM v) {
-  GetInstanceValueVerify(CEntityPointer, ppen, v, 2);
+  GetInstanceValueVerifyN(EntityRef, ppen, v, 2, "CEntityPointer");
   sq_pushbool(v, _pNetwork->IsPlayerLocal(*ppen));
   return 1;
 };

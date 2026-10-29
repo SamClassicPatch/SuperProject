@@ -27,6 +27,30 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sq {
 
+// Entity pointer for a specific Squirrel VM
+struct EntityRef {
+  CEntityPointer pen;
+  CListNode lnInVM;
+
+  inline EntityRef(CEntity *penSet = NULL) : pen(penSet) {};
+
+  inline const EntityRef &operator=(CEntity *penOther) {
+    pen = penOther;
+    return *this;
+  };
+
+  inline const EntityRef &operator=(const CEntityPointer &penOther) {
+    pen = penOther;
+    return *this;
+  };
+
+  inline CEntity *operator->(void) const { return pen; };
+  inline operator CEntity*(void) const { return pen; };
+  inline CEntity &operator*(void) const { return *pen; };
+
+  inline operator LibClassHolder(void) const { return LibClassHolder(pen); };
+};
+
 class VM {
   public:
     // Callback for pushing necessary arguments for closures before executing them
@@ -51,6 +75,7 @@ class VM {
     int m_ctExecutionArgs; // Amount of arguments passed into Execute() that need to be popped after finishing a suspended execution
 
     CScriptChatCommands m_mapChatCommands; // Chat commands registered by this VM
+    CListHead m_lhEntityRefs; // List of active EntityRef instances of this VM
 
     // Temporary arguments for executing chat commands for this VM
     INDEX m_iTempChatCommandClient;
@@ -256,6 +281,12 @@ class VM {
 
     // Remove a chat command registered by this VM
     bool RemoveChatCommand(const char *strCommand);
+
+    // Add new entity reference to this VM
+    void AddEntityRef(EntityRef &ref);
+
+    // Clear all entity references of this VM by nullifying the pointers
+    void ClearEntityRefs(BOOL bOnlyDeleted);
 
     // Toggle argument bypass
     void SetArgumentBypass(bool bState) {

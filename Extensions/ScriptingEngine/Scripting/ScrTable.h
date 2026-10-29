@@ -116,6 +116,10 @@ class TableBase : public Object {
       _PointerType *_PointerVariable; \
       { if (!(_Table).CreateInstanceOf(_ClassName, &_PointerVariable)) return SQ_ERROR; }
 
+    // Shortcut for creating a new instance, pushing it on top of the stack and setting its value
+    #define PushNewInstanceValue(_ValueType, _Table, _ClassName, _Data) \
+      { PushNewInstance(_ValueType, pValue, _Table, _ClassName); *pValue = (_Data); }
+
     // Shortcut for creating a new pointer instance with some data and pushing it on top of the stack
     #define PushNewPointer(_Table, _ClassName, _Data) \
       { if (!(_Table).CreatePointerInstanceOf(_ClassName, &(_Data))) return SQ_ERROR; }

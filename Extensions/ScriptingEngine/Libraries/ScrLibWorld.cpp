@@ -59,14 +59,14 @@ static SQInteger GetBackgroundColor(HSQUIRRELVM v) {
 
 static SQInteger GetBackgroundViewer(HSQUIRRELVM v) {
   ASSERT_WORLD;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = IWorld::GetWorld()->GetBackgroundViewer();
   return 1;
 };
 
 static SQInteger GetWSC(HSQUIRRELVM v) {
   ASSERT_WORLD;
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = IWorld::GetWSC(IWorld::GetWorld());
   return 1;
 };
@@ -113,7 +113,7 @@ static SQInteger GetEntities(HSQUIRRELVM v) {
     // Skip predictors, if needed
     if (!bPredictors && iten->IsPredictor()) continue;
 
-    PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+    PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
     *ppen = iten;
 
     sq_arrayappend(v, -2);
@@ -129,7 +129,7 @@ static SQInteger FindEntityByID(HSQUIRRELVM v) {
   SQInteger iEntityID;
   sq_getinteger(v, 2, &iEntityID);
 
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = IWorld::FindEntityByID(IWorld::GetWorld(), iEntityID);
   return 1;
 };
@@ -149,7 +149,7 @@ static SQInteger FindClasses(HSQUIRRELVM v) {
 
   // Create an entity instance for each entity in the container and append it to the array
   FOREACHINDYNAMICCONTAINER(cOutput, CEntity, iten) {
-    PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+    PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
     *ppen = iten;
 
     sq_arrayappend(v, -2);
@@ -173,7 +173,7 @@ static SQInteger FindClassesByID(HSQUIRRELVM v) {
 
   // Create an entity instance for each entity in the container and append it to the array
   FOREACHINDYNAMICCONTAINER(cOutput, CEntity, iten) {
-    PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+    PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
     *ppen = iten;
 
     sq_arrayappend(v, -2);
@@ -199,7 +199,7 @@ static SQInteger GetLocalPlayers(HSQUIRRELVM v) {
 
   // Create an entity instance for each entity in the container and append it to the array
   FOREACHINDYNAMICCONTAINER(cOutput, CPlayerEntity, iten) {
-    PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+    PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
     *ppen = iten;
 
     sq_arrayappend(v, -2);
@@ -223,7 +223,7 @@ static SQInteger GetPlayerEntity(HSQUIRRELVM v) {
   SQInteger iPlayer;
   sq_getinteger(v, 2, &iPlayer);
 
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = CEntity::GetPlayerEntity(iPlayer);
   return 1;
 };

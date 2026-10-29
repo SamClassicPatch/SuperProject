@@ -348,6 +348,15 @@ void RunCustomScripts(const SQChar *strFunc, sq::VM::FPushArguments pPushArgs, s
   }
 };
 
+// Clear all entity references for all loaded custom scripts
+void ClearEntityRefsInCustomScripts(void)
+{
+  FOREACHINDYNAMICCONTAINER(_cCustomScripts, sq::VM, itvm) {
+    sq::VM &vm = *itvm;
+    vm.ClearEntityRefs(FALSE); // All, not just deleted ones
+  }
+};
+
 // Module entry point
 CLASSICSPATCH_PLUGIN_STARTUP(HIniConfig props, PluginEvents_t &events)
 {

@@ -36,7 +36,7 @@ static BOOL _bPickedUp;
 
 __forceinline SQRESULT PushEvent(sq::VM &vm) {
   sq_pushroottable(vm);
-  PushNewPointer(vm.Root(), "CEntityPointer", _pen);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _pen);
   sq_pushinteger(vm, _pee->ee_slEvent);
   return SQ_OK;
 };
@@ -84,7 +84,7 @@ inline SQRESULT PushEntity(sq::VM &vm) {
 
   // Arguments
   sq_newarray(vm, 0);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penEntity);
   sq_arrayappend(vm, -2);
   return SQ_OK;
 };
@@ -96,7 +96,7 @@ inline SQRESULT PushIntEntity(sq::VM &vm) {
   sq_newarray(vm, 0);
   sq_pushinteger(vm, _iNumber);
   sq_arrayappend(vm, -2);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penEntity);
   sq_arrayappend(vm, -2);
   return SQ_OK;
 };
@@ -108,7 +108,7 @@ inline SQRESULT PushBoolEntity(sq::VM &vm) {
   sq_newarray(vm, 0);
   sq_pushbool(vm, _bState);
   sq_arrayappend(vm, -2);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penEntity);
   sq_arrayappend(vm, -2);
   return SQ_OK;
 };
@@ -132,11 +132,11 @@ inline SQRESULT PushTouchArgs(sq::VM &vm) {
 
   // Arguments
   sq_newarray(vm, 0);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penEntity);
   sq_arrayappend(vm, -2);
   sq_pushbool(vm, _bState);
   sq_arrayappend(vm, -2);
-  PushNewPointer(vm.Root(), "FLOATplane3D", _plPlane);
+  PushNewInstanceValue(FLOATplane3D, vm.Root(), "FLOATplane3D", _plPlane);
   sq_arrayappend(vm, -2);
   return SQ_OK;
 };
@@ -146,7 +146,7 @@ inline SQRESULT PushPassArgs(sq::VM &vm) {
 
   // Arguments
   sq_newarray(vm, 0);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penEntity);
   sq_arrayappend(vm, -2);
   sq_pushbool(vm, _bState);
   sq_arrayappend(vm, -2);
@@ -158,9 +158,9 @@ inline SQRESULT PushBlockArgs(sq::VM &vm) {
 
   // Arguments
   sq_newarray(vm, 0);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penEntity);
   sq_arrayappend(vm, -2);
-  PushNewPointer(vm.Root(), "FLOATplane3D", _plPlane);
+  PushNewInstanceValue(FLOATplane3D, vm.Root(), "FLOATplane3D", _plPlane);
   sq_arrayappend(vm, -2);
   return SQ_OK;
 };
@@ -170,11 +170,11 @@ inline SQRESULT PushDamageArgs(sq::VM &vm) {
 
   // Arguments
   sq_newarray(vm, 0);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penEntity);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penEntity);
   sq_arrayappend(vm, -2);
-  PushNewPointer(vm.Root(), "FLOAT3D", _vVector1);
+  PushNewInstanceValue(FLOAT3D, vm.Root(), "FLOAT3D", _vVector1);
   sq_arrayappend(vm, -2);
-  PushNewPointer(vm.Root(), "FLOAT3D", _vVector2);
+  PushNewInstanceValue(FLOAT3D, vm.Root(), "FLOAT3D", _vVector2);
   sq_arrayappend(vm, -2);
   sq_pushfloat(vm, _fNumber);
   sq_arrayappend(vm, -2);
@@ -186,6 +186,9 @@ inline SQRESULT PushDamageArgs(sq::VM &vm) {
 static void CallOnEvent(CEntity *pen, const CEntityEvent &ee, const CTString &strFunc) {
   // Restrict listener functions for remote players
   if (INetwork::IsPlayingOnRemoteServer()) return;
+
+  // No entity for some reason
+  if (pen == NULL || pen->GetFlags() & ENF_DELETED) return;
 
   static const SQChar *strScriptFuncGeneric = "GenericEvent";
   static const SQChar *strScriptFuncEnemy   = "EnemyEvent";
@@ -573,13 +576,13 @@ static FLOAT3D _vDirection;
 
 inline SQRESULT PushInflictDamageArgs(sq::VM &vm) {
   sq_pushroottable(vm);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penCaller);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penToDamage);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penInflictor);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penCaller);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penToDamage);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penInflictor);
   sq_pushinteger(vm, _eInflictDamageType);
   sq_pushfloat(vm, _fDamage);
-  PushNewPointer(vm.Root(), "FLOAT3D", _vHitPoint);
-  PushNewPointer(vm.Root(), "FLOAT3D", _vDirection);
+  PushNewInstanceValue(FLOAT3D, vm.Root(), "FLOAT3D", _vHitPoint);
+  PushNewInstanceValue(FLOAT3D, vm.Root(), "FLOAT3D", _vDirection);
   return SQ_OK;
 };
 

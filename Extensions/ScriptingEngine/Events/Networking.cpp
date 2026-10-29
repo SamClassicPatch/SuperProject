@@ -34,7 +34,7 @@ static BOOL _bLocal;
 
 inline SQRESULT PushPlayer(sq::VM &vm) {
   sq_pushroottable(vm);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penPlayer);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penPlayer);
   sq_pushbool(vm, _bLocal);
   return SQ_OK;
 };

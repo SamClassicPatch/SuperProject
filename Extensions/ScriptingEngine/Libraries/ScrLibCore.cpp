@@ -284,7 +284,7 @@ static SQInteger Constructor(HSQUIRRELVM v, int ctArgs, RayHolder &val) {
   }
 
   CCastRay &cr = val.cr;
-  GetInstanceValueVerify(CEntityPointer, ppenOrigin, v, 2);
+  GetInstanceValueVerifyN(EntityRef, ppenOrigin, v, 2, "CEntityPointer");
 
   // Try getting a placement first
   GetInstanceValue(CPlacement3D, pplOrigin, v, 3);
@@ -347,7 +347,7 @@ static SQInteger GetPlacement(HSQUIRRELVM v, int, RayHolder &val) {
 
 static SQInteger GetEntity(HSQUIRRELVM v, int, RayHolder &val) {
   SQ_RESTRICT(v);
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val.cr.cr_penOrigin;
   return 1;
 };
@@ -368,7 +368,7 @@ static SQInteger GetTarget(HSQUIRRELVM v, int, RayHolder &val) {
 
 static SQInteger GetHitEntity(HSQUIRRELVM v, int, RayHolder &val) {
   SQ_RESTRICT(v);
-  PushNewInstance(CEntityPointer, ppen, GetVMClass(v).Root(), "CEntityPointer");
+  PushNewInstance(EntityRef, ppen, GetVMClass(v).Root(), "CEntityPointer");
   *ppen = val.cr.cr_penHit;
   return 1;
 };

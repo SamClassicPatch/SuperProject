@@ -677,10 +677,36 @@ bool VM::RemoveChatCommand(const char *strCommand) {
   return true;
 };
 
+// Add new entity reference to this VM
+void VM::AddEntityRef(EntityRef &ref) {
+  m_lhEntityRefs.AddTail(ref.lnInVM);
+};
+
+// Clear all entity references of this VM by nullifying the pointers
+void VM::ClearEntityRefs(BOOL bOnlyDeleted) {
+  // Only clear references to entities that have been marked as deleted
+  if (bOnlyDeleted) {
+    FOREACHINLIST(EntityRef, lnInVM, m_lhEntityRefs, itref) {
+      if (itref->pen != NULL && itref->pen->GetFlags() & ENF_DELETED) {
+        itref->pen = NULL;
+      }
+    }
+
+  // Clear all references
+  } else {
+    FOREACHINLIST(EntityRef, lnInVM, m_lhEntityRefs, itref) {
+      itref->pen = NULL;
+    }
+  }
+};
+
 // Clear cached variables to prevent them from executing
 void VM::ClearCache(void) {
   m_strStartDemoRec = "";
   m_bStopDemoRec = false;
+
+  // Clear any references to deleted entities
+  ClearEntityRefs(TRUE);
 };
 
 // Start recording a new demo after executing a script

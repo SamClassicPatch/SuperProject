@@ -28,11 +28,17 @@ void IGameEvents_OnGameStart(void) {
 };
 
 void IGameEvents_OnChangeLevel(void) {
+  // Clear all references to entities within the last world
+  ClearEntityRefsInCustomScripts();
+
   RunCustomScripts("OnChangeLevel", NULL);
 };
 
 void IGameEvents_OnGameStop(void) {
   RunCustomScripts("OnGameStop", NULL);
+
+  // Clear all references to entities within the world that's about to be cleared
+  ClearEntityRefsInCustomScripts();
 };
 
 void IGameEvents_OnGameSave(const CTFileName &fnmSave) {

@@ -26,7 +26,7 @@ inline SQRESULT PushDrawPort(sq::VM &vm) {
 
 inline SQRESULT PushRenderView(sq::VM &vm) {
   sq_pushroottable(vm);
-  PushNewPointer(vm.Root(), "CEntityPointer", _penViewer);
+  PushNewInstanceValue(sq::EntityRef, vm.Root(), "CEntityPointer", _penViewer);
   PushNewPointer(vm.Root(), "CDrawPort", *_pdp);
   return SQ_OK;
 };
