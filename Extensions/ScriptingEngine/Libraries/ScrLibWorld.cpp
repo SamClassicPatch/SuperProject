@@ -210,7 +210,6 @@ static SQInteger GetLocalPlayers(HSQUIRRELVM v) {
 
 static SQInteger GetMaxPlayers(HSQUIRRELVM v) {
   ASSERT_WORLD;
-  SQ_RESTRICT(v);
 
   sq_pushinteger(v, CEntity::GetMaxPlayers());
   return 1;
